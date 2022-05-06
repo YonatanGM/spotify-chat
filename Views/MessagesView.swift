@@ -1,27 +1,14 @@
 //
-//  Message.swift
+//  MessagesView.swift
 //  test-app2
 //
-//  Created by Yonatan Mamo on 01.05.22.
+//  Created by Yonatan Mamo on 05.05.22.
 //
+
 
 import MessageKit
 import SwiftUI
 import InputBarAccessoryView
-
-struct Message: MessageType {
-    var sender: SenderType
-    var messageId: String
-    var sentDate: Date
-    var kind: MessageKind
-}
-
-struct Sender: SenderType {
-    var senderId: String
-    var displayName: String
-    var photoURL: String
-}
-
 
 
 final class MessageSwiftUIVC: MessagesViewController {
