@@ -21,6 +21,9 @@
 		46B2F95F2816B6130003AA69 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 46B2F95E2816B6130003AA69 /* FirebaseAuth */; };
 		46EAE3FE28095F3F0061C9BB /* WebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46EAE3FD28095F3F0061C9BB /* WebView.swift */; };
 		46EAE403280961AE0061C9BB /* ExternalAccessory.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 46EAE402280961AE0061C9BB /* ExternalAccessory.framework */; };
+		46ED90E9282519110064E5BE /* Users-ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46ED90E8282519110064E5BE /* Users-ViewModel.swift */; };
+		46ED90EB282519340064E5BE /* Users.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46ED90EA282519340064E5BE /* Users.swift */; };
+		46ED90ED2825250B0064E5BE /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46ED90EC2825250B0064E5BE /* LoginView.swift */; };
 		46F0CC2D280D716C00BF1B4B /* APICaller.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46F0CC2C280D716C00BF1B4B /* APICaller.swift */; };
 		46F0CC3E280D993000BF1B4B /* SDWebImageSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = 46F0CC3D280D993000BF1B4B /* SDWebImageSwiftUI */; };
 		46F0CC42280DCAE300BF1B4B /* TopArtistsResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46F0CC41280DCAE300BF1B4B /* TopArtistsResponse.swift */; };
@@ -46,6 +49,9 @@
 		46EAE3FF2809619D0061C9BB /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		46EAE400280961AE0061C9BB /* test-app2.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "test-app2.entitlements"; sourceTree = "<group>"; };
 		46EAE402280961AE0061C9BB /* ExternalAccessory.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ExternalAccessory.framework; path = System/Library/Frameworks/ExternalAccessory.framework; sourceTree = SDKROOT; };
+		46ED90E8282519110064E5BE /* Users-ViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Users-ViewModel.swift"; sourceTree = "<group>"; };
+		46ED90EA282519340064E5BE /* Users.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Users.swift; sourceTree = "<group>"; };
+		46ED90EC2825250B0064E5BE /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
 		46F0CC2C280D716C00BF1B4B /* APICaller.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APICaller.swift; sourceTree = "<group>"; };
 		46F0CC41280DCAE300BF1B4B /* TopArtistsResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopArtistsResponse.swift; sourceTree = "<group>"; };
 		46F0CC47280DCEED00BF1B4B /* TopTracksResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopTracksResponse.swift; sourceTree = "<group>"; };
@@ -82,6 +88,8 @@
 			children = (
 				461DCBD028236E88009E2F7F /* UserProfileView.swift */,
 				46F5CA6B2808C23E00D58C41 /* ContentView.swift */,
+				46ED90EC2825250B0064E5BE /* LoginView.swift */,
+				46ED90EA282519340064E5BE /* Users.swift */,
 				46EAE3FD28095F3F0061C9BB /* WebView.swift */,
 				461DCBD4282370B7009E2F7F /* MessagesView.swift */,
 			);
@@ -126,6 +134,14 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		46ED90E72825186F0064E5BE /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				46ED90E8282519110064E5BE /* Users-ViewModel.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
 		46F5CA5D2808C23E00D58C41 = {
 			isa = PBXGroup;
 			children = (
@@ -149,12 +165,13 @@
 				46EAE400280961AE0061C9BB /* test-app2.entitlements */,
 				46EAE3FF2809619D0061C9BB /* Info.plist */,
 				465B9C3428157AD500665947 /* GoogleService-Info.plist */,
+				46F5CA6D2808C24000D58C41 /* Assets.xcassets */,
 				46F5CA692808C23E00D58C41 /* test_app2App.swift */,
 				461DCBD62823712A009E2F7F /* Spotify */,
 				461DCBD72823714B009E2F7F /* Managers */,
 				461DCBD328236FC5009E2F7F /* Models */,
 				461DCBD228236F97009E2F7F /* Views */,
-				46F5CA6D2808C24000D58C41 /* Assets.xcassets */,
+				46ED90E72825186F0064E5BE /* ViewModels */,
 				46F5CA6F2808C24000D58C41 /* Preview Content */,
 			);
 			path = "test-app2";
@@ -259,12 +276,15 @@
 			files = (
 				46F0CC48280DCEED00BF1B4B /* TopTracksResponse.swift in Sources */,
 				463FEF26281D4242005155EE /* DatabaseManager.swift in Sources */,
+				46ED90E9282519110064E5BE /* Users-ViewModel.swift in Sources */,
 				461DCBCF2823439E009E2F7F /* UserProfile.swift in Sources */,
 				461DCBD128236E88009E2F7F /* UserProfileView.swift in Sources */,
 				461DCBD5282370B7009E2F7F /* MessagesView.swift in Sources */,
 				46F5CA6C2808C23E00D58C41 /* ContentView.swift in Sources */,
 				46F0CC2D280D716C00BF1B4B /* APICaller.swift in Sources */,
+				46ED90EB282519340064E5BE /* Users.swift in Sources */,
 				46EAE3FE28095F3F0061C9BB /* WebView.swift in Sources */,
+				46ED90ED2825250B0064E5BE /* LoginView.swift in Sources */,
 				46F5CA782808DD0D00D58C41 /* AuthManager.swift in Sources */,
 				46476EAB28099A8600C5B880 /* AuthResponse.swift in Sources */,
 				46F5CA6A2808C23E00D58C41 /* test_app2App.swift in Sources */,
