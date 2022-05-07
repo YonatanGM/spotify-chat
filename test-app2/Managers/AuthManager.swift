@@ -194,7 +194,12 @@ final class AuthManager {
         }
         UserDefaults.standard.setValue(Date().addingTimeInterval(TimeInterval(result.expires_in)), forKey: "expirationDate")
     }
-                   
+    
+    
+    public func signOut() {
+        try? Auth.auth().signOut()
+        UserDefaults.standard.setValue(nil, forKey: "access_token")
+    }
 }
 
 

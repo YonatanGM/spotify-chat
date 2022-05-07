@@ -65,20 +65,7 @@ class Coordinator: NSObject, WKNavigationDelegate {
     }
 //
     
-
-    func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
-
-        
-
-    }
-
     
-
-    func webView(_ webView: WKWebView, didReceiveServerRedirectForProvisionalNavigation navigation: WKNavigation!) {
-        print("yes")
-    }
-    
-
     func webView(_ webView: WKWebView, didStartProvisionalNavigation navigation: WKNavigation!) {
         
         guard let url = webView.url, let code = URLComponents(string: url.absoluteString)?.queryItems?.first(where: {
@@ -95,7 +82,7 @@ class Coordinator: NSObject, WKNavigationDelegate {
             return
         }
 
-        print("code: \(code)")
+        // print("code: \(code)")
         AuthManager.shared.handleAuthorizationCodeFlow(code: code) { success in
             DispatchQueue.main.async {
                 self.parent.completionHandler?(success)

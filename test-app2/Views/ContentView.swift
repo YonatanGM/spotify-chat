@@ -10,9 +10,9 @@ import MessageKit
 import FirebaseAuth
 
 struct ContentView: View {
-    @State private var showSignIn: Bool = false
-    @State private var isSignedIn = AuthManager.shared.isSignedIn
-    @State private var showLoginFailedAlert = false
+  
+    @State private var isLoggedIn = AuthManager.shared.isSignedIn
+    
     @State var profile: UserProfile?
     @State var messages: [MessageType] = [Message(sender: Sender(senderId: "1", displayName: "me", photoURL: ""),
                             messageId: "2",
@@ -20,58 +20,45 @@ struct ContentView: View {
                             kind: .text("hello there"))]
     
     var body: some View {
+                
+        if !isLoggedIn {
+            LoginView($isLoggedIn)
+        } else {
+            
+            
+        }
         
-//                MessagesView(messages: $messages)
-                if !isSignedIn {
-                    Button {
-                        showSignIn = true
-                    } label: {
-                        Text("Sign in")
-                    }
-                    .sheet(isPresented: $showSignIn, onDismiss: {
-                        self.showLoginFailedAlert = !isSignedIn
-                    }) {
-                        if let url = AuthManager.shared.signInUrl  {
-        
-                            WebView(url: url) { loginStatus in
-                                // print("status", loginStatus)
-                                self.isSignedIn = loginStatus
-                                self.handleSignIn(success: loginStatus)
-                                self.showSignIn = false
-                            }
-                            .padding(.top)
-                        }
-                    }
-                    .alert(isPresented: $showLoginFailedAlert) {
-                        Alert(title: Text("Oops"), message: Text("Something went wrong when signing in."), dismissButton: .default(Text("Dismiss")))
-                    }
-                } else {
-        
+
+                            
+                        
+
+//                } else {
+//
                     Text("Profile")
                         .onTapGesture {
                             getUserProfile()
-        
+
                         }
-        
+
                     Text("Top artists")
                         .onTapGesture {
                             getTopArtists()
                         }
-        
+
                     Text("Top tracks")
                         .onTapGesture {
                             getTopTracks()
                         }
-                    
+
                     Text("Test database")
                         .onTapGesture {
                             DatabaseManager.shared.userExists(with: Auth.auth().currentUser!.uid) {
-                                
+
                                 print("eiiii ", $0)
                             }
-                           
+
                         }
-                }
+//                }
         
                 if let profile = profile {
                     UserProfileView(profile: profile)
