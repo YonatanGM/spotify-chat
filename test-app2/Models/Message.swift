@@ -45,8 +45,11 @@ extension MessageKind {
 }
 
 struct Sender: SenderType {
+
+    
+
+    var senderId: String
     public var photoURL: String
-    public var senderId: String
     public var displayName: String
 }
 

@@ -7,10 +7,10 @@
 
 import Foundation
 
-struct Conversation {
+struct Conversation: Identifiable {
     let id: String
-    let name: String
-    let otherUserEmail: String
+    let otherUserName: String
+    let otherUserID: String
     let latestMessage: LatestMessage
 }
 

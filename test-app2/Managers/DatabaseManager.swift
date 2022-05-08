@@ -19,7 +19,9 @@ class DatabaseManager {
     static let shared = DatabaseManager()
     
     // private let database = Database.database().reference()
-    private let database = Database.database(url: "http://localhost:9007?ns=testapp-79467").reference()
+    private let database = Database.database(url: "http://localhost:9004?ns=testapp-79467").reference()
+    
+    var messageHandles = [String: UInt]() // to unregister them
 }
 
 
@@ -40,11 +42,10 @@ extension DatabaseManager {
     /// inserts new user to database
     public func insertUser(with profile: UserProfile, completion: @escaping ((Bool) ->Void)) {
         database.child(profile.id).setValue([
-            "country": profile.country,
             "name": profile.display_name,
-            "email": profile.email ?? "",
+            "email": profile.email,
             "profile_picture": profile.images.first?.url ?? ""
-        ], withCompletionBlock: { [weak self] error, _ in
+        ].compactMapValues { $0 }, withCompletionBlock: { [weak self] error, _ in
             guard error == nil else {
                 print("failed to write to database")
                 completion(false)
@@ -54,11 +55,11 @@ extension DatabaseManager {
             self?.database.child("users").observeSingleEvent(of: .value, with: { snapshot in
                 if var usersCollection = snapshot.value as? [[String: String]] {
                     let newElement = [
-                        "name" : profile.display_name,
-                        "email": profile.email ?? "",
-                        "country": profile.country,
-                        "profile_picture": profile.images.first?.url ?? ""
-                    ]
+                        "id": profile.id,
+                         "name" : profile.display_name,
+                         "email": profile.email,
+                         "profile_picture": profile.images.first?.url
+                    ].compactMapValues { $0 }
                     usersCollection.append(newElement)
                     self?.database.child("users").setValue(usersCollection, withCompletionBlock: { error, _ in
                         guard error == nil else {
@@ -70,10 +71,11 @@ extension DatabaseManager {
                     
                 } else {
                     let newCollection: [[String: String]] = [
-                        ["name" : profile.display_name,
-                        "email": profile.email ?? "",
-                        "country": profile.country,
-                        "profile_picture": profile.images.first?.url ?? ""]
+                        ["id": profile.id,
+                         "name" : profile.display_name,
+                         "email": profile.email,
+                         "profile_picture": profile.images.first?.url
+                        ].compactMapValues { $0 }
                     ]
                     
                     self?.database.child("users").setValue(newCollection, withCompletionBlock: { error, _ in
@@ -92,15 +94,21 @@ extension DatabaseManager {
         
     }
     
-    public func getAllUsers(completion: @escaping (Result<[[String: String]], Error>) -> Void) {
-        database.child("users").observeSingleEvent(of: .value, with: { snapshot in
+    public func getAllUsers(completion: @escaping (Result<[ChatUser], Error>) -> Void) {
+        database.child("users").observe(.value, with: { snapshot in
             guard let value = snapshot.value as? [[String: String]] else {
                 completion(.failure(DatabaseError.failedToFetch))
                 return
             }
             
-            completion(.success(value))
-            
+            let users: [ChatUser] = value.compactMap { user in
+                guard let id = user["id"],
+                      let name = user["name"] else {
+                    return nil
+                }
+                return ChatUser(id: id, name: name, email: user["email"], profile_picture: user["profile_picture"])
+            }
+            completion(.success(users))
         })
     }
     
@@ -323,9 +331,9 @@ extension DatabaseManager {
         })
     }
 
-    /// Fetches and returns all conversations for the user with passed in email
+    /// Fetches and returns all conversations for the user with passed in id
     public func getAllConversations(for user: String, completion: @escaping (Result<[Conversation], Error>) -> Void) {
-        database.child("\(user)/conversations").observe(.value, with: { snapshot in
+            database.child("\(user)/conversations").observe(.value, with: { snapshot in
             guard let value = snapshot.value as? [[String: Any]] else{
                 completion(.failure(DatabaseError.failedToFetch))
                 return
@@ -346,18 +354,20 @@ extension DatabaseManager {
                                                          text: message,
                                                          isRead: isRead)
                 return Conversation(id: conversationId,
-                                    name: otherUserName,
-                                    otherUserEmail: otherUserID,
+                                    otherUserName: otherUserName,
+                                    otherUserID: otherUserID,
                                     latestMessage: latestMmessageObject)
             })
 
             completion(.success(conversations))
         })
+        
+        
     }
 
     /// Gets all mmessages for a given conversatino
     public func getAllMessagesForConversation(with id: String, completion: @escaping (Result<[Message], Error>) -> Void) {
-        database.child("\(id)/messages").observe(.value, with: { snapshot in
+        messageHandles[id] = database.child("\(id)/messages").observe(.value, with: { snapshot in
             guard let value = snapshot.value as? [[String: Any]] else{
                 completion(.failure(DatabaseError.failedToFetch))
                 return
@@ -397,8 +407,7 @@ extension DatabaseManager {
                     return nil
                 }
 
-                let sender = Sender(photoURL: "",
-                                    senderId: senderID,
+                let sender = Sender(senderId: senderID, photoURL: "",
                                     displayName: otherUserName)
 
                 return Message(sender: sender,
@@ -409,6 +418,7 @@ extension DatabaseManager {
 
             completion(.success(messages))
         })
+
     }
 
     /// Sends a message with target conversation and message
@@ -651,7 +661,7 @@ extension DatabaseManager {
         }
     }
 
-    public func conversationExists(with recipientID: String, completion: @escaping (Result<String, Error>) -> Void) {
+    public func conversationExists(with recipientID: String, completion: @escaping (Result<String?, Error>) -> Void) {
         
         guard let senderID = Auth.auth().currentUser?.uid else {
             return
@@ -672,7 +682,7 @@ extension DatabaseManager {
             }) {
                 // get id
                 guard let id = conversation["id"] as? String else {
-                    completion(.failure(DatabaseError.failedToFetch))
+                    completion(.success(nil))
                     return
                 }
                 completion(.success(id))

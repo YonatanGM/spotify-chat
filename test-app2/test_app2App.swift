@@ -7,10 +7,12 @@
 
 import SwiftUI
 import Firebase
+import JGProgressHUD_SwiftUI
 
 
 @main
 struct test_app2App: App {
+    @StateObject var settings = AppStateModel()
     init() {
         FirebaseApp.configure()
         Auth.auth().useEmulator(withHost: "localhost", port: 9098)
@@ -22,8 +24,11 @@ struct test_app2App: App {
     }
     
     var body: some Scene {
+        
         WindowGroup {
             ContentView()
+                .environmentObject(settings)
+     
         }
     }
 }

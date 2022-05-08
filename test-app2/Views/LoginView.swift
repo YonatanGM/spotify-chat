@@ -9,48 +9,50 @@ import SwiftUI
 
 struct LoginView: View {
 
-    @Binding var isLoggedIn: Bool
+    @EnvironmentObject var model: AppStateModel
     @State var presentLogin = false
     @State var presentLoginFailedAlert = false
-    
-    init(_ isLoggedIn: Binding<Bool>) {
-        self._isLoggedIn = isLoggedIn
-    }
-    
+
     var body: some View {
-    
-        if !isLoggedIn {
-            Button(action: {
-                presentLogin = true
-            }) {
-                Text("Sign in")
+
+        
+        Button(action: {
+            presentLogin = true
+        }) {
+            Text("Sign in")
+        }
+        .sheet(isPresented: $presentLogin,
+               onDismiss: {
+            // presentLoginFailedAlert = !AuthManager.shared.isSignedIn
+        }) {
+            model.signIn { success in
+                presentLogin = false
+                presentLoginFailedAlert = !success
             }
-            .sheet(isPresented: $presentLogin,
-                   onDismiss: {
-                // presentLoginFailedAlert = !AuthManager.shared.isSignedIn
-            }) {
-                if let url = AuthManager.shared.signInUrl  {
-                    WebView(url: url) { success in
-                        presentLogin = false
-                        presentLoginFailedAlert = !success
-                        isLoggedIn = success
-                        
-                    }
-                    .padding(.top)
+            .overlay {
+                if model.isSigningIn {
+                    ProgressView() 
                 }
-            }
-            .alert(isPresented: $presentLoginFailedAlert) {
-                Alert(title: Text("Oops"),
-                      message: Text("Something went wrong when signing in."),
-                      dismissButton: .default(Text("Dismiss")))
+                    
             }
         }
+        .alert(isPresented: $presentLoginFailedAlert) {
+            Alert(title: Text("Oops"),
+                  message: Text("Something went wrong when signing in."),
+                  dismissButton: .default(Text("Dismiss")))
+        }
+
     }
 }
 
 
-struct LoginView_Previews: PreviewProvider {
-    static var previews: some View {
-        LoginView(.constant(false))
-    }
-}
+
+/*
+ 
+ struct LoginView_Previews: PreviewProvider {
+     static var previews: some View {
+         LoginView(model: .constant(false))
+     }
+ }
+
+ */

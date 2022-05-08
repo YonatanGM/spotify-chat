@@ -14,7 +14,9 @@ struct WebView: UIViewRepresentable {
  
     var url: URL
     
-    var completionHandler: ((Bool) -> Void)?
+    var completionHandler: ((Bool, Bool) -> Void)?
+
+    
     
     func makeCoordinator() -> Coordinator {
         Coordinator(self)
@@ -75,7 +77,7 @@ class Coordinator: NSObject, WKNavigationDelegate {
             if webView.url?.host == URL(string: AuthManager.Constants.redirectURI)?.host {
                 webView.isHidden = true
                 DispatchQueue.main.async {
-                    self.parent.completionHandler?(false)
+                    self.parent.completionHandler?(false, false)
                 }
             }
             // do nothing
@@ -83,9 +85,10 @@ class Coordinator: NSObject, WKNavigationDelegate {
         }
 
         // print("code: \(code)")
+        self.parent.completionHandler?(false, true)
         AuthManager.shared.handleAuthorizationCodeFlow(code: code) { success in
             DispatchQueue.main.async {
-                self.parent.completionHandler?(success)
+                self.parent.completionHandler?(success, false)
             }
         }
 
