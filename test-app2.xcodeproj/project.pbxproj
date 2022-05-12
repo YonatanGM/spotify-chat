@@ -26,6 +26,7 @@
 		46F0CC3E280D993000BF1B4B /* SDWebImageSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = 46F0CC3D280D993000BF1B4B /* SDWebImageSwiftUI */; };
 		46F0CC42280DCAE300BF1B4B /* TopArtistsResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46F0CC41280DCAE300BF1B4B /* TopArtistsResponse.swift */; };
 		46F0CC48280DCEED00BF1B4B /* TopTracksResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46F0CC47280DCEED00BF1B4B /* TopTracksResponse.swift */; };
+		46F22354282D81C900F31315 /* CirclePacking.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46F22353282D81C900F31315 /* CirclePacking.swift */; };
 		46F5CA6A2808C23E00D58C41 /* test_app2App.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46F5CA692808C23E00D58C41 /* test_app2App.swift */; };
 		46F5CA6C2808C23E00D58C41 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46F5CA6B2808C23E00D58C41 /* ContentView.swift */; };
 		46F5CA6E2808C24000D58C41 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 46F5CA6D2808C24000D58C41 /* Assets.xcassets */; };
@@ -58,6 +59,7 @@
 		46F0CC2C280D716C00BF1B4B /* APICaller.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APICaller.swift; sourceTree = "<group>"; };
 		46F0CC41280DCAE300BF1B4B /* TopArtistsResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopArtistsResponse.swift; sourceTree = "<group>"; };
 		46F0CC47280DCEED00BF1B4B /* TopTracksResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopTracksResponse.swift; sourceTree = "<group>"; };
+		46F22353282D81C900F31315 /* CirclePacking.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CirclePacking.swift; sourceTree = "<group>"; };
 		46F5CA662808C23E00D58C41 /* test-app2.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "test-app2.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		46F5CA692808C23E00D58C41 /* test_app2App.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = test_app2App.swift; sourceTree = "<group>"; };
 		46F5CA6B2808C23E00D58C41 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -98,6 +100,7 @@
 				46F5CA6B2808C23E00D58C41 /* ContentView.swift */,
 				46ED90EC2825250B0064E5BE /* LoginView.swift */,
 				46ED90EA282519340064E5BE /* UsersMap.swift */,
+				46F22353282D81C900F31315 /* CirclePacking.swift */,
 				46FFD4972826C1B40022D1DE /* ConversationsView.swift */,
 				46FFD4952826C0A70022D1DE /* Chat.swift */,
 				46FFD4922826C0750022D1DE /* UIKitWrappers */,
@@ -307,6 +310,7 @@
 				46ED90ED2825250B0064E5BE /* LoginView.swift in Sources */,
 				46F5CA782808DD0D00D58C41 /* AuthManager.swift in Sources */,
 				46FDC2D528267865002EB494 /* Conversation.swift in Sources */,
+				46F22354282D81C900F31315 /* CirclePacking.swift in Sources */,
 				46476EAB28099A8600C5B880 /* AuthResponse.swift in Sources */,
 				46FFD4982826C1B40022D1DE /* ConversationsView.swift in Sources */,
 				46F5CA6A2808C23E00D58C41 /* test_app2App.swift in Sources */,
