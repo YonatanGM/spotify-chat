@@ -323,15 +323,20 @@ extension AuthManager {
                         DatabaseManager.shared.insertUser(with: profile) { success in
                             guard success else {
                                 completion(false)
+                                // delete user
+                                
+                                // then sign out
+                                self?.signOut()
                                 return
                             }
+                            completion(true)
                  
+                            /*
                             guard let urlString = profile.images.first?.url, let url = URL(string: urlString) else {
                                 completion(false)
                                 
                                 return
                             }
-                            print("ppp", url)
                             print("downloading profile pic from spotify")
                             URLSession.shared.dataTask(with: url) { data, response, error  in
                                 guard let data = data else {
@@ -354,6 +359,7 @@ extension AuthManager {
                                 
                             }
                             .resume()
+                            */
                         }
                     }
                 }

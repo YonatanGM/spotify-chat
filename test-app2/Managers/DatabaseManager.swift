@@ -19,7 +19,7 @@ class DatabaseManager {
     static let shared = DatabaseManager()
     
     // private let database = Database.database().reference()
-    private let database = Database.database(url: "http://localhost:9004?ns=testapp-79467").reference()
+    private let database = Database.database(url: "http://localhost:9005?ns=testapp-79467").reference()
     
     var messageHandles = [String: UInt]() // to unregister them
 }
@@ -29,68 +29,117 @@ class DatabaseManager {
 extension DatabaseManager {
     
     public func userExists(with id: String, completion: @escaping ((Bool) -> Void )) {
-        database.child(id).observeSingleEvent(of: .value, with: { snapshot in
-            guard snapshot.exists() else {
+        database.child(id).observeSingleEvent(of: .value, with: { [weak self] snapshot in
+            
+            guard snapshot.exists(), snapshot.childrenCount > 3 else {
                 completion(false)
                 return
             }
-            completion(true)
+            // check if user exists in users array
+            self?.database.child("users").observeSingleEvent(of: .value, with: { snapshot in
+                
+                guard let usersCollection = snapshot.value as? [[String: String]], usersCollection.compactMap({ $0["id"] }).contains(id) else {
+                    completion(false)
+                    return
+                }
+                
+                completion(true)
+            })
+ 
         })
     
     }
     
     /// inserts new user to database
     public func insertUser(with profile: UserProfile, completion: @escaping ((Bool) ->Void)) {
-        database.child(profile.id).setValue([
-            "name": profile.display_name,
-            "email": profile.email,
-            "profile_picture": profile.images.first?.url ?? ""
-        ].compactMapValues { $0 }, withCompletionBlock: { [weak self] error, _ in
-            guard error == nil else {
-                print("failed to write to database")
-                completion(false)
-                return
-            }
+        
+        // set user's top tracks, artists & genres
             
-            self?.database.child("users").observeSingleEvent(of: .value, with: { snapshot in
-                if var usersCollection = snapshot.value as? [[String: String]] {
-                    let newElement = [
-                        "id": profile.id,
-                         "name" : profile.display_name,
-                         "email": profile.email,
-                         "profile_picture": profile.images.first?.url
-                    ].compactMapValues { $0 }
-                    usersCollection.append(newElement)
-                    self?.database.child("users").setValue(usersCollection, withCompletionBlock: { error, _ in
-                        guard error == nil else {
-                            completion(false)
-                            return
-                        }
-                        completion(true)
-                    })
+        // top artist
+        APICaller.shared.getTopArtists { [weak self] result in
+            switch result {
+            case .success(let response):
+                // convert to json
+                guard let data = try? JSONEncoder().encode(response), let topArtists = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] else {
+                    completion(false)
+                    return
+                }
+            
                     
-                } else {
-                    let newCollection: [[String: String]] = [
-                        ["id": profile.id,
-                         "name" : profile.display_name,
-                         "email": profile.email,
-                         "profile_picture": profile.images.first?.url
-                        ].compactMapValues { $0 }
-                    ]
-                    
-                    self?.database.child("users").setValue(newCollection, withCompletionBlock: { error, _ in
-                        guard error == nil else {
-                            print("failed to write to database")
-                            completion(false)
-                            return
-                        }
-                        completion(true)
-                    })
+                // top genres (based on genres of top artists)
+                
+                let topGenres =  response.items.compactMap { $0.genres }.reduce([]) {
+                    return Set($0).union(Set($1))
                 }
                 
-            })
+                // add new genres to genres array in the database
+                self?.database.child("genres").observeSingleEvent(of: .value, with: { snapshot in
+                    let allGenres = Array(Set(snapshot.value as? [String] ?? []).union(topGenres))
+                    self?.database.child("genres").setValue(allGenres, withCompletionBlock: { error, _ in
+                        guard error == nil else {
+                            completion(false)
+                            return
+                        }
+                        
+                        APICaller.shared.getTopTracks { [weak self] result in
+                            switch result {
+                            case .success(let response):
+                                // convert to json
+                                guard let data = try? JSONEncoder().encode(response), let topTracks = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] else {
+                                    completion(false)
+                                    return
+                                }
+                                
+                                // create user
+                                self?.database.child(profile.id).setValue([
+                                    "name": profile.display_name,
+                                    "email": profile.email,
+                                    "profile_picture": profile.images.first?.url,
+                                    "top_artists": topArtists,
+                                    "top_genres": Array(topGenres),
+                                    "top_tracks": topTracks
+                                ].compactMapValues { $0 }, withCompletionBlock: { error, _ in
+                                    guard error == nil else {
+                                        print("failed to write to database")
+                                        completion(false)
+                                        return
+                                    }
+                                })
+                                    
+                                // append to users array
+                                self?.database.child("users").observeSingleEvent(of: .value, with: { snapshot in
+                                    var usersCollection = snapshot.value as? [[String: String]] ?? []
+                                    let newElement = [
+                                        "id": profile.id,
+                                         "name" : profile.display_name,
+                                         "email": profile.email,
+                                         "profile_picture": profile.images.first?.url
+                                    ].compactMapValues { $0 }
+                                    usersCollection.append(newElement)
+                                    self?.database.child("users").setValue(usersCollection, withCompletionBlock: { error, _ in
+                                        guard error == nil else {
+                                            completion(false)
+                                            return
+                                        }
+                                        completion(true)
+                                    })
+                                })
+                                    
+                            case .failure( _):
+                                completion(false)
+                                
+                            }
+  
+                        }
+                    })
+
+                })
+            case .failure(_):
+                completion(false)
+                
+            }
             
-        })
+        }
         
     }
     

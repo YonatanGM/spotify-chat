@@ -34,6 +34,11 @@ struct ContentView: View {
                         Text("Chats")
                     }
             }
+            .onAppear {
+                APICaller.shared.getAvailableGenres { _ in
+                    
+                }
+            }
         }
     }
 }

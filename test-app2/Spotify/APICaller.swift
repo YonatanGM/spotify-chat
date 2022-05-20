@@ -78,7 +78,7 @@ final class APICaller {
     
     public func getTopArtists(timeRange: TimeRange = .long_term, completion: @escaping (Result<TopArtistsResponse, Error>) -> Void) {
         
-        createRequest(with: URL(string: Constants.baseAPIURL + "/me/top/artists?limit=50&time_range=\(timeRange.rawValue)"),
+        createRequest(with: URL(string: Constants.baseAPIURL + "/me/top/artists?limit=20&time_range=\(timeRange.rawValue)"),
                       type: .GET) { request in
    
             // execute the request
@@ -90,8 +90,6 @@ final class APICaller {
                 
                 do {
                     let result = try JSONDecoder().decode(TopArtistsResponse.self, from: data)
-                    // let result = try JSONSerialization.jsonObject(with: data)
-                    print(result.items.map { $0.name })
                     completion(.success(result))
                 } catch {
                     print(error.localizedDescription)
@@ -103,10 +101,12 @@ final class APICaller {
             
         }
     }
+
+    
     
     public func getTopTracks(timeRange: TimeRange = .long_term, completion: @escaping (Result<TopTracksResponse, Error>) -> Void) {
 
-        createRequest(with: URL(string: Constants.baseAPIURL + "/me/top/tracks?limit=50&time_range=\(timeRange.rawValue)"),
+        createRequest(with: URL(string: Constants.baseAPIURL + "/me/top/tracks?limit=20&time_range=\(timeRange.rawValue)"),
                       type: .GET) { request in
    
             // execute the request
@@ -131,5 +131,57 @@ final class APICaller {
         
         }
     }
+    
+    
+    
+    
+    
+    public func getAvailableGenres(completion: @escaping (Result<[String:[String]], Error>) -> Void) {
+
+        createRequest(with: URL(string: Constants.baseAPIURL + "/recommendations/available-genre-seeds/"),
+                      type: .GET) { request in
+   
+            // execute the request
+            let task = URLSession.shared.dataTask(with: request) { data, response, error in
+                guard let data = data, error == nil else {
+                    completion(.failure(APIError.failedToGetData))
+                    return
+                }
+                
+                do {
+                    print("ddd*", data)
+                    let result = try JSONDecoder().decode([String:[String]].self, from: data)
+                    print("res*", result["genres"])
+                    completion(.success(result))
+                } catch {
+                    print(error.localizedDescription)
+                    completion(.failure(error))
+                    
+                }
+            }
+            task.resume()
+        
+        }
+    }
+    
+    
+    public func getTopGenres(completition: @escaping (Result<[String], Error>) -> Void) {
+        getTopArtists { result in
+            switch result {
+            case .success(let response):
+                let genres = response.items.compactMap { $0.genres }
+                let uniqueGenres = genres.reduce([]) {
+                    return Set($0).union(Set($1))
+                }
+                print("topGenres", uniqueGenres)
+                
+                completition(.success(Array(uniqueGenres)))
+            case .failure(let error):
+                completition(.failure(error))
+            }
+            
+        }
+    }
+    
 
 }
