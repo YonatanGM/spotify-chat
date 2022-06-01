@@ -19,7 +19,7 @@ class DatabaseManager {
     static let shared = DatabaseManager()
     
     // private let database = Database.database().reference()
-    private let database = Database.database(url: "http://localhost:9005?ns=testapp-79467").reference()
+    private let database = Database.database(url: "http://localhost:9018?ns=testapp-79467-default-rtdb").reference()
     
     var messageHandles = [String: UInt]() // to unregister them
 }
@@ -36,7 +36,7 @@ extension DatabaseManager {
                 return
             }
             // check if user exists in users array
-            self?.database.child("users").observeSingleEvent(of: .value, with: { snapshot in
+            self?.database.child("users/\(id)").observeSingleEvent(of: .value, with: { snapshot in
                 
                 guard let usersCollection = snapshot.value as? [[String: String]], usersCollection.compactMap({ $0["id"] }).contains(id) else {
                     completion(false)
@@ -67,14 +67,18 @@ extension DatabaseManager {
             
                     
                 // top genres (based on genres of top artists)
-                
+                /*
                 let topGenres =  response.items.compactMap { $0.genres }.reduce([]) {
                     return Set($0).union(Set($1))
                 }
+                */
+                
+                let topGenres = Set(Array(Set(["acoustic", "afrobeat", "alt-rock", "alternative", "ambient", "anime", "black-metal", "bluegrass", "blues", "bossanova", "brazil", "breakbeat", "british", "cantopop", "chicago-house", "children", "chill", "classical", "club", "comedy", "country", "dance", "dancehall", "death-metal", "deep-house", "detroit-techno", "disco", "disney", "drum-and-bass", "dub", "dubstep", "edm", "electro", "electronic", "emo", "folk", "forro", "french", "funk", "garage", "german", "gospel", "goth", "grindcore", "groove", "grunge", "guitar", "happy", "hard-rock", "hardcore", "hardstyle", "heavy-metal", "hip-hop", "holidays", "honky-tonk", "house", "idm", "indian", "indie", "indie-pop", "industrial", "iranian", "j-dance", "j-idol", "j-pop", "j-rock", "jazz", "k-pop", "kids", "latin", "latino", "malay", "mandopop", "metal", "metal-misc", "metalcore", "minimal-techno", "movies", "mpb", "new-age", "new-release", "opera", "pagode", "party", "philippines-opm", "piano", "pop", "pop-film", "post-dubstep", "power-pop", "progressive-house", "psych-rock", "punk", "punk-rock", "r-n-b", "rainy-day", "reggae", "reggaeton", "road-trip", "rock", "rock-n-roll", "rockabilly", "romance", "sad", "salsa", "samba", "sertanejo", "show-tunes", "singer-songwriter", "ska", "sleep", "songwriter", "soul", "soundtracks", "spanish", "study", "summer", "swedish", "synth-pop", "tango", "techno", "trance", "trip-hop", "turkish", "work-out", "world-music"])).prefix(20))
                 
                 // add new genres to genres array in the database
                 self?.database.child("genres").observeSingleEvent(of: .value, with: { snapshot in
-                    let allGenres = Array(Set(snapshot.value as? [String] ?? []).union(topGenres))
+                    var allGenres = snapshot.value as? [String] ?? []
+                    allGenres += Array(topGenres.subtracting(allGenres))
                     self?.database.child("genres").setValue(allGenres, withCompletionBlock: { error, _ in
                         guard error == nil else {
                             completion(false)
@@ -91,7 +95,9 @@ extension DatabaseManager {
                                 }
                                 
                                 // create user
-                                self?.database.child(profile.id).setValue([
+                                print("creating user")
+                                print(response.items.map {$0.name}, topGenres)
+                                self?.database.child("users/\(profile.id)").setValue([
                                     "name": profile.display_name,
                                     "email": profile.email,
                                     "profile_picture": profile.images.first?.url,
@@ -104,9 +110,13 @@ extension DatabaseManager {
                                         completion(false)
                                         return
                                     }
+                                    completion(true)
                                 })
+                                
+                                
                                     
                                 // append to users array
+                                /*
                                 self?.database.child("users").observeSingleEvent(of: .value, with: { snapshot in
                                     var usersCollection = snapshot.value as? [[String: String]] ?? []
                                     let newElement = [
@@ -124,6 +134,7 @@ extension DatabaseManager {
                                         completion(true)
                                     })
                                 })
+                                */
                                     
                             case .failure( _):
                                 completion(false)
@@ -207,7 +218,7 @@ extension DatabaseManager {
         return formattre
     }()
 
-    /// Creates a new conversation with target user emamil and first message sent
+    /// Creates a new conversation with target user email and first message sent
     public func createNewConversation(with otherUserID: String, otherUserName: String, firstMessage: Message, completion: @escaping (Bool) -> Void) {
         guard let currentUserID = Auth.auth().currentUser?.uid,
               let currentUserName = Auth.auth().currentUser?.displayName else {

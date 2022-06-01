@@ -90,6 +90,7 @@ final class APICaller {
                 
                 do {
                     let result = try JSONDecoder().decode(TopArtistsResponse.self, from: data)
+                    print("top artist", result.items.map { $0.name })
                     completion(.success(result))
                 } catch {
                     print(error.localizedDescription)
@@ -119,7 +120,7 @@ final class APICaller {
                 do {
                     let result = try JSONDecoder().decode(TopTracksResponse.self, from: data)
                     // let result = try JSONSerialization.jsonObject(with: data)
-                    print(result.items.map { $0.name })
+                    print("top track", result.items.map { $0.name })
                     completion(.success(result))
                 } catch {
                     print(error.localizedDescription)

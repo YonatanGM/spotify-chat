@@ -18,6 +18,7 @@
 		465B9C332814A17C00665947 /* FirebaseDatabase in Frameworks */ = {isa = PBXBuildFile; productRef = 465B9C322814A17C00665947 /* FirebaseDatabase */; };
 		465B9C3528157AD500665947 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 465B9C3428157AD500665947 /* GoogleService-Info.plist */; };
 		46B2F95F2816B6130003AA69 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 46B2F95E2816B6130003AA69 /* FirebaseAuth */; };
+		46D1C9CB28474720006352BC /* CirclePacking2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46D1C9CA28474720006352BC /* CirclePacking2.swift */; };
 		46EAE3FE28095F3F0061C9BB /* WebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46EAE3FD28095F3F0061C9BB /* WebView.swift */; };
 		46EAE403280961AE0061C9BB /* ExternalAccessory.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 46EAE402280961AE0061C9BB /* ExternalAccessory.framework */; };
 		46ED90EB282519340064E5BE /* UsersMap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46ED90EA282519340064E5BE /* UsersMap.swift */; };
@@ -50,6 +51,7 @@
 		46476EAA28099A8600C5B880 /* AuthResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthResponse.swift; sourceTree = "<group>"; };
 		464CC646281E7B1200F05522 /* Message.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Message.swift; sourceTree = "<group>"; };
 		465B9C3428157AD500665947 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		46D1C9CA28474720006352BC /* CirclePacking2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CirclePacking2.swift; sourceTree = "<group>"; };
 		46EAE3FD28095F3F0061C9BB /* WebView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebView.swift; sourceTree = "<group>"; };
 		46EAE3FF2809619D0061C9BB /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		46EAE400280961AE0061C9BB /* test-app2.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "test-app2.entitlements"; sourceTree = "<group>"; };
@@ -101,6 +103,7 @@
 				46ED90EC2825250B0064E5BE /* LoginView.swift */,
 				46ED90EA282519340064E5BE /* UsersMap.swift */,
 				46F22353282D81C900F31315 /* CirclePacking.swift */,
+				46D1C9CA28474720006352BC /* CirclePacking2.swift */,
 				46FFD4972826C1B40022D1DE /* ConversationsView.swift */,
 				46FFD4952826C0A70022D1DE /* Chat.swift */,
 				46FFD4922826C0750022D1DE /* UIKitWrappers */,
@@ -312,6 +315,7 @@
 				46FDC2D528267865002EB494 /* Conversation.swift in Sources */,
 				46F22354282D81C900F31315 /* CirclePacking.swift in Sources */,
 				46476EAB28099A8600C5B880 /* AuthResponse.swift in Sources */,
+				46D1C9CB28474720006352BC /* CirclePacking2.swift in Sources */,
 				46FFD4982826C1B40022D1DE /* ConversationsView.swift in Sources */,
 				46F5CA6A2808C23E00D58C41 /* test_app2App.swift in Sources */,
 				46FFD4962826C0A70022D1DE /* Chat.swift in Sources */,

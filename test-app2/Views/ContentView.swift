@@ -38,6 +38,8 @@ struct ContentView: View {
                 APICaller.shared.getAvailableGenres { _ in
                     
                 }
+                APICaller.shared.getTopArtists { _ in}
+                APICaller.shared.getTopTracks { _ in}
             }
         }
     }
