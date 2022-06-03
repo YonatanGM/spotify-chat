@@ -12,11 +12,20 @@ import UIKit
 
 struct CircleInGrid: Identifiable {
     let id = UUID()
+    let intialCenter: CGPoint
     var center: CGPoint
     var dragTranslation: CGPoint? = .zero
     var alternateCenter: CGPoint {
         CGPoint(x: (center.x + (dragTranslation?.x ?? 0)) * 2 - 1, y: (center.y + (dragTranslation?.y ?? 0)) * 2 - 1) // -1, -1 to 1, 1 range
     }
+    var diplayCenter: CGPoint {
+        let isTranslatedPointInsideFrame = CGRect(origin: .zero, size: CGSize(width: 1, height: 1)).insetBy(dx: 0.01, dy: 0.01).contains(CGPoint(x: center.x + (dragTranslation?.x ?? 0), y: center.y + (dragTranslation?.y ?? 0)))
+        
+        return CGPoint(x: isTranslatedPointInsideFrame ?  center.x + (dragTranslation?.x ?? 0) : center.x,
+                       y: isTranslatedPointInsideFrame ?  center.y + (dragTranslation?.y ?? 0) : center.y)
+        
+    }
+    
     var radius: Double {
         sqrt(pow(alternateCenter.x, 2) + pow(alternateCenter.y, 2))
         
@@ -61,8 +70,13 @@ class Grid: ObservableObject {
                 let x = Double(i) / Double(circlesAlongSides - 1)
                 let y = (Double(j) / Double(circlesAlongSides - 1)) + (i % 2 == 0 ? gapBetweenCols / 2 : 0) + gapBetweenCols / 2
 
-                grid.append(CGPoint(x: x * sizeMultiplier,
-                                    y: y * sizeMultiplier))
+                var point = CGPoint(x: x * sizeMultiplier,
+                                    y: y * sizeMultiplier)
+                
+
+                    
+                    
+                grid.append(point)
 
             }
         }
@@ -72,7 +86,17 @@ class Grid: ObservableObject {
     
     private func makeCircles() {
         circles = makeGrid().map {
-            CircleInGrid(center: $0)
+            var circle = CircleInGrid(intialCenter: $0, center: $0)
+            /*
+            if CGRect(origin: .zero, size: CGSize(width: 1, height: 1))
+                .contains(CGPoint(x: circle.center.x, y: circle.center.y)) {
+                
+                circle.center.x = (easeOutSine(circle.alternateCenter.x) + 1.0) / 2.0
+                circle.center.y = (easeOutSine(circle.alternateCenter.y) + 1.0) / 2.0
+            }
+            print(circle.center)
+            */
+            return circle
         }
         // update scale
         for (index, _) in circles.enumerated() {
@@ -89,7 +113,7 @@ class Grid: ObservableObject {
             .contains(CGPoint(x: x, y: y))
         
         let isAlmostAtBorder =  !CGRect(origin: .zero, size: CGSize(width: 1, height: 1))
-            .inset(by: UIEdgeInsets(top: 0.1, left: 0.1, bottom: 0.1, right: 0.1))
+            .inset(by: UIEdgeInsets(top: 0.05, left: 0.05, bottom: 0.05, right: 0.05))
             .contains(CGPoint(x: x, y: y))
         
         let isOutsideBorder = !CGRect(origin: .zero, size: CGSize(width: 1, height: 1))
@@ -98,11 +122,11 @@ class Grid: ObservableObject {
         if isOutsideBorder {
             circles[index].scaleFactor = 0
         } else if isAlmostAtBorder {
-            circles[index].scaleFactor = 0.1
+            circles[index].scaleFactor = 0.05
         } else if isNearBorder {
-            circles[index].scaleFactor = 0.3
+            circles[index].scaleFactor = max(1 - circles[index].radius, 0)
         } else {
-            circles[index].scaleFactor = max(1 - (1 - exp(-1 * circles[index].radius)), 0)
+            circles[index].scaleFactor = max(1 - circles[index].radius, 0)
         }
     }
     
@@ -146,60 +170,90 @@ class Grid: ObservableObject {
        // setCircleSize()
     }
     
+    func recenter() {
+        for (index, _) in circles.enumerated() {
+            circles[index].center = circles[index].intialCenter
+            circles[index].dragTranslation = .zero
+            updateScaleOfCircle(with: index)
+            
+        }
+        
+    }
+    /// 0 <= x <= 1
+    private func easeOutSine(_ x: Double) -> Double {
+        
+        return sin(x * Double.pi / 2)
+        
+    }
+    
 }
 
 
-struct CircleGridView: View {
-    @StateObject var grid = Grid(numOfCircles: 81)
+struct ContentView: View {
+    @StateObject var grid = Grid(numOfCircles: 50)
     @State var gridSize: CGSize?
     @State var isDragging = false
-    
+   
     var body: some View {
-        NavigationView {
-            VStack {
-                ZStack {
-                    GeometryReader { geometry in
-                        ForEach(grid.circles, id: \.id) { circle in
-                            let tx = circle.dragTranslation?.x ?? 0
-                            let ty = circle.dragTranslation?.y ?? 0
-                            let x =  (circle.center.x + tx) * geometry.size.width
-                            let y =  (circle.center.y + ty) * geometry.size.width
-        //                    Text("\(circle.alternateCenter.y ?? 0, specifier: "%.2f")")
-        //                        .font(.footnote)
-                            let isPointInsideFrame = !geometry.frame(in: .local).insetBy(dx: 1, dy: 1).contains(CGPoint(x: x, y: y))
-                            NavigationLink(destination: {
-                                Text("S")
-                            }, label: {
-                                Image(systemName: "person.fill")
-                                    .resizable()
-                                    .clipShape(Circle())
-                                    .overlay(
-                                        Circle()
-                                            .stroke(.blue, lineWidth: 1)
-                                    )
-                    
-                                
-                                    
-                                    //.border(.red)
-
-                                
-                            })
-                      
-                            .frame(width: circle.circleWidth * (circle.scaleFactor ?? 1), height: circle.circleWidth * (circle.scaleFactor ?? 1) , alignment: .center)
-                            .position(x: x - (isPointInsideFrame ? (tx * geometry.size.width) : 0),
-                                      y: y - (isPointInsideFrame ? (ty * geometry.size.width) : 0))
-                            .animation(.easeIn)
-                    
-                        }
-            
-                        .onAppear {
-                            // print("width", geometry.size)
-                            gridSize = geometry.size
         
-                        }
-                    }
-                }
+
+
+            
+            NavigationView {
                 
+                VStack {
+                    Divider()
+
+                    TopArtistsGrid()
+
+                    Divider()
+ 
+                    ZStack {
+                        GeometryReader { geometry in
+                            ForEach(grid.circles, id: \.id) { circle in
+
+                                NavigationLink(destination: {
+                                    
+                                    Text("\(circle.center.y)")
+                                        .navigationTitle(circle.id.uuidString.prefix(5))
+                              
+                            
+                                }, label: {
+                                    Image(systemName: "person.fill")
+                                        .resizable()
+                                        .clipShape(Circle())
+                                        .overlay(
+                                            Circle()
+                                                .stroke(.blue, lineWidth: 1)
+                                        )
+                                        .onAppear {
+                                            // print("App0000")
+                                        }
+                        
+                                    
+                                        
+                                        //.border(.red)
+
+                                    
+                                })
+
+                                .frame(width: circle.circleWidth * (circle.scaleFactor ?? 1),
+                                       height: circle.circleWidth * (circle.scaleFactor ?? 1) ,
+                                       alignment: .center)
+                                .position(x: circle.diplayCenter.x * geometry.size.width,
+                                          y: circle.diplayCenter.y * geometry.size.width)
+                                .animation(.easeIn)
+                        
+                            }
+            
+                            .onAppear {
+                                // print("width", geometry.size)
+                                gridSize = geometry.size
+            
+                            }
+                    }
+                
+                }
                 .frame(width: UIScreen.main.bounds.width - 30, height: UIScreen.main.bounds.width - 30)
                 .contentShape(Rectangle())
          
@@ -218,12 +272,30 @@ struct CircleGridView: View {
                     grid.processDragFinished(value, containerSize: containerSize)
                 })
 
-                .border(.red)
-                
+                .overlay(alignment: .bottomTrailing) {
+                    Button(action: {
+                        grid.recenter()
+                    }) {
+                    Image(systemName: "scope")
+                        .imageScale(.small)
+                        .padding(3)
+                    }
+                }
+
                 Spacer()
             }
+
+            .navigationBarTitle("MUSIQ", displayMode: .inline)
+//            .navigationBarHidden(true)
         }
     }
 
 
 }
+
+struct ContentView_Previews: PreviewProvider {
+    static var previews: some View {
+        ContentView()
+    }
+}
+
