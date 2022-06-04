@@ -189,7 +189,7 @@ class Grid: ObservableObject {
 }
 
 
-struct ContentView: View {
+struct ContentView2: View {
     @StateObject var grid = Grid(numOfCircles: 50)
     @State var gridSize: CGSize?
     @State var isDragging = false
@@ -204,7 +204,7 @@ struct ContentView: View {
                 VStack {
                     Divider()
 
-                    TopArtistsGrid()
+//                    TopArtistsGrid()
 
                     Divider()
  
@@ -293,7 +293,7 @@ struct ContentView: View {
 
 }
 
-struct ContentView_Previews: PreviewProvider {
+struct ContentView2_Previews: PreviewProvider {
     static var previews: some View {
         ContentView()
     }

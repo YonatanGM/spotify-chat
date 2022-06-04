@@ -29,25 +29,14 @@ class DatabaseManager {
 extension DatabaseManager {
     
     public func userExists(with id: String, completion: @escaping ((Bool) -> Void )) {
-        database.child(id).observeSingleEvent(of: .value, with: { [weak self] snapshot in
+        database.child("users/\(id)").observeSingleEvent(of: .value, with: { [weak self] snapshot in
             
             guard snapshot.exists(), snapshot.childrenCount > 3 else {
                 completion(false)
                 return
             }
-            // check if user exists in users array
-            self?.database.child("users/\(id)").observeSingleEvent(of: .value, with: { snapshot in
-                
-                guard let usersCollection = snapshot.value as? [[String: String]], usersCollection.compactMap({ $0["id"] }).contains(id) else {
-                    completion(false)
-                    return
-                }
-                
-                completion(true)
-            })
- 
+            completion(true)
         })
-    
     }
     
     /// inserts new user to database
@@ -112,29 +101,6 @@ extension DatabaseManager {
                                     }
                                     completion(true)
                                 })
-                                
-                                
-                                    
-                                // append to users array
-                                /*
-                                self?.database.child("users").observeSingleEvent(of: .value, with: { snapshot in
-                                    var usersCollection = snapshot.value as? [[String: String]] ?? []
-                                    let newElement = [
-                                        "id": profile.id,
-                                         "name" : profile.display_name,
-                                         "email": profile.email,
-                                         "profile_picture": profile.images.first?.url
-                                    ].compactMapValues { $0 }
-                                    usersCollection.append(newElement)
-                                    self?.database.child("users").setValue(usersCollection, withCompletionBlock: { error, _ in
-                                        guard error == nil else {
-                                            completion(false)
-                                            return
-                                        }
-                                        completion(true)
-                                    })
-                                })
-                                */
                                     
                             case .failure( _):
                                 completion(false)
@@ -179,7 +145,250 @@ extension DatabaseManager {
 }
 
 
-// MARK: - Sending messages / conversations
+// MARK: - Group Chat
+
+extension DatabaseManager {
+    
+    public static let dateFormatter: DateFormatter = {
+        let formattre = DateFormatter()
+        formattre.dateStyle = .medium
+        formattre.timeStyle = .long
+        formattre.locale = .current
+        return formattre
+    }()
+    
+    
+    public func sendMessage(message: Message, completion: @escaping (Bool) -> Void) {
+        guard let currentUserID = Auth.auth().currentUser?.uid,
+              let currentUserName = Auth.auth().currentUser?.displayName else {
+                completion(false)
+                return
+        }
+        
+        var messageContent = ""
+        let dateString = Self.dateFormatter.string(from: message.sentDate)
+        switch message.kind {
+        case .text(let messageText):
+            messageContent = messageText
+        case .attributedText(_):
+            break
+        case .photo(let mediaItem):
+            if let targetUrlString = mediaItem.url?.absoluteString {
+                messageContent = targetUrlString
+            }
+            break
+        case .video(let mediaItem):
+            if let targetUrlString = mediaItem.url?.absoluteString {
+                messageContent = targetUrlString
+            }
+            break
+        case .location(let locationData):
+            let location = locationData.location
+            messageContent = "\(location.coordinate.longitude),\(location.coordinate.latitude)"
+            break
+        case .emoji(_):
+            break
+        case .audio(_):
+            break
+        case .contact(_):
+            break
+        case .custom(_), .linkPreview(_):
+            break
+        }
+        
+
+        var newMessageRef = database.child("room/conversations").childByAutoId()
+        let newMessage: [String: Any] = [
+            "id": newMessageRef.key,
+            "type": message.kind.messageKindString,
+            "content": messageContent,
+            "date": dateString,
+            "sender_id": currentUserID,
+            "is_read": false
+        ]
+        
+        newMessageRef.setValue(newMessage, withCompletionBlock: { [weak self] error, _ in
+            guard error == nil else {
+                completion(false)
+                return
+            }
+            
+            completion(true)
+        })
+    }
+    
+    public func fetchMessages(in roomID: String, completion: @escaping (Result<[Message], Error>) -> Void) {
+        let numOfMessagesToFetch: UInt = 100
+        var messages: [Message] = []
+        database.child("room/conversations").queryLimited(toLast: numOfMessagesToFetch).observeSingleEvent(of: .value, with: { snapshot in
+            let enumerator = snapshot.children
+            while let messageSnapshot = enumerator.nextObject() as? DataSnapshot {
+                if let dictionary = messageSnapshot.value as? [String: Any],
+                   let isRead = dictionary["is_read"] as? Bool,
+                   let messageID = dictionary["id"] as? String,
+                   let content = dictionary["content"] as? String,
+                   let senderID = dictionary["sender_id"] as? String,
+                   let type = dictionary["type"] as? String,
+                   let dateString = dictionary["date"] as? String,
+                   let date = Self.dateFormatter.date(from: dateString)
+                {
+                    
+                    var kind: MessageKind?
+                    // won't be supporting photo/video/audio
+                    // location seems useful
+                    if type == "location" {
+                        let locationComponents = content.components(separatedBy: ",")
+                        if let longitude = Double(locationComponents[0]),
+                           let latitude = Double(locationComponents[1]) {
+                            // print("Rendering location; long=\(longitude) | lat=\(latitude)")
+                            let location = Location(location: CLLocation(latitude: latitude, longitude: longitude),
+                                                    size: CGSize(width: 300, height: 300))
+                            kind = .location(location)
+                        }
+                        
+                    } else if type == "text" {
+                        kind = .text(content)
+                    }
+
+                    // kind is not known
+                    if let finalKind = kind {
+                        
+                        let sender = Sender(senderId: senderID, photoURL: "",
+                                            displayName: "")
+                        messages.append(Message(sender: sender,
+                                                messageId: messageID,
+                                                sentDate: date,
+                                                kind: finalKind))
+                        
+                    }
+
+                }
+                    
+            }
+            completion(.success(messages))
+
+        }, withCancel: { error in
+            completion(.failure(error))
+        })
+
+    }
+    
+    public func listenForNewMessages(in roomID: String, completion: @escaping (Result<[Message], Error>) -> Void) {
+        
+        let numOfMessagesToFetch: UInt = 100
+        var messages: [Message] = []
+        database.child("room/conversations").queryLimited(toLast: numOfMessagesToFetch).observe(.childAdded, with: { snapshot in
+            let enumerator = snapshot.children
+            while let messageSnapshot = enumerator.nextObject() as? DataSnapshot {
+                if let dictionary = messageSnapshot.value as? [String: Any],
+                   let isRead = dictionary["is_read"] as? Bool,
+                   let messageID = dictionary["id"] as? String,
+                   let content = dictionary["content"] as? String,
+                   let senderID = dictionary["sender_id"] as? String,
+                   let type = dictionary["type"] as? String,
+                   let dateString = dictionary["date"] as? String,
+                   let date = Self.dateFormatter.date(from: dateString)
+                {
+                    
+                    var kind: MessageKind?
+                    // won't be supporting photo/video/audio
+                    // location seems useful
+                    if type == "location" {
+                        let locationComponents = content.components(separatedBy: ",")
+                        if let longitude = Double(locationComponents[0]),
+                           let latitude = Double(locationComponents[1]) {
+                            // print("Rendering location; long=\(longitude) | lat=\(latitude)")
+                            let location = Location(location: CLLocation(latitude: latitude, longitude: longitude),
+                                                    size: CGSize(width: 300, height: 300))
+                            kind = .location(location)
+                        }
+                        
+                    } else if type == "text" {
+                        kind = .text(content)
+                    }
+
+                    // only text and location supported for now
+                    if let finalKind = kind {
+                        
+                        let sender = Sender(senderId: senderID, photoURL: "",
+                                            displayName: "")
+                        messages.append(Message(sender: sender,
+                                                messageId: messageID,
+                                                sentDate: date,
+                                                kind: finalKind))
+                        
+                    }
+                }
+            }
+            completion(.success(messages))
+        }, withCancel: { error in
+            completion(.failure(error))
+        })
+    }
+    
+    public func listenForMessages(in roomID: String, completion: @escaping (Result<[Message], Error>) -> Void) {
+        
+        let numOfMessagesToFetch: UInt = 100
+        var messages: [Message] = []
+        database.child("room/conversations").queryLimited(toLast: numOfMessagesToFetch).observe(.value, with: { snapshot in
+            let enumerator = snapshot.children
+            while let messageSnapshot = enumerator.nextObject() as? DataSnapshot {
+                if let dictionary = messageSnapshot.value as? [String: Any],
+                   let isRead = dictionary["is_read"] as? Bool,
+                   let messageID = dictionary["id"] as? String,
+                   let content = dictionary["content"] as? String,
+                   let senderID = dictionary["sender_id"] as? String,
+                   let type = dictionary["type"] as? String,
+                   let dateString = dictionary["date"] as? String,
+                   let date = Self.dateFormatter.date(from: dateString)
+                {
+                    
+                    var kind: MessageKind?
+                    // won't be supporting photo/video/audio
+                    // location seems useful
+                    if type == "location" {
+                        let locationComponents = content.components(separatedBy: ",")
+                        if let longitude = Double(locationComponents[0]),
+                           let latitude = Double(locationComponents[1]) {
+                            // print("Rendering location; long=\(longitude) | lat=\(latitude)")
+                            let location = Location(location: CLLocation(latitude: latitude, longitude: longitude),
+                                                    size: CGSize(width: 300, height: 300))
+                            kind = .location(location)
+                        }
+                        
+                    } else if type == "text" {
+                        kind = .text(content)
+                    }
+
+                    // only text and location supported for now
+                    if let finalKind = kind {
+                        
+                        let sender = Sender(senderId: senderID, photoURL: "",
+                                            displayName: "")
+                        messages.append(Message(sender: sender,
+                                                messageId: messageID,
+                                                sentDate: date,
+                                                kind: finalKind))
+                        
+                    }
+                }
+            }
+            completion(.success(messages))
+
+        }, withCancel: { error in
+            completion(.failure(error))
+        })
+    }
+}
+
+
+
+
+
+
+
+// TODO: Remove 
+// MARK: - Sending messages / conversations ** two people only
 
 extension DatabaseManager {
 
@@ -209,14 +418,7 @@ extension DatabaseManager {
               ],
             ]
            */
-    
-    public static let dateFormatter: DateFormatter = {
-        let formattre = DateFormatter()
-        formattre.dateStyle = .medium
-        formattre.timeStyle = .long
-        formattre.locale = .current
-        return formattre
-    }()
+
 
     /// Creates a new conversation with target user email and first message sent
     public func createNewConversation(with otherUserID: String, otherUserName: String, firstMessage: Message, completion: @escaping (Bool) -> Void) {

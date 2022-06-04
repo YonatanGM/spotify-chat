@@ -331,35 +331,6 @@ extension AuthManager {
                             }
                             completion(true)
                  
-                            /*
-                            guard let urlString = profile.images.first?.url, let url = URL(string: urlString) else {
-                                completion(false)
-                                
-                                return
-                            }
-                            print("downloading profile pic from spotify")
-                            URLSession.shared.dataTask(with: url) { data, response, error  in
-                                guard let data = data else {
-                                    completion(false)
-                                    return
-                                }
-                                
-                                
-                                StorageManager.shared.uploadProfilePicture(with: data, fileName: profile.firebaseStorageProfilePictureName) { result in
-                                    switch result {
-                                    case .success(let downloadUrl):
-                                        print("uploaded profile to firebase")
-                                        completion(true)
-                                    case .failure(let error):
-                                        print("error storing image for profile \(profile.id)")
-                                        completion(false)
-                                    }
-                                    return
-                                }
-                                
-                            }
-                            .resume()
-                            */
                         }
                     }
                 }
