@@ -15,27 +15,28 @@ class AppStateModel: ObservableObject {
     
 
     
-    @Published private(set) var users = [ChatUser]()
-    @Published private(set) var conversations = [Conversation]()
-    @Published var messages = [String: [Message]]()
- 
-    @Published private(set) var isSignedIn: Bool = AuthManager.shared.isSignedIn
-    @Published private(set) var isSigningIn: Bool = false
+    
+    // @Published private(set) var conversations = [Conversation]()
+    // @Published var messages = [String: [Message]]()
+    
+    @Published private(set) var isSignedIn = AuthManager.shared.isSignedIn
+    @Published private(set) var isSigningIn = false
+    
+    @Published private(set) var userIDsInCurrentRoom = [String]()
+    @Published var messages = [Message.ChatMessageItem]()
+
     
     
-    var currentChatUser: ChatUser? {
-        guard let currentUserID = Auth.auth().currentUser?.uid,
-              let currentUserName = Auth.auth().currentUser?.displayName else {
-            return nil
-        }
-        return ChatUser(id: currentUserID, name: currentUserName, email: Auth.auth().currentUser?.email, profile_picture: Auth.auth().currentUser?.photoURL?.absoluteString)
+    /*
+    var currentChatUser: Message.ChatUserItem? {
+        return Message.ChatUserItem(userName: currentUsername, avatarURL: Auth.auth().currentUser?.photoURL, avatar: nil)
     }
-    
+    */
     
     init() {
 
         if isSignedIn {
-            listenForConversations()
+            listenForMessages()
         }
     }
     
@@ -59,10 +60,7 @@ class AppStateModel: ObservableObject {
         isSignedIn = false
     }
     
-    
-    
-    
-    
+
     
 }
 
@@ -70,18 +68,23 @@ class AppStateModel: ObservableObject {
 //MARK: - User related / Match-making
 
 extension AppStateModel {
-    func loadUsers() {
-        DatabaseManager.shared.getAllUsers(completion: { [weak self] result in
-            switch result {
-            case .success(let usersCollection):
-                self?.users = usersCollection
-            case.failure(let error):
-                print("failed to get users: \(error)")
-            }
-            
-        })
-    }
-    
+    /*
+     
+     func loadUsers() {
+         DatabaseManager.shared.getAllUsers(completion: { [weak self] result in
+             switch result {
+             case .success(let usersCollection):
+                 self?.users = usersCollection
+             case.failure(let error):
+                 print("failed to get users: \(error)")
+             }
+             
+         })
+     }
+     
+     
+     */
+
     
     private func loadMatchingUsers() {
         // match making algorithm
@@ -96,80 +99,42 @@ extension AppStateModel {
 
 
 extension AppStateModel {
-    
-    var hasConversations: Bool {
-        !conversations.isEmpty
-    }
-    
-    private func listenForConversations() {
-        guard let currentUserID = Auth.auth().currentUser?.uid else {
-            return
-        }
 
-        print("starting conversation fetch...")
-
-        DatabaseManager.shared.getAllConversations(for: currentUserID, completion: { [weak self] result in
-            guard let strongSelf = self else {
-                return
-            }
+    private func listenForMessages() {
+        DatabaseManager.shared.observeRoomChange() { [weak self] result in
             switch result {
-            case .success(let conversations):
-                print("successfully got conversations")
+
+            case .success(let room):
+                // stop listening for conversations in the previous room
+                DatabaseManager.shared.removeMessagesObserver(for: room)
+                // empty messages since the room has changed
+                self?.messages = []
                 
-                DispatchQueue.main.async {
-                    strongSelf.conversations = conversations
-                    
-                    // new convos
-                    conversations.filter { !strongSelf.messages.keys.contains($0.id) }.forEach { newConversation in
-                        strongSelf.listenForMessages(in: newConversation.id)
-                        
+                // update users
+                DatabaseManager.shared.getUsers(in: room) { result in
+                    switch result {
+                    case .success(let newUserIDs):
+                        self?.userIDsInCurrentRoom = newUserIDs
+                    case .failure(_):
+                        print("failed to get users in new room")
+                    }
+                }
+                
+                // get messages in new room
+                DatabaseManager.shared.listenForMessages(in: room) { result in
+                    switch result {
+                    case .success(let newMessage):
+                        self?.messages += newMessage
+                    case .failure(_):
+                        print("failed to get message")
                     }
                 }
                 
             case .failure(let error):
-                print("failed to get convos: \(error)")
+                print(error.localizedDescription)
             }
-        })
-    }
-    
-    
-    func conversationExists(with otherUser: ChatUser,  completion: @escaping (Result<String?, Error>) -> Void) {
-        // check if conversation is already in current conversations
-       if let targetConversation = conversations.first(where: {
-            $0.otherUserID == otherUser.id
-       }) {
-           completion(.success(targetConversation.id))
-       } else {
-            // check in database
-            DatabaseManager.shared.conversationExists(with: otherUser.id) { result in
-                DispatchQueue.main.async {
-                    completion(result)
-                }
-            }
+            
         }
     }
     
-    
-    
-
-    private func listenForMessages(in conversation: String) {
-        DatabaseManager.shared.getAllMessagesForConversation(with: conversation, completion: { [weak self] result in
-            switch result {
-            case .success(let messages):
-                print("success in getting messages: \(messages)")
-                guard !messages.isEmpty else {
-                    print("messages are empty")
-                    return
-                }
-                self?.messages[conversation] = messages
-
-            case .failure(let error):
-                print("failed to get messages: \(error)")
-            }
-        })
-    }
-    
-    
-
-
 }

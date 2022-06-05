@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+/*
 struct ConversationsView: View {
     
     @EnvironmentObject var model: AppStateModel
@@ -42,3 +43,5 @@ struct ConversationsView_Previews: PreviewProvider {
         ConversationsView()
     }
 }
+
+*/

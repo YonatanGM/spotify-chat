@@ -13,7 +13,7 @@ struct ContentView: View {
     
     @EnvironmentObject var model: AppStateModel
     
-    @State var profile: UserProfile?
+    @State var profile: UserProfileResponse?
 
     
     var body: some View {

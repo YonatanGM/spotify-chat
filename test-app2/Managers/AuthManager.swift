@@ -12,6 +12,9 @@ import FirebaseAuth
 final class AuthManager {
     static let shared = AuthManager()
     
+    static var currentUser: User?
+
+    
     private var refreshingToken = false
     struct Constants {
         static let clientID = "0a1b68ee7fdf43f287d15f82d31af2a7"
@@ -209,6 +212,7 @@ extension AuthManager {
     public enum AuthError: Error {
         case failedToGetFirebaseToken
         case failedToConvertFirebaseTokenJSONToString
+        case failedToGetCurrentUser
 
     }
     
@@ -241,7 +245,7 @@ extension AuthManager {
         
     }
     
-    public func firebaseLogIn(completion: ((Result<UserProfile, Error>) -> Void)?) {
+    public func firebaseLogIn(completion: ((Result<UserProfileResponse, Error>) -> Void)?) {
          
         // do spotify login first, then firebase stuff
         // simply call the getUserProfile to get the uid.
@@ -269,7 +273,7 @@ extension AuthManager {
                             
                             // set user display name
                             let changeRequest = result.user.createProfileChangeRequest()
-                            changeRequest.displayName = profile.display_name
+                            changeRequest.displayName = profile.display_name + "-" + profile.country
                             if let url = profile.images.first?.url {
                                 changeRequest.photoURL = URL(string: url)
                             }
@@ -282,7 +286,8 @@ extension AuthManager {
                             if let email = profile.email {
                                 result.user.updateEmail(to: email)
                             }
-        
+                            
+                    
                             // UserDefaults.standard.set(profile.display_name, forKey: "display_name")
                             completion?(.success(profile))
                             return

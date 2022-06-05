@@ -42,7 +42,7 @@ final class APICaller {
         }
     }
     
-    public func getUserProfile(completion: @escaping (Result<UserProfile, Error>) -> Void) {
+    public func getUserProfile(completion: @escaping (Result<UserProfileResponse, Error>) -> Void) {
 
         createRequest(with: URL(string: Constants.baseAPIURL + "/me"),
                       type: .GET) { request in
@@ -55,7 +55,7 @@ final class APICaller {
                 }
                 
                 do {
-                    let result = try JSONDecoder().decode(UserProfile.self, from: data)
+                    let result = try JSONDecoder().decode(UserProfileResponse.self, from: data)
                     // let result = try JSONSerialization.jsonObject(with: data, options: .allowFragments)
                     // print(result)
                     completion(.success(result))

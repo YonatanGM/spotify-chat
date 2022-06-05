@@ -9,7 +9,7 @@ import Foundation
 
 
 
-struct UserProfile: Codable, Identifiable {
+struct UserProfileResponse: Codable, Identifiable {
     let country: String
     let display_name: String
     let email: String?
@@ -24,7 +24,7 @@ struct UserProfile: Codable, Identifiable {
     
 }
 
-extension UserProfile {
+extension UserProfileResponse {
     var firebaseStorageProfilePictureName: String {
         return "\(id)_profile_picture.png"
     }

@@ -13,7 +13,7 @@ struct Chat: View {
     @EnvironmentObject var model: AppStateModel
 
     
-    let otherUser: ChatUser
+    let otherUser: Message.ChatUserItem
     @State var conversationID: String?
     @State private var conversationExistsClosureDone = false
     

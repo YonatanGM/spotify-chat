@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+/*
 struct UsersMap: View {
     @EnvironmentObject var model: AppStateModel
     
@@ -36,3 +37,6 @@ struct UsersMap_Previews: PreviewProvider {
         UsersMap()
     }
 }
+
+
+*/

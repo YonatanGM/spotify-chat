@@ -9,7 +9,7 @@ import SwiftUI
 import SDWebImageSwiftUI
 
 struct UserProfileView: View {
-    var profile: UserProfile
+    var profile: UserProfileResponse
     var body: some View {
         Text(profile.display_name)
         if let urlString = profile.images.first?.url {

@@ -13,16 +13,7 @@ import JGProgressHUD_SwiftUI
 @main
 struct test_app2App: App {
     @StateObject var settings = AppStateModel()
-    init() {
-        FirebaseApp.configure()
-        Auth.auth().useEmulator(withHost: "localhost", port: 9098)
-        print("init", Auth.auth().currentUser?.uid)
-        if AuthManager.shared.isSignedIn {
-            AuthManager.shared.refreshIfNeeded()
-            
-        }
-    }
-    
+    @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate: AppDelegate
     var body: some Scene {
         
         WindowGroup {
@@ -30,5 +21,37 @@ struct test_app2App: App {
                 .environmentObject(settings)
      
         }
+    }
+}
+
+
+class AppDelegate: NSObject, UIApplicationDelegate {
+    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
+
+        FirebaseApp.configure()
+        Auth.auth().useEmulator(withHost: "localhost", port: 9098)
+    
+        if UserDefaults.standard.value(forKey: "appFirstTimeOpend") == nil {
+            UserDefaults.standard.setValue(true, forKey: "appFirstTimeOpend")
+            try? Auth.auth().signOut()
+      
+        } else {
+            
+            if AuthManager.shared.isSignedIn {
+                AuthManager.shared.refreshIfNeeded()
+            }
+
+            Auth.auth().addStateDidChangeListener { auth, user in
+                if user == nil {
+                    // detach all observers from all database references that have observes
+                }
+                
+                AuthManager.currentUser = user
+                
+            }
+
+        }
+
+        return true
     }
 }
