@@ -91,7 +91,7 @@ public struct Message {
     // MARK: - Concrete model for ChatMessage
     public struct ChatMessageItem: ChatMessage {
         
-        public let id = UUID()
+        public let id: String
         public var user: ChatUserItem
         public var messageKind: ChatMessageKind
         public var isSender: Bool
@@ -101,12 +101,14 @@ public struct Message {
             user: ChatUserItem,
             messageKind: ChatMessageKind,
             isSender: Bool = false,
-            date: Date = .init()
+            date: Date = .init(),
+            id: String = UUID().uuidString
         ) {
             self.user = user
             self.messageKind = messageKind
             self.isSender = isSender
             self.date = date
+            self.id = id
         }
     }
     

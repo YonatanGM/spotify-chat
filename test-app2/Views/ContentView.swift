@@ -28,11 +28,7 @@ struct ContentView: View {
                         Text("Home")
                     }
                 
-                ConversationsView()
-                    .tabItem {
-                        Image(systemName: "message")
-                        Text("Chats")
-                    }
+
             }
             .onAppear {
                 APICaller.shared.getAvailableGenres { _ in

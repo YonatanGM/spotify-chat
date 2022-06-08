@@ -12,7 +12,7 @@ import FirebaseAuth
 final class AuthManager {
     static let shared = AuthManager()
     
-    static var currentUser: User?
+    var currentUser: User?
 
     
     private var refreshingToken = false

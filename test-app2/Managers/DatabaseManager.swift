@@ -20,7 +20,7 @@ class DatabaseManager {
     static let shared = DatabaseManager()
     
     // private let database = Database.database().reference()
-    private let database = Database.database(url: "http://localhost:9018?ns=testapp-79467-default-rtdb").reference()
+    private let database = Database.database(url: "http://localhost:9020?ns=testapp-79467-default-rtdb").reference()
     
     // var messageHandles = [String: UInt]() // to unregister them
     
@@ -48,9 +48,9 @@ extension DatabaseManager {
         // top artist
         APICaller.shared.getTopArtists { [weak self] result in
             switch result {
-            case .success(let response):
+            case .success(let topArtistsResponse):
                 // convert to json
-                guard let data = try? JSONEncoder().encode(response), let topArtists = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] else {
+                guard let data = try? JSONEncoder().encode(topArtistsResponse), let topArtists = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] else {
                     completion(false)
                     return
                 }
@@ -77,9 +77,9 @@ extension DatabaseManager {
                         
                         APICaller.shared.getTopTracks { [weak self] result in
                             switch result {
-                            case .success(let response):
+                            case .success(let topTracksResponse):
                                 // convert to json
-                                guard let data = try? JSONEncoder().encode(response), let topTracks = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] else {
+                                guard let data = try? JSONEncoder().encode(topTracksResponse), let topTracks = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] else {
                                     completion(false)
                                     return
                                 }
@@ -89,9 +89,14 @@ extension DatabaseManager {
                                 // print(response.items.map {$0.name}, topGenres)
                                 
                                 self?.database.child("users_info/\(profile.id)").setValue([
+                                    "id": profile.id, //redundant but whatever
                                     "name": profile.display_name,
                                     "email": profile.email,
-                                    "profile_picture": profile.images.first?.url
+                                    "profile_picture": profile.images.first?.url,
+                                    "top_summary": ["top_artist": topArtistsResponse.items.first?.name,
+                                                    "top_track": topTracksResponse.items.first?.name,
+                                                    "top_genre": topGenres.first].compactMapValues { $0 }
+                                    
                                 ].compactMapValues { $0 }, withCompletionBlock: { error, _ in
                                     guard error == nil else {
                                         completion(false)
@@ -135,27 +140,19 @@ extension DatabaseManager {
 // MARK: - Group Chat
 
 extension DatabaseManager {
-    
-    public static let dateFormatter: DateFormatter = {
-        let formattre = DateFormatter()
-        formattre.dateStyle = .medium
-        formattre.timeStyle = .long
-        formattre.locale = .current
-        return formattre
-    }()
-    
+
     public static let maxNumOfMessagesToFetch: UInt = 100
     
     
     public func sendMessage(message: Message.ChatMessageItem, completion: @escaping (Bool) -> Void) {
-        guard let currentUserID = AuthManager.currentUser?.uid,
-              let currentUserName = AuthManager.currentUser?.displayName else {
+        guard let currentUserID = AuthManager.shared.currentUser?.uid,
+              let currentUserName = AuthManager.shared.currentUser?.displayName else {
                 completion(false)
                 return
         }
         
         var messageContent = ""
-        let dateString = Self.dateFormatter.string(from: message.date)
+        let dateString = DateFormatter.dateFormatter.string(from: message.date)
         switch message.messageKind {
         case .text(let content):
             messageContent = content
@@ -201,18 +198,19 @@ extension DatabaseManager {
                 return
             }
             
-            guard let newMessageRef = self?.database.child("conversations/\(room)").childByAutoId() else {
+            guard let newMessageRef = self?.database.child("conversations/\(room)").childByAutoId(),
+                  let messageID = newMessageRef.key else {
                 completion(false)
                 return
             }
             let newMessage: [String: Any] = [
-                "id": newMessageRef.key,
+                "id": messageID,
                 "type": message.messageKind.description,
                 "content": messageContent,
                 "date": dateString,
                 "sender_id": currentUserID,
                 "sender_name": currentUserName,
-                "sender_profile_pic_url":  AuthManager.currentUser?.photoURL,
+                "sender_profile_pic_url":  AuthManager.shared.currentUser?.photoURL,
                 "is_read": false
             ]
             
@@ -233,7 +231,7 @@ extension DatabaseManager {
     
 
     public func observeRoomChange(completion: @escaping (Result<String, Error>) -> Void) {
-        guard let currentUserID = AuthManager.currentUser?.uid else {
+        guard let currentUserID = AuthManager.shared.currentUser?.uid else {
             completion(.failure(AuthManager.AuthError.failedToGetCurrentUser)) // user signed out already or the object hasn't been initalized yet
             return
         }
@@ -262,14 +260,14 @@ extension DatabaseManager {
             while let messageSnapshot = enumerator.nextObject() as? DataSnapshot {
                 if let dictionary = messageSnapshot.value as? [String: Any],
                    // let isRead = dictionary["is_read"] as? Bool,
-                   // let messageID = dictionary["id"] as? String,
+                   let messageID = dictionary["id"] as? String,
                    let content = dictionary["content"] as? String,
                    let senderID = dictionary["sender_id"] as? String,
                    let senderName = dictionary["sender_name"] as? String,
                    let senderProfilePicURLString = dictionary["sender_profile_pic_url"] as? String,
                    let type = dictionary["type"] as? String,
                    let dateString = dictionary["date"] as? String,
-                   let date = Self.dateFormatter.date(from: dateString)
+                   let date = DateFormatter.dateFormatter.date(from: dateString)
                 {
                     
                     var kind: ChatMessageKind?
@@ -284,7 +282,7 @@ extension DatabaseManager {
                     // kind is not known
                     if let finalKind = kind {
                         let sender = Message.ChatUserItem(userName: senderName, avatarURL: URL(string: senderProfilePicURLString), avatar: nil, id: senderID)
-                        messages.append(.init(user: sender, messageKind: finalKind, isSender: true, date: date))
+                        messages.append(.init(user: sender, messageKind: finalKind, isSender: true, date: date, id: messageID))
                         
                     }
                 }
@@ -307,23 +305,26 @@ extension DatabaseManager {
 extension DatabaseManager {
     
     public func getUsers(in room: String, completion: @escaping (Result<[Message.ChatUserItem], Error>) -> Void) {
-        database.child("\(room)/users").observeSingleEvent(of: .value, with: { [weak self] snapshot in
-            guard let userIDs = snapshot.value as? [String] else {
+        database.child("room/\(room)/users").observeSingleEvent(of: .value, with: { [weak self] snapshot in
+            guard let userInfoArray = snapshot.value as? [[String: Any]] else {
                 completion(.failure(Self.DatabaseError.failedToFetch))
                 return
             }
             
             var users = [Message.ChatUserItem]()
-            for userID in userIDs {
-                self?.database.child("user_info/\(userID)").observeSingleEvent(of: .value, with: { snapshot in
-                    if let dictionary = snapshot.value as? [String: Any],
-                       let userName = dictionary["name"] as? String,
-                       let photoURLstring = dictionary["profile_picture"] as? String,
-                       let photoURL = URL(string: photoURLstring) {
-                        users.append(.init(userName: userName, avatarURL: photoURL, avatar: nil, id: userID))
+            for user in userInfoArray {
+                if let name = user["name"] as? String,
+                   let id = user["id"] as? String {
+                
+                    
+                    var photoURL: URL?
+                    if let photoURLString = user["profile_picture"] as? String {
+                        photoURL = URL(string: photoURLString)
                     }
                     
-                })
+                    users.append(.init(userName: name, avatarURL: photoURL, avatar: nil, id: id))
+                        
+                }
             }
             completion(.success(users))
         }, withCancel: { error in
@@ -332,22 +333,50 @@ extension DatabaseManager {
     }
     
     public func getAllUsers(completion: @escaping (Result<[Message.ChatUserItem], Error>) -> Void) {
+        guard let currentUserID = AuthManager.shared.currentUser?.uid else {
+            completion(.failure(AuthManager.AuthError.failedToGetCurrentUser)) // user signed out already or the object hasn't been initalized yet
+            return
+        }
+                
         var users = [Message.ChatUserItem]()
-        database.child("users_info").observeSingleEvent(of: .value, with: { [weak self] snapshot in
-            let enumerator = snapshot.children
-            while let userInfoSnapshot = enumerator.nextObject() as? DataSnapshot {
-                if let dictionary = userInfoSnapshot.value as? [String: Any],
-                   let userName = dictionary["name"] as? String,
-                   let photoURLstring = dictionary["profile_picture"] as? String,
-                   let photoURL = URL(string: photoURLstring) {
-                    users.append(.init(userName: userName, avatarURL: photoURL, avatar: nil, id: userInfoSnapshot.key))
+        database.child("users/\(currentUserID)/room").observeSingleEvent(of: .value, with: { [weak self] snapshot in
+            guard let room = snapshot.value as? String else {
+                completion(.failure(Self.DatabaseError.failedToFetch))
+                return
+            }
+            
+            
+            self?.database.child("room/\(room)/closest_clusters").observeSingleEvent(of: .value, with: { snapshot in
+                
+                
+                let closestRoomsSortedByDistance = snapshot.value as? [String]
+                
+                let group = DispatchGroup()
+                for roomID in [room] + (closestRoomsSortedByDistance ?? [])  {
+                    group.enter()
+                    self?.getUsers(in: roomID, completion: { result in
+                        defer { group.leave() }
+                        switch result {
+                        case .success(let usersInRoom):
+                            users += usersInRoom
+                        case .failure(_):
+                            print("failed to get users in new room")
+                        }
+                        
+                    })
+                    
                 }
                 
-            }
-            completion(.success(users))
-    
-        }, withCancel: { error in
-            completion(.failure(error))
+                group.notify(queue: .main) {
+                    completion(.success(users))
+                }
+                
+
+                
+            })
+        
+            
+            
         })
     }
     

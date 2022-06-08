@@ -36,7 +36,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
             try? Auth.auth().signOut()
       
         } else {
-            
+            AuthManager.shared.currentUser = Auth.auth().currentUser
             if AuthManager.shared.isSignedIn {
                 AuthManager.shared.refreshIfNeeded()
             }
@@ -46,7 +46,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
                     // detach all observers from all database references that have observes
                 }
                 
-                AuthManager.currentUser = user
+                AuthManager.shared.currentUser = user
                 
             }
 

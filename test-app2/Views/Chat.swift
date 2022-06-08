@@ -8,7 +8,7 @@
 import SwiftUI
 
 
-
+/*
 struct Chat: View {
     @EnvironmentObject var model: AppStateModel
 
@@ -64,6 +64,8 @@ struct Chat: View {
        
     }
     
+ 
+
 //    private func listenForMessages(id: String) {
 //        DatabaseManager.shared.getAllMessagesForConversation(with: id, completion: { result in
 //            switch result {
@@ -84,6 +86,7 @@ struct Chat: View {
 //    }
 }
 
+*/
 //struct Chat_Previews: PreviewProvider {
 //    static var previews: some View {
 //        Chat()
