@@ -297,6 +297,13 @@ extension DatabaseManager {
     public func removeMessagesObserver(for room: String) {
         database.child("conversations/\(room)").removeAllObservers()
     }
+    
+    public func removeRoomChangeObserver() {
+        guard let currentUserID = AuthManager.shared.currentUser?.uid else {
+            return
+        }
+        database.child("users/\(currentUserID)/room").removeAllObservers()
+    }
 }
 
 

@@ -7,17 +7,14 @@
 
 import Foundation
 import FirebaseAuth
-import MessageKit
 import SwiftUI
 import FirebaseAuth
+import Combine
+
+
 
 class AppStateModel: ObservableObject {
     
-
-    
-    
-    // @Published private(set) var conversations = [Conversation]()
-    // @Published var messages = [String: [Message]]()
     
     @Published private(set) var isSignedIn = AuthManager.shared.isSignedIn
     @Published private(set) var isSigningIn = false
@@ -27,20 +24,23 @@ class AppStateModel: ObservableObject {
     @Published var currentRoom: String?
     
     @Published var chatUserDisplayCircles: [ChatUserDisplayCircle] = []
+    private var cancellables = Set<AnyCancellable>()
 
     
-    
-    /*
-    var currentChatUser: Message.ChatUserItem? {
-        return Message.ChatUserItem(userName: currentUsername, avatarURL: Auth.auth().currentUser?.photoURL, avatar: nil)
-    }
-    */
+
+
+
     
     init() {
+        
+        self.$isSignedIn.sink(receiveValue: { [weak self] isSignedIn in
+            if isSignedIn {
+                DatabaseManager.shared.removeRoomChangeObserver()
+                self?.listenForMessages()
+            }
+        })
+        .store(in: &cancellables)
 
-        if isSignedIn {
-            listenForMessages()
-        }
     }
     
     
@@ -48,15 +48,14 @@ class AppStateModel: ObservableObject {
         guard let url = AuthManager.shared.signInUrl else {
             return nil
         }
-
         return WebView(url: url) { [weak self] success, didStartAuthFlow in
             DispatchQueue.main.async {
                 self?.isSignedIn = success
                 self?.isSigningIn = didStartAuthFlow
             }
-            
         }
     }
+    
     
     func signOut() {
         AuthManager.shared.signOut()
@@ -102,6 +101,8 @@ extension AppStateModel {
 
 
 extension AppStateModel {
+    
+    
 
     private func listenForMessages() {
         DatabaseManager.shared.observeRoomChange() { [weak self] result in
@@ -118,24 +119,21 @@ extension AppStateModel {
                 // empty messages since the room has changed
                 self?.messages = []
                 
-                // update users
+                // update the users
 
                 DatabaseManager.shared.getAllUsers(completion: { result in
                     switch result {
                     case .success(let allUsers):
                         self?.users = allUsers
-                        // this needs to be update as well
+                        // this needs to be updated as well
                         self?.makeCircles()
-                        print(self?.users.count)
-                        print(self?.chatUserDisplayCircles.count)
-                        print(self?.chatUserDisplayCircles)
                     case .failure(_):
                         print("failed to get users in new room")
                     }
                 })
                 
  
-                // get messages in new room
+                // get messages in the new room
                 DatabaseManager.shared.listenForMessages(in: room) { result in
                     switch result {
                     case .success(let newMessage):
@@ -221,13 +219,9 @@ extension AppStateModel {
                                         y: 0.5))
                     
                 }
-
-
             }
         }
         
-        
-        print(grid)
         chatUserDisplayCircles = grid.map { ChatUserDisplayCircle(intialCenter: $0, center: $0) }
         // update scale
         for (index, _) in chatUserDisplayCircles.enumerated() {
@@ -325,11 +319,15 @@ extension AppStateModel {
     }
     /// 0 <= x <= 1
     private func easeOutSine(_ x: Double) -> Double {
-        
         return sin(x * Double.pi / 2)
-        
     }
     
 }
+
+
+
+
+
+
 
 

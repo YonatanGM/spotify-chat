@@ -1,94 +1,138 @@
 //
-//  Chat.swift
+//  ChatVIew.swift
 //  test-app2
 //
-//  Created by Yonatan Mamo on 07.05.22.
+//  Created by Yonatan Mamo on 08.06.22.
 //
 
 import SwiftUI
+import SwiftyChat
 
 
-/*
 struct Chat: View {
     @EnvironmentObject var model: AppStateModel
-
+    @State private var scrollToBottom = false
     
-    let otherUser: Message.ChatUserItem
-    @State var conversationID: String?
-    @State private var conversationExistsClosureDone = false
+    // MARK: - InputBarView variables
+    @State private var message = ""
+    @State private var isEditing = false
     
-
-  
-
-    var body: some View {
-        
-
-            VStack {
-                if conversationExistsClosureDone {
-                    MessagesView(messages: Binding<[Message]>(
-                        get: {
-                            if let conversationID = conversationID {
-                                return model.messages[conversationID] ?? []
-                            } else {
-                                return []
-                            }
-                    }, set: {
-                        if let conversationID = conversationID {
-                            model.messages[conversationID] = $0
-                        }
-                    }), otherUser: otherUser, conversationID: conversationID)
-                    
-                } else {
-                    
-                    ProgressView("wait")
-                    
-                    
-                }
-
-            }
-        
-
-        .onAppear {
-     
-            model.conversationExists(with: otherUser) { result in
-                switch result {
-                case .success(let id):
-                    conversationID = id
-                case .failure(_):
-                    break
-                }
-                conversationExistsClosureDone = true
-                
-            }
+    var currentChatUser: Message.ChatUserItem? {
+        guard let currentUserID = AuthManager.shared.currentUser?.uid,
+              let currentUserName = AuthManager.shared.currentUser?.displayName else {
+                return nil
         }
-       
+        
+        return Message.ChatUserItem(userName: currentUserName,
+                                    avatarURL:  AuthManager.shared.currentUser?.photoURL,
+                                    avatar: nil,
+                                    id: currentUserID)
     }
     
- 
+    var body: some View {
+        
+        chatView
+    }
+        
+    
+    private var chatView: some View {
 
-//    private func listenForMessages(id: String) {
-//        DatabaseManager.shared.getAllMessagesForConversation(with: id, completion: { result in
-//            switch result {
-//            case .success(let messages):
-//                print("success in getting messages: \(messages)")
-//                guard !messages.isEmpty else {
-//                    print("messages are empty")
-//                    return
-//                }
-//                DispatchQueue.main.async {
-//                    self.messages = messages
-//                }
-//               
-//            case .failure(let error):
-//                print("failed to get messages: \(error)")
-//            }
-//        })
-//    }
+        ChatView<Message.ChatMessageItem, Message.ChatUserItem>(
+            messages: Binding(
+                get: {
+                    model.messages
+                },
+                set: {
+                    model.messages = $0
+            }),
+            scrollToBottom: $scrollToBottom
+        
+        ) {
+
+            BasicInputView(
+                message: $message,
+                isEditing: $isEditing,
+                placeholder: "Type something",
+                onCommit: { messageKind in
+                    if let currentChatUser = currentChatUser {
+                        model.messages.append(
+                            .init(user: currentChatUser,
+                                  messageKind: messageKind,
+                                  isSender: true)
+                        )
+                    }
+
+                    scrollToBottom = true
+                }
+            )
+            .padding(8)
+            .padding(.bottom, isEditing ? 0 : 8)
+            .accentColor(.chatBlue)
+            .background(Color.primary.colorInvert())
+            .animation(.linear)
+            .embedInAnyView()
+            
+        }
+        // ▼ Optional, Present context menu when cell long pressed
+        .messageCellContextMenu { message -> AnyView in
+            switch message.messageKind {
+            case .text(let text):
+                return Button(action: {
+                    print("Copy Context Menu tapped!!")
+                    UIPasteboard.general.string = text
+                }) {
+                    Text("Copy")
+                    Image(systemName: "doc.on.doc")
+                }.embedInAnyView()
+            default:
+                // If you don't want to implement contextMenu action
+                // for a specific case, simply return EmptyView like below;
+                return EmptyView().embedInAnyView()
+            }
+        }
+        // ▼ Required
+        .environmentObject(ChatMessageCellStyle.basicStyle)
+        .navigationBarTitle("Basic")
+        .listStyle(PlainListStyle())
+    }
 }
 
-*/
-//struct Chat_Previews: PreviewProvider {
-//    static var previews: some View {
-//        Chat()
-//    }
-//}
+
+
+extension Color {
+    static let chatBlue = Color(#colorLiteral(red: 0.1405690908, green: 0.1412397623, blue: 0.25395751, alpha: 1))
+    static let chatGray = Color(#colorLiteral(red: 0.7861273885, green: 0.7897668481, blue: 0.7986581922, alpha: 1))
+}
+
+let futuraFont = Font.custom("Futura", size: 17)
+
+internal extension ChatMessageCellStyle {
+    
+    static let basicStyle = ChatMessageCellStyle(
+        incomingTextStyle: .init(
+            textStyle: .init(textColor: .black, font: futuraFont),
+            textPadding: 16,
+            attributedTextStyle: .init(textColor: .black),
+            cellBackgroundColor: Color.chatGray,
+            cellBorderWidth: 0,
+            cellShadowRadius: 0,
+            cellRoundedCorners: [.topRight, .bottomRight, .bottomLeft]
+        ),
+        outgoingTextStyle: .init(
+            textStyle: .init(textColor: .white, font: futuraFont),
+            textPadding: 16,
+            cellBackgroundColor: Color.chatBlue,
+            cellBorderWidth: 0,
+            cellShadowRadius: 0,
+            cellRoundedCorners: [.topLeft, .bottomRight, .bottomLeft]
+        ),
+        incomingAvatarStyle: .init(imageStyle: .init(imageSize: .zero))
+    )
+    
+}
+
+struct Chat_Previews: PreviewProvider {
+    static var previews: some View {
+        Chat()
+    }
+}

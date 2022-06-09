@@ -12,6 +12,9 @@ import JGProgressHUD_SwiftUI
 
 @main
 struct test_app2App: App {
+    init() {
+        
+    }
     @StateObject var settings = AppStateModel()
     @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate: AppDelegate
     var body: some Scene {
@@ -30,28 +33,23 @@ class AppDelegate: NSObject, UIApplicationDelegate {
 
         FirebaseApp.configure()
         Auth.auth().useEmulator(withHost: "localhost", port: 9098)
-    
-        if UserDefaults.standard.value(forKey: "appFirstTimeOpend") == nil {
-            UserDefaults.standard.setValue(true, forKey: "appFirstTimeOpend")
-            try? Auth.auth().signOut()
-      
-        } else {
-            AuthManager.shared.currentUser = Auth.auth().currentUser
+        
+        Auth.auth().addStateDidChangeListener { auth, user in
+            AuthManager.shared.currentUser = user
             if AuthManager.shared.isSignedIn {
                 AuthManager.shared.refreshIfNeeded()
             }
-
-            Auth.auth().addStateDidChangeListener { auth, user in
-                if user == nil {
-                    // detach all observers from all database references that have observes
-                }
-                
-                AuthManager.shared.currentUser = user
-                
+            
+            if user == nil {
+                // detach all observers from all database references that have observes
             }
-
         }
-
+    
+        if UserDefaults.standard.value(forKey: "appFirstTimeOpened") == nil {
+            UserDefaults.standard.setValue(true, forKey: "appFirstTimeOpened")
+            try? Auth.auth().signOut()
+        }
+        
         return true
     }
 }
