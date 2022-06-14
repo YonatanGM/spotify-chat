@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4604EF9C28571E9D000DF914 /* TopArtistsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4604EF9B28571E9D000DF914 /* TopArtistsView.swift */; };
+		4604EFA02857216F000DF914 /* TopTracksView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4604EF9F2857216F000DF914 /* TopTracksView.swift */; };
 		461DCBCF2823439E009E2F7F /* UserProfileResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 461DCBCE2823439E009E2F7F /* UserProfileResponse.swift */; };
 		463FEF26281D4242005155EE /* DatabaseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 463FEF25281D4242005155EE /* DatabaseManager.swift */; };
 		463FEF2C281D60F2005155EE /* JGProgressHUD-SwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = 463FEF2B281D60F2005155EE /* JGProgressHUD-SwiftUI */; };
@@ -39,6 +41,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		4604EF9B28571E9D000DF914 /* TopArtistsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopArtistsView.swift; sourceTree = "<group>"; };
+		4604EF9F2857216F000DF914 /* TopTracksView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopTracksView.swift; sourceTree = "<group>"; };
 		461DCBCE2823439E009E2F7F /* UserProfileResponse.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserProfileResponse.swift; sourceTree = "<group>"; };
 		463FEF25281D4242005155EE /* DatabaseManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseManager.swift; sourceTree = "<group>"; };
 		46476EAA28099A8600C5B880 /* AuthResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthResponse.swift; sourceTree = "<group>"; };
@@ -92,6 +96,8 @@
 				4685CEBF285106CC00EE5376 /* Chat.swift */,
 				46ED90EC2825250B0064E5BE /* LoginView.swift */,
 				46D1C9CA28474720006352BC /* UsersMap.swift */,
+				4604EF9B28571E9D000DF914 /* TopArtistsView.swift */,
+				4604EF9F2857216F000DF914 /* TopTracksView.swift */,
 				46FFD4972826C1B40022D1DE /* ConversationsView.swift */,
 				46FFD4922826C0750022D1DE /* UIKitWrappers */,
 			);
@@ -305,9 +311,11 @@
 				46F5CA782808DD0D00D58C41 /* AuthManager.swift in Sources */,
 				46476EAB28099A8600C5B880 /* AuthResponse.swift in Sources */,
 				46F8B3DE284DF95900EBCD9C /* Extensions.swift in Sources */,
+				4604EF9C28571E9D000DF914 /* TopArtistsView.swift in Sources */,
 				46D1C9CB28474720006352BC /* UsersMap.swift in Sources */,
 				46FFD4982826C1B40022D1DE /* ConversationsView.swift in Sources */,
 				46F5CA6A2808C23E00D58C41 /* test_app2App.swift in Sources */,
+				4604EFA02857216F000DF914 /* TopTracksView.swift in Sources */,
 				46F0CC42280DCAE300BF1B4B /* TopArtistsResponse.swift in Sources */,
 				46FDC2D728268418002EB494 /* AppStateModel.swift in Sources */,
 				46FD501E281E9D3000505CB7 /* StorageManager.swift in Sources */,
