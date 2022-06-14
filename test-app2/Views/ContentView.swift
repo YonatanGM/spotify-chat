@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import MessageKit
 import FirebaseAuth
 
 struct ContentView: View {
@@ -18,24 +17,26 @@ struct ContentView: View {
     
     var body: some View {
                 
-        if !model.isSignedIn {
-            LoginView()
-        } else {
-            TabView {
-                UsersMap()
-                    .tabItem {
-                        Image(systemName: "house.fill")
-                        Text("Home")
-                    }
+        NavigationView {
+            if model.signInStatus == .signedOut || model.signInStatus == .signingIn {
+                LoginView()
+            } else if model.signInStatus == .signedIn {
                 
-
-            }
-            .onAppear {
-                APICaller.shared.getAvailableGenres { _ in
+                VStack {
+                    Divider()
+                    UsersMap()
+                    Divider()
+                    Spacer()
+                    Divider()
                     
+                    Chat()
+                        .frame(height: 200)
+                    
+                    
+ 
+
                 }
-                APICaller.shared.getTopArtists { _ in}
-                APICaller.shared.getTopTracks { _ in}
+                .navigationBarTitle("MUSIQ", displayMode: .inline)
             }
         }
     }

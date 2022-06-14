@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SDWebImageSwiftUI
 import SwiftyChat
 
 
@@ -25,54 +26,53 @@ struct Chat: View {
         
         return Message.ChatUserItem(userName: currentUserName,
                                     avatarURL:  AuthManager.shared.currentUser?.photoURL,
-                                    avatar: nil,
+                                    avatar: UIImage(systemName: "person"),
                                     id: currentUserID)
     }
     
     var body: some View {
         
         chatView
+    
     }
         
     
     private var chatView: some View {
 
         ChatView<Message.ChatMessageItem, Message.ChatUserItem>(
-            messages: Binding(
-                get: {
-                    model.messages
-                },
-                set: {
-                    model.messages = $0
-            }),
-            scrollToBottom: $scrollToBottom
+            messages: Binding(get: { model.messages }, set: { _ in }),
+            scrollToBottom: $scrollToBottom,
+            shouldShowGroupChatHeaders: true
         
         ) {
 
-            BasicInputView(
+            InputView(
                 message: $message,
                 isEditing: $isEditing,
                 placeholder: "Type something",
                 onCommit: { messageKind in
                     if let currentChatUser = currentChatUser {
-                        model.messages.append(
-                            .init(user: currentChatUser,
-                                  messageKind: messageKind,
-                                  isSender: true)
-                        )
+                        DatabaseManager.shared.sendMessage(message: .init(user: currentChatUser,
+                                                                          messageKind: messageKind,
+                                                                          isSender: true))
                     }
-
                     scrollToBottom = true
                 }
             )
+
             .padding(8)
             .padding(.bottom, isEditing ? 0 : 8)
             .accentColor(.chatBlue)
             .background(Color.primary.colorInvert())
-            .animation(.linear)
+            // .animation(.linear)
+            // .border(.red)
             .embedInAnyView()
+
+
             
         }
+
+        
         // ▼ Optional, Present context menu when cell long pressed
         .messageCellContextMenu { message -> AnyView in
             switch message.messageKind {
@@ -92,11 +92,97 @@ struct Chat: View {
         }
         // ▼ Required
         .environmentObject(ChatMessageCellStyle.basicStyle)
-        .navigationBarTitle("Basic")
         .listStyle(PlainListStyle())
+        .background(Color.primary.colorInvert())
+
     }
 }
 
+
+
+
+
+public struct InputView: View {
+    
+    @Binding private var message: String
+    @Binding private var isEditing: Bool
+    private let placeholder: String
+
+    @State private var contentSizeThatFits: CGSize = .zero
+
+    private var internalAttributedMessage: Binding<NSAttributedString> {
+        Binding<NSAttributedString>(
+            get: {
+                NSAttributedString(
+                    string: self.message,
+                    attributes: [
+                        NSAttributedString.Key.font: UIFont.preferredFont(forTextStyle: .body),
+                        NSAttributedString.Key.foregroundColor: UIColor.label,
+                    ]
+                )
+            },
+            set: { self.message = $0.string }
+        )
+    }
+
+    private var onCommit: ((ChatMessageKind) -> Void)?
+    
+    public init(
+        message: Binding<String>,
+        isEditing: Binding<Bool>,
+        placeholder: String = "",
+        onCommit: @escaping (ChatMessageKind) -> Void
+    ) {
+        self._message = message
+        self.placeholder = placeholder
+        self._isEditing = isEditing
+        self._contentSizeThatFits = State(initialValue: .zero)
+        self.onCommit = onCommit
+    }
+
+    private var messageEditorHeight: CGFloat {
+        min(
+            self.contentSizeThatFits.height,
+            0.2 * UIScreen.main.bounds.height
+        )
+    }
+
+    private var messageEditorView: some View {
+        MultilineTextField(
+            attributedText: self.internalAttributedMessage,
+            placeholder: placeholder,
+            isEditing: self.$isEditing
+        )
+        .onPreferenceChange(ContentSizeThatFitsKey.self) {
+            self.contentSizeThatFits = $0
+        }
+        .frame(height: self.messageEditorHeight)
+    }
+
+    private var sendButton: some View {
+        Button(action: {
+            self.onCommit?(.text(message))
+            self.message.removeAll()
+        }, label: {
+ 
+            Image(systemName: "paperplane.fill")
+                .rotationEffect(.degrees(45))
+          
+        })
+        .disabled(message.isEmpty)
+    }
+
+    public var body: some View {
+        VStack {
+            Divider()
+            HStack {
+                self.messageEditorView
+                self.sendButton
+            }
+        }
+    }
+    
+}
 
 
 extension Color {
@@ -107,11 +193,11 @@ extension Color {
 let futuraFont = Font.custom("Futura", size: 17)
 
 internal extension ChatMessageCellStyle {
-    
+
     static let basicStyle = ChatMessageCellStyle(
         incomingTextStyle: .init(
             textStyle: .init(textColor: .black, font: futuraFont),
-            textPadding: 16,
+            textPadding: 12,
             attributedTextStyle: .init(textColor: .black),
             cellBackgroundColor: Color.chatGray,
             cellBorderWidth: 0,
@@ -120,13 +206,24 @@ internal extension ChatMessageCellStyle {
         ),
         outgoingTextStyle: .init(
             textStyle: .init(textColor: .white, font: futuraFont),
-            textPadding: 16,
+            textPadding: 12,
             cellBackgroundColor: Color.chatBlue,
             cellBorderWidth: 0,
             cellShadowRadius: 0,
             cellRoundedCorners: [.topLeft, .bottomRight, .bottomLeft]
         ),
-        incomingAvatarStyle: .init(imageStyle: .init(imageSize: .zero))
+        incomingAvatarStyle: .init(imageStyle: .init(imageSize: CGSize(width: 32, height: 32),
+                                                     cornerRadius: 16,
+                                                     borderColor: Color.clear,
+                                                     borderWidth: 0,
+                                                     shadowRadius: 0,
+                                                     shadowColor: Color.clear)),
+        outgoingAvatarStyle: .init(imageStyle: .init(imageSize: CGSize(width: 32, height: 32),
+                                                     cornerRadius: 16,
+                                                     borderColor: Color.clear,
+                                                     borderWidth: 0,
+                                                     shadowRadius: 0,
+                                                     shadowColor: Color.clear))
     )
     
 }

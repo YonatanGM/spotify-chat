@@ -10,7 +10,6 @@ import Foundation
 import FirebaseDatabase
 import FirebaseAuth
 import CoreLocation
-import MessageKit
 import CoreGraphics
 import SwiftyChat
 
@@ -144,10 +143,10 @@ extension DatabaseManager {
     public static let maxNumOfMessagesToFetch: UInt = 100
     
     
-    public func sendMessage(message: Message.ChatMessageItem, completion: @escaping (Bool) -> Void) {
+    public func sendMessage(message: Message.ChatMessageItem, completion: ((Bool) -> Void)? = nil) {
         guard let currentUserID = AuthManager.shared.currentUser?.uid,
               let currentUserName = AuthManager.shared.currentUser?.displayName else {
-                completion(false)
+                completion?(false)
                 return
         }
         
@@ -194,13 +193,13 @@ extension DatabaseManager {
         // get current users room
         database.child("users/\(currentUserID)/room").observeSingleEvent(of: .value, with: { [weak self] snapshot in
             guard let room = snapshot.value as? String else {
-                completion(false)
+                completion?(false)
                 return
             }
             
             guard let newMessageRef = self?.database.child("conversations/\(room)").childByAutoId(),
                   let messageID = newMessageRef.key else {
-                completion(false)
+                completion?(false)
                 return
             }
             let newMessage: [String: Any] = [
@@ -210,17 +209,17 @@ extension DatabaseManager {
                 "date": dateString,
                 "sender_id": currentUserID,
                 "sender_name": currentUserName,
-                "sender_profile_pic_url":  AuthManager.shared.currentUser?.photoURL,
+                "sender_profile_pic_url":  AuthManager.shared.currentUser?.photoURL?.absoluteString,
                 "is_read": false
             ]
             
             newMessageRef.setValue(newMessage, withCompletionBlock: { error, _ in
                 guard error == nil else {
-                    completion(false)
+                    completion?(false)
                     return
                 }
                 
-                completion(true)
+                completion?(true)
             })
             
             
@@ -251,43 +250,50 @@ extension DatabaseManager {
     
     
     /// listens for newly added messages. At first, all messages are fetched at once, then it the event only triggers for new messages.
-    public func listenForMessages(in room: String, completion: @escaping (Result<[Message.ChatMessageItem], Error>) -> Void) {
-        
-        
-        var messages: [Message.ChatMessageItem] = []
+    public func listenForMessages(in room: String, completion: @escaping (Result<Message.ChatMessageItem, Error>) -> Void) {
+        guard let currentUserID = AuthManager.shared.currentUser?.uid else {
+            // user signed out already or the object hasn't been initalized yet
+            completion(.failure(AuthManager.AuthError.failedToGetCurrentUser))
+            return
+        }
         database.child("conversations/\(room)").queryLimited(toLast: Self.maxNumOfMessagesToFetch).observe(.childAdded, with: { snapshot in
-            let enumerator = snapshot.children
-            while let messageSnapshot = enumerator.nextObject() as? DataSnapshot {
-                if let dictionary = messageSnapshot.value as? [String: Any],
-                   // let isRead = dictionary["is_read"] as? Bool,
-                   let messageID = dictionary["id"] as? String,
-                   let content = dictionary["content"] as? String,
-                   let senderID = dictionary["sender_id"] as? String,
-                   let senderName = dictionary["sender_name"] as? String,
-                   let senderProfilePicURLString = dictionary["sender_profile_pic_url"] as? String,
-                   let type = dictionary["type"] as? String,
-                   let dateString = dictionary["date"] as? String,
-                   let date = DateFormatter.dateFormatter.date(from: dateString)
-                {
-                    
-                    var kind: ChatMessageKind?
-                    // won't be supporting photo/video/audio
-                    // location seems useful
-                    if type == "location" {
-                        //FIXME: take care of this
-                    } else if type == "text" {
-                        kind = .text(content)
-                    }
-                    
-                    // kind is not known
-                    if let finalKind = kind {
-                        let sender = Message.ChatUserItem(userName: senderName, avatarURL: URL(string: senderProfilePicURLString), avatar: nil, id: senderID)
-                        messages.append(.init(user: sender, messageKind: finalKind, isSender: true, date: date, id: messageID))
-                        
-                    }
+            // let enumerator = snapshot.children
+
+            // print("sss", enumerator.allObjects.count)
+            //  print(snapshot.value as? [String: Any])
+
+            if let dictionary = snapshot.value as? [String: Any],
+               let isRead = dictionary["is_read"] as? Bool,
+               let messageID = dictionary["id"] as? String,
+               let content = dictionary["content"] as? String,
+               let senderID = dictionary["sender_id"] as? String,
+               let senderName = dictionary["sender_name"] as? String,
+               let type = dictionary["type"] as? String,
+               let dateString = dictionary["date"] as? String,
+               let date = DateFormatter.dateFormatter.date(from: dateString) {
+                
+                var kind: ChatMessageKind?
+                // won't be supporting photo/video/audio
+                // location seems useful
+                if type == "location" {
+                    //TODO: take care of this
+                } else if type == "MessageKind.text(\(content))" {
+                    kind = .text(content)
                 }
+
+   
+                if let finalKind = kind {
+                    var avatarURL: URL?
+                    if let avatarURLString = dictionary["sender_profile_pic_url"] as? String {
+                        avatarURL = URL(string: avatarURLString)
+                    }
+                    let sender = Message.ChatUserItem(userName: senderName, avatarURL: avatarURL, avatar: nil, id: senderID)
+                    completion(.success(Message.ChatMessageItem(user: sender, messageKind: finalKind, isSender: senderID == currentUserID, date: date, id: messageID)))
+                }
+                
             }
-            completion(.success(messages))
+            
+            
         }, withCancel: { error in
             completion(.failure(error))
         })
@@ -373,7 +379,7 @@ extension DatabaseManager {
                     })
                     
                 }
-                
+                // TODO: find better, less risky alternative
                 group.notify(queue: .main) {
                     completion(.success(users))
                 }

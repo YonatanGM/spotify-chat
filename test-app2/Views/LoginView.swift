@@ -30,8 +30,9 @@ struct LoginView: View {
                 presentLoginFailedAlert = !success
             }
             .overlay {
-                if model.isSigningIn {
-                    ProgressView() 
+                if model.signInStatus == .signingIn {
+                    ProgressView()
+
                 }
                     
             }

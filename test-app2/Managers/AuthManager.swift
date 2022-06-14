@@ -31,7 +31,7 @@ final class AuthManager {
     }
     
     var isSignedIn: Bool {
-        return accessToken != nil && Auth.auth().currentUser != nil
+        return accessToken != nil && Self.shared.currentUser != nil
     }
     
     private var accessToken: String? {

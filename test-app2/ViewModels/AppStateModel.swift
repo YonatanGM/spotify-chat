@@ -15,9 +15,14 @@ import Combine
 
 class AppStateModel: ObservableObject {
     
+    enum SignInStatus {
+        case signedIn
+        case signingIn
+        case notDetermined
+        case signedOut
+    }
     
-    @Published private(set) var isSignedIn = AuthManager.shared.isSignedIn
-    @Published private(set) var isSigningIn = false
+    @Published private(set) var signInStatus: SignInStatus = .notDetermined
     
     @Published private(set) var users = [Message.ChatUserItem]()
     @Published var messages = [Message.ChatMessageItem]()
@@ -26,20 +31,27 @@ class AppStateModel: ObservableObject {
     @Published var chatUserDisplayCircles: [ChatUserDisplayCircle] = []
     private var cancellables = Set<AnyCancellable>()
 
-    
-
-
 
     
     init() {
         
-        self.$isSignedIn.sink(receiveValue: { [weak self] isSignedIn in
-            if isSignedIn {
-                DatabaseManager.shared.removeRoomChangeObserver()
+        self.$signInStatus.sink(receiveValue: { [weak self] signInStatus in
+            if signInStatus == .signedIn {
                 self?.listenForMessages()
             }
         })
         .store(in: &cancellables)
+        
+        Auth.auth().addStateDidChangeListener { [weak self] auth, user in
+            AuthManager.shared.currentUser = user
+            if AuthManager.shared.isSignedIn {
+                AuthManager.shared.refreshIfNeeded()
+                self?.signInStatus = .signedIn
+            } else {
+                DatabaseManager.shared.removeRoomChangeObserver()
+                self?.signInStatus = .signedOut
+            }
+        }
 
     }
     
@@ -50,8 +62,9 @@ class AppStateModel: ObservableObject {
         }
         return WebView(url: url) { [weak self] success, didStartAuthFlow in
             DispatchQueue.main.async {
-                self?.isSignedIn = success
-                self?.isSigningIn = didStartAuthFlow
+                // self?.isSignedIn = success
+                // self?.isSigningIn = didStartAuthFlow
+                self?.signInStatus = didStartAuthFlow ? .signingIn : (success ? .signedIn : .signedOut)
             }
         }
     }
@@ -59,11 +72,9 @@ class AppStateModel: ObservableObject {
     
     func signOut() {
         AuthManager.shared.signOut()
-        isSignedIn = false
+        signInStatus = .signedOut
     }
-    
 
-    
 }
 
 
@@ -99,7 +110,6 @@ extension AppStateModel {
 
 //MARK: - Conversations
 
-
 extension AppStateModel {
     
     
@@ -120,7 +130,6 @@ extension AppStateModel {
                 self?.messages = []
                 
                 // update the users
-
                 DatabaseManager.shared.getAllUsers(completion: { result in
                     switch result {
                     case .success(let allUsers):
@@ -137,7 +146,7 @@ extension AppStateModel {
                 DatabaseManager.shared.listenForMessages(in: room) { result in
                     switch result {
                     case .success(let newMessage):
-                        self?.messages += newMessage
+                        self?.messages.append(newMessage)
                     case .failure(_):
                         print("failed to get message")
                     }
@@ -169,7 +178,7 @@ extension AppStateModel {
         }
         var diplayCenter: CGPoint {
             let isTranslatedPointInsideFrame = CGRect(origin: .zero, size: CGSize(width: 1, height: 1)).insetBy(dx: 0.01, dy: 0.01).contains(CGPoint(x: center.x + (dragTranslation?.x ?? 0), y: center.y + (dragTranslation?.y ?? 0)))
-            
+    
             return CGPoint(x: isTranslatedPointInsideFrame ?  center.x + (dragTranslation?.x ?? 0) : center.x,
                            y: isTranslatedPointInsideFrame ?  center.y + (dragTranslation?.y ?? 0) : center.y)
             
@@ -209,8 +218,6 @@ extension AppStateModel {
                     let x = Double(i) / Double(circlesAlongSides - 1)
                     let y = (Double(j) / Double(circlesAlongSides - 1)) + (i % 2 == 0 ? gapBetweenCols / 2 : 0)
 
-                    
-                    
                     grid.append(CGPoint(x: (x - 0.5) * sizeMultiplier + 0.5,
                                         y: (y - 0.5) * sizeMultiplier + 0.5))
        
@@ -227,8 +234,6 @@ extension AppStateModel {
         for (index, _) in chatUserDisplayCircles.enumerated() {
             updateScaleOfCircle(with: index)
         }
-        
-        print(chatUserDisplayCircles)
         
         chatUserDisplayCircles = chatUserDisplayCircles.sorted { $0.radius < $1.radius }
         

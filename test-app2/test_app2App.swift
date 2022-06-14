@@ -22,6 +22,7 @@ struct test_app2App: App {
         WindowGroup {
             ContentView()
                 .environmentObject(settings)
+                .preferredColorScheme(.dark)
      
         }
     }
@@ -34,16 +35,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         FirebaseApp.configure()
         Auth.auth().useEmulator(withHost: "localhost", port: 9098)
         
-        Auth.auth().addStateDidChangeListener { auth, user in
-            AuthManager.shared.currentUser = user
-            if AuthManager.shared.isSignedIn {
-                AuthManager.shared.refreshIfNeeded()
-            }
-            
-            if user == nil {
-                // detach all observers from all database references that have observes
-            }
-        }
+
     
         if UserDefaults.standard.value(forKey: "appFirstTimeOpened") == nil {
             UserDefaults.standard.setValue(true, forKey: "appFirstTimeOpened")
