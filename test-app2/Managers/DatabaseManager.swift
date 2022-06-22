@@ -19,7 +19,7 @@ class DatabaseManager {
     static let shared = DatabaseManager()
     
     // private let database = Database.database().reference()
-    private let database = Database.database(url: "http://localhost:9020?ns=testapp-79467-default-rtdb").reference()
+    private let database = Database.database(url: "http://localhost:9021?ns=testapp-79467-default-rtdb").reference()
     
     // var messageHandles = [String: UInt]() // to unregister them
     
@@ -300,7 +300,7 @@ extension DatabaseManager {
     }
     
     
-    public func removeMessagesObserver(for room: String) {
+    public func removeMessagesObserver(_ room: String) {
         database.child("conversations/\(room)").removeAllObservers()
     }
     
@@ -327,7 +327,8 @@ extension DatabaseManager {
             var users = [Message.ChatUserItem]()
             for user in userInfoArray {
                 if let name = user["name"] as? String,
-                   let id = user["id"] as? String {
+                   let id = user["id"] as? String,
+                   let topSummary = user["top_summary"] as? [String: String] {
                 
                     
                     var photoURL: URL?
@@ -335,7 +336,7 @@ extension DatabaseManager {
                         photoURL = URL(string: photoURLString)
                     }
                     
-                    users.append(.init(userName: name, avatarURL: photoURL, avatar: nil, id: id))
+                    users.append(.init(userName: name, avatarURL: photoURL, avatar: nil, id: id, additionalInfo: topSummary))
                         
                 }
             }

@@ -129,12 +129,16 @@ public struct Message {
         
         /// User's chat profile image URL
         public var avatarURL: URL?
+        
+        /// Additional information
+        public var additionalInfo: [String: String]
 
-        public init(userName: String, avatarURL: URL? = nil, avatar: UIImage? = nil, id: String = UUID().uuidString) {
+        public init(userName: String, avatarURL: URL? = nil, avatar: UIImage? = nil, id: String = UUID().uuidString, additionalInfo: [String: String] = [:]) {
             self.id = id
             self.userName = userName
             self.avatar = avatar
             self.avatarURL = avatarURL
+            self.additionalInfo = additionalInfo
         }
         
     }

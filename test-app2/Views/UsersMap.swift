@@ -11,17 +11,24 @@ import Foundation
 import UIKit
 import SDWebImageSwiftUI
 import SwiftyChat
+import SpriteKit
 
 struct UsersMap: View {
     @EnvironmentObject var model: AppStateModel
+
     @State var gridSize: CGSize?
     @State var isDragging = false
+    
+    
 
    
     var body: some View {
-        
+    
         ZStack {
+            
             GeometryReader { geometry in
+                SpriteView(scene: model.skBg)
+                
                 ForEach(model.chatUserDisplayCircles, id: \.id) { circle in
 
                     NavigationLink(destination: {
@@ -65,6 +72,9 @@ struct UsersMap: View {
                 .onAppear {
                     // print("width", geometry.size)
                     gridSize = geometry.size
+                    guard let containerSize = gridSize else { return }
+
+            
 
                 }
             }
