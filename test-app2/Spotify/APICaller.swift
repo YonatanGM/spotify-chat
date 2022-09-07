@@ -120,7 +120,7 @@ final class APICaller {
                 do {
                     let result = try JSONDecoder().decode(TopTracksResponse.self, from: data)
                     // let result = try JSONSerialization.jsonObject(with: data)
-                    print("top track", result.items.map { $0.name })
+                    print("top track", result.items.map { $0.album })
                     completion(.success(result))
                 } catch {
                     print(error.localizedDescription)

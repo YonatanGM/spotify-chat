@@ -22,7 +22,6 @@ struct test_app2App: App {
         WindowGroup {
             ContentView()
                 .environmentObject(settings)
-                .preferredColorScheme(.dark)
      
         }
     }
@@ -31,6 +30,15 @@ struct test_app2App: App {
 
 class AppDelegate: NSObject, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
+        
+        // navigation bar apearance
+        // UINavigationBar.appearance().backgroundColor = .orange
+
+        //Use this if NavigationBarTitle is with Large Font
+        // UINavigationBar.appearance().largeTitleTextAttributes = [.font : UIFont(name: "Georgia-Bold", size: 20)!]
+
+        
+        // firebase
 
         FirebaseApp.configure()
         Auth.auth().useEmulator(withHost: "localhost", port: 9098)
@@ -41,6 +49,9 @@ class AppDelegate: NSObject, UIApplicationDelegate {
             UserDefaults.standard.setValue(true, forKey: "appFirstTimeOpened")
             try? Auth.auth().signOut()
         }
+        
+        
+        
         
         return true
     }

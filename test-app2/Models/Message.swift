@@ -131,14 +131,22 @@ public struct Message {
         public var avatarURL: URL?
         
         /// Additional information
-        public var additionalInfo: [String: String]
-
-        public init(userName: String, avatarURL: URL? = nil, avatar: UIImage? = nil, id: String = UUID().uuidString, additionalInfo: [String: String] = [:]) {
+        // public var additionalInfo: [String: String]
+        
+        // Top tracks
+        public var topTracks: TopTracksResponse?
+        
+        public var topArtists: TopArtistsResponse?
+        
+        public init(userName: String, avatarURL: URL? = nil, avatar: UIImage? = nil, id: String = UUID().uuidString, /* additionalInfo: [String: String] = [:] */ topTracks: TopTracksResponse? = nil, topArtists: TopArtistsResponse? = nil) {
             self.id = id
             self.userName = userName
             self.avatar = avatar
             self.avatarURL = avatarURL
-            self.additionalInfo = additionalInfo
+            // self.additionalInfo = additionalInfo
+            self.topTracks = topTracks
+            self.topArtists = topArtists
+            
         }
         
     }

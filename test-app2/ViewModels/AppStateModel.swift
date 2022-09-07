@@ -27,10 +27,11 @@ class AppStateModel: ObservableObject {
     @Published private(set) var signInStatus: SignInStatus = .notDetermined
     
     @Published private(set) var users = [Message.ChatUserItem]()
+    @Published private(set) var usersInCurrentRoom = [Message.ChatUserItem]()
     @Published var messages = [Message.ChatMessageItem]()
     @Published var currentRoom: String?
     
-    @Published var chatUserDisplayCircles: [ChatUserDisplayCircle] = []
+    // @Published var chatUserDisplayCircles: [ChatUserDisplayCircle] = []
     private var cancellables = Set<AnyCancellable>()
     
     @Published var skBg = { () -> SKScene in 
@@ -136,7 +137,20 @@ extension AppStateModel {
                 // empty messages since the room has changed
                 self?.messages = []
                 
+                // remove old users
+                self?.usersInCurrentRoom = []
+                
                 // update the users
+                DatabaseManager.shared.getUsers(in: room, completion: { result in
+                    switch result {
+                    case .success(let users):
+                        self?.usersInCurrentRoom = users
+                    case .failure(_):
+                        print("failed to get users in new room")
+                    }
+                    
+                })
+                /*
                 DatabaseManager.shared.getAllUsers(completion: { result in
                     switch result {
                     case .success(let allUsers):
@@ -160,10 +174,10 @@ extension AppStateModel {
                             
                         }
                     case .failure(_):
-                        print("failed to get users in new room")
+                        c
                     }
                 })
-                
+                */
  
                 // get messages in the new room
                 DatabaseManager.shared.listenForMessages(in: room) { result in
@@ -186,7 +200,7 @@ extension AppStateModel {
 
 
 //MARK: - Users map (rendering)
-
+/*
 extension AppStateModel {
     
     struct ChatUserDisplayCircle: Identifiable {
@@ -438,6 +452,7 @@ extension AppStateModel {
     }
     
 }
+ */
 
 
 

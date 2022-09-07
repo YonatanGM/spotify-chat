@@ -7,20 +7,34 @@
 
 import Foundation
 
-struct TopTracksResponse: Codable {
+public struct TopTracksResponse: Codable {
     let items: [Track]
 }
 
-struct Track: Codable {
+public struct Track: Codable {
+    var album: Album?
     let id: String
     let name: String
     let artists: [Artist]
     let external_urls: [String: String]
     let preview_url: String?
 
-    let disc_number: Int
-    let duration_ms: Int
+    // let disc_number: Int
+    // let duration_ms: Int
     let explicit: Bool
+}
+
+
+
+public struct Album: Codable {
+    let album_type: String
+    let available_markets: [String]?
+    let id: String
+    var images: [APIImage]
+    let name: String
+    let release_date: String
+    let total_tracks: Int
+    // let artists: [Artist]
 }
 
 

@@ -19,7 +19,7 @@ class DatabaseManager {
     static let shared = DatabaseManager()
     
     // private let database = Database.database().reference()
-    private let database = Database.database(url: "http://localhost:9021?ns=testapp-79467-default-rtdb").reference()
+    private let database = Database.database(url: "http://localhost:5002?ns=testapp-79467-default-rtdb").reference()
     
     // var messageHandles = [String: UInt]() // to unregister them
     
@@ -56,13 +56,14 @@ extension DatabaseManager {
             
                     
                 // top genres (based on genres of top artists)
-                /*
-                let topGenres =  response.items.compactMap { $0.genres }.reduce([]) {
+                let topGenres =  topArtistsResponse.items.compactMap { $0.genres }.reduce([]) {
                     return Set($0).union(Set($1))
                 }
-                */
-                
+                print("-a")
+        
+                /*
                 let topGenres = Set(Array(Set(["acoustic", "afrobeat", "alt-rock", "alternative", "ambient", "anime", "black-metal", "bluegrass", "blues", "bossanova", "brazil", "breakbeat", "british", "cantopop", "chicago-house", "children", "chill", "classical", "club", "comedy", "country", "dance", "dancehall", "death-metal", "deep-house", "detroit-techno", "disco", "disney", "drum-and-bass", "dub", "dubstep", "edm", "electro", "electronic", "emo", "folk", "forro", "french", "funk", "garage", "german", "gospel", "goth", "grindcore", "groove", "grunge", "guitar", "happy", "hard-rock", "hardcore", "hardstyle", "heavy-metal", "hip-hop", "holidays", "honky-tonk", "house", "idm", "indian", "indie", "indie-pop", "industrial", "iranian", "j-dance", "j-idol", "j-pop", "j-rock", "jazz", "k-pop", "kids", "latin", "latino", "malay", "mandopop", "metal", "metal-misc", "metalcore", "minimal-techno", "movies", "mpb", "new-age", "new-release", "opera", "pagode", "party", "philippines-opm", "piano", "pop", "pop-film", "post-dubstep", "power-pop", "progressive-house", "psych-rock", "punk", "punk-rock", "r-n-b", "rainy-day", "reggae", "reggaeton", "road-trip", "rock", "rock-n-roll", "rockabilly", "romance", "sad", "salsa", "samba", "sertanejo", "show-tunes", "singer-songwriter", "ska", "sleep", "songwriter", "soul", "soundtracks", "spanish", "study", "summer", "swedish", "synth-pop", "tango", "techno", "trance", "trip-hop", "turkish", "work-out", "world-music"])).prefix(20))
+                 */
                 
                 // add new genres to genres array in the database
                 self?.database.child("genres").observeSingleEvent(of: .value, with: { snapshot in
@@ -73,7 +74,7 @@ extension DatabaseManager {
                             completion(false)
                             return
                         }
-                        
+                        print("-a")
                         APICaller.shared.getTopTracks { [weak self] result in
                             switch result {
                             case .success(let topTracksResponse):
@@ -87,14 +88,14 @@ extension DatabaseManager {
                                 print("creating new user")
                                 // print(response.items.map {$0.name}, topGenres)
                                 
-                                self?.database.child("users_info/\(profile.id)").setValue([
+                                self?.database.child("users/\(profile.id)").setValue([
                                     "id": profile.id, //redundant but whatever
                                     "name": profile.display_name,
                                     "email": profile.email,
                                     "profile_picture": profile.images.first?.url,
-                                    "top_summary": ["top_artist": topArtistsResponse.items.first?.name,
-                                                    "top_track": topTracksResponse.items.first?.name,
-                                                    "top_genre": topGenres.first].compactMapValues { $0 }
+                                    "top_artists": topArtists,
+                                    "top_tracks": topTracks,
+                                    "top_genres": Array(topGenres)
                                     
                                 ].compactMapValues { $0 }, withCompletionBlock: { error, _ in
                                     guard error == nil else {
@@ -102,6 +103,9 @@ extension DatabaseManager {
                                         return
                                     }
                                     
+                                    completion(true)
+                                    
+                                    /*
                                     self?.database.child("users/\(profile.id)").setValue([
                                         "top_artists": topArtists,
                                         "top_genres": Array(topGenres),
@@ -113,6 +117,7 @@ extension DatabaseManager {
                                         }
                                         completion(true)
                                     })
+                                     */
                                 })
 
                             case .failure( _):
@@ -134,6 +139,41 @@ extension DatabaseManager {
     }
                                             
 }
+
+// MARK: - Get user data
+extension DatabaseManager {
+    
+    public func getTopTracks(for id: String,  completion: @escaping ((Result<TopTracksResponse, Error>) ->Void)) {
+        self.database.child("users/\(id)/top_tracks").observeSingleEvent(of: .value, with: { snapshot in
+            
+            guard let value = snapshot.value, let data = try? JSONSerialization.data(withJSONObject: value), let result = try? JSONDecoder().decode(TopTracksResponse.self, from: data)  else {
+                completion(.failure(DatabaseError.failedToFetch))
+                return
+            }
+            
+            completion(.success(result))
+        })
+        
+    }
+    
+    public func getTopArtists(for id: String,  completion: @escaping ((Result<TopArtistsResponse, Error>) ->Void)) {
+        self.database.child("users/\(id)/top_artists").observeSingleEvent(of: .value, with: { snapshot in
+            
+            guard let value = snapshot.value, let data = try? JSONSerialization.data(withJSONObject: value), let result = try? JSONDecoder().decode(TopArtistsResponse.self, from: data)  else {
+                completion(.failure(DatabaseError.failedToFetch))
+                return
+            }
+            
+            completion(.success(result))
+        })
+        
+    }
+    
+    
+    
+    
+}
+
 
 
 // MARK: - Group Chat
@@ -319,26 +359,46 @@ extension DatabaseManager {
     
     public func getUsers(in room: String, completion: @escaping (Result<[Message.ChatUserItem], Error>) -> Void) {
         database.child("room/\(room)/users").observeSingleEvent(of: .value, with: { [weak self] snapshot in
-            guard let userInfoArray = snapshot.value as? [[String: Any]] else {
+            guard let usersArray = snapshot.value as? [[String: Any]] else {
                 completion(.failure(Self.DatabaseError.failedToFetch))
                 return
             }
             
             var users = [Message.ChatUserItem]()
-            for user in userInfoArray {
+            for user in usersArray {
                 if let name = user["name"] as? String,
-                   let id = user["id"] as? String,
-                   let topSummary = user["top_summary"] as? [String: String] {
-                
-                    
-                    var photoURL: URL?
-                    if let photoURLString = user["profile_picture"] as? String {
-                        photoURL = URL(string: photoURLString)
+                   let id = user["id"] as? String {
+                    var topTracksResponse: TopTracksResponse?
+                    var topArtistsResponse: TopArtistsResponse?
+                    if let top_artists = user["top_artists"],
+                       let artistsJSON = try? JSONSerialization.data(withJSONObject: top_artists) {
+                       topArtistsResponse = try? JSONDecoder().decode(TopArtistsResponse.self, from: artistsJSON)
+                        
                     }
                     
-                    users.append(.init(userName: name, avatarURL: photoURL, avatar: nil, id: id, additionalInfo: topSummary))
+                    if let top_tracks = user["top_tracks"] {
+                        if JSONSerialization.isValidJSONObject(top_tracks) {
+                            if let tracksJSON = try? JSONSerialization.data(withJSONObject: top_tracks) {
+                                do {
+                                    topTracksResponse = try JSONDecoder().decode(TopTracksResponse.self, from: tracksJSON)
+                                } catch {
+                                    print("ERROR:", error)
+                                }
+
                         
+                            }
+                        }
+                    }
+                     
+                     var photoURL: URL?
+                     if let photoURLString = user["profile_picture"] as? String {
+                         photoURL = URL(string: photoURLString)
+                     }
+                     
+                     users.append(.init(userName: name, avatarURL: photoURL, avatar: nil, id: id, topTracks: topTracksResponse, topArtists: topArtistsResponse))
+
                 }
+
             }
             completion(.success(users))
         }, withCancel: { error in

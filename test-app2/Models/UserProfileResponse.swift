@@ -30,7 +30,7 @@ extension UserProfileResponse {
     }
 }
 
-struct APIImage: Codable {
+public struct APIImage: Codable {
     let url: String
 }
 

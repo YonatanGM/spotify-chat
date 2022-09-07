@@ -18,25 +18,53 @@ struct ContentView: View {
     var body: some View {
                 
         NavigationView {
-            if model.signInStatus == .signedOut || model.signInStatus == .signingIn {
-                LoginView()
-            } else if model.signInStatus == .signedIn {
-                
-                VStack {
-                    Divider()
-                    UsersMap()
-                    Divider()
-                    Spacer()
-                    Divider()
-                    
-                    Chat()
-                        .frame(height: 200)
-                    
-                    
- 
+            ZStack {
+                LinearGradient(colors: [
+                    Color(.sRGB,
+                          red: Double(18) / 255,
+                          green: Double(18) / 255,
+                          blue: Double(18) / 255,
+                          opacity: 0.75),
+                    Color(.sRGB,
+                          red: Double(18) / 255,
+                          green: Double(18) / 255,
+                          blue: Double(18) / 255,
+                          opacity: 1)
+  
+                ], startPoint: .top, endPoint: .center)
 
+              
+                if model.signInStatus == .signedOut || model.signInStatus == .signingIn {
+                    LoginView()
+                } else if model.signInStatus == .signedIn {
+                    VStack {
+                        TopArtistsView()
+                        
+                        TopTracksView()
+                    }
+                    
+                    
+                        
+                    /*
+                    VStack {
+                        Divider()
+                        UsersMap()
+                        Divider()
+                        Spacer()
+                        Divider()
+                        
+                        Chat()
+                            .frame(height: 200)
+                        
+                    }
+                     */
+                    // .navigationBarTitle("testApp", displayMode: .inline)
+                   
+                    
+                    
+                    
+                    
                 }
-                .navigationBarTitle("MUSIQ", displayMode: .inline)
             }
         }
     }

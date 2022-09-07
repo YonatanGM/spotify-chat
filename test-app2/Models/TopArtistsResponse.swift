@@ -7,11 +7,11 @@
 
 import Foundation
 
-struct TopArtistsResponse: Codable {
+public struct TopArtistsResponse: Codable {
     let items: [Artist]
 }
 
-struct Artist: Codable {
+public struct Artist: Codable {
     let id: String
     let name: String
     let external_urls: [String: String]
