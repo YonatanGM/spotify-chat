@@ -35,6 +35,7 @@ struct TopArtistsView: View {
 //                                      blue: Double(24) / 255,
 //                                      opacity: 1)
                                 VStack {
+                                    
                                     HStack {
                                         Spacer()
                                         Image("Spotify_Icon_RGB_Green")
@@ -43,6 +44,7 @@ struct TopArtistsView: View {
                                             .scaledToFill()
                                         
                                             .frame(width: 15, height: 15)
+                                            .opacity(0)
                                             
                                             
                                     }

@@ -38,6 +38,8 @@
 		46FD5021281E9DEF00505CB7 /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 46FD5020281E9DEF00505CB7 /* FirebaseStorage */; };
 		46FDC2D728268418002EB494 /* AppStateModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46FDC2D628268418002EB494 /* AppStateModel.swift */; };
 		46FFD4982826C1B40022D1DE /* ConversationsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46FFD4972826C1B40022D1DE /* ConversationsView.swift */; };
+		9FCB86AC28C8AA1C00A96A50 /* PlaylistsResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FCB86AB28C8AA1B00A96A50 /* PlaylistsResponse.swift */; };
+		9FCB86AE28C8D0F600A96A50 /* TrackCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FCB86AD28C8D0F600A96A50 /* TrackCard.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -68,6 +70,8 @@
 		46FD501D281E9D3000505CB7 /* StorageManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorageManager.swift; sourceTree = "<group>"; };
 		46FDC2D628268418002EB494 /* AppStateModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppStateModel.swift; sourceTree = "<group>"; };
 		46FFD4972826C1B40022D1DE /* ConversationsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationsView.swift; sourceTree = "<group>"; };
+		9FCB86AB28C8AA1B00A96A50 /* PlaylistsResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaylistsResponse.swift; sourceTree = "<group>"; };
+		9FCB86AD28C8D0F600A96A50 /* TrackCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackCard.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -98,6 +102,7 @@
 				46D1C9CA28474720006352BC /* UsersMap.swift */,
 				4604EF9B28571E9D000DF914 /* TopArtistsView.swift */,
 				4604EF9F2857216F000DF914 /* TopTracksView.swift */,
+				9FCB86AD28C8D0F600A96A50 /* TrackCard.swift */,
 				46FFD4972826C1B40022D1DE /* ConversationsView.swift */,
 				46FFD4922826C0750022D1DE /* UIKitWrappers */,
 			);
@@ -112,6 +117,7 @@
 				46F0CC47280DCEED00BF1B4B /* TopTracksResponse.swift */,
 				461DCBCE2823439E009E2F7F /* UserProfileResponse.swift */,
 				46F8B3DA284C3BA800EBCD9C /* Message.swift */,
+				9FCB86AB28C8AA1B00A96A50 /* PlaylistsResponse.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -312,10 +318,12 @@
 				46476EAB28099A8600C5B880 /* AuthResponse.swift in Sources */,
 				46F8B3DE284DF95900EBCD9C /* Extensions.swift in Sources */,
 				4604EF9C28571E9D000DF914 /* TopArtistsView.swift in Sources */,
+				9FCB86AE28C8D0F600A96A50 /* TrackCard.swift in Sources */,
 				46D1C9CB28474720006352BC /* UsersMap.swift in Sources */,
 				46FFD4982826C1B40022D1DE /* ConversationsView.swift in Sources */,
 				46F5CA6A2808C23E00D58C41 /* test_app2App.swift in Sources */,
 				4604EFA02857216F000DF914 /* TopTracksView.swift in Sources */,
+				9FCB86AC28C8AA1C00A96A50 /* PlaylistsResponse.swift in Sources */,
 				46F0CC42280DCAE300BF1B4B /* TopArtistsResponse.swift in Sources */,
 				46FDC2D728268418002EB494 /* AppStateModel.swift in Sources */,
 				46FD501E281E9D3000505CB7 /* StorageManager.swift in Sources */,

@@ -24,6 +24,8 @@ final class APICaller {
     enum HTTPMethod: String {
         case GET
         case POST
+        case PUT
+        case DELETE
     }
     
     private func createRequest(with url:  URL?, type: HTTPMethod, completion: @escaping (URLRequest) -> Void) {
@@ -183,6 +185,128 @@ final class APICaller {
             
         }
     }
+    
+    
+    
+    public func getPlaylists(completion: @escaping (Result<[Playlist], Error>) -> Void) {
+        createRequest(
+            with: URL(string: Constants.baseAPIURL + "/me/playlists/?limit=50"),
+            type: .GET
+        ) { request in
+            let task = URLSession.shared.dataTask(with: request) { data, _, error in
+                guard let data = data, error == nil else {
+                    completion(.failure(APIError.failedToGetData))
+                    return
+                }
+
+                do {
+                    let result = try JSONDecoder().decode(PlaylistsResponse.self, from: data)
+                    completion(.success(result.items))
+                }
+                catch {
+                    print(error)
+                    completion(.failure(error))
+                }
+            }
+            task.resume()
+        }
+    }
+    
+    // only interested in the name of playlist
+    public func getPlaylistDetails(for playlist: Playlist, completion: @escaping (Result<Playlist, Error>) -> Void) {
+        createRequest(
+            with: URL(string: Constants.baseAPIURL + "/playlists/" + playlist.id + "?fields=id,name"),
+            type: .GET
+        ) { request in
+            let task = URLSession.shared.dataTask(with: request) { data, _, error in
+                guard let data = data, error == nil else {
+                    completion(.failure(APIError.failedToGetData))
+                    return
+                }
+
+                do {
+                    let result = try JSONDecoder().decode(Playlist.self, from: data)
+                    completion(.success(result))
+                }
+                catch {
+                    completion(.failure(error))
+                }
+            }
+            task.resume()
+        }
+    }
+    
+    
+    public func addToLikedSongs(trackID: String, completion: @escaping (Bool) -> Void) {
+        createRequest(
+            with: URL(string: Constants.baseAPIURL + "/me/tracks?ids=\(trackID)"),
+            type: .PUT
+        ) { request in
+            let task = URLSession.shared.dataTask(with: request) { data, response, error in
+
+                guard let data = data,
+                      let httpResponse = response as? HTTPURLResponse,
+                      httpResponse.statusCode == 200,
+                      error == nil else {
+                    completion(false)
+                    return
+                }
+                
+
+                completion(true)
+            }
+            task.resume()
+        }
+    }
+    
+    public func removeFromLikedSongs(trackID: String, completion: @escaping (Bool) -> Void) {
+        createRequest(
+            with: URL(string: Constants.baseAPIURL + "/me/tracks?ids=\(trackID)"),
+            type: .DELETE
+        ) { request in
+            let task = URLSession.shared.dataTask(with: request) { data, response, error in
+
+                
+                guard let data = data,
+                      let httpResponse = response as? HTTPURLResponse,
+                      httpResponse.statusCode == 200,
+                      error == nil else {
+                    completion(false)
+                    return
+                }
+                completion(true)
+            }
+            task.resume()
+        }
+    }
+    
+    public func checkUsersSavedTrack(trackID: String, completion: @escaping (Bool) -> Void) {
+        createRequest(
+            with: URL(string: Constants.baseAPIURL + "/me/tracks/contains/?ids=\(trackID)"),
+            type: .GET
+        ) { request in
+            let task = URLSession.shared.dataTask(with: request) { data, response, error in
+                print(data)
+                print(error)
+                print((response as? HTTPURLResponse)?.statusCode)
+                guard let data = data,
+                      let httpResponse = response as? HTTPURLResponse,
+                      httpResponse.statusCode == 200,
+                      error == nil else {
+                    completion(false)
+                    let result = try? JSONSerialization.jsonObject(with: data!)
+                    print(result)
+
+                    return
+                }
+                
+                completion(true)
+            }
+            task.resume()
+        }
+    }
+    
+    
     
 
 }

@@ -31,15 +31,22 @@ class AppStateModel: ObservableObject {
     @Published var messages = [Message.ChatMessageItem]()
     @Published var currentRoom: String?
     
-    // @Published var chatUserDisplayCircles: [ChatUserDisplayCircle] = []
+    
+    @Published  var selectedTrackID: String?
+    @Published  var playingTrackID: String?
+    
     private var cancellables = Set<AnyCancellable>()
     
+    // @Published var chatUserDisplayCircles: [ChatUserDisplayCircle] = []
+    
+    /*
     @Published var skBg = { () -> SKScene in 
         let scene = SKScene()
         scene.backgroundColor = .clear
         scene.scaleMode = .resizeFill
         return scene
     }()
+    */
 
 
     

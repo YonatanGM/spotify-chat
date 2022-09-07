@@ -22,6 +22,7 @@ public struct Track: Codable {
     // let disc_number: Int
     // let duration_ms: Int
     let explicit: Bool
+    let uri: String
 }
 
 
