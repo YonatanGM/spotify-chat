@@ -12,6 +12,7 @@ import FirebaseAuth
 import Combine
 import SpriteKit
 import SwiftyChat
+import AVKit
 
 
 
@@ -34,6 +35,9 @@ class AppStateModel: ObservableObject {
     
     @Published  var selectedTrackID: String?
     @Published  var playingTrackID: String?
+    
+    // @Published var audioPlayer: AVPlayer?
+    
     
     private var cancellables = Set<AnyCancellable>()
     
