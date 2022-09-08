@@ -280,22 +280,23 @@ final class APICaller {
         }
     }
     
+    // FIXME: fix this function
     public func checkUsersSavedTrack(trackID: String, completion: @escaping (Bool) -> Void) {
         createRequest(
             with: URL(string: Constants.baseAPIURL + "/me/tracks/contains/?ids=\(trackID)"),
             type: .GET
         ) { request in
             let task = URLSession.shared.dataTask(with: request) { data, response, error in
-                print(data)
-                print(error)
-                print((response as? HTTPURLResponse)?.statusCode)
+//                print(data)
+//                print(error)
+//                print((response as? HTTPURLResponse)?.statusCode)
                 guard let data = data,
                       let httpResponse = response as? HTTPURLResponse,
                       httpResponse.statusCode == 200,
                       error == nil else {
                     completion(false)
-                    let result = try? JSONSerialization.jsonObject(with: data!)
-                    print(result)
+//                    let result = try? JSONSerialization.jsonObject(with: data!)
+//                    print(result)
 
                     return
                 }

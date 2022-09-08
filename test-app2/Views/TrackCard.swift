@@ -173,6 +173,7 @@ struct TrackCard: View {
             // .border(.blue)
 
         }
+        
     
         
         .background(
@@ -188,6 +189,7 @@ struct TrackCard: View {
         
         .onTapGesture {
             model.selectedTrackID = track.id
+            // animation
             withAnimation(.easeIn(duration: 0.1)) {
                 isTapping = true
             }
@@ -196,6 +198,11 @@ struct TrackCard: View {
                     isTapping = false
                 }
             }
+            // open spotify
+            if let url = URL(string: track.external_urls["spotify"]!) {
+                UIApplication.shared.open(url)
+            }
+            
     
         }
         .onAppear {
@@ -242,8 +249,11 @@ struct TrackCard: View {
                 // stop playing and seek to beginning
                 audioPlayer?.pause()
                 audioPlayer?.seek(to: CMTime(seconds: 0, preferredTimescale: 30))
-            } 
+            }
+
+            
         }
+
     }
 }
 

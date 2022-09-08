@@ -85,6 +85,7 @@ struct TopArtistsView: View {
                             
                             .onTapGesture {
                                 selectedTrackID = artist.id
+                                // animation
                                 withAnimation(.easeIn(duration: 0.1)) {
                                     isTapping = true
                                 }
@@ -94,44 +95,20 @@ struct TopArtistsView: View {
                                     }
                                 }
                                 
+                                // Open spotify
+                                if let url = URL(string: artist.external_urls["spotify"]!) {
+                                    UIApplication.shared.open(url)
+                                }
                             }
-                            
-
+                        
                         }
-                        
-                        
-                       
                     }
                 }
             }
 
         }
         .frame(height: Double(UIScreen.main.bounds.width) / 2)
-        .onAppear {
-//            APICaller.shared.getTopArtists { result in
-//                switch result {
-//                case .success(let topArtistResponse):
-//                    self.topArtistResponse = topArtistResponse
-//                case .failure(_):
-//                    return
-//
-//                }
-//
-//            }
-//            if let id = AuthManager.shared.currentUser?.uid {
-//                DatabaseManager.shared.getTopArtists(for: id) { result in
-//                    switch result {
-//                    case .success(let topArtistResponse):
-//                        self.topArtistResponse = topArtistResponse
-//                    case .failure(_):
-//                        return
-//
-//                    }
-//                    
-//                }
-//            }
-        }
-        
+
     }
 }
 
