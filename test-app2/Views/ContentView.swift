@@ -37,34 +37,26 @@ struct ContentView: View {
                 if model.signInStatus == .signedOut || model.signInStatus == .signingIn {
                     LoginView()
                 } else if model.signInStatus == .signedIn {
-                    VStack {
+            
+                       
+            
+                    ScrollView(showsIndicators: false) {
+                        UsersView()
+                            
                         TopArtistsView()
-                        
+                            
                         TopTracksView()
-                        Spacer()
+
                     }
+                    .navigationTitle("App name")
                     
-                    
-                        
-                    /*
-                    VStack {
-                        Divider()
-                        UsersMap()
-                        Divider()
-                        Spacer()
-                        Divider()
-                        
-                        Chat()
-                            .frame(height: 200)
-                        
-                    }
-                     */
-                    // .navigationBarTitle("testApp", displayMode: .inline)
-                   
-                    
-                    
-                    
-                    
+                    .overlay(
+                        Bar()
+                            .padding(5)
+                        ,alignment: .top)
+
+        
+
                 }
             }
         }

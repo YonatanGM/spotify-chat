@@ -32,7 +32,7 @@ class AppStateModel: ObservableObject {
     @Published var messages = [Message.ChatMessageItem]()
     @Published var currentRoom: String?
     
-    
+
     @Published  var selectedTrackID: String?
     @Published  var playingTrackID: String?
     

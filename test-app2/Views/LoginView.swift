@@ -29,13 +29,14 @@ struct LoginView: View {
                 presentLogin = false
                 presentLoginFailedAlert = !success
             }
-            .overlay {
-                if model.signInStatus == .signingIn {
-                    ProgressView()
-
-                }
-                    
-            }
+            // ios 15+
+//            .overlay {
+//                if model.signInStatus == .signingIn {
+//                    ProgressView()
+//
+//                }
+//
+//            }
         }
         .alert(isPresented: $presentLoginFailedAlert) {
             Alert(title: Text("Oops"),

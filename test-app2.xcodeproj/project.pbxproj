@@ -40,6 +40,11 @@
 		46FFD4982826C1B40022D1DE /* ConversationsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46FFD4972826C1B40022D1DE /* ConversationsView.swift */; };
 		9FCB86AC28C8AA1C00A96A50 /* PlaylistsResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FCB86AB28C8AA1B00A96A50 /* PlaylistsResponse.swift */; };
 		9FCB86AE28C8D0F600A96A50 /* TrackCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FCB86AD28C8D0F600A96A50 /* TrackCard.swift */; };
+		9FD44B9628CB3E170028A408 /* UsersView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FD44B9528CB3E170028A408 /* UsersView.swift */; };
+		9FD44B9828CB683D0028A408 /* ChatButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FD44B9728CB683D0028A408 /* ChatButton.swift */; };
+		9FD44B9A28CB7B140028A408 /* InviteButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FD44B9928CB7B140028A408 /* InviteButton.swift */; };
+		9FD44B9C28CB7B9A0028A408 /* Bar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FD44B9B28CB7B9A0028A408 /* Bar.swift */; };
+		9FD44B9E28CB84290028A408 /* ChatView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FD44B9D28CB84290028A408 /* ChatView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -72,6 +77,11 @@
 		46FFD4972826C1B40022D1DE /* ConversationsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationsView.swift; sourceTree = "<group>"; };
 		9FCB86AB28C8AA1B00A96A50 /* PlaylistsResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaylistsResponse.swift; sourceTree = "<group>"; };
 		9FCB86AD28C8D0F600A96A50 /* TrackCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackCard.swift; sourceTree = "<group>"; };
+		9FD44B9528CB3E170028A408 /* UsersView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsersView.swift; sourceTree = "<group>"; };
+		9FD44B9728CB683D0028A408 /* ChatButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatButton.swift; sourceTree = "<group>"; };
+		9FD44B9928CB7B140028A408 /* InviteButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InviteButton.swift; sourceTree = "<group>"; };
+		9FD44B9B28CB7B9A0028A408 /* Bar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Bar.swift; sourceTree = "<group>"; };
+		9FD44B9D28CB84290028A408 /* ChatView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -98,12 +108,17 @@
 			children = (
 				46F5CA6B2808C23E00D58C41 /* ContentView.swift */,
 				4685CEBF285106CC00EE5376 /* Chat.swift */,
+				9FD44B9D28CB84290028A408 /* ChatView.swift */,
 				46ED90EC2825250B0064E5BE /* LoginView.swift */,
 				46D1C9CA28474720006352BC /* UsersMap.swift */,
+				9FD44B9528CB3E170028A408 /* UsersView.swift */,
 				4604EF9B28571E9D000DF914 /* TopArtistsView.swift */,
 				4604EF9F2857216F000DF914 /* TopTracksView.swift */,
 				9FCB86AD28C8D0F600A96A50 /* TrackCard.swift */,
 				46FFD4972826C1B40022D1DE /* ConversationsView.swift */,
+				9FD44B9728CB683D0028A408 /* ChatButton.swift */,
+				9FD44B9928CB7B140028A408 /* InviteButton.swift */,
+				9FD44B9B28CB7B9A0028A408 /* Bar.swift */,
 				46FFD4922826C0750022D1DE /* UIKitWrappers */,
 			);
 			path = Views;
@@ -309,20 +324,25 @@
 				463FEF26281D4242005155EE /* DatabaseManager.swift in Sources */,
 				461DCBCF2823439E009E2F7F /* UserProfileResponse.swift in Sources */,
 				46F5CA6C2808C23E00D58C41 /* ContentView.swift in Sources */,
+				9FD44B9E28CB84290028A408 /* ChatView.swift in Sources */,
 				4685CEC0285106CC00EE5376 /* Chat.swift in Sources */,
 				46F0CC2D280D716C00BF1B4B /* APICaller.swift in Sources */,
 				46EAE3FE28095F3F0061C9BB /* WebView.swift in Sources */,
 				46ED90ED2825250B0064E5BE /* LoginView.swift in Sources */,
 				46F8B3DB284C3BA800EBCD9C /* Message.swift in Sources */,
+				9FD44B9628CB3E170028A408 /* UsersView.swift in Sources */,
+				9FD44B9A28CB7B140028A408 /* InviteButton.swift in Sources */,
 				46F5CA782808DD0D00D58C41 /* AuthManager.swift in Sources */,
 				46476EAB28099A8600C5B880 /* AuthResponse.swift in Sources */,
 				46F8B3DE284DF95900EBCD9C /* Extensions.swift in Sources */,
 				4604EF9C28571E9D000DF914 /* TopArtistsView.swift in Sources */,
 				9FCB86AE28C8D0F600A96A50 /* TrackCard.swift in Sources */,
+				9FD44B9828CB683D0028A408 /* ChatButton.swift in Sources */,
 				46D1C9CB28474720006352BC /* UsersMap.swift in Sources */,
 				46FFD4982826C1B40022D1DE /* ConversationsView.swift in Sources */,
 				46F5CA6A2808C23E00D58C41 /* test_app2App.swift in Sources */,
 				4604EFA02857216F000DF914 /* TopTracksView.swift in Sources */,
+				9FD44B9C28CB7B9A0028A408 /* Bar.swift in Sources */,
 				9FCB86AC28C8AA1C00A96A50 /* PlaylistsResponse.swift in Sources */,
 				46F0CC42280DCAE300BF1B4B /* TopArtistsResponse.swift in Sources */,
 				46FDC2D728268418002EB494 /* AppStateModel.swift in Sources */,
@@ -383,7 +403,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 15.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -437,7 +457,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 15.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
@@ -465,6 +485,7 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -496,6 +517,7 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

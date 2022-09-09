@@ -184,8 +184,8 @@ struct TrackCard: View {
                   opacity: 0.75)
         )
         .cornerRadius(5)
-        .scaleEffect(model.selectedTrackID == track.id && isTapping ? 0.97 : 1)
-        .brightness(model.selectedTrackID == track.id && isTapping ? 0.05 : 0)
+        .scaleEffect(model.selectedTrackID == track.id && isTapping ? 0.9 : 1)
+        .brightness(model.selectedTrackID == track.id && isTapping ? 0.1 : 0)
         
         .onTapGesture {
             model.selectedTrackID = track.id
@@ -196,16 +196,22 @@ struct TrackCard: View {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                 withAnimation {
                     isTapping = false
+                    
+                }
+                if let url = URL(string: track.external_urls["spotify"]!) {
+                    UIApplication.shared.open(url)
                 }
             }
             // open spotify
-            if let url = URL(string: track.external_urls["spotify"]!) {
-                UIApplication.shared.open(url)
-            }
+//            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+
+//            }
+
             
     
         }
         .onAppear {
+            print("disapp")
             APICaller.shared.checkUsersSavedTrack(trackID: track.id) { result in
                 like = result
                 
@@ -236,9 +242,13 @@ struct TrackCard: View {
             }
         }
         .onDisappear {
+            print("dis")
+            audioPlayer?.pause()
+            audioPlayer?.seek(to: CMTime(seconds: 0, preferredTimescale: 30))
             if let observer = audioPlayerDidFinishObserver {
                 NotificationCenter.default.removeObserver(observer)
             }
+            
         }
         .onReceive(model.$playingTrackID) { id in
             guard let trackID = id else {
