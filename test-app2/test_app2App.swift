@@ -20,7 +20,7 @@ struct test_app2App: App {
     var body: some Scene {
         
         WindowGroup {
-            ContentView()
+            MainView()
                 .environmentObject(settings)
      
         }
@@ -41,7 +41,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         // firebase
 
         FirebaseApp.configure()
-        Auth.auth().useEmulator(withHost: "localhost", port: 9098)
+        Auth.auth().useEmulator(withHost: "localhost", port: 9099)
         
 
     

@@ -10,7 +10,13 @@ import UIKit
 
 struct ChatButton: View {
     let numOfUnseenMessages = 0
+    @State var showGroupChat = false
+    @State var isTapping: Bool = false
+    
     var body: some View {
+        NavigationLink(isActive: $showGroupChat,
+                       destination: { GroupChat() },
+                       label: { EmptyView() })
         HStack(spacing:0) {
             Image(systemName: "paperplane.fill")
                 .resizable()
@@ -28,13 +34,31 @@ struct ChatButton: View {
         .foregroundColor(.white)
         .background(
             Color(.sRGB,
-                  red: Double(24) / 255,
-                  green: Double(24) / 255,
-                  blue: Double(24) / 255,
+                  red: Double(25) / 255,
+                  green: Double(25) / 255,
+                  blue: Double(25) / 255,
                   opacity: 0.5)
         )
         
         .clipShape(Capsule())
+        .scaleEffect(isTapping ? 0.9 : 1)
+        .brightness(isTapping ? 0.1 : 0)
+        .onTapGesture {
+            // animation
+            withAnimation(.easeIn(duration: 0.1)) {
+                isTapping = true
+            }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                withAnimation {
+                    isTapping = false
+                    
+                    
+                }
+                showGroupChat = true
+
+            }
+            
+        }
                
     }
        

@@ -248,6 +248,7 @@ final class APICaller {
                       let httpResponse = response as? HTTPURLResponse,
                       httpResponse.statusCode == 200,
                       error == nil else {
+                    print((response as? HTTPURLResponse)?.statusCode)
                     completion(false)
                     return
                 }

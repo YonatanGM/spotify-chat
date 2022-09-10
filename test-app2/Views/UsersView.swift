@@ -11,7 +11,6 @@ import UIKit
 
 struct UsersView: View {
     @EnvironmentObject var model: AppStateModel
-    // @State var topArtistResponse: TopArtistsResponse?
     @State var selectedUserID: String?
     @State var isTapping = false
     @State var showUserDetail = false
@@ -36,7 +35,6 @@ struct UsersView: View {
                             Spacer()
                             HStack {
                                 Spacer()
-                                
                                 VStack(alignment: .leading) {
                                     Text(user.userName)
                                         .font(.footnote)
@@ -65,7 +63,6 @@ struct UsersView: View {
                                 showUserDetail = true
                             }
                         }
-                        // navigate to detail view
                         
                     }
 

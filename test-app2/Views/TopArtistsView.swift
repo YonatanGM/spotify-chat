@@ -70,7 +70,6 @@ struct TopArtistsView: View {
                                         }
                                     }
                                    
-
                                 }
                                 
                         }

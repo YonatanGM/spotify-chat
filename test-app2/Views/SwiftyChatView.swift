@@ -10,7 +10,7 @@ import SDWebImageSwiftUI
 import SwiftyChat
 
 
-struct Chat: View {
+struct SwiftyChatView: View {
     @EnvironmentObject var model: AppStateModel
     @State private var scrollToBottom = false
     
@@ -59,19 +59,19 @@ struct Chat: View {
                     scrollToBottom = true
                 }
             )
-
-            .padding(8)
-            .padding(.bottom, isEditing ? 0 : 8)
-            .accentColor(.chatBlue)
-            .background(Color.primary.colorInvert())
+//
+//            .padding(8)
+//            .padding(.bottom, isEditing ? 0 : 8)
+//            .accentColor(.chatBlue)
+//            .background(Color.primary.colorInvert())
             // .animation(.linear)
-            // .border(.red)
+             .border(.red)
             .embedInAnyView()
 
 
             
         }
-
+       
         
         // ▼ Optional, Present context menu when cell long pressed
         .messageCellContextMenu { message -> AnyView in
@@ -93,7 +93,7 @@ struct Chat: View {
         // ▼ Required
         .environmentObject(ChatMessageCellStyle.basicStyle)
         .listStyle(PlainListStyle())
-        .background(Color.primary.colorInvert())
+        // .background(Color.primary.colorInvert())
 
     }
 }
@@ -187,6 +187,7 @@ public struct InputView: View {
 
 extension Color {
     static let chatBlue = Color(#colorLiteral(red: 0.1405690908, green: 0.1412397623, blue: 0.25395751, alpha: 1))
+    static let chatSpotifyColor = Color(#colorLiteral(red: 0.1960784314, green: 0.1960784314, blue: 0.1960784314, alpha: 0.5145384934))
     static let chatGray = Color(#colorLiteral(red: 0.7861273885, green: 0.7897668481, blue: 0.7986581922, alpha: 1))
 }
 
@@ -196,21 +197,22 @@ internal extension ChatMessageCellStyle {
 
     static let basicStyle = ChatMessageCellStyle(
         incomingTextStyle: .init(
-            textStyle: .init(textColor: .black, font: futuraFont),
+            textStyle: .init(textColor: .white, font: .footnote),
             textPadding: 12,
             attributedTextStyle: .init(textColor: .black),
-            cellBackgroundColor: Color.chatGray,
+            cellBackgroundColor: Color.chatSpotifyColor,
             cellBorderWidth: 0,
             cellShadowRadius: 0,
-            cellRoundedCorners: [.topRight, .bottomRight, .bottomLeft]
+            cellRoundedCorners: [.allCorners]
         ),
         outgoingTextStyle: .init(
             textStyle: .init(textColor: .white, font: futuraFont),
             textPadding: 12,
-            cellBackgroundColor: Color.chatBlue,
+            cellBackgroundColor: Color.chatSpotifyColor,
             cellBorderWidth: 0,
             cellShadowRadius: 0,
-            cellRoundedCorners: [.topLeft, .bottomRight, .bottomLeft]
+            cellRoundedCorners: [.allCorners]
+            
         ),
         incomingAvatarStyle: .init(imageStyle: .init(imageSize: CGSize(width: 32, height: 32),
                                                      cornerRadius: 16,
@@ -230,6 +232,6 @@ internal extension ChatMessageCellStyle {
 
 struct Chat_Previews: PreviewProvider {
     static var previews: some View {
-        Chat()
+        SwiftyChatView()
     }
 }
