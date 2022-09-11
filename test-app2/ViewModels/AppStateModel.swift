@@ -15,7 +15,6 @@ import SwiftyChat
 import AVKit
 
 
-
 class AppStateModel: ObservableObject {
     
     enum SignInStatus {
@@ -27,7 +26,7 @@ class AppStateModel: ObservableObject {
     
     @Published private(set) var signInStatus: SignInStatus = .notDetermined
     
-    @Published private(set) var users = [Message.ChatUserItem]()
+    // @Published private(set) var users = [Message.ChatUserItem]()
     @Published private(set) var usersInCurrentRoom = [Message.ChatUserItem]()
     @Published var messages = [Message.ChatMessageItem]()
     @Published var currentRoom: String?
@@ -35,11 +34,16 @@ class AppStateModel: ObservableObject {
 
     @Published  var selectedTrackID: String?
     @Published  var playingTrackID: String?
-    
     // assume spotify is not installed 
     @Published var isSpotifyInstalled = false
     
     private var cancellables = Set<AnyCancellable>()
+    
+    
+    
+    // Group
+    @Published var groups = [Group]()
+    @Published var pendingGroups = [Group]()
     
     init() {
         // check if spotify is installed
@@ -98,6 +102,73 @@ extension AppStateModel {
     
 
     private func listenForMessages() {
+        DatabaseManager.shared.observeRoomChange() { [weak self] result in
+            switch result {
+
+            case .success(let room):
+                // stop listening for conversations in the previous room
+                if let currentRoom = self?.currentRoom {
+                    DatabaseManager.shared.removeMessagesObserver(currentRoom)
+                }
+                
+                self?.currentRoom = room
+                
+                // empty messages since the room has changed
+                self?.messages = []
+                
+                // remove old users
+                self?.usersInCurrentRoom = []
+                
+                // update the users
+                DatabaseManager.shared.getUsers(in: room, completion: { result in
+                    switch result {
+                    case .success(let users):
+                        self?.usersInCurrentRoom = users
+                    case .failure(_):
+                        print("failed to get users in new room")
+                    }
+                    
+                })
+                
+                // get messages in the new room
+                DatabaseManager.shared.listenForMessages(in: room) { result in
+                    switch result {
+                    case .success(let newMessage):
+                        self?.messages.append(newMessage)
+                    case .failure(_):
+                        print("failed to get message")
+                    }
+                }
+                
+            case .failure(let error):
+                print(error.localizedDescription)
+            }
+            
+        }
+    }
+    
+    
+    private func setup() {
+        
+        DatabaseManager.shared.observeUserAdditionToGroup() { [weak self] groupID in
+            DatabaseManager.shared.getGroup(with: groupID) { result in
+                switch result {
+                case .success(let group):
+                    self?.groups.append(group)
+                case .failure(_):
+                    print("failed to get group with id \(groupID)")
+                }
+            }
+            
+        }
+        
+        DatabaseManager.shared.observeUserRemovalFromGroup() { [weak self] groupID in
+            guard let strongSelf = self else { return }
+            strongSelf.groups = strongSelf.groups.filter { $0.id != groupID }
+
+        }
+            
+        
         DatabaseManager.shared.observeRoomChange() { [weak self] result in
             switch result {
 

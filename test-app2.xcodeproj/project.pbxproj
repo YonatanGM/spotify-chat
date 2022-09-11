@@ -36,6 +36,8 @@
 		46FD501E281E9D3000505CB7 /* StorageManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46FD501D281E9D3000505CB7 /* StorageManager.swift */; };
 		46FD5021281E9DEF00505CB7 /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 46FD5020281E9DEF00505CB7 /* FirebaseStorage */; };
 		46FDC2D728268418002EB494 /* AppStateModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46FDC2D628268418002EB494 /* AppStateModel.swift */; };
+		9F17479C28CDBAEF0054AE20 /* Group.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F17479B28CDBAEF0054AE20 /* Group.swift */; };
+		9F17479E28CDBB290054AE20 /* UserInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F17479D28CDBB290054AE20 /* UserInfo.swift */; };
 		9FBFACE828CBCD3200C9F179 /* Home.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FBFACE728CBCD3200C9F179 /* Home.swift */; };
 		9FCB86AC28C8AA1C00A96A50 /* PlaylistsResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FCB86AB28C8AA1B00A96A50 /* PlaylistsResponse.swift */; };
 		9FCB86AE28C8D0F600A96A50 /* TrackCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FCB86AD28C8D0F600A96A50 /* TrackCard.swift */; };
@@ -72,6 +74,8 @@
 		46F8B3DD284DF95900EBCD9C /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		46FD501D281E9D3000505CB7 /* StorageManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorageManager.swift; sourceTree = "<group>"; };
 		46FDC2D628268418002EB494 /* AppStateModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppStateModel.swift; sourceTree = "<group>"; };
+		9F17479B28CDBAEF0054AE20 /* Group.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Group.swift; sourceTree = "<group>"; };
+		9F17479D28CDBB290054AE20 /* UserInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserInfo.swift; sourceTree = "<group>"; };
 		9FBFACE728CBCD3200C9F179 /* Home.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Home.swift; sourceTree = "<group>"; };
 		9FCB86AB28C8AA1B00A96A50 /* PlaylistsResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaylistsResponse.swift; sourceTree = "<group>"; };
 		9FCB86AD28C8D0F600A96A50 /* TrackCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackCard.swift; sourceTree = "<group>"; };
@@ -130,6 +134,7 @@
 				461DCBCE2823439E009E2F7F /* UserProfileResponse.swift */,
 				46F8B3DA284C3BA800EBCD9C /* Message.swift */,
 				9FCB86AB28C8AA1B00A96A50 /* PlaylistsResponse.swift */,
+				9F17479A28CDBAB50054AE20 /* Firebase  */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -226,6 +231,15 @@
 				46EAE3FD28095F3F0061C9BB /* WebView.swift */,
 			);
 			path = UIKitWrappers;
+			sourceTree = "<group>";
+		};
+		9F17479A28CDBAB50054AE20 /* Firebase  */ = {
+			isa = PBXGroup;
+			children = (
+				9F17479B28CDBAEF0054AE20 /* Group.swift */,
+				9F17479D28CDBB290054AE20 /* UserInfo.swift */,
+			);
+			path = "Firebase ";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -326,6 +340,7 @@
 				9FBFACE828CBCD3200C9F179 /* Home.swift in Sources */,
 				46F0CC2D280D716C00BF1B4B /* APICaller.swift in Sources */,
 				46EAE3FE28095F3F0061C9BB /* WebView.swift in Sources */,
+				9F17479C28CDBAEF0054AE20 /* Group.swift in Sources */,
 				46ED90ED2825250B0064E5BE /* LoginView.swift in Sources */,
 				46F8B3DB284C3BA800EBCD9C /* Message.swift in Sources */,
 				9FD44B9628CB3E170028A408 /* UsersView.swift in Sources */,
@@ -336,6 +351,7 @@
 				4604EF9C28571E9D000DF914 /* TopArtistsView.swift in Sources */,
 				9FCB86AE28C8D0F600A96A50 /* TrackCard.swift in Sources */,
 				9FD44B9828CB683D0028A408 /* ChatButton.swift in Sources */,
+				9F17479E28CDBB290054AE20 /* UserInfo.swift in Sources */,
 				46F5CA6A2808C23E00D58C41 /* test_app2App.swift in Sources */,
 				4604EFA02857216F000DF914 /* TopTracksView.swift in Sources */,
 				9FD44B9C28CB7B9A0028A408 /* Bar.swift in Sources */,

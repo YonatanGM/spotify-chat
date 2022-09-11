@@ -20,7 +20,7 @@ struct Bar: View {
     }
 }
 
-struct BAR_Previews: PreviewProvider {
+struct Bar_Previews: PreviewProvider {
     static var previews: some View {
         Bar()
     }
