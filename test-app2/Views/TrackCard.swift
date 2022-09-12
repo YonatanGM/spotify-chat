@@ -171,10 +171,10 @@ struct TrackCard: View {
         }
         .background(
             Color(.sRGB,
-                  red: Double(24) / 255,
-                  green: Double(24) / 255,
-                  blue: Double(24) / 255,
-                  opacity: 0.75)
+                  red: 1,
+                  green: 1,
+                  blue: 1,
+                  opacity: 0.05)
         )
         .cornerRadius(5)
         .scaleEffect(model.selectedTrackID == track.id && isTapping ? 0.9 : 1)

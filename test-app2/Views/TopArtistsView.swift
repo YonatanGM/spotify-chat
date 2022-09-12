@@ -24,7 +24,7 @@ struct TopArtistsView: View {
         ScrollView(.horizontal, showsIndicators: false) {
             if let topArtistResponse = model.usersInCurrentRoom.first?.topArtists {
 
-                HStack {
+                LazyHStack {
                     ForEach(topArtistResponse.items, id: \.id) { artist in
                         
                         if let urlString = artist.images?.first?.url,

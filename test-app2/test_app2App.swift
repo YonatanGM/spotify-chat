@@ -35,13 +35,13 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         // UINavigationBar.appearance().backgroundColor = .orange
 
         //Use this if NavigationBarTitle is with Large Font
-        // UINavigationBar.appearance().largeTitleTextAttributes = [.font : UIFont(name: "Georgia-Bold", size: 20)!]
-
+         UINavigationBar.appearance().largeTitleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.white]
         
+
         // firebase
 
         FirebaseApp.configure()
-        Auth.auth().useEmulator(withHost: "localhost", port: 9099)
+        Auth.auth().useEmulator(withHost: "localhost", port: 9091)
         
 
     

@@ -19,7 +19,7 @@ class DatabaseManager {
     static let shared = DatabaseManager()
     
     // private let database = Database.database().reference()
-    private let database = Database.database(url: "http://localhost:5003?ns=testapp-79467-default-rtdb").reference()
+    private let database = Database.database(url: "http://localhost:5008?ns=testapp-79467-default-rtdb").reference()
     
     // var messageHandles = [String: UInt]() // to unregister them
     
@@ -289,6 +289,8 @@ extension DatabaseManager {
     
     
     
+    
+    
     /// listens for newly added messages. At first, all messages are fetched at once, then it the event only triggers for new messages.
     public func listenForMessages(in room: String, completion: @escaping (Result<Message.ChatMessageItem, Error>) -> Void) {
         guard let currentUserID = AuthManager.shared.currentUser?.uid else {
@@ -347,6 +349,9 @@ extension DatabaseManager {
         }
         database.child("users/\(currentUserID)/room").removeAllObservers()
     }
+    
+    
+    
 }
 
 
@@ -392,7 +397,9 @@ extension DatabaseManager {
                          photoURL = URL(string: photoURLString)
                      }
                      
+                    
                      users.append(.init(userName: name, avatarURL: photoURL, avatar: nil, id: id, topTracks: topTracksResponse, topArtists: topArtistsResponse))
+                    print(users.map { $0.userName })
 
                 }
 
@@ -507,9 +514,9 @@ extension DatabaseManager {
         // i have the groupID now
         // child updates
         // let childUpdates = users.map { ["/users/\($0.id)/group_invites/" : "\(groupID)"]}
-        var childUpdates = users.reduce([String: String]()) {
+        var childUpdates = users.reduce([String: Any]()) {
             var dict = $0
-            dict["users/\($1.id)/pending_invitations"] = groupID
+            dict["users/\($1.id)/pending_invitations/\(groupID)"] = true
             return dict
         }
         
@@ -624,6 +631,80 @@ extension DatabaseManager {
         }
         database.child("users/\(currentUserID)/Groups").removeAllObservers()
         
+    }
+    
+    public func sendMessage(message: Message.ChatMessageItem, to group: String, completion: ((Bool) -> Void)? = nil) {
+        guard let currentUserID = AuthManager.shared.currentUser?.uid,
+              let currentUserName = AuthManager.shared.currentUser?.displayName else {
+                completion?(false)
+                return
+        }
+        
+        var messageContent = ""
+        let dateString = DateFormatter.dateFormatter.string(from: message.date)
+        switch message.messageKind {
+        case .text(let content):
+            messageContent = content
+
+        /// An image message, from local(UIImage) or remote(URL).
+        case .image( _):
+            break
+            
+        /// An image message, from local(UIImage) or remote(URL).
+        case .imageText(_, _):
+            break
+            
+            
+        /// A location message, pins given location & presents on MapKit.
+        case .location( _):
+            break
+            
+        /// A contact message, generally for sharing purpose.
+        case .contact( _):
+            break
+            
+        /// Multiple options, disable itself after selection.
+        case .quickReply( _):
+            break
+            
+        /// `CarouselItem` contains title, subtitle, image & button in a scrollable view
+        case .carousel( _):
+            break
+            
+        /// A video message, opens the given URL.
+        case .video( _):
+            break
+            
+        /// Loading indicator contained in chat bubble
+        case.loading:
+            break
+        }
+        
+  
+        let newMessageRef = self.database.child("conversations/\(group)").childByAutoId()
+        guard let messageID = newMessageRef.key else {
+            completion?(false)
+            return
+        }
+        let newMessage: [String: Any] = [
+            "id": messageID,
+            "type": message.messageKind.description,
+            "content": messageContent,
+            "date": dateString,
+            "sender_id": currentUserID,
+            "sender_name": currentUserName,
+            "sender_profile_pic_url":  AuthManager.shared.currentUser?.photoURL?.absoluteString,
+            "is_read": false
+        ]
+        
+        newMessageRef.setValue(newMessage, withCompletionBlock: { error, _ in
+            guard error == nil else {
+                completion?(false)
+                return
+            }
+            
+            completion?(true)
+        })
     }
 }
 

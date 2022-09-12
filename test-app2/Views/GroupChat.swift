@@ -30,34 +30,32 @@ struct GroupChat: View {
                           opacity: 1)
   
                 ], startPoint: .top, endPoint: .bottom)
-
-                ForEach(chatUserCirclePositions.indices, id: \.self) { index in
-                    Image(systemName: "circle.fill")
-                    
-                        .resizable()
-                        .scaleEffect(scale)
-                        .scaledToFit()
-                        .clipShape(Circle())
-                        .animation(.easeInOut(duration: 0.4).speed((Double(
-                            index + 1) / Double(numOfPoints)) + Double(0.1)))
-                       // .position(chatUserCirclePositions[index])
-                        .animation(.easeOut(duration: 0.4).speed((Double(index + 1) / Double(numOfPoints)) + Double(0.1)))
-                        .frame(height: chatUserCircleHeight)
-                        .foregroundColor(        Color(
-                            red: .random(in: 0...1),
-                            green: .random(in: 0...1),
-                            blue: .random(in: 0...1)
-                        ))
-                    
-
-                }
+//
+//                ForEach(chatUserCirclePositions.indices, id: \.self) { index in
+//                    Image(systemName: "circle.fill")
+//                    
+//                        .resizable()
+//                        .scaleEffect(scale)
+//                        .scaledToFit()
+//                        .clipShape(Circle())
+//                        .animation(.easeInOut(duration: 0.4).speed((Double(
+//                            index + 1) / Double(numOfPoints)) + Double(0.1)))
+//                       // .position(chatUserCirclePositions[index])
+//                        .animation(.easeOut(duration: 0.4).speed((Double(index + 1) / Double(numOfPoints)) + Double(0.1)))
+//                        .frame(height: chatUserCircleHeight)
+//                        .foregroundColor(        Color(
+//                            red: .random(in: 0...1),
+//                            green: .random(in: 0...1),
+//                            blue: .random(in: 0...1)
+//                        ))
+//                    
+//
+//                }
 
          
                     SwiftyChatView()
                 
-     
-                  
-                
+
                    //  .padding([.horizontal, .top], chatUserCircleHeight)
                     .shadow(radius: 5)
                 

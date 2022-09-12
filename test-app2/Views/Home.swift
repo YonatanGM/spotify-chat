@@ -13,18 +13,21 @@ struct Home: View {
 
             LinearGradient(colors: [
                 Color(.sRGB,
-                      red: Double(18) / 255,
-                      green: Double(18) / 255,
-                      blue: Double(18) / 255,
+                      red: Double(20) / 255,
+                      green: Double(20) / 255,
+                      blue: Double(20) / 255,
                       opacity: 0.75),
                 Color(.sRGB,
-                      red: Double(18) / 255,
-                      green: Double(18) / 255,
-                      blue: Double(18) / 255,
+                      red: Double(25) / 255,
+                      green: Double(25) / 255,
+                      blue: Double(25) / 255,
                       opacity: 1)
 
-            ], startPoint: .top, endPoint: .bottom)
+            ], startPoint: .topLeading, endPoint: .center)
+            .ignoresSafeArea(.all, edges: .all)
+
             ScrollView(showsIndicators: false) {
+//                GroupsView()
                 UsersView()
                     
                 TopArtistsView()
@@ -33,6 +36,7 @@ struct Home: View {
             }
             .overlay(Bar().padding(5), alignment: .top)
         }
+       
     }
 }
 

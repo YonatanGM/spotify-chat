@@ -11,7 +11,9 @@ struct Bar: View {
     var body: some View {
         HStack {
             Spacer()
+           
             ChatButton()
+            FindButton()
             InviteButton()
         }
         .frame(height: Double(UIScreen.main.bounds.width) / 10)

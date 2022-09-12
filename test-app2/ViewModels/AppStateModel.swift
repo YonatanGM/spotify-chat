@@ -27,7 +27,7 @@ class AppStateModel: ObservableObject {
     @Published private(set) var signInStatus: SignInStatus = .notDetermined
     
     // @Published private(set) var users = [Message.ChatUserItem]()
-    @Published private(set) var usersInCurrentRoom = [Message.ChatUserItem]()
+    @Published var usersInCurrentRoom = [Message.ChatUserItem]()
     @Published var messages = [Message.ChatMessageItem]()
     @Published var currentRoom: String?
     
@@ -54,7 +54,8 @@ class AppStateModel: ObservableObject {
         
         self.$signInStatus.sink(receiveValue: { [weak self] signInStatus in
             if signInStatus == .signedIn {
-                self?.listenForMessages()
+                // self?.listenForMessages()
+                self?.setup()
             }
         })
         .store(in: &cancellables)
@@ -190,7 +191,10 @@ extension AppStateModel {
                 DatabaseManager.shared.getUsers(in: room, completion: { result in
                     switch result {
                     case .success(let users):
+                        print(users.map { $0.userName })
+          
                         self?.usersInCurrentRoom = users
+                        print( self?.usersInCurrentRoom)
                     case .failure(_):
                         print("failed to get users in new room")
                     }
