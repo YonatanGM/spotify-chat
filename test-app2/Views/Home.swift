@@ -8,6 +8,9 @@
 import SwiftUI
 
 struct Home: View {
+    @State private var searchText = ""
+    @Namespace var bottomID
+    @EnvironmentObject var model: AppStateModel
     var body: some View {
         ZStack {
 
@@ -25,16 +28,36 @@ struct Home: View {
 
             ], startPoint: .topLeading, endPoint: .center)
             .ignoresSafeArea(.all, edges: .all)
-
-            ScrollView(showsIndicators: false) {
-//                GroupsView()
-                UsersView()
+            ScrollViewReader { proxy in
+                ScrollView(showsIndicators: false) {
+    //                GroupsView()
+                    UsersView()
+                        
+                    TopArtistsView()
+                        
+                    TopTracksView()
                     
-                TopArtistsView()
+                    SearchBar(searchText: $searchText)
+                        .id(bottomID)
+                        .padding([.bottom])
+                       
+                }
+                
+                .overlay(Bar().padding(5), alignment: .top)
+                .onChange(of: model.scrollToBottom) { value in
+                    if value == true {
+                        withAnimation(Animation.easeInOut(duration: 1)) {
+                            proxy.scrollTo(bottomID)
+                        }
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                            withAnimation {
+                                model.scrollToBottom = false
+                            }
+                        }
+                    }
                     
-                TopTracksView()
+                }
             }
-            .overlay(Bar().padding(5), alignment: .top)
         }
        
     }

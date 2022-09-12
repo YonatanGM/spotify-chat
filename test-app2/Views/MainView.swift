@@ -11,8 +11,7 @@ import FirebaseAuth
 struct MainView: View {
     
     @EnvironmentObject var model: AppStateModel
-
-    
+   
     var body: some View {
                 
         NavigationView {
@@ -22,7 +21,10 @@ struct MainView: View {
             } else if model.signInStatus == .signedIn {
                 Home()
                     .navigationTitle("App name")
+               
             }
+          
+            
         
         }
     }

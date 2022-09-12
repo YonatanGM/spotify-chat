@@ -35,9 +35,9 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         // UINavigationBar.appearance().backgroundColor = .orange
 
         //Use this if NavigationBarTitle is with Large Font
-         UINavigationBar.appearance().largeTitleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.white]
+        UINavigationBar.appearance().largeTitleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.white]
         
-
+        UINavigationBar.appearance().titleTextAttributes =  [NSAttributedString.Key.foregroundColor: UIColor.white]
         // firebase
 
         FirebaseApp.configure()

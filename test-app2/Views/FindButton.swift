@@ -9,6 +9,7 @@ import SwiftUI
 
 struct FindButton: View {
     @State var isTapping: Bool = false
+    @EnvironmentObject var model: AppStateModel
     
     var body: some View {
         HStack(spacing:0) {
@@ -30,6 +31,7 @@ struct FindButton: View {
         .clipShape(Capsule())
         .scaleEffect(isTapping ? 0.9 : 1)
         .brightness(isTapping ? 0.1 : 0)
+        .border(.red)
         .onTapGesture {
             // animation
             withAnimation(.easeIn(duration: 0.1)) {
@@ -40,7 +42,7 @@ struct FindButton: View {
                     isTapping = false
                     
                 }
-
+                model.scrollToBottom = true
             }
             
         }

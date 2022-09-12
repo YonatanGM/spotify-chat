@@ -17,6 +17,7 @@ struct TopArtistsView: View {
     // @State var topArtistResponse: TopArtistsResponse?
     @State var selectedTrackID: String?
     @State var isTapping: Bool = false
+    
 
     
     var body: some View {

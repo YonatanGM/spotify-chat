@@ -37,6 +37,8 @@ class AppStateModel: ObservableObject {
     // assume spotify is not installed 
     @Published var isSpotifyInstalled = false
     
+    @Published var scrollToBottom = false
+    
     private var cancellables = Set<AnyCancellable>()
     
     
