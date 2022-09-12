@@ -52,9 +52,12 @@ struct SwiftyChatView: View {
                 placeholder: "Type something",
                 onCommit: { messageKind in
                     if let currentChatUser = currentChatUser {
+                        // get back to this 
+                        /*
                         DatabaseManager.shared.sendMessage(message: .init(user: currentChatUser,
                                                                           messageKind: messageKind,
                                                                           isSender: true))
+                         */
                     }
                     scrollToBottom = true
                 }

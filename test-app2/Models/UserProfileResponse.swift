@@ -10,15 +10,15 @@ import Foundation
 
 
 struct UserProfileResponse: Codable, Identifiable {
-    let country: String
+    let country: String // is this always available 
     let display_name: String
     let email: String?
-    let explicit_content: [String: Bool]
+    let explicit_content: [String: Bool] // what is this?
     let external_urls: [String: String]
     // let followers: [String: Codable?]
     let id: String
     let images: [APIImage]
-    let product: String
+    let product: String // what is this?
     
     
     

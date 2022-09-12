@@ -138,7 +138,9 @@ public struct Message {
         
         public var topArtists: TopArtistsResponse?
         
-        public init(userName: String, avatarURL: URL? = nil, avatar: UIImage? = nil, id: String = UUID().uuidString, /* additionalInfo: [String: String] = [:] */ topTracks: TopTracksResponse? = nil, topArtists: TopArtistsResponse? = nil) {
+        public var topGenres: [String]?
+        
+        public init(userName: String, avatarURL: URL? = nil, avatar: UIImage? = nil, id: String = UUID().uuidString, /* additionalInfo: [String: String] = [:] */ topTracks: TopTracksResponse? = nil, topArtists: TopArtistsResponse? = nil, topGenres: [String]? = nil) {
             self.id = id
             self.userName = userName
             self.avatar = avatar
@@ -146,6 +148,7 @@ public struct Message {
             // self.additionalInfo = additionalInfo
             self.topTracks = topTracks
             self.topArtists = topArtists
+            self.topGenres = topGenres
             
         }
         
