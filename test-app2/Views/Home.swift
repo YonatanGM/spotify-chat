@@ -39,7 +39,7 @@ struct Home: View {
                     
                     SearchBar(searchText: $searchText)
                         .id(bottomID)
-                        .padding([.bottom])
+//                        .padding([.bottom])
                        
                 }
                 
