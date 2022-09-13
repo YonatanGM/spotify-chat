@@ -80,50 +80,53 @@ extension DatabaseManager {
                         
                         let topArtistUpdates = topArtistsResponse.items.map { $0.name.lowercased().replacingOccurrences(of: "[\\[\\].$#]", with: " ", options: .regularExpression) }.reduce([String: Any]()) {
                             var dict = $0
-                            dict["artists/\($1)/\(profile.id)"] = true
+                            // dict["artists/\(profile.id)/\($1)"] = true
+                            dict["users/\(profile.id)/search/\($1)"] = true
                             return dict
                         }
                         
                         let topTrackUpdates = topTracksResponse.items.map { $0.name.lowercased().replacingOccurrences(of: "[\\[\\].$#]", with: " ", options: .regularExpression) }.reduce([String: Any]()) {
                             var dict = $0
-                            dict["tracks/\($1)/\(profile.id)"] = true
+                            // dict["tracks/\(profile.id)/\($1)"] = true
+                            dict["users/\(profile.id)/search/\($1)"] = true
                             return dict
                         }
                         
-                        print("IIII: ", topArtistUpdates)
-                        print("IIII: ", topTrackUpdates)
-                        
-
-                        // create the user
-                        print("creating new user")
-                        let userUpdates: [String: Any] = [
-                            "users/\(profile.id)" : [
-                                "id": profile.id, //redundant but whatever
-                                "name": profile.display_name,
-                                "email": profile.email,
-                                "profile_picture": profile.images.first?.url,
-                                "top_artists": topArtists,
-                                "top_tracks": topTracks,
-                                "top_genres": Array(topGenres)
-                            ]
-                        ]
-                        let allUpdates = userUpdates.merging(topTrackUpdates) { (_, new) in new }
-                                                    .merging(topArtistUpdates) { (_, new) in new }
-                                                    .merging(topGenreUpdates) { (_, new) in new }
-                        
-                        self?.database.updateChildValues(allUpdates) { error, _ in
-                            guard error == nil else {
-                                completion(false)
-                                return
-                            }
-                            completion(true)
-                        }
-
+                       let userUpdates: [String: Any] = [
+                           "users/\(profile.id)/id": profile.id, //redundant but whatever
+                           "users/\(profile.id)/name": profile.display_name,
+                           "users/\(profile.id)/email": profile.email,
+                           "users/\(profile.id)/profile_picture": profile.images.first?.url,
+                           "users/\(profile.id)/top_artists": topArtists,
+                           "users/\(profile.id)/top_tracks": topTracks,
+                           "users/\(profile.id)/top_genres": Array(topGenres)
+                           
+                       ]
+                       
+                       // update the genres first
+                       self?.database.updateChildValues(topGenreUpdates) {  error, _ in
+                          guard error == nil else {
+                             completion(false)
+                             return
+                          }
+                          
+                          // create the user
+                          // write the user data automically
+                          let allUpdates = userUpdates.merging(topArtistUpdates) { (_, new) in new }
+                                                      .merging(topTrackUpdates) { (_, new) in new }
+ 
+                          self?.database.updateChildValues(allUpdates) { error, _ in
+                              guard error == nil else {
+                                  completion(false)
+                                  return
+                              }
+                             completion(true)
+                          }
+                       }
                     case .failure( _):
                         completion(false)
                     }
                 }
-       
              
             case .failure(_):
                 completion(false)
@@ -194,9 +197,13 @@ extension DatabaseManager {
         self.database.child("users").queryOrdered(byChild: "room").queryEqual(toValue: "\(room)").observeSingleEvent(of: .value) { [weak self] snapshot in
             
             var users = [Message.ChatUserItem]()
-            for case let userSnapshot as DataSnapshot in snapshot.children {
-                if let user = userSnapshot.value as? [String: Any],
-                   let name = user["name"] as? String,
+           guard let usersDict = snapshot.value as? [String: [String: Any]] else {
+                completion(.failure(DatabaseError.failedToFetch))
+                return
+            }
+            
+           for user in usersDict.values {
+                if let name = user["name"] as? String,
                    let id = user["id"] as? String {
 
                     var topTracksResponse: TopTracksResponse?
@@ -233,7 +240,6 @@ extension DatabaseManager {
                     // shouldn't happen
                     continue
                 }
-     
             }
             completion(.success(users))
         }
@@ -497,7 +503,7 @@ extension DatabaseManager {
             break
             
         /// Loading indicator contained in chat bubble
-        case.loading:
+        case .loading:
             break
         }
         
@@ -616,4 +622,88 @@ extension DatabaseManager {
 }
 
 
+//MARK: - Quering (get user by artist or track name)
 
+extension DatabaseManager {
+    
+    
+    
+   public func queryUsersByArtistOrTrackName(_ searchTerms: [String], completion: @escaping ([Message.ChatUserItem]) -> ()) {
+      guard !searchTerms.isEmpty else {
+         completion([])
+         return
+      }
+      
+      var users = [[Message.ChatUserItem]]()
+      let dispatchGroup = DispatchGroup()
+      for term in searchTerms {
+         dispatchGroup.enter()
+         database.child("users")
+            .queryOrdered(byChild: "search/\(term)")
+            .queryEqual(toValue: true)
+            .observeSingleEvent(of: .value) { snapshot in
+               defer {
+                  dispatchGroup.leave()
+               }
+               guard let usersDict = snapshot.value as? [String: [String: Any]] else {
+                  return
+               }
+               var usersCurrentQuery = [Message.ChatUserItem]()
+               for user in usersDict.values {
+                  if let name = user["name"] as? String,
+                     let id = user["id"] as? String {
+                     
+                     var topTracksResponse: TopTracksResponse?
+                     var topArtistsResponse: TopArtistsResponse?
+                     var topGenres: [String]?
+                     // revist this
+                     if let top_artists = user["top_artists"],
+                        let artistsJSON = try? JSONSerialization.data(withJSONObject: top_artists) {
+                        topArtistsResponse = try? JSONDecoder().decode(TopArtistsResponse.self, from: artistsJSON)
+                        
+                     }
+                     
+                     if let top_tracks = user["top_tracks"] {
+                        if JSONSerialization.isValidJSONObject(top_tracks) {
+                           if let tracksJSON = try? JSONSerialization.data(withJSONObject: top_tracks) {
+                              do {
+                                 topTracksResponse = try JSONDecoder().decode(TopTracksResponse.self, from: tracksJSON)
+                              } catch {
+                                 print("ERROR:", error)
+                              }
+                           }
+                        }
+                     }
+                     
+                     topGenres = user["top_genres"] as? [String]
+                     var photoURL: URL?
+                     if let photoURLString = user["profile_picture"] as? String {
+                        photoURL = URL(string: photoURLString)
+                     }
+                     
+                     usersCurrentQuery.append(.init(userName: name, avatarURL: photoURL, avatar: nil, id: id, topTracks: topTracksResponse, topArtists: topArtistsResponse, topGenres: topGenres))
+                     
+                  }
+               }
+               users.append(usersCurrentQuery)
+            }
+      }
+      
+      dispatchGroup.notify(queue: .main) {
+         guard let initalResults = users.first else {
+            completion([])
+            return
+         }
+         let result = users.reduce(Set<Message.ChatUserItem>(initalResults)) {
+            $0.intersection($1)
+         }
+         completion(Array(result))
+         
+      }
+   }
+   
+   // rename
+   public func removeObserver(with path: String) {
+      database.child(path).removeAllObservers()
+   }
+}

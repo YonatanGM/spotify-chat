@@ -113,12 +113,15 @@ public struct Message {
     }
     
     // MARK: - Concrete model for ChatUser
-    public struct ChatUserItem: ChatUser {
+    public struct ChatUserItem: Hashable, ChatUser {
 
         public static func == (lhs: ChatUserItem, rhs: ChatUserItem) -> Bool {
             lhs.id == rhs.id
         }
 
+        public func hash(into hasher: inout Hasher) {
+               hasher.combine(id)
+        }
         public let id: String
         
         /// Username

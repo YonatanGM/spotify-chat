@@ -38,6 +38,7 @@ class AppStateModel: ObservableObject {
     @Published var isSpotifyInstalled = false
     
     @Published var scrollToBottom = false
+    @Published var searchResults = [Message.ChatUserItem]()
     
     private var cancellables = Set<AnyCancellable>()
     
@@ -48,6 +49,7 @@ class AppStateModel: ObservableObject {
     @Published var pendingGroups = [Group]()
     
     init() {
+        print("yeah")
         // check if spotify is installed
         // ... if I want to open appstore in case spotify is not installed 
         if let url = URL(string: "spotify://"), UIApplication.shared.canOpenURL(url) {
@@ -222,3 +224,20 @@ extension AppStateModel {
     
 }
 
+extension AppStateModel {
+    
+    func queryUsersByArtistOrTrackName(_ terms: [String]) {
+        // clear previous result
+        self.searchResults = []
+        // remove ongoing observers
+        DatabaseManager.shared.removeObserver(with: "User")
+        // cancel search if it takes too long
+        DispatchQueue.main.asyncAfter(deadline: .now() + 10) {
+            DatabaseManager.shared.removeObserver(with: "User")
+        }
+        DatabaseManager.shared.queryUsersByArtistOrTrackName(terms) { [weak self] results in
+            self?.searchResults = results
+            
+        }
+    }
+}

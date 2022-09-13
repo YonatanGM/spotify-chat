@@ -27,6 +27,7 @@ struct MainView: View {
             
         
         }
+        .navigationViewStyle(StackNavigationViewStyle())
     }
 }
 

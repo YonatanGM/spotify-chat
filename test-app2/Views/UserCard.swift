@@ -102,7 +102,7 @@ struct UserCard: View {
         .scaleEffect(selectedUserID == user.id && isTapping ? 0.9 : 1)
         .brightness(selectedUserID == user.id && isTapping ? 0.1 : 0)
         .onTapGesture {
-            print(model.usersInCurrentRoom.map { $0.id })
+            // print(model.usersInCurrentRoom.map { $0.id })
             selectedUserID = user.id
             // animation
             withAnimation(.easeIn(duration: 0.1)) {

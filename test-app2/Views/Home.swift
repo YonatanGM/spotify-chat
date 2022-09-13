@@ -31,12 +31,13 @@ struct Home: View {
             ScrollViewReader { proxy in
                 ScrollView(showsIndicators: false) {
     //                GroupsView()
-                    UsersView()
+                     UsersView()
                         
-                    TopArtistsView()
+                     TopArtistsView()
                         
-                    TopTracksView()
-                    
+                     TopTracksView()
+                
+       
                     SearchBar(searchText: $searchText)
                         .id(bottomID)
 //                        .padding([.bottom])
@@ -46,7 +47,7 @@ struct Home: View {
                 .overlay(Bar().padding(5), alignment: .top)
                 .onChange(of: model.scrollToBottom) { value in
                     if value == true {
-                        withAnimation(Animation.easeInOut(duration: 1)) {
+                        withAnimation {
                             proxy.scrollTo(bottomID)
                         }
                         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
@@ -55,6 +56,12 @@ struct Home: View {
                             }
                         }
                     }
+
+                    
+                    
+                }
+                .onChange(of: model.searchResults) { _ in
+                    proxy.scrollTo(bottomID)
                     
                 }
             }

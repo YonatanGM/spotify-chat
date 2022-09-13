@@ -32,6 +32,7 @@ struct TopArtistsView: View {
                            let url = URL(string: urlString) {
                                 VStack {
                                     AnimatedImage(url: url)
+                                    // Image(systemName: "Rectangle.fill")
                                         .resizable()
                                         .scaledToFill()
                                         .clipShape(Circle())

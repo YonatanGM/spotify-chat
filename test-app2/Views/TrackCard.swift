@@ -34,9 +34,10 @@ struct TrackCard: View {
             VStack {
                 if let urlString = track.album?.images.first?.url,
                    let url = URL(string: urlString) {
-                    AnimatedImage(url: url)
+                     AnimatedImage(url: url)
+                    // Image(systemName: "Rectangle.fill")
                         .resizable()
-                        .scaledToFill()
+                        .scaledToFit()
                 } else {
                     // probably don't need this
                     Image(systemName: "Rectangle.fill")
@@ -206,90 +207,90 @@ struct TrackCard: View {
 //                like = result
 //                
 //            }
-            
-            // initalize AVPlayer
-            if let urlString = track.preview_url,
-               let url = URL(string: urlString) {
-                audioPlayer = AVPlayer(url: url)
-                audioPlayer!.actionAtItemEnd = .pause
-                audioPlayer!.addPeriodicTimeObserver(forInterval:
-                                                        CMTime(seconds: 0.1, preferredTimescale: CMTimeScale(NSEC_PER_SEC)),
-                                                     queue: .main,
-                                                     using: { time in
-                    // weird problem here, starts at 0 and jump to 0.1
-                     print(time.seconds)
-                    progress = time.seconds / 30
-                })
-                
-                // add oberver to detect when preview ends
-                itemDidPlayToEndTimeObserver = NotificationCenter.default.addObserver(forName: .AVPlayerItemDidPlayToEndTime, object: audioPlayer!.currentItem, queue: .main) { _ in
-                    // seek to beginning
-                    print("pp:")
-                    audioPlayer?.pause()
-                    audioPlayer?.seek(to: CMTime(seconds: 0, preferredTimescale: 30))
-                   
-                }
-                
-                itemFailedToPlayToEndTimeObserver = NotificationCenter.default.addObserver(forName: .AVPlayerItemFailedToPlayToEndTime, object: audioPlayer!.currentItem, queue: .main) { _ in
-                    // seek to beginning
-                    print("pp:x")
-                    audioPlayer?.pause()
-                    audioPlayer?.seek(to: CMTime(seconds: 0, preferredTimescale: 30))
-                   
-                }
-                
-                itemPlaybackStalledObserved = NotificationCenter.default.addObserver(forName: .AVPlayerItemPlaybackStalled, object: audioPlayer!.currentItem, queue: .main) { _ in
-                    // seek to beginning
-                    print("pp:")
-                    audioPlayer?.pause()
-                    audioPlayer?.seek(to: CMTime(seconds: 0, preferredTimescale: 30))
-                   
-                }
-                
-                
-
-            }
+//
+//            // initalize AVPlayer
+//            if let urlString = track.preview_url,
+//               let url = URL(string: urlString) {
+//                audioPlayer = AVPlayer(url: url)
+//                audioPlayer!.actionAtItemEnd = .pause
+//                audioPlayer!.addPeriodicTimeObserver(forInterval:
+//                                                        CMTime(seconds: 0.1, preferredTimescale: CMTimeScale(NSEC_PER_SEC)),
+//                                                     queue: .main,
+//                                                     using: { time in
+//                    // weird problem here, starts at 0 and jump to 0.1
+//                     print(time.seconds)
+//                    progress = time.seconds / 30
+//                })
+//
+//                // add oberver to detect when preview ends
+//                itemDidPlayToEndTimeObserver = NotificationCenter.default.addObserver(forName: .AVPlayerItemDidPlayToEndTime, object: audioPlayer!.currentItem, queue: .main) { _ in
+//                    // seek to beginning
+//                    print("pp:")
+//                    audioPlayer?.pause()
+//                    audioPlayer?.seek(to: CMTime(seconds: 0, preferredTimescale: 30))
+//
+//                }
+//
+//                itemFailedToPlayToEndTimeObserver = NotificationCenter.default.addObserver(forName: .AVPlayerItemFailedToPlayToEndTime, object: audioPlayer!.currentItem, queue: .main) { _ in
+//                    // seek to beginning
+//                    print("pp:x")
+//                    audioPlayer?.pause()
+//                    audioPlayer?.seek(to: CMTime(seconds: 0, preferredTimescale: 30))
+//
+//                }
+//
+//                itemPlaybackStalledObserved = NotificationCenter.default.addObserver(forName: .AVPlayerItemPlaybackStalled, object: audioPlayer!.currentItem, queue: .main) { _ in
+//                    // seek to beginning
+//                    print("pp:")
+//                    audioPlayer?.pause()
+//                    audioPlayer?.seek(to: CMTime(seconds: 0, preferredTimescale: 30))
+//
+//                }
+//
+//
+//
+//            }
         }
         .onDisappear {
-            print("dis")
-            play = false
-            audioPlayer?.pause()
-            audioPlayer?.seek(to: CMTime(seconds: 0, preferredTimescale: 30))
-
-            NotificationCenter.default.removeObserver(itemDidPlayToEndTimeObserver!)
-            NotificationCenter.default.removeObserver(itemFailedToPlayToEndTimeObserver!)
-            NotificationCenter.default.removeObserver(itemPlaybackStalledObserved!)
-            
+//            print("dis")
+//            play = false
+//            audioPlayer?.pause()
+//            audioPlayer?.seek(to: CMTime(seconds: 0, preferredTimescale: 30))
+//
+//            NotificationCenter.default.removeObserver(itemDidPlayToEndTimeObserver!)
+//            NotificationCenter.default.removeObserver(itemFailedToPlayToEndTimeObserver!)
+//            NotificationCenter.default.removeObserver(itemPlaybackStalledObserved!)
+//
             
             
         }
         .onReceive(model.$playingTrackID) { id in
-            guard let trackID = id else {
-                return
-            }
-            
-            if track.id != trackID && audioPlayer?.timeControlStatus == .playing {
-                // stop playing and seek to beginning
-                play = false
-                audioPlayer?.pause()
-                audioPlayer?.seek(to: CMTime(seconds: 0, preferredTimescale: 30))
-            }
+//            guard let trackID = id else {
+//                return
+//            }
+//
+//            if track.id != trackID && audioPlayer?.timeControlStatus == .playing {
+//                // stop playing and seek to beginning
+//                play = false
+//                audioPlayer?.pause()
+//                audioPlayer?.seek(to: CMTime(seconds: 0, preferredTimescale: 30))
+//            }
 
         }
         
         .onChange(of: scenePhase) { phase in
             // check .inactive
-            if phase == .background {
-                // pause the player if it's playing when app goes to background
-                if play == true {
-                    audioPlayer?.pause()
-                }
-            } else if phase == .active {
-                // continue playing if the player was paused
-                if play == true {
-                    audioPlayer?.play()
-                }
-            }
+//            if phase == .background {
+//                // pause the player if it's playing when app goes to background
+//                if play == true {
+//                    audioPlayer?.pause()
+//                }
+//            } else if phase == .active {
+//                // continue playing if the player was paused
+//                if play == true {
+//                    audioPlayer?.play()
+//                }
+//            }
         }
 
     }
