@@ -39,6 +39,7 @@ class AppStateModel: ObservableObject {
     
     @Published var scrollToBottom = false
     @Published var searchResults = [Message.ChatUserItem]()
+   
     
     private var cancellables = Set<AnyCancellable>()
     
@@ -226,7 +227,7 @@ extension AppStateModel {
 
 extension AppStateModel {
     
-    func queryUsersByArtistOrTrackName(_ terms: [String]) {
+    func queryUsersByArtistOrTrackName(_ terms: [String], completion: @escaping ([Message.ChatUserItem]) -> Void) {
         // clear previous result
         self.searchResults = []
         // remove ongoing observers
@@ -235,8 +236,9 @@ extension AppStateModel {
         DispatchQueue.main.asyncAfter(deadline: .now() + 10) {
             DatabaseManager.shared.removeObserver(with: "User")
         }
-        DatabaseManager.shared.queryUsersByArtistOrTrackName(terms) { [weak self] results in
-            self?.searchResults = results
+        DatabaseManager.shared.queryUsersByArtistOrTrackName(terms) { results in
+            // self?.searchResults = results
+            completion(results)
             
         }
     }

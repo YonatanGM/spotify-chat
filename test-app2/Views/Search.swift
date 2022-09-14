@@ -46,7 +46,10 @@ struct SearchBar: View {
                                  .replacingOccurrences(of: "[\\[\\].$#]", with: " ", options: .regularExpression)
                              }
                              
-                         model.queryUsersByArtistOrTrackName(terms)
+                         model.queryUsersByArtistOrTrackName(terms) { results in
+                             model.searchResults = results
+
+                         }
                      }
                      .accentColor(.white)
                      .keyboardType(.webSearch)

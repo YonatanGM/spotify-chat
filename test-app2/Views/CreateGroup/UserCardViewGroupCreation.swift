@@ -14,12 +14,15 @@ struct UserCardViewGroupCreation: View {
     @State var selectedUserID: String? = nil
     @State var isTapping = false
     @State var addedUsers = [Message.ChatUserItem]()
+    @State var searchText = ""
+    @State var searchResults = [Message.ChatUserItem]()
     @Namespace private var animation
     var body: some View {
         
-        VStack {
+        VStack(alignment: .leading, spacing: 5) {
             
             HStack {
+                Spacer()
                 ForEach(addedUsers, id: \.id) { user in
                     if let url = user.avatarURL {
                         AnimatedImage(url: url)
@@ -34,7 +37,13 @@ struct UserCardViewGroupCreation: View {
                                 }
                                 
                             }
-                            .matchedGeometryEffect(id: "pic", in: animation)
+                            .overlay(
+                                Image(systemName: "x.circle.fill")
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: 15, height: 15)
+                                , alignment: .topTrailing)
+                            .matchedGeometryEffect(id: user.id, in: animation)
                         
                     } else {
                         
@@ -49,40 +58,102 @@ struct UserCardViewGroupCreation: View {
                                 }
                                 
                             }
-                            .matchedGeometryEffect(id: "picInitial", in: animation)
+                        
+                            .overlay(
+                                Image(systemName: "x.circle.fill")
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: 15, height: 15)
+                                , alignment: .topTrailing)
+                            .matchedGeometryEffect(id: "picInitial" + user.id, in: animation)
                         
                     }
                     
                 }
+                Spacer()
             }
-            .frame(height: 100)
-            ScrollView(.horizontal, showsIndicators: false) {
-
+            .frame(height: 50)
+            
+            Text("Find")
+                .fontWeight(.light)
+                .font(.largeTitle)
+                .padding([.horizontal], 10)
+            
+            ZStack {
+                Rectangle()
+                    .foregroundColor(.backdrop)
                 HStack {
-                    ForEach(model.usersInCurrentRoom.filter { !addedUsers.contains($0) }, id: \.id) { user in
-                        UserCardGroupCreation(user: user, namespace: animation)
-                        
-                            .onTapGesture {
-                     
-                
-                                withAnimation(.spring(response: 0.5)) {
-                                        addedUsers.append(user)
-                                    }
-                                   
-                                
-                                
+                    Image(systemName: "magnifyingglass")
+                    TextField("Search", text: $searchText) {
+                        let terms = searchText
+                            .components(separatedBy: ",")
+                            .filter { !$0.isEmpty }
+                            .map { $0.lowercased()
+                                    .replacingOccurrences(of: "[\\[\\].$#]", with: " ", options: .regularExpression)
                             }
-                         
-
-
-
+                        
+                        model.queryUsersByArtistOrTrackName(terms) { results in
+                            searchResults = results
+                        }
+                        
+                    }
+                    
+                    .accentColor(.white)
+                    .keyboardType(.webSearch)
+                    .disableAutocorrection(true)
+                    .onChange(of: searchText) {
+                        if $0.isEmpty {
+                            searchResults = []
+                        }
+                    }
+                }
+                .foregroundColor(.white)
+                .padding(.leading, 13)
+            }
+            .frame(height: 40)
+            .clipShape(Capsule())
+            .padding([.horizontal], 10)
+            // search results
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack {
+                    ForEach(searchResults.filter { userFromSearch in
+                        !model.usersInCurrentRoom.map { $0.id }.contains(userFromSearch.id)
+                    }, id: \.id) { user in
+                        UserCardGroupCreation(user: user, namespace: animation)
+                            .padding([.horizontal], 1)
+                            .padding([.leading], searchResults.first?.id == user.id ? 10 : 0)
+                            .onTapGesture {
+                                withAnimation(.spring(response: 0.5)) {
+                                    addedUsers.append(user)
+                                }
+                            }
                     }
                 }
             }
-            .frame(height: Double(UIScreen.main.bounds.width) / 2)
+            .padding([.bottom])
             
+            
+            Text("Suggested users")
+                .fontWeight(.light)
+                .font(.largeTitle)
+                .padding([.horizontal], 10)
+            ScrollView(.horizontal, showsIndicators: false) {
+                
+                HStack {
+                    ForEach(model.usersInCurrentRoom.filter { !addedUsers.contains($0) }, id: \.id) { user in
+                        UserCardGroupCreation(user: user, namespace: animation)
+                            .padding([.horizontal], 1)
+                            .padding([.leading], model.usersInCurrentRoom.first?.id == user.id ? 10 : 0)
+                            .onTapGesture {
+                                withAnimation(.spring(response: 0.5)) {
+                                    addedUsers.append(user)
+                                }
+                            }
+                    }
+                }
+            }
+            Spacer()
         }
-
     }
 }
 

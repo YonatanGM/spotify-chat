@@ -13,18 +13,18 @@ struct Home: View {
     @EnvironmentObject var model: AppStateModel
     var body: some View {
         ZStack {
-
+            
             LinearGradient(colors: [
-//                Color(.sRGB,
-//                      red: Double(30) / 255,
-//                      green: Double(15) / 255,
-//                      blue: Double(25) / 255,
-//                      opacity: 0.8),
-//                Color(.sRGB,
-//                      red: Double(20) / 255,
-//                      green: Double(15) / 255,
-//                      blue: Double(25) / 255,
-//                      opacity: 1)
+                //                Color(.sRGB,
+                //                      red: Double(30) / 255,
+                //                      green: Double(15) / 255,
+                //                      blue: Double(25) / 255,
+                //                      opacity: 0.8),
+                //                Color(.sRGB,
+                //                      red: Double(20) / 255,
+                //                      green: Double(15) / 255,
+                //                      blue: Double(25) / 255,
+                //                      opacity: 1)
                 Color(.sRGB,
                       red: Double(20) / 255,
                       green: Double(20) / 255,
@@ -35,23 +35,24 @@ struct Home: View {
                       green: Double(10) / 255,
                       blue: Double(10) / 255,
                       opacity: 1)
-
+                
             ], startPoint: .topLeading, endPoint: .center)
             .ignoresSafeArea(.all, edges: .all)
             ScrollViewReader { proxy in
                 ScrollView(showsIndicators: false) {
-    //                GroupsView()
-                     UsersView()
-                        
-                     TopArtistsView()
-                        
-                     TopTracksView()
-                
-       
+                    //                GroupsView()
+                    UsersView()
+                    
+                    TopArtistsView()
+                    
+                    TopTracksView()
+                    
+                    Spacer()
+                    
                     SearchBar(searchText: $searchText)
                         .id(bottomID)
-//                        .padding([.bottom])
-                       
+                    //                        .padding([.bottom])
+                    
                 }
                 
                 .overlay(Bar().padding(5), alignment: .top)
@@ -66,7 +67,7 @@ struct Home: View {
                             }
                         }
                     }
-
+                    
                     
                     
                 }
@@ -76,7 +77,7 @@ struct Home: View {
                 }
             }
         }
-       
+        
     }
 }
 

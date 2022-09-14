@@ -21,15 +21,18 @@ struct UserCardGroupCreation: View {
                         .resizable()
                         .scaledToFit()
                         .clipShape(Circle())
+                        .frame(height: Double(UIScreen.main.bounds.width) / 3)
                         .shadow(radius: 5)
-                        .matchedGeometryEffect(id: "pic", in: namespace)
+                        .matchedGeometryEffect(id: user.id, in: namespace)
                 } else {
                     InitialsUI(initials: user.userName.components(separatedBy: " ").first ?? "", useDefaultForegroundColor: true, fontWeight: .light)
                     
                         .scaledToFit()
                         .clipShape(Circle())
+                        .frame(height: Double(UIScreen.main.bounds.width) / 3)
                         .shadow(radius: 5)
-                        .matchedGeometryEffect(id: "picInitial", in: namespace)
+                        .matchedGeometryEffect(id: "picInitial" + user.id, in: namespace)
+                        
                     
                 }
                 
