@@ -7,6 +7,7 @@
 
 import SwiftUI
 import SDWebImageSwiftUI
+import InitialsUI
 
 struct UserCardViewGroupCreation: View {
     @EnvironmentObject var model: AppStateModel
@@ -25,10 +26,10 @@ struct UserCardViewGroupCreation: View {
                             .resizable()
                             .scaledToFit()
                             .clipShape(Circle())
-                            .frame(height: Double(UIScreen.main.bounds.width) / 6)
+                            .frame(height: Double(UIScreen.main.bounds.width) / 10)
                             .shadow(radius: 5)
                             .onTapGesture {
-                                withAnimation {
+                                withAnimation(.spring(response: 0.5))  {
                                     addedUsers = addedUsers.filter { $0.id != user.id}
                                 }
                                 
@@ -37,36 +38,34 @@ struct UserCardViewGroupCreation: View {
                         
                     } else {
                         
-                        Image(systemName: "Person.fill")
-                            .resizable()
+                        InitialsUI(initials: user.userName.components(separatedBy: " ").first ?? "", useDefaultForegroundColor: true, fontWeight: .light)
                             .scaledToFit()
                             .clipShape(Circle())
-                            .frame(height: Double(UIScreen.main.bounds.width) / 6)
+                            .frame(height: Double(UIScreen.main.bounds.width) / 10)
                             .shadow(radius: 5)
                             .onTapGesture {
-                                withAnimation {
+                                withAnimation(.spring(response: 0.5))  {
                                     addedUsers = addedUsers.filter { $0.id != user.id}
                                 }
                                 
                             }
-                            .matchedGeometryEffect(id: "pic", in: animation)
+                            .matchedGeometryEffect(id: "picInitial", in: animation)
                         
                     }
                     
                 }
             }
-            
+            .frame(height: 100)
             ScrollView(.horizontal, showsIndicators: false) {
 
                 HStack {
                     ForEach(model.usersInCurrentRoom.filter { !addedUsers.contains($0) }, id: \.id) { user in
-                        UserCardGroupCreation(namespace: animation, user: user)
-                           
-  
+                        UserCardGroupCreation(user: user, namespace: animation)
+                        
                             .onTapGesture {
                      
                 
-                                    withAnimation {
+                                withAnimation(.spring(response: 0.5)) {
                                         addedUsers.append(user)
                                     }
                                    

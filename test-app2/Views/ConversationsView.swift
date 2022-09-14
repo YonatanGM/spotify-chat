@@ -31,7 +31,7 @@ struct ConversationsView: View {
                    
             }
             .navigationTitle("Conversations")
-            .navigationBarTitleDisplayMode(.inline)
+            // .navigationBarTitleDisplayMode(.inline)
 
             
             // bar

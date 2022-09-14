@@ -40,6 +40,7 @@
 		9F17479E28CDBB290054AE20 /* UserInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F17479D28CDBB290054AE20 /* UserInfo.swift */; };
 		9F1747A028CE19CE0054AE20 /* GroupsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F17479F28CE19CE0054AE20 /* GroupsView.swift */; };
 		9F1747BE28CF3C970054AE20 /* ArtistAnimatedIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F1747BD28CF3C960054AE20 /* ArtistAnimatedIcon.swift */; };
+		9F22828628D238970050929E /* InitialsUI in Frameworks */ = {isa = PBXBuildFile; productRef = 9F22828528D238970050929E /* InitialsUI */; };
 		9F9C419228CF531F009CA948 /* FindButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F9C419128CF531E009CA948 /* FindButton.swift */; };
 		9F9C419628CF6BE4009CA948 /* Search.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F9C419528CF6BE4009CA948 /* Search.swift */; };
 		9F9C419A28D13F76009CA948 /* UserCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F9C419928D13F76009CA948 /* UserCard.swift */; };
@@ -115,6 +116,7 @@
 				46B2F95F2816B6130003AA69 /* FirebaseAuth in Frameworks */,
 				46FD5021281E9DEF00505CB7 /* FirebaseStorage in Frameworks */,
 				46EAE403280961AE0061C9BB /* ExternalAccessory.framework in Frameworks */,
+				9F22828628D238970050929E /* InitialsUI in Frameworks */,
 				465B9C332814A17C00665947 /* FirebaseDatabase in Frameworks */,
 				463FEF2C281D60F2005155EE /* JGProgressHUD-SwiftUI in Frameworks */,
 				46F8B3D9284C3B6900EBCD9C /* SwiftyChat in Frameworks */,
@@ -140,10 +142,7 @@
 				9F9C419B28D1529D009CA948 /* ConversationsView.swift */,
 				9FD44B9D28CB84290028A408 /* GroupChat.swift */,
 				4685CEBF285106CC00EE5376 /* SwiftyChatView.swift */,
-				9FD44B9728CB683D0028A408 /* ChatButton.swift */,
-				9F9C419128CF531E009CA948 /* FindButton.swift */,
-				9FD44B9928CB7B140028A408 /* InviteButton.swift */,
-				9F9C419D28D1562E009CA948 /* NewGroupButton.swift */,
+				9F22828728D23DCF0050929E /* Buttons */,
 				9F9C41A128D18A52009CA948 /* CreateGroup */,
 				9FD44B9B28CB7B9A0028A408 /* Bar.swift */,
 				9F1747BD28CF3C960054AE20 /* ArtistAnimatedIcon.swift */,
@@ -270,6 +269,17 @@
 			path = "Firebase ";
 			sourceTree = "<group>";
 		};
+		9F22828728D23DCF0050929E /* Buttons */ = {
+			isa = PBXGroup;
+			children = (
+				9FD44B9728CB683D0028A408 /* ChatButton.swift */,
+				9F9C419128CF531E009CA948 /* FindButton.swift */,
+				9FD44B9928CB7B140028A408 /* InviteButton.swift */,
+				9F9C419D28D1562E009CA948 /* NewGroupButton.swift */,
+			);
+			path = Buttons;
+			sourceTree = "<group>";
+		};
 		9F9C41A128D18A52009CA948 /* CreateGroup */ = {
 			isa = PBXGroup;
 			children = (
@@ -304,6 +314,7 @@
 				463FEF2B281D60F2005155EE /* JGProgressHUD-SwiftUI */,
 				46FD5020281E9DEF00505CB7 /* FirebaseStorage */,
 				46F8B3D8284C3B6900EBCD9C /* SwiftyChat */,
+				9F22828528D238970050929E /* InitialsUI */,
 			);
 			productName = "test-app2";
 			productReference = 46F5CA662808C23E00D58C41 /* test-app2.app */;
@@ -341,6 +352,7 @@
 				465B9C2F2814A17C00665947 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 				463FEF2A281D60F2005155EE /* XCRemoteSwiftPackageReference "JGProgressHUD-SwiftUI" */,
 				46F8B3D7284C3B6900EBCD9C /* XCRemoteSwiftPackageReference "SwiftyChat" */,
+				9F22828428D238970050929E /* XCRemoteSwiftPackageReference "InitialsUI" */,
 			);
 			productRefGroup = 46F5CA672808C23E00D58C41 /* Products */;
 			projectDirPath = "";
@@ -647,6 +659,14 @@
 				minimumVersion = 2.0.0;
 			};
 		};
+		9F22828428D238970050929E /* XCRemoteSwiftPackageReference "InitialsUI" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/lovetodream/InitialsUI";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -684,6 +704,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 465B9C2F2814A17C00665947 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebaseStorage;
+		};
+		9F22828528D238970050929E /* InitialsUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 9F22828428D238970050929E /* XCRemoteSwiftPackageReference "InitialsUI" */;
+			productName = InitialsUI;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

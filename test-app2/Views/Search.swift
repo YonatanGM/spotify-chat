@@ -19,6 +19,7 @@ struct SearchBar: View {
                 HStack {
                     ForEach(model.searchResults, id: \.id) { user in
                         UserCard(user: user)
+                            .padding([.horizontal], 1)
                             .animation(nil)
                     }
                 }

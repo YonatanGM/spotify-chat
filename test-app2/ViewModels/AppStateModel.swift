@@ -198,7 +198,7 @@ extension AppStateModel {
                         print(users.map { $0.userName })
           
                         self?.usersInCurrentRoom = users
-                        print( self?.usersInCurrentRoom)
+//                        print( self?.usersInCurrentRoom)
                     case .failure(_):
                         print("failed to get users in new room")
                     }
