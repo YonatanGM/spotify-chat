@@ -10,7 +10,7 @@ import SDWebImageSwiftUI
 
 struct ArtistAnimatedIcon: View {
     let url: URL
-    let shouldAnimate: Bool
+
     @State var scale = 0.001
     
     var body: some View {
@@ -21,11 +21,11 @@ struct ArtistAnimatedIcon: View {
             .scaledToFill()
             .clipShape(Circle())
             .shadow(radius: 5)
-            .scaleEffect(shouldAnimate ? scale : 1.0)
+            .scaleEffect(scale)
             .onAppear {
                 withAnimation(.easeIn(duration: 0.2)) {
                     scale = 1.0
-                    print("md")
+
                 }
                
             }

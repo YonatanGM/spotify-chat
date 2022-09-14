@@ -15,15 +15,25 @@ struct Home: View {
         ZStack {
 
             LinearGradient(colors: [
+//                Color(.sRGB,
+//                      red: Double(30) / 255,
+//                      green: Double(15) / 255,
+//                      blue: Double(25) / 255,
+//                      opacity: 0.8),
+//                Color(.sRGB,
+//                      red: Double(20) / 255,
+//                      green: Double(15) / 255,
+//                      blue: Double(25) / 255,
+//                      opacity: 1)
                 Color(.sRGB,
                       red: Double(20) / 255,
                       green: Double(20) / 255,
                       blue: Double(20) / 255,
-                      opacity: 0.75),
+                      opacity: 0.6),
                 Color(.sRGB,
-                      red: Double(25) / 255,
-                      green: Double(25) / 255,
-                      blue: Double(25) / 255,
+                      red: Double(10) / 255,
+                      green: Double(10) / 255,
+                      blue: Double(10) / 255,
                       opacity: 1)
 
             ], startPoint: .topLeading, endPoint: .center)

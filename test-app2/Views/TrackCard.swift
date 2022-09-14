@@ -38,7 +38,7 @@ struct TrackCard: View {
                     // Image(systemName: "Rectangle.fill")
                         .resizable()
                         .scaledToFit()
-                        .cornerRadius(5)
+                
                 } else {
                     // probably don't need this
                     Image(systemName: "Rectangle.fill")

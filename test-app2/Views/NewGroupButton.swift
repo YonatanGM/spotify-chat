@@ -46,44 +46,11 @@ struct NewGroupButton: View {
         
         .sheet(isPresented: $presentSheet,
                onDismiss: {
+               
 
         }) {
-            ZStack(alignment: .topLeading) {
-                LinearGradient(colors: [
-                    Color(.sRGB,
-                          red: Double(18) / 255,
-                          green: Double(18) / 255,
-                          blue: Double(18) / 255,
-                          opacity: 0.75),
-                    Color(.sRGB,
-                          red: Double(18) / 255,
-                          green: Double(18) / 255,
-                          blue: Double(18) / 255,
-                          opacity: 1)
-  
-                ], startPoint: .top, endPoint: .bottom)
-                VStack {
-                    
-                    HStack {
-                        Spacer()
-                        HStack {
-                            Text("Done")
-                                .font(.headline)
-                        }
-                        .padding([.horizontal], 10)
-                        .padding([.vertical], 7.5)
-                        .foregroundColor(.white)
-                        .background(
-                            Color.backdrop
-                        )
-                        
-                    }
-                    Spacer()
-                }
-                
-            }
 
-      
+            CreateGroup(present: $presentSheet)
 
         }
 

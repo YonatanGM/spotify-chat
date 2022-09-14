@@ -18,12 +18,12 @@ struct ConversationsView: View {
                       blue: Double(20) / 255,
                       opacity: 0.75),
                 Color(.sRGB,
-                      red: Double(25) / 255,
-                      green: Double(25) / 255,
-                      blue: Double(25) / 255,
+                      red: Double(10) / 255,
+                      green: Double(10) / 255,
+                      blue: Double(10) / 255,
                       opacity: 1)
 
-            ], startPoint: .top, endPoint: .bottom)
+            ], startPoint: .topLeading, endPoint: .bottom)
             .ignoresSafeArea(.all, edges: .all)
             
             ScrollView(showsIndicators: false) {
@@ -31,6 +31,8 @@ struct ConversationsView: View {
                    
             }
             .navigationTitle("Conversations")
+            .navigationBarTitleDisplayMode(.inline)
+
             
             // bar
             .overlay(

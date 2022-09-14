@@ -15,7 +15,7 @@ struct UserCard: View {
     @State var selectedUserID: String?
     @State var isTapping = false
     @State var showUserDetail = false
-    @State var shouldAnimate = false
+
     let user: Message.ChatUserItem
     var body: some View {
         VStack {
@@ -24,49 +24,50 @@ struct UserCard: View {
                                destination: { Text(user.userName) },
                                label: { EmptyView() })
                 if let url = user.avatarURL {
-                    AnimatedImage(url: url)
-                        .resizable()
-                        .scaledToFit()
-                        .clipShape(Circle())
-                        .frame(height: Double(UIScreen.main.bounds.width) / 3)
                     VStack {
-               
-                        ScrollView(.horizontal, showsIndicators: false) {
-                            LazyHStack(spacing: 0) {
-                                if let topArtistResponse = user.topArtists {
-                                    ForEach(topArtistResponse.items.prefix(20), id: \.id) { artist in
-                                        if let urlString = artist.images?.first?.url,
-                                            let url = URL(string: urlString) {
-                                            ArtistAnimatedIcon(url: url, shouldAnimate: shouldAnimate)
-    
-                                        }
+                        
+
+
+                        AnimatedImage(url: url)
+                            .resizable()
+                            .scaledToFit()
+                            .clipShape(Circle())
+                            .frame(height: Double(UIScreen.main.bounds.width) / 3)
+                            .shadow(radius: 5)
+                        
+                        HStack {
+                            Spacer()
+                            Text(user.userName)
+                            .font(.subheadline)
+                            .foregroundColor(.white)
+                            .lineLimit(1)
+                            Spacer()
+
+                        }
+
+                    }
+
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        LazyHStack(spacing: 1) {
+                            if let topArtistResponse = user.topArtists {
+                                ForEach(topArtistResponse.items.prefix(20), id: \.id) { artist in
+                                    if let urlString = artist.images?.first?.url,
+                                        let url = URL(string: urlString) {
+                                        ArtistAnimatedIcon(url: url)
+                                            
+
                                     }
                                 }
                             }
-                            .background(GeometryReader {
-                                Color.clear.preference(key: ViewOffsetKey.self,
-                                value: -$0.frame(in: .named("scroll")).origin.x)
-                            }).onPreferenceChange(ViewOffsetKey.self) {
-                                // print("offset >> \($0)")
-                                shouldAnimate = $0 > 0.0
-                                // print(" SS", shouldAnimate)
-                                
-                            }
-                           
                         }
-                        .frame(height: 20)
-        
-                        .coordinateSpace(name: "scroll")
-                        .frame(width: Double(UIScreen.main.bounds.width) / 4)
-                        .cornerRadius(10)
-                    Text(user.userName)
-                            .font(.headline)
-                        .foregroundColor(.white)
-                        .lineLimit(1)
-                        
-                        
+                       
                     }
+                    .frame(height: 20)
+                    .frame(width: 125)
+                    .cornerRadius(10)
+                    
 
+                
    
                 } else {
                     // no profile pic
@@ -92,12 +93,13 @@ struct UserCard: View {
                 }
             }
             
-            .padding(10)
+            .padding([.vertical], 10)
+            .padding([.horizontal])
      
         }
-
+        .background(Color.backdrop)
         .cornerRadius(5)
-
+        
         
         .scaleEffect(selectedUserID == user.id && isTapping ? 0.9 : 1)
         .brightness(selectedUserID == user.id && isTapping ? 0.1 : 0)
@@ -117,14 +119,6 @@ struct UserCard: View {
             
         }
 
-    }
-}
-
-struct ViewOffsetKey: PreferenceKey {
-    typealias Value = CGFloat
-    static var defaultValue = CGFloat.zero
-    static func reduce(value: inout Value, nextValue: () -> Value) {
-        value += nextValue()
     }
 }
 

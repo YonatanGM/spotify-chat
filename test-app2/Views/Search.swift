@@ -18,7 +18,7 @@ struct SearchBar: View {
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack {
                     ForEach(model.searchResults, id: \.id) { user in
-                        UserCard2(user: user)
+                        UserCard(user: user)
                             .animation(nil)
                     }
                 }
