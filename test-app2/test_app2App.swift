@@ -39,6 +39,8 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         
         UINavigationBar.appearance().titleTextAttributes =  [NSAttributedString.Key.foregroundColor: UIColor.white]
         // firebase
+        UINavigationBar.appearance().barTintColor = UIColor(.chatSpotifyColor)
+        UINavigationBar.appearance().tintColor  = .white
 
         FirebaseApp.configure()
         Auth.auth().useEmulator(withHost: "localhost", port: 9091)

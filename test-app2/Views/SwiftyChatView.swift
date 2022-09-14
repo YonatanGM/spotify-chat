@@ -190,13 +190,13 @@ public struct InputView: View {
 
 extension Color {
     static let chatBlue = Color(#colorLiteral(red: 0.1405690908, green: 0.1412397623, blue: 0.25395751, alpha: 1))
-    static let chatSpotifyColor = Color(#colorLiteral(red: 0.1960784314, green: 0.1960784314, blue: 0.1960784314, alpha: 0.5145384934))
+    static let chatSpotifyColor = Color(#colorLiteral(red: 0.1960784314, green: 0.1960784314, blue: 0.1960784314, alpha: 0.5))
     static let backdrop = Color(#colorLiteral(red: 1, green: 1, blue: 1, alpha: 0.05))
     static let chatGray = Color(#colorLiteral(red: 0.7861273885, green: 0.7897668481, blue: 0.7986581922, alpha: 1))
 }
 
 let futuraFont = Font.custom("Futura", size: 17)
-
+ 
 internal extension ChatMessageCellStyle {
 
     static let basicStyle = ChatMessageCellStyle(

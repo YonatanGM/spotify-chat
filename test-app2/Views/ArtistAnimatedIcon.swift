@@ -18,8 +18,9 @@ struct ArtistAnimatedIcon: View {
         
             .resizable()
             
-            .scaledToFit()
+            .scaledToFill()
             .clipShape(Circle())
+            .shadow(radius: 5)
             .scaleEffect(shouldAnimate ? scale : 1.0)
             .onAppear {
                 withAnimation(.easeIn(duration: 0.2)) {

@@ -20,11 +20,7 @@ struct InviteButton: View {
         .padding([.vertical], 7.5)
         .foregroundColor(.white)
         .background(
-            Color(.sRGB,
-                  red: Double(24) / 255,
-                  green: Double(24) / 255,
-                  blue: Double(24) / 255,
-                  opacity: 0.5)
+            Color.backdrop
         )
         
         .clipShape(Capsule())

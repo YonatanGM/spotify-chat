@@ -45,6 +45,9 @@
 		9F9C419428CF53EA009CA948 /* FindView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F9C419328CF53EA009CA948 /* FindView.swift */; };
 		9F9C419628CF6BE4009CA948 /* Search.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F9C419528CF6BE4009CA948 /* Search.swift */; };
 		9F9C419828CF76C6009CA948 /* CreateRoom.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F9C419728CF76C6009CA948 /* CreateRoom.swift */; };
+		9F9C419A28D13F76009CA948 /* UserCard2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F9C419928D13F76009CA948 /* UserCard2.swift */; };
+		9F9C419C28D1529D009CA948 /* ConversationsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F9C419B28D1529D009CA948 /* ConversationsView.swift */; };
+		9F9C419E28D1562E009CA948 /* NewGroupButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F9C419D28D1562E009CA948 /* NewGroupButton.swift */; };
 		9FBFACE828CBCD3200C9F179 /* Home.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FBFACE728CBCD3200C9F179 /* Home.swift */; };
 		9FCB86AC28C8AA1C00A96A50 /* PlaylistsResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FCB86AB28C8AA1B00A96A50 /* PlaylistsResponse.swift */; };
 		9FCB86AE28C8D0F600A96A50 /* TrackCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FCB86AD28C8D0F600A96A50 /* TrackCard.swift */; };
@@ -90,6 +93,9 @@
 		9F9C419328CF53EA009CA948 /* FindView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FindView.swift; sourceTree = "<group>"; };
 		9F9C419528CF6BE4009CA948 /* Search.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Search.swift; sourceTree = "<group>"; };
 		9F9C419728CF76C6009CA948 /* CreateRoom.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateRoom.swift; sourceTree = "<group>"; };
+		9F9C419928D13F76009CA948 /* UserCard2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserCard2.swift; sourceTree = "<group>"; };
+		9F9C419B28D1529D009CA948 /* ConversationsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationsView.swift; sourceTree = "<group>"; };
+		9F9C419D28D1562E009CA948 /* NewGroupButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewGroupButton.swift; sourceTree = "<group>"; };
 		9FBFACE728CBCD3200C9F179 /* Home.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Home.swift; sourceTree = "<group>"; };
 		9FCB86AB28C8AA1B00A96A50 /* PlaylistsResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaylistsResponse.swift; sourceTree = "<group>"; };
 		9FCB86AD28C8D0F600A96A50 /* TrackCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackCard.swift; sourceTree = "<group>"; };
@@ -131,11 +137,14 @@
 				9F17479F28CE19CE0054AE20 /* GroupsView.swift */,
 				9FCB86AD28C8D0F600A96A50 /* TrackCard.swift */,
 				9F1747A128CF1EA80054AE20 /* UserCard.swift */,
+				9F9C419928D13F76009CA948 /* UserCard2.swift */,
+				9F9C419B28D1529D009CA948 /* ConversationsView.swift */,
 				9FD44B9D28CB84290028A408 /* GroupChat.swift */,
 				4685CEBF285106CC00EE5376 /* SwiftyChatView.swift */,
 				9FD44B9728CB683D0028A408 /* ChatButton.swift */,
 				9F9C419128CF531E009CA948 /* FindButton.swift */,
 				9FD44B9928CB7B140028A408 /* InviteButton.swift */,
+				9F9C419D28D1562E009CA948 /* NewGroupButton.swift */,
 				9FD44B9B28CB7B9A0028A408 /* Bar.swift */,
 				9F1747BD28CF3C960054AE20 /* ArtistAnimatedIcon.swift */,
 				9F9C419328CF53EA009CA948 /* FindView.swift */,
@@ -353,6 +362,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				9F1747A028CE19CE0054AE20 /* GroupsView.swift in Sources */,
+				9F9C419A28D13F76009CA948 /* UserCard2.swift in Sources */,
 				46F0CC48280DCEED00BF1B4B /* TopTracksResponse.swift in Sources */,
 				463FEF26281D4242005155EE /* DatabaseManager.swift in Sources */,
 				461DCBCF2823439E009E2F7F /* UserProfileResponse.swift in Sources */,
@@ -366,6 +376,7 @@
 				9F17479C28CDBAEF0054AE20 /* Group.swift in Sources */,
 				46ED90ED2825250B0064E5BE /* LoginView.swift in Sources */,
 				9F9C419828CF76C6009CA948 /* CreateRoom.swift in Sources */,
+				9F9C419C28D1529D009CA948 /* ConversationsView.swift in Sources */,
 				46F8B3DB284C3BA800EBCD9C /* Message.swift in Sources */,
 				9FD44B9628CB3E170028A408 /* UsersView.swift in Sources */,
 				9F9C419628CF6BE4009CA948 /* Search.swift in Sources */,
@@ -380,6 +391,7 @@
 				46F5CA6A2808C23E00D58C41 /* test_app2App.swift in Sources */,
 				4604EFA02857216F000DF914 /* TopTracksView.swift in Sources */,
 				9FD44B9C28CB7B9A0028A408 /* Bar.swift in Sources */,
+				9F9C419E28D1562E009CA948 /* NewGroupButton.swift in Sources */,
 				9F9C419428CF53EA009CA948 /* FindView.swift in Sources */,
 				9FCB86AC28C8AA1C00A96A50 /* PlaylistsResponse.swift in Sources */,
 				46F0CC42280DCAE300BF1B4B /* TopArtistsResponse.swift in Sources */,

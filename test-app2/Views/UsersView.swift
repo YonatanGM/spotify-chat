@@ -17,7 +17,7 @@ struct UsersView: View {
 
             HStack {
                 ForEach(model.usersInCurrentRoom, id: \.id) { user in
-                    UserCard(user: user)
+                    UserCard2(user: user)
 
 
 

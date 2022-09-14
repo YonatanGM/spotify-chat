@@ -15,7 +15,7 @@ struct ChatButton: View {
     
     var body: some View {
         NavigationLink(isActive: $showGroupChat,
-                       destination: { GroupChat() },
+                       destination: { ConversationsView() },
                        label: { EmptyView() })
         HStack(spacing:0) {
             Image(systemName: "paperplane.fill")
@@ -33,11 +33,7 @@ struct ChatButton: View {
         .padding([.vertical], 7.5)
         .foregroundColor(.white)
         .background(
-            Color(.sRGB,
-                  red: Double(25) / 255,
-                  green: Double(25) / 255,
-                  blue: Double(25) / 255,
-                  opacity: 0.5)
+            Color.backdrop
         )
         
         .clipShape(Capsule())
