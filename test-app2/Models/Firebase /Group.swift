@@ -12,4 +12,7 @@ struct Group {
     let admin: String
     let users: [UserInfo]
     
+    var messages = [Message.ChatMessageItem]()
+    var genres_display = [String]()
+    
 }

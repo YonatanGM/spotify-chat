@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct ConversationsView: View {
+    @EnvironmentObject var model: AppStateModel
     var body: some View {
         ZStack {
 
@@ -32,7 +33,6 @@ struct ConversationsView: View {
             }
             .navigationTitle("Conversations")
             // .navigationBarTitleDisplayMode(.inline)
-
             
             // bar
             .overlay(
@@ -45,6 +45,9 @@ struct ConversationsView: View {
                 .frame(height: Double(UIScreen.main.bounds.width) / 10)
                 .padding(10), alignment: .top
             )
+            
+            
+            
         }
     }
 }

@@ -100,6 +100,7 @@ extension DatabaseManager {
                            "users/\(profile.id)/top_artists": topArtists,
                            "users/\(profile.id)/top_tracks": topTracks,
                            "users/\(profile.id)/top_genres": Array(topGenres)
+                           "users/\(profile.id)/top_genre_display": topArtistsResponse.items.first?.genres?.first,
                            
                        ]
                        
@@ -280,8 +281,7 @@ extension DatabaseManager {
     
     public func acceptPendingInvitation(_ groupID: String, completion: @escaping ((Bool) -> Void)) {
         guard let currentUserID = AuthManager.shared.currentUser?.uid,
-              let currentUserName = AuthManager.shared.currentUser?.displayName,
-              let currentUserPhotoURL = AuthManager.shared.currentUser?.photoURL else {
+              let currentUserName = AuthManager.shared.currentUser?.displayName else {
             completion(false)
             return
         }
@@ -296,7 +296,7 @@ extension DatabaseManager {
             let updates: [String: Any?] = [
                 "users/\(currentUserID)/pending_invitations/\(groupID)": nil, // remove the invitation
                 "users/\(currentUserID)/Groups/\(groupID)": true,
-                "Group/\(groupID)/users/\(currentUserID)": ["id": currentUserID, "name": currentUserName, "photoURL": currentUserPhotoURL]
+                "Group/\(groupID)/users/\(currentUserID)": ["id": currentUserID, "name": currentUserName, "photoURL": AuthManager.shared.currentUser?.photoURL]
             ]
             // atomic write
             self?.database.updateChildValues(updates) { error, _ in
@@ -304,7 +304,6 @@ extension DatabaseManager {
                     completion(false)
                     return
                 }
-                
                 completion(true)
             }
         }
@@ -328,10 +327,11 @@ extension DatabaseManager {
     
    
     public func createGroup(with users: [Message.ChatUserItem], name: String, completion: @escaping ((Bool) ->Void)) {
-        guard let currentUserName = AuthManager.shared.currentUser?.displayName else {
-            completion(false)
-            return
-        }
+       guard let currentUserID = AuthManager.shared.currentUser?.uid,
+             let currentUserName = AuthManager.shared.currentUser?.displayName else {
+           completion(false)
+           return
+       }
         
         guard let groupID = database.child("Group").childByAutoId().key else {
             completion(false)
@@ -349,6 +349,7 @@ extension DatabaseManager {
         
         childUpdates["Group/\(groupID)/admin"] = currentUserName
         childUpdates["Group/\(groupID)/name"] = name
+        childUpdates["Group/\(groupID)/users/\(currentUserID)"] =  ["id": currentUserID, "name": currentUserName, "photoURL":  AuthManager.shared.currentUser?.photoURL]
         database.updateChildValues(childUpdates) { error, _ in
             guard error == nil else {
                 completion(false)
@@ -561,13 +562,13 @@ extension DatabaseManager {
     
     
     /// listens for newly added messages. At first, all messages are fetched at once, then it the event only triggers for new messages.
-    public func listenForMessages(in room: String, completion: @escaping (Result<Message.ChatMessageItem, Error>) -> Void) {
+    public func listenForMessages(in group: String, completion: @escaping (Result<Message.ChatMessageItem, Error>) -> Void) {
         guard let currentUserID = AuthManager.shared.currentUser?.uid else {
             // user signed out already or the object hasn't been initalized yet
             completion(.failure(AuthManager.AuthError.failedToGetCurrentUser))
             return
         }
-        database.child("conversations/\(room)").queryLimited(toLast: Self.maxNumOfMessagesToFetch).observe(.childAdded, with: { snapshot in
+        database.child("conversations/\(group)").queryLimited(toLast: Self.maxNumOfMessagesToFetch).observe(.childAdded, with: { snapshot in
             // let enumerator = snapshot.children
 
             // print("sss", enumerator.allObjects.count)
