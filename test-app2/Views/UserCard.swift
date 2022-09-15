@@ -7,7 +7,6 @@
 
 import SwiftUI
 import SDWebImageSwiftUI
-import InitialsUI
 import UIKit
 
 struct UserCard: View {
@@ -34,12 +33,22 @@ struct UserCard: View {
                         .frame(height: Double(UIScreen.main.bounds.width) / 3)
                         .shadow(radius: 5)
                 } else {
-                    InitialsUI(initials: user.userName.components(separatedBy: " ").first ?? "", useDefaultForegroundColor: true, fontWeight: .light)
+                    Image(systemName: "circle.fill")
+                        .resizable()
+                        .foregroundColor(.gray)
                     
                         .scaledToFit()
                         .clipShape(Circle())
                         .frame(height: Double(UIScreen.main.bounds.width) / 3)
                         .shadow(radius: 5)
+                        .overlay(
+                            Text(user.userName.components(separatedBy: " ").reduce("") { ($0.first?.description ?? "") +  ($1.first?.description ?? "")})
+                                .font(.largeTitle)
+                                .fontWeight(.thin)
+                                .foregroundColor(.white)
+                                
+                        , alignment: .center)
+                    
                     
                 }
                 

@@ -41,7 +41,7 @@ struct TopArtistsView: View {
                                         Spacer()
                                         VStack(alignment: .leading) {
                                             Text(artist.name)
-                                                .font(.footnote)
+                                                .font(.body)
                                                 .foregroundColor(.white)
                                                 .lineLimit(1)
                                         

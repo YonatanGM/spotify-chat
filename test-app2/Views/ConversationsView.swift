@@ -43,7 +43,7 @@ struct ConversationsView: View {
 
                 }
                 .frame(height: Double(UIScreen.main.bounds.width) / 10)
-                .padding(5), alignment: .top
+                .padding(10), alignment: .top
             )
         }
     }

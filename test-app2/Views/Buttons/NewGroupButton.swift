@@ -39,21 +39,21 @@ struct NewGroupButton: View {
                     
                 }
                 presentSheet = true
-
+                
             }
             
         }
         
         .sheet(isPresented: $presentSheet,
                onDismiss: {
-               
-
+            
+            
         }) {
-
+            
             CreateGroup(present: $presentSheet)
-
+            
         }
-
+        
     }
 }
 

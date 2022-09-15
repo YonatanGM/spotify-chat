@@ -12,6 +12,8 @@ struct CreateGroup: View {
     @EnvironmentObject var model: AppStateModel
     @Binding var present: Bool
     @State var name = ""
+    @State var nameIsMissing = false
+    @State var addedUsers = [Message.ChatUserItem]()
     var body: some View {
         ZStack(alignment: .topLeading) {
             LinearGradient(colors: [
@@ -54,32 +56,61 @@ struct CreateGroup: View {
                                 withAnimation {
                                     isTapping = false
                                 }
-                                present = false
+                                
+                                if !name.isEmpty && !addedUsers.isEmpty  {
+                                    DatabaseManager.shared.createGroup(with: addedUsers, name: name) { result in
+                                        if result == true { // group creation is a success
+                                            present = false  // hide the sheet
+                                        }
+                                    }
+                                }
                             }
                         }
+           
                     }
                     .padding([.top, .trailing], 10)
-                    
-                    
-                    TextField("Name of group", text: $name) {
+                    VStack(alignment: .leading, spacing: 5) {
+                        Text("Name of group")
+                            .fontWeight(.light)
+                            .font(.title) +
+                        Text(" *").fontWeight(.light).font(.title2).baselineOffset(4).foregroundColor(name.isEmpty ? .white : .clear)
+                        
+                            
+                        ZStack {
+                            Color.backdrop
+                            TextField("", text: $name) {
+                       
+                            }
+                            .accentColor(.white)
+                            .disableAutocorrection(true)
+                            .padding(.leading)
+                            .frame(height: 40)
+                            
+                        }
+                        .foregroundColor(.white)
+                        .clipShape(Capsule())
+               
                     }
-                    .accentColor(.black)
-                    .keyboardType(.webSearch)
-                    .disableAutocorrection(true)
-                    .textFieldStyle(.roundedBorder)
-    //                .clipShape(Capsule())
-                    .frame(height: 40)
-                    .foregroundColor(.black)
-                        
-                   
+
                     .padding([.horizontal], 10)
-                    UserCardViewGroupCreation()
-                        
+                    
+                    UserCardViewGroupCreation(addedUsers: $addedUsers)
+                    
                     
                     Spacer()
                 }
                 .foregroundColor(.white)
             }
+        }
+    }
+    
+    private func validateAndCreateGroup() {
+        guard !name.isEmpty && !addedUsers.isEmpty else {
+            return
+        }
+        
+        DatabaseManager.shared.createGroup(with: addedUsers, name: name) { result in
+            // print("group creation \(result)")
         }
     }
 }

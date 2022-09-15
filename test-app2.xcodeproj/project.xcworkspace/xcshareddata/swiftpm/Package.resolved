@@ -82,15 +82,6 @@
       }
     },
     {
-      "identity" : "initialsui",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/lovetodream/InitialsUI",
-      "state" : {
-        "branch" : "main",
-        "revision" : "66d672f446730661ac13feaefb0039b2bab43591"
-      }
-    },
-    {
       "identity" : "jgprogresshud",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/JonasGessner/JGProgressHUD.git",

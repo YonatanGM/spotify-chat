@@ -7,13 +7,13 @@
 
 import SwiftUI
 import SDWebImageSwiftUI
-import InitialsUI
+
 
 struct UserCardViewGroupCreation: View {
     @EnvironmentObject var model: AppStateModel
     @State var selectedUserID: String? = nil
     @State var isTapping = false
-    @State var addedUsers = [Message.ChatUserItem]()
+    @Binding var addedUsers: [Message.ChatUserItem]
     @State var searchText = ""
     @State var searchResults = [Message.ChatUserItem]()
     @Namespace private var animation
@@ -47,24 +47,35 @@ struct UserCardViewGroupCreation: View {
                         
                     } else {
                         
-                        InitialsUI(initials: user.userName.components(separatedBy: " ").first ?? "", useDefaultForegroundColor: true, fontWeight: .light)
+                        
+                        Image(systemName: "circle.fill")
+                            .resizable()
+                            .foregroundColor(.gray)
+                        
                             .scaledToFit()
                             .clipShape(Circle())
                             .frame(height: Double(UIScreen.main.bounds.width) / 10)
                             .shadow(radius: 5)
-                            .onTapGesture {
-                                withAnimation(.spring(response: 0.5))  {
-                                    addedUsers = addedUsers.filter { $0.id != user.id}
-                                }
-                                
-                            }
-                        
+                            .overlay(
+                                Text(user.userName.components(separatedBy: " ").reduce("") { ($0.first?.description ?? "") +  ($1.first?.description ?? "")})
+                                    .font(.title)
+                                    .fontWeight(.thin)
+                                    .foregroundColor(.white)
+                  
+                                    
+                            , alignment: .center)
                             .overlay(
                                 Image(systemName: "x.circle.fill")
                                     .resizable()
                                     .scaledToFit()
                                     .frame(width: 15, height: 15)
                                 , alignment: .topTrailing)
+                            .onTapGesture {
+                                withAnimation(.spring(response: 0.5))  {
+                                    addedUsers = addedUsers.filter { $0.id != user.id}
+                                }
+                                
+                            }
                             .matchedGeometryEffect(id: "picInitial" + user.id, in: animation)
                         
                     }
@@ -76,7 +87,7 @@ struct UserCardViewGroupCreation: View {
             
             Text("Find")
                 .fontWeight(.light)
-                .font(.largeTitle)
+                .font(.title)
                 .padding([.horizontal], 10)
             
             ZStack {
@@ -129,13 +140,14 @@ struct UserCardViewGroupCreation: View {
                             }
                     }
                 }
+
             }
             .padding([.bottom])
             
             
             Text("Suggested users")
                 .fontWeight(.light)
-                .font(.largeTitle)
+                .font(.title)
                 .padding([.horizontal], 10)
             ScrollView(.horizontal, showsIndicators: false) {
                 
@@ -154,11 +166,5 @@ struct UserCardViewGroupCreation: View {
             }
             Spacer()
         }
-    }
-}
-
-struct UserCardViewGroupCreation_Previews: PreviewProvider {
-    static var previews: some View {
-        UserCardViewGroupCreation()
     }
 }

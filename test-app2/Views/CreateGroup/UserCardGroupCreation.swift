@@ -7,7 +7,7 @@
 
 import SwiftUI
 import SDWebImageSwiftUI
-import InitialsUI
+
 
 struct UserCardGroupCreation: View {
     let user: Message.ChatUserItem
@@ -25,13 +25,25 @@ struct UserCardGroupCreation: View {
                         .shadow(radius: 5)
                         .matchedGeometryEffect(id: user.id, in: namespace)
                 } else {
-                    InitialsUI(initials: user.userName.components(separatedBy: " ").first ?? "", useDefaultForegroundColor: true, fontWeight: .light)
+//                    InitialsUI(initials: user.userName.components(separatedBy: " ").first ?? "", useDefaultForegroundColor: true, fontWeight: .light)
+                    
+                    Image(systemName: "circle.fill")
+                        .resizable()
+                        .foregroundColor(.gray)
                     
                         .scaledToFit()
                         .clipShape(Circle())
                         .frame(height: Double(UIScreen.main.bounds.width) / 3)
                         .shadow(radius: 5)
+                        .overlay(
+                            Text(user.userName.components(separatedBy: " ").reduce("") { ($0.first?.description ?? "") +  ($1.first?.description ?? "")})
+                                .font(.largeTitle)
+                                .fontWeight(.thin)
+                                .foregroundColor(.white)
+                                
+                        , alignment: .center)
                         .matchedGeometryEffect(id: "picInitial" + user.id, in: namespace)
+                        
                         
                     
                 }
