@@ -22,6 +22,8 @@ struct MainView: View {
                 Home()
                     .navigationTitle("App name")
                
+            } else {
+                Color.white
             }
           
             

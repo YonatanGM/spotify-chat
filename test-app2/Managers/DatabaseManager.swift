@@ -202,7 +202,7 @@ extension DatabaseManager {
    
    public func getUsers(in room: String, completion: @escaping (Result<[Message.ChatUserItem], Error>) -> Void) {
       
-      self.database.child("users").queryOrdered(byChild: "room").queryEqual(toValue: "\(room)").observeSingleEvent(of: .value) { [weak self] snapshot in
+      self.database.child("users").queryOrdered(byChild: "room").queryEqual(toValue: "\(room)").observe(.value) { [weak self] snapshot in
          
          var users = [Message.ChatUserItem]()
          guard let usersDict = snapshot.value as? [String: [String: Any]] else {
@@ -353,9 +353,8 @@ extension DatabaseManager {
          dict["users/\($1.id)/pending_invitations/\(groupID)"] = true
          return dict
       }
-      
-      
-      childUpdates["Group/\(groupID)/admin"] = currentUserName
+
+      childUpdates["Group/\(groupID)/admin"] = currentUserID
       childUpdates["Group/\(groupID)/name"] = name
       childUpdates["Group/\(groupID)/users/\(currentUserID)"] =  ["id": currentUserID, "name": currentUserName, "photoURL":  AuthManager.shared.currentUser?.photoURL?.absoluteString]
       childUpdates["users/\(currentUserID)/Groups/\(groupID)"] =  true

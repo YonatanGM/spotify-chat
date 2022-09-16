@@ -53,27 +53,27 @@ class AppStateModel: ObservableObject {
         if let url = URL(string: "spotify://"), UIApplication.shared.canOpenURL(url) {
             isSpotifyInstalled = true
         }
-        
+
         self.$signInStatus.sink(receiveValue: { [weak self] signInStatus in
             if signInStatus == .signedIn {
-                // self?.listenForMessages()
                 self?.setup()
+
+                
             }
         })
         .store(in: &cancellables)
         
+
         Auth.auth().addStateDidChangeListener { [weak self] auth, user in
             AuthManager.shared.currentUser = user
-            if AuthManager.shared.isSignedIn {
+            if user != nil {
                 AuthManager.shared.refreshIfNeeded()
                 self?.signInStatus = .signedIn
             } else {
-                DatabaseManager.shared.removeRoomChangeObserver()
+                // remove observers here
                 self?.signInStatus = .signedOut
             }
         }
-        
-        setup()
         
     }
     
@@ -81,9 +81,11 @@ class AppStateModel: ObservableObject {
         guard let url = AuthManager.shared.signInUrl else {
             return nil
         }
-        return WebView(url: url) { [weak self] success, didStartAuthFlow in
+        return WebView(url: url) { [weak self] didStartAuthFlow in
             DispatchQueue.main.async {
-                self?.signInStatus = didStartAuthFlow ? .signingIn : (success ? .signedIn : .signedOut)
+                if didStartAuthFlow {
+                    self?.signInStatus = .signingIn
+                }
             }
         }
     }

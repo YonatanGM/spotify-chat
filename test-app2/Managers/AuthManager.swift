@@ -17,10 +17,12 @@ final class AuthManager {
     
     private var refreshingToken = false
     struct Constants {
+        // revisit this
         static let clientID = "0a1b68ee7fdf43f287d15f82d31af2a7"
         static let clientSecret = "d446b893026d4021998ce6b161933057"
         static let tokenAPIURL = "https://accounts.spotify.com/api/token"
         static let redirectURI = "http://localhost:5001/testapp-79467/us-central1/redirect"
+        // add the scope for liking tracks here
         static let scopes = "user-read-private%20user-top-read%20playlist-read-private%20user-library-modify"
     }
     
@@ -30,6 +32,7 @@ final class AuthManager {
         return URL(string: "https://accounts.spotify.com/authorize?response_type=code&client_id=\(Constants.clientID)&scope=\(Constants.scopes)&redirect_uri=\(Constants.redirectURI)&show_dialog=TRUE")
     }
     
+    // don't need this, don't think it's accurate
     var isSignedIn: Bool {
         return accessToken != nil && Self.shared.currentUser != nil
     }
@@ -51,7 +54,7 @@ final class AuthManager {
             return false
         }
         let currentDate = Date()
-        let after: TimeInterval = 300 // after 5 minutes
+        let after: TimeInterval = 300 // after 5 minutes, revisit this
         return currentDate.addingTimeInterval(after) >= expirationDate
     }
     
@@ -228,13 +231,13 @@ extension AuthManager {
             guard let data = data, error == nil else {
                 // completion(.failure(APIError.failedToGetData))
                 completion(.failure(AuthError.failedToGetFirebaseToken))
-                // print("etto,", error?.localizedDescription)
+                print("etto,", error?.localizedDescription)
                 return
             }
             
             do {
                 let result = try JSONDecoder().decode([String: String].self, from: data)
-                // print("tokkk, ", result["token"])
+                print("tokkk, ", result["token"])
                 completion(.success(result["token"]!))
                 
             } catch {

@@ -46,7 +46,8 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         Auth.auth().useEmulator(withHost: "localhost", port: 9091)
         
 
-    
+        // revisit this
+        // clear firebase auth cache
         if UserDefaults.standard.value(forKey: "appFirstTimeOpened") == nil {
             UserDefaults.standard.setValue(true, forKey: "appFirstTimeOpened")
             try? Auth.auth().signOut()

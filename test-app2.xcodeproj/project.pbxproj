@@ -44,6 +44,7 @@
 		9F22828E28D3CE5A0050929E /* GenresAnimatedIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F22828D28D3CE5A0050929E /* GenresAnimatedIcon.swift */; };
 		9F22829028D3CFDC0050929E /* ConversationGroupRowPending.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F22828F28D3CFDC0050929E /* ConversationGroupRowPending.swift */; };
 		9F22829228D3E6470050929E /* UserImagesStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F22829128D3E6470050929E /* UserImagesStack.swift */; };
+		9F2282AE28D4D45A0050929E /* ConversationRowUserPicBubbles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F2282AD28D4D45A0050929E /* ConversationRowUserPicBubbles.swift */; };
 		9F9C419228CF531F009CA948 /* FindButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F9C419128CF531E009CA948 /* FindButton.swift */; };
 		9F9C419628CF6BE4009CA948 /* Search.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F9C419528CF6BE4009CA948 /* Search.swift */; };
 		9F9C419A28D13F76009CA948 /* UserCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F9C419928D13F76009CA948 /* UserCard.swift */; };
@@ -96,6 +97,7 @@
 		9F22828D28D3CE5A0050929E /* GenresAnimatedIcon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenresAnimatedIcon.swift; sourceTree = "<group>"; };
 		9F22828F28D3CFDC0050929E /* ConversationGroupRowPending.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationGroupRowPending.swift; sourceTree = "<group>"; };
 		9F22829128D3E6470050929E /* UserImagesStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserImagesStack.swift; sourceTree = "<group>"; };
+		9F2282AD28D4D45A0050929E /* ConversationRowUserPicBubbles.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationRowUserPicBubbles.swift; sourceTree = "<group>"; };
 		9F9C419128CF531E009CA948 /* FindButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FindButton.swift; sourceTree = "<group>"; };
 		9F9C419528CF6BE4009CA948 /* Search.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Search.swift; sourceTree = "<group>"; };
 		9F9C419928D13F76009CA948 /* UserCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserCard.swift; sourceTree = "<group>"; };
@@ -294,6 +296,7 @@
 				9F22828828D3CA680050929E /* ConversationGroupRow.swift */,
 				9F22829128D3E6470050929E /* UserImagesStack.swift */,
 				9F22828A28D3CB1B0050929E /* UserAnimatedIcon.swift */,
+				9F2282AD28D4D45A0050929E /* ConversationRowUserPicBubbles.swift */,
 			);
 			path = Conversation;
 			sourceTree = "<group>";
@@ -431,6 +434,7 @@
 				9F22828E28D3CE5A0050929E /* GenresAnimatedIcon.swift in Sources */,
 				9F17479E28CDBB290054AE20 /* UserInfo.swift in Sources */,
 				46F5CA6A2808C23E00D58C41 /* test_app2App.swift in Sources */,
+				9F2282AE28D4D45A0050929E /* ConversationRowUserPicBubbles.swift in Sources */,
 				4604EFA02857216F000DF914 /* TopTracksView.swift in Sources */,
 				9FD44B9C28CB7B9A0028A408 /* Bar.swift in Sources */,
 				9F9C419E28D1562E009CA948 /* NewGroupButton.swift in Sources */,
