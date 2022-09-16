@@ -10,21 +10,25 @@ import SwiftUI
 
 struct UsersView: View {
     @EnvironmentObject var model: AppStateModel
-
+    var currentUserID: String? {
+        AuthManager.shared.currentUser?.uid
+    }
     
     var body: some View {
-        ScrollView(.horizontal, showsIndicators: false) {
+        if let currentUserID = currentUserID {
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack {
+                    ForEach(model.suggestedUsers.filter { $0.id != currentUserID }, id: \.id) { user in
+                        UserCard(user: user)
+                            .padding([.horizontal], 1)
 
-            HStack {
-                ForEach(model.usersInCurrentRoom, id: \.id) { user in
-                    UserCard(user: user)
-                        .padding([.horizontal], 1)
 
 
-
+                    }
                 }
             }
         }
+
 
     }
 }

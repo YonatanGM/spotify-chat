@@ -18,7 +18,7 @@ struct TopTracksView: View {
     var body: some View {
 
         ScrollView(.horizontal, showsIndicators: false) {
-            if let topTracksResponse = model.usersInCurrentRoom.first?.topTracks {
+            if let topTracksResponse = model.suggestedUsers.first?.topTracks {
                 LazyHStack(alignment: .top) {
                     ForEach(topTracksResponse.items, id: \.id) { track in
                         TrackCard(track: track)

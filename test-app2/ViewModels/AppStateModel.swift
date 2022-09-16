@@ -27,32 +27,29 @@ class AppStateModel: ObservableObject {
     @Published private(set) var signInStatus: SignInStatus = .notDetermined
     
     // @Published private(set) var users = [Message.ChatUserItem]()
-    @Published var usersInCurrentRoom = [Message.ChatUserItem]()
+    @Published var suggestedUsers = [Message.ChatUserItem]()
     @Published var messages = [Message.ChatMessageItem]()
     @Published var currentRoom: String?
     
-
+    
     @Published  var selectedTrackID: String?
     @Published  var playingTrackID: String?
-    // assume spotify is not installed 
+    // assume spotify is not installed
     @Published var isSpotifyInstalled = false
     
     @Published var scrollToBottom = false
     @Published var searchResults = [Message.ChatUserItem]()
-   
+    
     
     private var cancellables = Set<AnyCancellable>()
-    
-    
-    
+
     // Group
     @Published var groups = [Group]()
     @Published var pendingGroups = [Group]()
     
     init() {
-
         // check if spotify is installed
-        // ... if I want to open appstore in case spotify is not installed 
+        // ... if I want to open appstore in case spotify is not installed
         if let url = URL(string: "spotify://"), UIApplication.shared.canOpenURL(url) {
             isSpotifyInstalled = true
         }
@@ -76,10 +73,9 @@ class AppStateModel: ObservableObject {
             }
         }
         
+        setup()
         
-
     }
-    
     
     func signIn(completion: @escaping (Bool) -> Void) -> WebView? {
         guard let url = AuthManager.shared.signInUrl else {
@@ -92,12 +88,11 @@ class AppStateModel: ObservableObject {
         }
     }
     
-    
     func signOut() {
         AuthManager.shared.signOut()
         signInStatus = .signedOut
     }
-
+    
 }
 
 
@@ -105,7 +100,7 @@ class AppStateModel: ObservableObject {
 
 extension AppStateModel {
     
-    public func observeGroups() {
+    public func setup() {
         DatabaseManager.shared.observeUserAdditionToGroup() { [weak self] groupID in
             DatabaseManager.shared.getGroup(with: groupID) { result in
                 switch result {
@@ -119,7 +114,7 @@ extension AppStateModel {
                             if let index = self?.groups.firstIndex(where: { $0.id == group.id }) {
                                 self?.groups[index].messages.append(message)
                             }
-                        
+                            
                         case .failure(_):
                             print("failed to get messages in group \(group.id)")
                         }
@@ -135,7 +130,8 @@ extension AppStateModel {
         
         DatabaseManager.shared.observeUserRemovalFromGroup() { [weak self] groupID in
             self?.groups.removeAll { $0.id == groupID }
-            
+            // stop observing messages in the room
+            DatabaseManager.shared.removeObserver(with: "conversations/\(groupID)")
         }
         
         DatabaseManager.shared.observePendingInvites() { [weak self] result in
@@ -157,17 +153,12 @@ extension AppStateModel {
             case .failure(_):
                 print("error getting ids of pending group invites")
             }
-
+            
         }
-    }
-    
-    
-    
-
-    private func listenForMessages() {
+        
         DatabaseManager.shared.observeRoomChange() { [weak self] result in
             switch result {
-
+                
             case .success(let room):
                 // stop listening for conversations in the previous room
                 if let currentRoom = self?.currentRoom {
@@ -176,107 +167,23 @@ extension AppStateModel {
                 
                 self?.currentRoom = room
                 
-                // empty messages since the room has changed
-                self?.messages = []
-                
                 // remove old users
-                self?.usersInCurrentRoom = []
+                self?.suggestedUsers = []
                 
                 // update the users
                 DatabaseManager.shared.getUsers(in: room, completion: { result in
                     switch result {
                     case .success(let users):
-                        self?.usersInCurrentRoom = users
+                        self?.suggestedUsers = users
                     case .failure(_):
-                        print("failed to get users in new room")
+                        print("failed to get users in new room \(room)")
                     }
                     
                 })
                 
-                // get messages in the new room
-                DatabaseManager.shared.listenForMessages(in: room) { result in
-                    switch result {
-                    case .success(let newMessage):
-                        self?.messages.append(newMessage)
-                    case .failure(_):
-                        print("failed to get message")
-                    }
-                }
-                
             case .failure(let error):
                 print(error.localizedDescription)
             }
-            
-        }
-    }
-    
-    
-    private func setup() {
-        
-        DatabaseManager.shared.observeUserAdditionToGroup() { [weak self] groupID in
-            DatabaseManager.shared.getGroup(with: groupID) { result in
-                switch result {
-                case .success(let group):
-                    self?.groups.append(group)
-                case .failure(_):
-                    print("failed to get group with id \(groupID)")
-                }
-            }
-            
-        }
-        
-        DatabaseManager.shared.observeUserRemovalFromGroup() { [weak self] groupID in
-            guard let strongSelf = self else { return }
-            strongSelf.groups = strongSelf.groups.filter { $0.id != groupID }
-
-        }
-            
-        
-        DatabaseManager.shared.observeRoomChange() { [weak self] result in
-            switch result {
-
-            case .success(let room):
-                // stop listening for conversations in the previous room
-                if let currentRoom = self?.currentRoom {
-                    DatabaseManager.shared.removeMessagesObserver(currentRoom)
-                }
-                
-                self?.currentRoom = room
-                
-                // empty messages since the room has changed
-                self?.messages = []
-                
-                // remove old users
-                self?.usersInCurrentRoom = []
-                
-                // update the users
-                DatabaseManager.shared.getUsers(in: room, completion: { result in
-                    switch result {
-                    case .success(let users):
-                        print(users.map { $0.userName })
-          
-                        self?.usersInCurrentRoom = users
-//                        print( self?.usersInCurrentRoom)
-                    case .failure(_):
-                        print("failed to get users in new room")
-                    }
-                    
-                })
-                
-                // get messages in the new room
-                DatabaseManager.shared.listenForMessages(in: room) { result in
-                    switch result {
-                    case .success(let newMessage):
-                        self?.messages.append(newMessage)
-                    case .failure(_):
-                        print("failed to get message")
-                    }
-                }
-                
-            case .failure(let error):
-                print(error.localizedDescription)
-            }
-            
         }
     }
     
@@ -315,15 +222,15 @@ extension AppStateModel {
         for userInfo in groups[index].users {
             DatabaseManager.shared.getUser(with: userInfo.id) { [weak self] result in
                 switch result {
-                    case .success(let user):
-                        if let topGenre = user.topArtists?.items.first?.genres?.first {
-                            self?.groups[index].genres_display.append(topGenre)
-                        }
+                case .success(let user):
+                    if let topGenre = user.topArtists?.items.first?.genres?.first {
+                        self?.groups[index].genres_display.append(topGenre)
+                    }
                 case .failure(_):
                     print("couldn't get user with id \(userInfo.id) in getting Genres of group")
                 }
             }
         }
     }
-
+    
 }

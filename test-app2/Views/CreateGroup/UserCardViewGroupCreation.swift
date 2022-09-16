@@ -128,7 +128,7 @@ struct UserCardViewGroupCreation: View {
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack {
                     ForEach(searchResults.filter { userFromSearch in
-                        !model.usersInCurrentRoom.map { $0.id }.contains(userFromSearch.id)
+                        !model.suggestedUsers.map { $0.id }.contains(userFromSearch.id)
                     }, id: \.id) { user in
                         UserCardGroupCreation(user: user, namespace: animation)
                             .padding([.horizontal], 1)
@@ -152,10 +152,10 @@ struct UserCardViewGroupCreation: View {
             ScrollView(.horizontal, showsIndicators: false) {
                 
                 HStack {
-                    ForEach(model.usersInCurrentRoom.filter { !addedUsers.contains($0) }, id: \.id) { user in
+                    ForEach(model.suggestedUsers.filter { !addedUsers.contains($0) }, id: \.id) { user in
                         UserCardGroupCreation(user: user, namespace: animation)
                             .padding([.horizontal], 1)
-                            .padding([.leading], model.usersInCurrentRoom.first?.id == user.id ? 10 : 0)
+                            .padding([.leading], model.suggestedUsers.first?.id == user.id ? 10 : 0)
                             .onTapGesture {
                                 withAnimation(.spring(response: 0.5)) {
                                     addedUsers.append(user)

@@ -12,9 +12,11 @@ struct NewGroupButton: View {
     @State var presentSheet: Bool = false
     var body: some View {
         HStack {
+            /*
             Image(systemName: "plus")
                 .resizable()
                 .scaledToFit()
+             */
             Text("New group")
                 .font(.headline)
         }

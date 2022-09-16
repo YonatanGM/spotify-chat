@@ -273,7 +273,7 @@ extension AuthManager {
                             
                             // set user display name
                             let changeRequest = result.user.createProfileChangeRequest()
-                            changeRequest.displayName = profile.display_name + "-" + profile.country
+                            changeRequest.displayName = profile.display_name 
                             if let url = profile.images.first?.url {
                                 changeRequest.photoURL = URL(string: url)
                             }

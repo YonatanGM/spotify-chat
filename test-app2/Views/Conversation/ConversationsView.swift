@@ -10,7 +10,7 @@ import SwiftUI
 struct ConversationsView: View {
     @EnvironmentObject var model: AppStateModel
     var body: some View {
-        ZStack {
+        ZStack(alignment: .top) {
 
             LinearGradient(colors: [
                 Color(.sRGB,
@@ -28,13 +28,39 @@ struct ConversationsView: View {
             .ignoresSafeArea(.all, edges: .all)
             
             ScrollView(showsIndicators: false) {
-   
+                // list groups the user is currently in first
+                VStack {
+                    ForEach(model.groups, id: \.id) { group in
+                        ConversationGroupRow(group: group)
+                    }
+                    // the pending ones
+                    ForEach(model.pendingGroups, id: \.id) { group in
+                        ConversationGroupRowPending(group: group)
+               
+//                        HStack {
+//                            Text("\(group)")
+//                            Spacer()
+//                        }
+//                        .border(.red)
+                       
+                    }
+                    
+                }
+
                    
             }
+            .padding([.horizontal], 10)
+          
+ 
             .navigationTitle("Conversations")
-            // .navigationBarTitleDisplayMode(.inline)
+            .navigationBarTitleDisplayMode(.inline)
             
             // bar
+            .navigationBarItems(trailing: NewGroupButton()
+                .frame(height: 20)
+            
+            )
+            /*
             .overlay(
                 HStack {
                     Spacer()
@@ -45,6 +71,7 @@ struct ConversationsView: View {
                 .frame(height: Double(UIScreen.main.bounds.width) / 10)
                 .padding(10), alignment: .top
             )
+             */
             
             
             

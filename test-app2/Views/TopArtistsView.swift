@@ -23,7 +23,7 @@ struct TopArtistsView: View {
     var body: some View {
 
         ScrollView(.horizontal, showsIndicators: false) {
-            if let topArtistResponse = model.usersInCurrentRoom.first?.topArtists {
+            if let topArtistResponse = model.suggestedUsers.first?.topArtists {
 
                 LazyHStack {
                     ForEach(topArtistResponse.items, id: \.id) { artist in

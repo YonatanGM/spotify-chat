@@ -1,18 +1,17 @@
 //
-//  ArtistAnimatedIcon.swift
+//  UserAnimatedIcon.swift
 //  test-app2
 //
-//  Created by Yonatan Mamo on 12.09.22.
+//  Created by Yonatan Mamo on 15.09.22.
 //
 
 import SwiftUI
 import SDWebImageSwiftUI
 
-struct ArtistAnimatedIcon: View {
+struct UserAnimatedIcon: View {
     let url: URL
 
     @State var scale = 0.001
-    
     var body: some View {
         AnimatedImage(url: url)
         
