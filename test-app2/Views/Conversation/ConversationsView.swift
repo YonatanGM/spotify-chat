@@ -9,9 +9,11 @@ import SwiftUI
 
 struct ConversationsView: View {
     @EnvironmentObject var model: AppStateModel
+    @State var isTapping = false
+    @State var selectedGroup: String?
     var body: some View {
         ZStack(alignment: .top) {
-
+//
             LinearGradient(colors: [
                 Color(.sRGB,
                       red: Double(20) / 255,
@@ -24,33 +26,59 @@ struct ConversationsView: View {
                       blue: Double(10) / 255,
                       opacity: 1)
 
-            ], startPoint: .topLeading, endPoint: .bottom)
+            ], startPoint: .topLeading, endPoint: .center)
             .ignoresSafeArea(.all, edges: .all)
             
-            ScrollView(showsIndicators: false) {
+//            ScrollView(showsIndicators: false) {
                 // list groups the user is currently in first
-                VStack {
+                List {
                     ForEach(model.groups, id: \.id) { group in
                         ConversationGroupRow(group: group)
+                            .listRowBackground(Color.backdrop.brightness(selectedGroup == group.id && isTapping ? 0.3: 0).ignoresSafeArea())
+                            .listRowInsets(.init(top: 10, leading: 10, bottom: 10, trailing: 10))
+                            .scaleEffect(selectedGroup == group.id && isTapping ? 0.9 : 1)
+            
+                            .onTapGesture {
+                                selectedGroup = group.id
+                                // animation
+                                withAnimation(.easeIn(duration: 0.1)) {
+                                    isTapping = true
+                                }
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                                    withAnimation {
+                                        isTapping = false
+                                        
+                                    }
+
+                                }
+                            }
                     }
-                    // the pending ones
-                    ForEach(model.pendingGroups, id: \.id) { group in
-                        ConversationGroupRowPending(group: group)
-               
-//                        HStack {
-//                            Text("\(group)")
-//                            Spacer()
-//                        }
-//                        .border(.red)
-                       
-                    }
-                    
+                  
                 }
+                .listStyle(.plain)
+        }
+
 
                    
-            }
-            .padding([.horizontal], 10)
-          
+                    // the pending ones
+//                    ForEach(model.pendingGroups, id: \.id) { group in
+//                        ConversationGroupRowPending(group: group)
+//
+////                        HStack {
+////                            Text("\(group)")
+////                            Spacer()
+////                        }
+////                        .border(.red)
+//
+//                    }
+                    
+//                }
+
+                   
+//            }
+            
+//            .padding([.horizontal, .top], 10)
+            
  
             .navigationTitle("Conversations")
             .navigationBarTitleDisplayMode(.inline)
@@ -75,7 +103,7 @@ struct ConversationsView: View {
             
             
             
-        }
+//        }
     }
 }
 

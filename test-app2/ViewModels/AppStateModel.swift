@@ -215,7 +215,7 @@ extension AppStateModel {
 
 extension AppStateModel {
     // meant to be called only once in the conversations view if genres_display is empty
-    public func getGenresOfGroup(for groupID: String, completion: @escaping ([String]) -> Void) {
+    public func getGenresOfGroup(for groupID: String) {
         // genre of top artist of each user
         guard let index = groups.firstIndex(where: { $0.id == groupID }) else {
             return

@@ -9,18 +9,25 @@ import SwiftUI
 
 struct GenresAnimatedIcon: View {
     let genre: String
+    
 
     @State var scale = 0.001
     var body: some View {
         ZStack {
-            Color.backdrop
+            Color.black.opacity(0.25)
+                .shadow(radius: 5)
             Text(genre)
                 .font(.footnote)
-                .fontWeight(.thin)
+                .padding([.horizontal], 7.5)
+                .padding([.vertical], 2.5)
         }
+   
         .clipShape(Capsule())
-        .shadow(radius: 5)
+
         .scaleEffect(scale)
+        .shadow(radius: 10)
+
+        .foregroundColor(.white)
         .onAppear {
             withAnimation(.easeIn(duration: 0.2)) {
                 scale = 1.0
