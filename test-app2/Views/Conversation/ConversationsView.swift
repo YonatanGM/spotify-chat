@@ -11,9 +11,17 @@ struct ConversationsView: View {
     @EnvironmentObject var model: AppStateModel
     @State var isTapping = false
     @State var selectedGroup: String?
+    @State var showChat = false
     var body: some View {
         ZStack(alignment: .top) {
-//
+            NavigationLink(isActive: $showChat,
+                           destination: {
+                if let selectedGroup = selectedGroup {
+                    SwiftyChatView(groupID: selectedGroup)
+                }
+            },
+                           label: { EmptyView() })
+
             LinearGradient(colors: [
                 Color(.sRGB,
                       red: Double(20) / 255,
@@ -32,6 +40,7 @@ struct ConversationsView: View {
 //            ScrollView(showsIndicators: false) {
                 // list groups the user is currently in first
                 List {
+                    // ForEach(Array(model.groups.keys.sorted(by: >)), id: \.self) { key in
                     ForEach(model.groups, id: \.id) { group in
                         ConversationGroupRow(group: group)
                             .listRowBackground(Color.backdrop.brightness(selectedGroup == group.id && isTapping ? 0.3: 0).ignoresSafeArea())
@@ -49,6 +58,7 @@ struct ConversationsView: View {
                                         isTapping = false
                                         
                                     }
+                                    showChat = true
 
                                 }
                             }

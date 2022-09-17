@@ -12,11 +12,17 @@ import SwiftyChat
 
 struct SwiftyChatView: View {
     @EnvironmentObject var model: AppStateModel
+    let groupID: String
     @State private var scrollToBottom = false
     
     // MARK: - InputBarView variables
     @State private var message = ""
     @State private var isEditing = false
+    
+    var index: Int! {
+        model.groups.firstIndex(where: { $0.id == groupID })
+    }
+ 
     
     var currentChatUser: Message.ChatUserItem? {
         guard let currentUserID = AuthManager.shared.currentUser?.uid,
@@ -26,7 +32,7 @@ struct SwiftyChatView: View {
         
         return Message.ChatUserItem(userName: currentUserName,
                                     avatarURL:  AuthManager.shared.currentUser?.photoURL,
-                                    avatar: UIImage(systemName: "person"),
+                                    avatar: nil,
                                     id: currentUserID)
     }
     
@@ -40,7 +46,7 @@ struct SwiftyChatView: View {
     private var chatView: some View {
 
         ChatView<Message.ChatMessageItem, Message.ChatUserItem>(
-            messages: Binding(get: { model.messages }, set: { _ in }),
+            messages: Binding(get: { model.groups[index].messages }, set: { _ in }),
             scrollToBottom: $scrollToBottom,
             shouldShowGroupChatHeaders: true
         
@@ -53,11 +59,11 @@ struct SwiftyChatView: View {
                 onCommit: { messageKind in
                     if let currentChatUser = currentChatUser {
                         // get back to this 
-                        /*
+                      
                         DatabaseManager.shared.sendMessage(message: .init(user: currentChatUser,
                                                                           messageKind: messageKind,
-                                                                          isSender: true))
-                         */
+                                                                          isSender: true), to: groupID)
+                
                     }
                     scrollToBottom = true
                 }
@@ -68,7 +74,7 @@ struct SwiftyChatView: View {
 //            .accentColor(.chatBlue)
 //            .background(Color.primary.colorInvert())
             // .animation(.linear)
-             .border(.red)
+            // .border(.red)
             .embedInAnyView()
 
 
@@ -232,10 +238,4 @@ internal extension ChatMessageCellStyle {
                                                      shadowColor: Color.clear))
     )
     
-}
-
-struct Chat_Previews: PreviewProvider {
-    static var previews: some View {
-        SwiftyChatView()
-    }
 }

@@ -39,10 +39,7 @@
 		9F17479C28CDBAEF0054AE20 /* Group.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F17479B28CDBAEF0054AE20 /* Group.swift */; };
 		9F17479E28CDBB290054AE20 /* UserInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F17479D28CDBB290054AE20 /* UserInfo.swift */; };
 		9F1747BE28CF3C970054AE20 /* ArtistAnimatedIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F1747BD28CF3C960054AE20 /* ArtistAnimatedIcon.swift */; };
-		9F22828B28D3CB1B0050929E /* UserAnimatedIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F22828A28D3CB1B0050929E /* UserAnimatedIcon.swift */; };
 		9F22828E28D3CE5A0050929E /* GenresAnimatedIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F22828D28D3CE5A0050929E /* GenresAnimatedIcon.swift */; };
-		9F22829028D3CFDC0050929E /* ConversationGroupRowPending.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F22828F28D3CFDC0050929E /* ConversationGroupRowPending.swift */; };
-		9F22829228D3E6470050929E /* UserImagesStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F22829128D3E6470050929E /* UserImagesStack.swift */; };
 		9F2282AE28D4D45A0050929E /* ConversationGroupRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F2282AD28D4D45A0050929E /* ConversationGroupRow.swift */; };
 		9F9C419228CF531F009CA948 /* FindButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F9C419128CF531E009CA948 /* FindButton.swift */; };
 		9F9C419628CF6BE4009CA948 /* Search.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F9C419528CF6BE4009CA948 /* Search.swift */; };
@@ -59,7 +56,6 @@
 		9FD44B9828CB683D0028A408 /* ChatButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FD44B9728CB683D0028A408 /* ChatButton.swift */; };
 		9FD44B9A28CB7B140028A408 /* InviteButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FD44B9928CB7B140028A408 /* InviteButton.swift */; };
 		9FD44B9C28CB7B9A0028A408 /* Bar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FD44B9B28CB7B9A0028A408 /* Bar.swift */; };
-		9FD44B9E28CB84290028A408 /* GroupChat.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FD44B9D28CB84290028A408 /* GroupChat.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -91,10 +87,7 @@
 		9F17479B28CDBAEF0054AE20 /* Group.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Group.swift; sourceTree = "<group>"; };
 		9F17479D28CDBB290054AE20 /* UserInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserInfo.swift; sourceTree = "<group>"; };
 		9F1747BD28CF3C960054AE20 /* ArtistAnimatedIcon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArtistAnimatedIcon.swift; sourceTree = "<group>"; };
-		9F22828A28D3CB1B0050929E /* UserAnimatedIcon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserAnimatedIcon.swift; sourceTree = "<group>"; };
 		9F22828D28D3CE5A0050929E /* GenresAnimatedIcon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenresAnimatedIcon.swift; sourceTree = "<group>"; };
-		9F22828F28D3CFDC0050929E /* ConversationGroupRowPending.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationGroupRowPending.swift; sourceTree = "<group>"; };
-		9F22829128D3E6470050929E /* UserImagesStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserImagesStack.swift; sourceTree = "<group>"; };
 		9F2282AD28D4D45A0050929E /* ConversationGroupRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationGroupRow.swift; sourceTree = "<group>"; };
 		9F9C419128CF531E009CA948 /* FindButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FindButton.swift; sourceTree = "<group>"; };
 		9F9C419528CF6BE4009CA948 /* Search.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Search.swift; sourceTree = "<group>"; };
@@ -111,7 +104,6 @@
 		9FD44B9728CB683D0028A408 /* ChatButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatButton.swift; sourceTree = "<group>"; };
 		9FD44B9928CB7B140028A408 /* InviteButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InviteButton.swift; sourceTree = "<group>"; };
 		9FD44B9B28CB7B9A0028A408 /* Bar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Bar.swift; sourceTree = "<group>"; };
-		9FD44B9D28CB84290028A408 /* GroupChat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupChat.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -144,8 +136,7 @@
 				4604EF9F2857216F000DF914 /* TopTracksView.swift */,
 				9FCB86AD28C8D0F600A96A50 /* TrackCard.swift */,
 				9F9C419928D13F76009CA948 /* UserCard.swift */,
-				9FD44B9D28CB84290028A408 /* GroupChat.swift */,
-				4685CEBF285106CC00EE5376 /* SwiftyChatView.swift */,
+				9F2282C928D630810050929E /* Chat */,
 				9F22828C28D3CB910050929E /* Conversation */,
 				9F22828728D23DCF0050929E /* Buttons */,
 				9F9C41A128D18A52009CA948 /* CreateGroup */,
@@ -289,13 +280,18 @@
 			isa = PBXGroup;
 			children = (
 				9F9C419B28D1529D009CA948 /* ConversationsView.swift */,
-				9F22828F28D3CFDC0050929E /* ConversationGroupRowPending.swift */,
-				9F22829128D3E6470050929E /* UserImagesStack.swift */,
-				9F22828A28D3CB1B0050929E /* UserAnimatedIcon.swift */,
 				9F2282AD28D4D45A0050929E /* ConversationGroupRow.swift */,
 				9F22828D28D3CE5A0050929E /* GenresAnimatedIcon.swift */,
 			);
 			path = Conversation;
+			sourceTree = "<group>";
+		};
+		9F2282C928D630810050929E /* Chat */ = {
+			isa = PBXGroup;
+			children = (
+				4685CEBF285106CC00EE5376 /* SwiftyChatView.swift */,
+			);
+			path = Chat;
 			sourceTree = "<group>";
 		};
 		9F9C41A128D18A52009CA948 /* CreateGroup */ = {
@@ -401,21 +397,17 @@
 				46F0CC48280DCEED00BF1B4B /* TopTracksResponse.swift in Sources */,
 				463FEF26281D4242005155EE /* DatabaseManager.swift in Sources */,
 				9F9C41A328D18AE0009CA948 /* UserCardGroupCreation.swift in Sources */,
-				9F22829028D3CFDC0050929E /* ConversationGroupRowPending.swift in Sources */,
 				461DCBCF2823439E009E2F7F /* UserProfileResponse.swift in Sources */,
 				46F5CA6C2808C23E00D58C41 /* MainView.swift in Sources */,
-				9FD44B9E28CB84290028A408 /* GroupChat.swift in Sources */,
 				4685CEC0285106CC00EE5376 /* SwiftyChatView.swift in Sources */,
 				9FBFACE828CBCD3200C9F179 /* Home.swift in Sources */,
 				9F9C41A528D18D44009CA948 /* UserCardViewGroupCreation.swift in Sources */,
-				9F22828B28D3CB1B0050929E /* UserAnimatedIcon.swift in Sources */,
 				9F9C419228CF531F009CA948 /* FindButton.swift in Sources */,
 				46F0CC2D280D716C00BF1B4B /* APICaller.swift in Sources */,
 				9F9C41A028D17E3B009CA948 /* CreateGroup.swift in Sources */,
 				46EAE3FE28095F3F0061C9BB /* WebView.swift in Sources */,
 				9F17479C28CDBAEF0054AE20 /* Group.swift in Sources */,
 				46ED90ED2825250B0064E5BE /* LoginView.swift in Sources */,
-				9F22829228D3E6470050929E /* UserImagesStack.swift in Sources */,
 				9F9C419C28D1529D009CA948 /* ConversationsView.swift in Sources */,
 				46F8B3DB284C3BA800EBCD9C /* Message.swift in Sources */,
 				9FD44B9628CB3E170028A408 /* UsersView.swift in Sources */,

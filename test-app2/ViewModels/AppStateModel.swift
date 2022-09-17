@@ -44,6 +44,7 @@ class AppStateModel: ObservableObject {
     private var cancellables = Set<AnyCancellable>()
 
     // Group
+    // @Published var groups = [String: Group]()
     @Published var groups = [Group]()
     @Published var pendingGroups = [Group]()
     
@@ -57,8 +58,6 @@ class AppStateModel: ObservableObject {
         self.$signInStatus.sink(receiveValue: { [weak self] signInStatus in
             if signInStatus == .signedIn {
                 self?.setup()
-
-                
             }
         })
         .store(in: &cancellables)
@@ -74,7 +73,6 @@ class AppStateModel: ObservableObject {
                 self?.signInStatus = .signedOut
             }
         }
-        
     }
     
     func signIn(completion: @escaping (Bool) -> Void) -> WebView? {
@@ -107,15 +105,19 @@ extension AppStateModel {
             DatabaseManager.shared.getGroup(with: groupID) { result in
                 switch result {
                 case .success(let group):
+                    // self?.groups[group.id] = group
                     self?.groups.append(group)
                     DatabaseManager.shared.listenForMessages(in: group.id) { result in
                         switch result {
                         case .success(let message):
                             // find the index
                             // shouldn't take too long to find the index
+  
                             if let index = self?.groups.firstIndex(where: { $0.id == group.id }) {
                                 self?.groups[index].messages.append(message)
                             }
+                            
+                            // self?.groups[group.id] = group
                             
                         case .failure(_):
                             print("failed to get messages in group \(group.id)")
@@ -132,6 +134,7 @@ extension AppStateModel {
         
         DatabaseManager.shared.observeUserRemovalFromGroup() { [weak self] groupID in
             self?.groups.removeAll { $0.id == groupID }
+            // self?.groups[groupID] = nil
             // stop observing messages in the room
             DatabaseManager.shared.removeObserver(with: "conversations/\(groupID)")
         }
@@ -217,17 +220,28 @@ extension AppStateModel {
     // meant to be called only once in the conversations view if genres_display is empty
     public func getGenresOfGroup(for groupID: String) {
         // genre of top artist of each user
+
         guard let index = groups.firstIndex(where: { $0.id == groupID }) else {
             return
         }
-        
+        /*
+        guard let group = groups[groupID] else {
+            return
+        }
+        */
         for userInfo in groups[index].users {
             DatabaseManager.shared.getUser(with: userInfo.id) { [weak self] result in
                 switch result {
                 case .success(let user):
+       
                     if let topGenre = user.topArtists?.items.first?.genres?.first {
                         self?.groups[index].genres_display.append(topGenre)
                     }
+                    /*
+                    if let topGenre = user.topArtists?.items.first?.genres?.first {
+                        self?.groups[groupID]?.genres_display.append(topGenre)
+                    }
+                    */
                 case .failure(_):
                     print("couldn't get user with id \(userInfo.id) in getting Genres of group")
                 }
