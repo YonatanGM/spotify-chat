@@ -29,6 +29,7 @@ struct CreateGroup: View {
                       opacity: 1)
                 
             ], startPoint: .topLeading, endPoint: .bottom)
+            .ignoresSafeArea()
             ScrollView {
                 VStack {
                     
