@@ -430,9 +430,8 @@ extension DatabaseManager {
          
          if let usersInfoDict = dict["users"] as? [String: [String: String]] {
             for (id, userInfo) in usersInfoDict {
-               if let name = userInfo["name"],
-                  let photoURL = userInfo["photoURL"] {
-                  usersInfo.append(UserInfo(id: id, name: name, photoURL: photoURL))
+               if let name = userInfo["name"] {
+                  usersInfo.append(UserInfo(id: id, name: name, photoURL: userInfo["photoURL"]))
                }
             }
             

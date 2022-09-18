@@ -38,7 +38,39 @@ struct SwiftyChatView: View {
     
     var body: some View {
         
-        chatView
+        ZStack {
+            
+            LinearGradient(colors: [
+                Color(.sRGB,
+                      red: Double(20) / 255,
+                      green: Double(20) / 255,
+                      blue: Double(20) / 255,
+                      opacity: 0.75),
+                Color(.sRGB,
+                      red: Double(10) / 255,
+                      green: Double(10) / 255,
+                      blue: Double(10) / 255,
+                      opacity: 1)
+
+            ], startPoint: .topLeading, endPoint: .center)
+            .ignoresSafeArea()
+            
+            chatView
+        }
+        .toolbar {
+            ToolbarItem(placement: .principal) {
+                UserIconsToolbar(users: model.groups[index].users)
+      
+                .accessibilityAddTraits(.isHeader)
+            }
+        }
+        .navigationBarItems(trailing:
+                                Image(systemName: "ellipsis")
+                                    .rotationEffect(Angle(degrees: 90))
+                                    .foregroundColor(.white)
+            
+        )
+        
     
     }
         
@@ -68,11 +100,12 @@ struct SwiftyChatView: View {
                     scrollToBottom = true
                 }
             )
-//
-//            .padding(8)
-//            .padding(.bottom, isEditing ? 0 : 8)
+           
+            .padding([.bottom, .horizontal], 25)
+            .background(Color.backdrop.brightness(0.25))
+            //.padding(.bottom, isEditing ? 0 : 8)
 //            .accentColor(.chatBlue)
-//            .background(Color.primary.colorInvert())
+           
             // .animation(.linear)
             // .border(.red)
             .embedInAnyView()
@@ -126,11 +159,15 @@ public struct InputView: View {
                     string: self.message,
                     attributes: [
                         NSAttributedString.Key.font: UIFont.preferredFont(forTextStyle: .body),
-                        NSAttributedString.Key.foregroundColor: UIColor.label,
+                        NSAttributedString.Key.foregroundColor: UIColor.white,
                     ]
                 )
             },
-            set: { self.message = $0.string }
+            set: { message in
+                DispatchQueue.main.async {
+                    self.message = message.string
+                }
+            }
         )
     }
 
@@ -175,9 +212,11 @@ public struct InputView: View {
         }, label: {
  
             Image(systemName: "paperplane.fill")
+                
                 .rotationEffect(.degrees(45))
           
         })
+        .foregroundColor(message.isEmpty ? .secondary : .white)
         .disabled(message.isEmpty)
     }
 

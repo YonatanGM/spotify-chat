@@ -33,23 +33,8 @@ struct UserCard: View {
                         .frame(height: Double(UIScreen.main.bounds.width) / 3)
                         .shadow(radius: 5)
                 } else {
-                    Image(systemName: "circle.fill")
-                        .resizable()
-                        .foregroundColor(.gray)
-                    
-                        .scaledToFit()
-                        .clipShape(Circle())
+                    UserPicInitials(name: user.userName)
                         .frame(height: Double(UIScreen.main.bounds.width) / 3)
-                        .shadow(radius: 5)
-                        .overlay(
-                            Text(user.userName.components(separatedBy: " ").reduce("") { ($0.first?.description ?? "") +  ($1.first?.description ?? "")})
-                                .font(.largeTitle)
-                                .fontWeight(.thin)
-                                .foregroundColor(.white)
-                                
-                        , alignment: .center)
-                    
-                    
                 }
                 
                 HStack {
