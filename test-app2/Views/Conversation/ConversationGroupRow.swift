@@ -28,6 +28,7 @@ struct ConversationGroupRow: View {
     var admin: UserInfo! {
         group.users.filter { $0.id == group.admin }.first
     }
+
     
     var body: some View {
         
@@ -137,21 +138,6 @@ struct ConversationGroupRow: View {
         }
 
         .frame(height: 60)
-        .gesture(DragGesture(minimumDistance: 20, coordinateSpace: .global)
-                    .onEnded { value in
-                        if value.translation.width < 0 {
-                        print("left")
-                       
-                        }
-                    }
-                    .onChanged { value in
-                        if value.translation.width < 0 {
-                            rowTranslationOffset = value.translation.width
-                        }
-                    }
-        )
-        .offset(x: rowTranslationOffset)
-        
         .onAppear {
             points = randomPoints(5)
             if group.genres_display.isEmpty {

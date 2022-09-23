@@ -12,13 +12,13 @@ struct ConversationsView: View {
     @State var isTapping = false
     @State var selectedGroup: String?
     @State var showChat = false
-    @State var rowTranslationOffset = 0.0
     
     var pendingGroups: [Group] {
         model.groups.filter { $0.pending == true }.reversed()
     }
     
-   
+    @State var rowTranslationOffset = 0.0
+    @State var groupBeingDragged: String?
     var body: some View {
         ZStack(alignment: .top) {
             NavigationLink(isActive: $showChat,
@@ -70,6 +70,35 @@ struct ConversationsView: View {
                                         showChat = true
                                     }
                                 }
+                                .gesture(DragGesture(minimumDistance: 5, coordinateSpace: .global)
+                                            .onEnded { value in
+                                                if value.translation.width < -1 * Double(UIScreen.main.bounds.width) / 2.5 {
+                                                    withAnimation(.spring()) {
+                                                        rowTranslationOffset = -1 * Double(UIScreen.main.bounds.width)
+                                                       
+                                                    }
+                                                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                                   
+                                                            model.groups.removeAll { $0.id == group.id }
+                                                        
+                                                    }
+                                                    
+                                                } else {
+                                                    print("here")
+                                                    withAnimation(.spring(response: 0.2)) {
+                                                        rowTranslationOffset = 0
+                                                    }
+                                                }
+                                            }
+                                            .onChanged { value in
+                                                if value.translation.width < 0  {
+                                                    groupBeingDragged = group.id
+                                                    rowTranslationOffset = value.translation.width
+                                                }
+                                            }
+                                )
+                                .offset(x: groupBeingDragged == group.id ? rowTranslationOffset : 0.0)
+                                .opacity(groupBeingDragged == group.id ? max(0.0, 1 + rowTranslationOffset * 2 /  Double(UIScreen.main.bounds.width)) : 1.0)
                         }
        
                 }
@@ -96,6 +125,35 @@ struct ConversationsView: View {
                             }
                             
                         }
+                        .gesture(DragGesture(minimumDistance: 5, coordinateSpace: .global)
+                                    .onEnded { value in
+                                        if value.translation.width < -1 * Double(UIScreen.main.bounds.width) / 2.5 {
+                                            withAnimation(.spring()) {
+                                                rowTranslationOffset = -1 * Double(UIScreen.main.bounds.width)
+                                               
+                                            }
+                                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                           
+                                                    model.groups.removeAll { $0.id == group.id }
+                                                
+                                            }
+                                            
+                                        } else {
+                                            print("here")
+                                            withAnimation(.spring(response: 0.2)) {
+                                                rowTranslationOffset = 0
+                                            }
+                                        }
+                                    }
+                                    .onChanged { value in
+                                        if value.translation.width < 0  {
+                                            groupBeingDragged = group.id
+                                            rowTranslationOffset = value.translation.width
+                                        }
+                                    }
+                        )
+                        .offset(x: groupBeingDragged == group.id ? rowTranslationOffset : 0.0)
+                        .opacity(groupBeingDragged == group.id ? max(0.0, 1 + rowTranslationOffset * 2 /  Double(UIScreen.main.bounds.width)) : 1.0)
                 }
                 
             }
