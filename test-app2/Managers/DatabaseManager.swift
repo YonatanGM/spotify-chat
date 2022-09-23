@@ -19,7 +19,7 @@ class DatabaseManager {
    static let shared = DatabaseManager()
    
    // private let database = Database.database().reference()
-   private let database = Database.database(url: "http://localhost:5009?ns=testapp-79467-default-rtdb").reference()
+   private let database = Database.database(url: "http://localhost:5010?ns=testapp-79467-default-rtdb").reference()
    
    // var messageHandles = [String: UInt]() // to unregister them
    
@@ -363,7 +363,6 @@ extension DatabaseManager {
             completion(false)
             return
          }
-         
          completion(true)
       }
    }
@@ -374,11 +373,34 @@ extension DatabaseManager {
          completion(false)
          return
       }
-      
       let updates: [String: Any?] = [
          "users/\(currentUserID)/Groups/\(groupID)": nil,
          "Group/\(groupID)/users/\(currentUserID)": nil
       ]
+      database.updateChildValues(updates) { error, _ in
+         guard error == nil else {
+            completion(false)
+            return
+         }
+         completion(true)
+      }
+   }
+   
+   public func deleteGroup(_ group: Group, completion: @escaping (Bool) -> Void) {
+      // delete the group, conversations, and remove group from users
+      // pending groups ?
+      
+      // query the users
+      var updates = group.users.reduce([String:Any]()) {
+         var dict = $0
+         dict["users/\($1.id)/Groups/\(group.id)"] = nil
+         dict["users/\($1.id)/pending_invitations/\(group.id)"] = nil
+         return dict
+      }
+      
+      updates["Group/\(group.id)"] = nil
+      // remove conversations
+      updates["conversations/\(group.id)"] = nil
       database.updateChildValues(updates) { error, _ in
          guard error == nil else {
             completion(false)
@@ -711,8 +733,53 @@ extension DatabaseManager {
       }
    }
    
-   // rename
+
+}
+
+
+// MARK: - remove observer
+extension DatabaseManager {
+   
    public func removeObserver(with path: String) {
       database.child(path).removeAllObservers()
+   }
+   
+   public func removeObserver(with handle: UInt) {
+      database.removeObserver(withHandle: handle)
+   }
+}
+
+//MARK: - Presence
+
+extension DatabaseManager {
+   public func managePresence() {
+      // not doing error handling
+      guard let currentUserID = AuthManager.shared.currentUser?.uid else {
+         return
+      }
+      
+      database.child(".info/connected").observe(.value) { [weak self] snapshot in
+          guard (snapshot.value as? Bool) == true else {
+              return
+          }
+         self?.database.child("status/\(currentUserID)").onDisconnectSetValue(false) { error, _ in
+            guard error == nil else {
+               return
+            }
+            self?.database.child("status/\(currentUserID)").setValue(true)
+         }
+      }
+   }
+   
+   public func checkOnlineStatus(for userID: String, completion: @escaping (Bool) -> Void) -> UInt {
+      let handle = database.child("status/\(userID)").observe(.value) { snapshot in
+         guard let isOnline = snapshot.value as? Bool else {
+            completion(false)
+            return
+         }
+         completion(isOnline)
+      }
+      return handle
+
    }
 }

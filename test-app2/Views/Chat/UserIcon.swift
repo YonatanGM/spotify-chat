@@ -16,6 +16,8 @@ struct UserIcon: View {
         return abs(UIScreen.main.bounds.size.width / 2 - posX) / (UIScreen.main.bounds.size.width / 2)
     }
     
+    @State var onlineStatusHandle: UInt?
+    @State var isOnline = false
     
     var body: some View {
         if let urlString = user.photoURL,
@@ -32,14 +34,14 @@ struct UserIcon: View {
                                 .resizable()
                                 .scaledToFit()
                                 .frame(width: 10)
-                                .offset(x: cos(Angle(degrees: 45).radians) * geometry.size.width / 2,
-                                        y: sin(Angle(degrees: 45).radians) * geometry.size.height / 2)
-                                .opacity(0.25)
+                                .foregroundColor(.green)
+                                .offset(x: cos(Angle(degrees: -45).radians) * geometry.size.width / 2,
+                                        y: sin(Angle(degrees: -45).radians) * geometry.size.height / 2)
                         }
                         .frame(width: geometry.size.width, height: geometry.size.height, alignment: .center)
                     }
+                    .opacity(isOnline ? 1.0 : 0.0 )
                 )
-                .rotationEffect(.degrees(-90))
                 .scaleEffect(max(0.01, 1 - scale))
                 .overlay(
                     GeometryReader { geometry in
@@ -55,7 +57,18 @@ struct UserIcon: View {
                     }
                     
                 )
-            
+                .onAppear {
+                    // check online status
+                    onlineStatusHandle = DatabaseManager.shared.checkOnlineStatus(for: user.id) { status in
+                        isOnline = status
+                        
+                    }
+                }
+                .onDisappear {
+                    if let onlineStatusHandle = onlineStatusHandle {
+                        DatabaseManager.shared.removeObserver(with: onlineStatusHandle)
+                    }
+                }
         } else {
             UserPicInitials(name: user.name)
                 .overlay(
@@ -67,8 +80,6 @@ struct UserIcon: View {
                                 .frame(width: 15)
                                 .offset(x: cos(Angle(degrees: 45).radians) * geometry.size.width / 2,
                                         y: sin(Angle(degrees: 45).radians) * geometry.size.height / 2)
-                            
-                      
                                 .opacity(0.25)
                         }
                         .frame(width: geometry.size.width, height: geometry.size.height, alignment: .center)
@@ -78,18 +89,30 @@ struct UserIcon: View {
                 .scaleEffect(max(0.01, 1 - scale) + 0.03)
                 .overlay(
                     GeometryReader { geometry in
-                        Color.clear
-                            .onChange(of: geometry.frame(in: .global).midX) { _ in
-                                withAnimation(.easeIn) {
-                                    scale = scaleAmount(posX: geometry.frame(in: .global).midX)
-                                }
-                            }
-                            .onAppear {
-                                scale = scaleAmount(posX: geometry.frame(in: .global).midX)
-                            }
+                        ZStack {
+                            Image(systemName: "circle.fill")
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 10)
+                                .foregroundColor(.green)
+                                .offset(x: cos(Angle(degrees: -45).radians) * geometry.size.width / 2,
+                                        y: sin(Angle(degrees: -45).radians) * geometry.size.height / 2)
+                        }
+                        .frame(width: geometry.size.width, height: geometry.size.height, alignment: .center)
                     }
-                    
+                    .opacity(isOnline ? 1.0 : 0.0 )
                 )
+                .onAppear {
+                    // check online status
+                    onlineStatusHandle = DatabaseManager.shared.checkOnlineStatus(for: user.id) { status in
+                        isOnline = status
+                    }
+                }
+                .onDisappear {
+                    if let onlineStatusHandle = onlineStatusHandle {
+                        DatabaseManager.shared.removeObserver(with: onlineStatusHandle)
+                    }
+                }
         }
     }
 }

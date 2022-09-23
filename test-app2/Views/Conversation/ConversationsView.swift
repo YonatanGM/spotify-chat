@@ -12,6 +12,13 @@ struct ConversationsView: View {
     @State var isTapping = false
     @State var selectedGroup: String?
     @State var showChat = false
+    @State var rowTranslationOffset = 0.0
+    
+    var pendingGroups: [Group] {
+        model.groups.filter { $0.pending == true }.reversed()
+    }
+    
+   
     var body: some View {
         ZStack(alignment: .top) {
             NavigationLink(isActive: $showChat,
@@ -41,7 +48,33 @@ struct ConversationsView: View {
             // list groups the user is currently in first
             List {
                 // ForEach(Array(model.groups.keys.sorted(by: >)), id: \.self) { key in
-                ForEach(model.groups, id: \.id) { group in
+                
+                if !pendingGroups.isEmpty {
+                        ForEach(pendingGroups, id: \.id) { group in
+                            ConversationGroupRow(group: group)
+                                .listRowBackground(Color.backdrop.brightness(selectedGroup == group.id && isTapping ? 0.3: 0).ignoresSafeArea())
+                                .listRowInsets(.init(top: 10, leading: 10, bottom: 10, trailing: 10))
+                                .scaleEffect(selectedGroup == group.id && isTapping ? 0.9 : 1)
+                                 .contentShape(Rectangle())
+                                .onTapGesture {
+                                    selectedGroup = group.id
+                                    // animation
+                                    withAnimation(.easeIn(duration: 0.1)) {
+                                        isTapping = true
+                                    }
+                                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
+                                        withAnimation {
+                                            isTapping = false
+                                            
+                                        }
+                                        showChat = true
+                                    }
+                                }
+                        }
+       
+                }
+
+                ForEach(model.groups.filter { $0.pending == false }.reversed(), id: \.id) { group in
                     ConversationGroupRow(group: group)
                         .listRowBackground(Color.backdrop.brightness(selectedGroup == group.id && isTapping ? 0.3: 0).ignoresSafeArea())
                         .listRowInsets(.init(top: 10, leading: 10, bottom: 10, trailing: 10))

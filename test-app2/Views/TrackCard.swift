@@ -204,7 +204,6 @@ struct TrackCard: View {
     
         }
         .onAppear {
-            print("disapp")
 //            APICaller.shared.checkUsersSavedTrack(trackID: track.id) { result in
 //                like = result
 //                

@@ -65,6 +65,7 @@ class AppStateModel: ObservableObject {
 
         Auth.auth().addStateDidChangeListener { [weak self] auth, user in
             AuthManager.shared.currentUser = user
+            
             if user != nil {
                 AuthManager.shared.refreshIfNeeded()
                 self?.signInStatus = .signedIn
@@ -101,6 +102,8 @@ class AppStateModel: ObservableObject {
 extension AppStateModel {
     
     public func setup() {
+        DatabaseManager.shared.managePresence()
+        
         DatabaseManager.shared.observeUserAdditionToGroup() { [weak self] groupID in
             DatabaseManager.shared.getGroup(with: groupID) { result in
                 switch result {
@@ -122,7 +125,6 @@ extension AppStateModel {
                         case .failure(_):
                             print("failed to get messages in group \(group.id)")
                         }
-                        
                     }
                     
                 case .failure(_):
@@ -135,20 +137,20 @@ extension AppStateModel {
         DatabaseManager.shared.observeUserRemovalFromGroup() { [weak self] groupID in
             self?.groups.removeAll { $0.id == groupID }
             // self?.groups[groupID] = nil
-            // stop observing messages in the room
+            // stop observing messages in the room, good!
             DatabaseManager.shared.removeObserver(with: "conversations/\(groupID)")
         }
         
         DatabaseManager.shared.observePendingInvites() { [weak self] result in
             switch result {
             case .success(let groupIDs):
-                // empty the pending groups array
-                self?.pendingGroups = []
+                self?.groups.removeAll { $0.pending == true }
                 for id in groupIDs {
                     DatabaseManager.shared.getGroup(with: id) { result in
                         switch result {
-                        case .success(let group):
-                            self?.pendingGroups.append(group)
+                        case .success(var group):
+                            group.pending = true
+                            self?.groups.append(group)
                             
                         case .failure(_):
                             print("failed to get group with id \(id)")
@@ -249,4 +251,6 @@ extension AppStateModel {
         }
     }
     
+    
 }
+

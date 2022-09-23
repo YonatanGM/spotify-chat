@@ -137,8 +137,20 @@ struct ConversationGroupRow: View {
         }
 
         .frame(height: 60)
-        //        .background(Color.backdrop.brightness(0.75).shadow(radius: 5))
-        //
+        .gesture(DragGesture(minimumDistance: 20, coordinateSpace: .global)
+                    .onEnded { value in
+                        if value.translation.width < 0 {
+                        print("left")
+                       
+                        }
+                    }
+                    .onChanged { value in
+                        if value.translation.width < 0 {
+                            rowTranslationOffset = value.translation.width
+                        }
+                    }
+        )
+        .offset(x: rowTranslationOffset)
         
         .onAppear {
             points = randomPoints(5)
@@ -146,6 +158,8 @@ struct ConversationGroupRow: View {
                 model.getGenresOfGroup(for: group.id)
             }
         }
+        
+        
         
     }
 }

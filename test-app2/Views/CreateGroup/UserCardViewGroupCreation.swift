@@ -17,6 +17,11 @@ struct UserCardViewGroupCreation: View {
     @State var searchText = ""
     @State var searchResults = [Message.ChatUserItem]()
     @Namespace private var animation
+    
+    var currentUserID: String? {
+        AuthManager.shared.currentUser?.uid
+    }
+    
     var body: some View {
         
         VStack(alignment: .leading, spacing: 5) {
@@ -152,7 +157,7 @@ struct UserCardViewGroupCreation: View {
             ScrollView(.horizontal, showsIndicators: false) {
                 
                 HStack {
-                    ForEach(model.suggestedUsers.filter { !addedUsers.contains($0) }, id: \.id) { user in
+                    ForEach(model.suggestedUsers.filter { $0.id != currentUserID && !addedUsers.contains($0) }, id: \.id) { user in
                         UserCardGroupCreation(user: user, namespace: animation)
                             .padding([.horizontal], 1)
                             .padding([.leading], model.suggestedUsers.first?.id == user.id ? 10 : 0)

@@ -15,6 +15,8 @@ struct UserCard: View {
     @State var selectedUserID: String?
     @State var isTapping = false
     @State var showUserDetail = false
+    @State var onlineStatusHandle: UInt?
+    @State var isOnline = false
     
     let user: Message.ChatUserItem
     var body: some View {
@@ -32,9 +34,43 @@ struct UserCard: View {
                         .clipShape(Circle())
                         .frame(height: Double(UIScreen.main.bounds.width) / 3)
                         .shadow(radius: 5)
+                        .overlay(
+                            GeometryReader { geometry in
+                                ZStack {
+                                    Image(systemName: "circle.fill")
+                                        .resizable()
+                                        .scaledToFit()
+                                        .frame(width: 10)
+                                        .foregroundColor(.green)
+                                        .offset(x: cos(Angle(degrees: -45).radians) * geometry.size.width / 2,
+                                                y: sin(Angle(degrees: -45).radians) * geometry.size.height / 2)
+                                    
+                            
+                                }
+                                .frame(width: geometry.size.width, height: geometry.size.height, alignment: .center)
+                            }
+                            .opacity(isOnline ? 1.0 : 0.0 )
+                        )
                 } else {
                     UserPicInitials(name: user.userName)
                         .frame(height: Double(UIScreen.main.bounds.width) / 3)
+                        .overlay(
+                            GeometryReader { geometry in
+                                ZStack {
+                                    Image(systemName: "circle.fill")
+                                        .resizable()
+                                        .scaledToFit()
+                                        .frame(width: 10)
+                                        .foregroundColor(.green)
+                                        .offset(x: cos(Angle(degrees: -45).radians) * geometry.size.width / 2,
+                                                y: sin(Angle(degrees: -45).radians) * geometry.size.height / 2)
+                                    
+                            
+                                }
+                                .frame(width: geometry.size.width, height: geometry.size.height, alignment: .center)
+                            }
+                            .opacity(isOnline ? 1.0 : 0.0 )
+                        )
                 }
                 
                 HStack {
@@ -86,6 +122,19 @@ struct UserCard: View {
                     showUserDetail = true
                 }
             }
+        }
+        .onAppear {
+            // check online status
+            onlineStatusHandle = DatabaseManager.shared.checkOnlineStatus(for: user.id) { status in
+                isOnline = status
+                
+            }
+        }
+        .onDisappear {
+            if let onlineStatusHandle = onlineStatusHandle {
+                DatabaseManager.shared.removeObserver(with: onlineStatusHandle)
+            }
+           
         }
     }
 }

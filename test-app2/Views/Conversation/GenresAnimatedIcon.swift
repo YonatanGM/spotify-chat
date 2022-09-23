@@ -9,8 +9,6 @@ import SwiftUI
 
 struct GenresAnimatedIcon: View {
     let genre: String
-    
-
     @State var scale = 0.001
     var body: some View {
         ZStack {

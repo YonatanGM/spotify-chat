@@ -12,6 +12,10 @@ import SDWebImageSwiftUI
 struct UserCardGroupCreation: View {
     let user: Message.ChatUserItem
     let namespace: Namespace.ID
+    @State var onlineStatusHandle: UInt?
+    @State var isOnline = false
+
+    
     var body: some View {
         VStack {
             
@@ -23,29 +27,40 @@ struct UserCardGroupCreation: View {
                         .clipShape(Circle())
                         .frame(height: Double(UIScreen.main.bounds.width) / 3)
                         .shadow(radius: 5)
+                        .overlay(
+                            GeometryReader { geometry in
+                                ZStack {
+                                    Image(systemName: "circle.fill")
+                                        .resizable()
+                                        .scaledToFit()
+                                        .frame(width: 10)
+                                        .foregroundColor(.green)
+                                        .offset(x: cos(Angle(degrees: -45).radians) * geometry.size.width / 2,
+                                                y: sin(Angle(degrees: -45).radians) * geometry.size.height / 2)
+                                }
+                                .frame(width: geometry.size.width, height: geometry.size.height, alignment: .center)
+                            }
+                            .opacity(isOnline ? 1.0 : 0.0 )
+                        )
                         .matchedGeometryEffect(id: user.id, in: namespace)
                 } else {
-//                    InitialsUI(initials: user.userName.components(separatedBy: " ").first ?? "", useDefaultForegroundColor: true, fontWeight: .light)
-                    
-                    Image(systemName: "circle.fill")
-                        .resizable()
-                        .foregroundColor(.gray)
-                    
-                        .scaledToFit()
-                        .clipShape(Circle())
-                        .frame(height: Double(UIScreen.main.bounds.width) / 3)
-                        .shadow(radius: 5)
+                    UserPicInitials(name: user.userName)
                         .overlay(
-                            Text(user.userName.components(separatedBy: " ").reduce("") { ($0.first?.description ?? "") +  ($1.first?.description ?? "")})
-                                .font(.largeTitle)
-                                .fontWeight(.thin)
-                                .foregroundColor(.white)
-                                
-                        , alignment: .center)
+                            GeometryReader { geometry in
+                                ZStack {
+                                    Image(systemName: "circle.fill")
+                                        .resizable()
+                                        .scaledToFit()
+                                        .frame(width: 10)
+                                        .foregroundColor(.green)
+                                        .offset(x: cos(Angle(degrees: -45).radians) * geometry.size.width / 2,
+                                                y: sin(Angle(degrees: -45).radians) * geometry.size.height / 2)
+                                }
+                                .frame(width: geometry.size.width, height: geometry.size.height, alignment: .center)
+                            }
+                            .opacity(isOnline ? 1.0 : 0.0 )
+                        )
                         .matchedGeometryEffect(id: "picInitial" + user.id, in: namespace)
-                        
-                        
-                    
                 }
                 
                 HStack {
@@ -83,6 +98,18 @@ struct UserCardGroupCreation: View {
         }
         .background(Color.backdrop.animation(nil))
         .cornerRadius(5)
+        .onAppear {
+            // check online status
+            onlineStatusHandle = DatabaseManager.shared.checkOnlineStatus(for: user.id) { status in
+                isOnline = status
+                
+            }
+        }
+        .onDisappear {
+            if let onlineStatusHandle = onlineStatusHandle {
+                DatabaseManager.shared.removeObserver(with: onlineStatusHandle)
+            }
+        }
 
     }
 }

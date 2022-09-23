@@ -12,6 +12,7 @@ struct Group {
     let admin: String
     let users: [UserInfo]
     
+    var pending = false 
     var messages = [Message.ChatMessageItem]()
     var genres_display = [String]()
     

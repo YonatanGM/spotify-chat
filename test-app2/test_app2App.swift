@@ -41,7 +41,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         // firebase
         UINavigationBar.appearance().barTintColor = UIColor(.chatSpotifyColor)
         UINavigationBar.appearance().tintColor  = .white
-
+        UITableView.appearance().tableHeaderView = UIView(frame: CGRect(x: 0, y: 0, width: 0, height: Double.leastNonzeroMagnitude))
         FirebaseApp.configure()
         Auth.auth().useEmulator(withHost: "localhost", port: 9091)
         
