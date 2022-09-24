@@ -44,8 +44,8 @@ class AppStateModel: ObservableObject {
     private var cancellables = Set<AnyCancellable>()
 
     // Group
-    // @Published var groups = [String: Group]()
-    @Published var groups = [Group]()
+    @Published var groups = [String: Group]()
+    // @Published var groups = [Group]()
     @Published var pendingGroups = [Group]()
     
     init() {
@@ -104,12 +104,89 @@ extension AppStateModel {
     public func setup() {
         DatabaseManager.shared.managePresence()
         
+        DatabaseManager.shared.observeNewGroup() { [weak self] result in
+            switch result {
+            case .success(let (groupID, userHasJoined)):
+                
+                DatabaseManager.shared.getGroup(with: groupID) { [weak self] result in
+                    switch result {
+                    case .success(var group):
+                        group.pending = !userHasJoined
+                        // self?.groups.append(group)
+                        self?.groups[groupID] = group
+                        // self?.groups.insert(group, at: 0)
+                        // observe change in group child nodes
+                        DatabaseManager.shared.observeChangesInGroup(with: groupID) { result in
+                            switch result {
+                            
+                            case .success(let (key, snapshotValue)):
+                                // update group name
+                                // print(key, snapshotValue)
+                                if key == "name" {
+                                    if let name = snapshotValue as? String {
+                                        self?.groups[groupID]?.name = name
+                                    }
+                                } else if key == "users" {
+                                    // update group users (in case a user joins or leaves the group)
+                                    var users = [UserInfo]()
+                                    if let usersInfoDict = snapshotValue as? [String: [String: String]] {
+                                        for (id, userInfo) in usersInfoDict {
+                                            if let name = userInfo["name"] {
+                                                users.append(UserInfo(id: id, name: name, photoURL: userInfo["photoURL"], genreDisplay: userInfo["top_genre_display"]))
+                                            }
+                                        }
+                                        self?.groups[groupID]?.users = users
+                                    }
+                                }
+                                
+                            case .failure(_):
+                                print("failed to get changes at child locations of group \(groupID)")
+                            }
+                        }
+                        if userHasJoined {
+                            DatabaseManager.shared.listenForMessages(in: group.id) { result in
+                                switch result {
+                                case .success(let message):
+                                    // find the index
+                                    // shouldn't take too long to find the index hopefully
+                                    /*
+                                    if let index = self?.groups.firstIndex(where: { $0.id == group.id }) {
+                                        self?.groups[index].messages.append(message)
+                                    }
+                                    */
+                                    self?.groups[groupID]?.messages.append(message)
+                                    
+                                case .failure(_):
+                                    print("failed to get messages in group \(group.id)")
+                                }
+                            }
+                        }
+                        
+                    case .failure(_):
+                        print("failed to get group with id \(groupID)")
+                    }
+                }
+            case .failure(_):
+                print("failed to get new group")
+            }
+            
+        }
+        
+        DatabaseManager.shared.observeGroupRemoval() { [weak self] groupID in
+            // self?.groups.removeAll { $0.id == groupID }
+            self?.groups[groupID] = nil
+            // stop observing messages in the room, good!
+            DatabaseManager.shared.removeObserver(with: "conversations/\(groupID)")
+        }
+        
+        /*
         DatabaseManager.shared.observeUserAdditionToGroup() { [weak self] groupID in
             DatabaseManager.shared.getGroup(with: groupID) { result in
                 switch result {
                 case .success(let group):
                     // self?.groups[group.id] = group
                     self?.groups.append(group)
+//                    self?.groups.insert(group, at: 0)
                     DatabaseManager.shared.listenForMessages(in: group.id) { result in
                         switch result {
                         case .success(let message):
@@ -133,35 +210,27 @@ extension AppStateModel {
             }
             
         }
+        */
+
         
-        DatabaseManager.shared.observeUserRemovalFromGroup() { [weak self] groupID in
-            self?.groups.removeAll { $0.id == groupID }
-            // self?.groups[groupID] = nil
-            // stop observing messages in the room, good!
-            DatabaseManager.shared.removeObserver(with: "conversations/\(groupID)")
-        }
-        
-        DatabaseManager.shared.observePendingInvites() { [weak self] result in
+        DatabaseManager.shared.observeInviteAcceptance() { [weak self] result in
             switch result {
-            case .success(let groupIDs):
-                self?.groups.removeAll { $0.pending == true }
-                for id in groupIDs {
-                    DatabaseManager.shared.getGroup(with: id) { result in
-                        switch result {
-                        case .success(var group):
-                            group.pending = true
-                            self?.groups.append(group)
-                            
-                        case .failure(_):
-                            print("failed to get group with id \(id)")
-                        }
+            case .success(let groupID):
+                self?.groups[groupID]?.pending = false 
+                DatabaseManager.shared.listenForMessages(in: groupID) { result in
+                    switch result {
+                    case .success(let message):
+                        self?.groups[groupID]?.messages.append(message)
+                        
+                    case .failure(_):
+                        print("failed to get messages in group \(groupID)")
                     }
                 }
             case .failure(_):
-                print("error getting ids of pending group invites")
+                print("error getting id of pending group invite")
             }
-            
         }
+        
         
         DatabaseManager.shared.observeRoomChange() { [weak self] result in
             switch result {
@@ -217,40 +286,3 @@ extension AppStateModel {
 
 
 //MARK: - Additional functions
-
-extension AppStateModel {
-    // meant to be called only once in the conversations view if genres_display is empty
-    public func getGenresOfGroup(for groupID: String) {
-        // genre of top artist of each user
-
-        guard let index = groups.firstIndex(where: { $0.id == groupID }) else {
-            return
-        }
-        /*
-        guard let group = groups[groupID] else {
-            return
-        }
-        */
-        for userInfo in groups[index].users {
-            DatabaseManager.shared.getUser(with: userInfo.id) { [weak self] result in
-                switch result {
-                case .success(let user):
-       
-                    if let topGenre = user.topArtists?.items.first?.genres?.first {
-                        self?.groups[index].genres_display.append(topGenre)
-                    }
-                    /*
-                    if let topGenre = user.topArtists?.items.first?.genres?.first {
-                        self?.groups[groupID]?.genres_display.append(topGenre)
-                    }
-                    */
-                case .failure(_):
-                    print("couldn't get user with id \(userInfo.id) in getting Genres of group")
-                }
-            }
-        }
-    }
-    
-    
-}
-

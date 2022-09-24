@@ -292,28 +292,34 @@ extension DatabaseManager {
          completion(false)
          return
       }
-      
-      database.child("users/\(currentUserID)/pending_invitations/\(groupID)").observeSingleEvent(of: .value) { [weak self] snapshot in
-         guard snapshot.exists() else {
-            completion(false)
-            return
-         }
-         
-         
-         let updates: [String: Any?] = [
-            "users/\(currentUserID)/pending_invitations/\(groupID)": nil, // remove the invitation
-            "users/\(currentUserID)/Groups/\(groupID)": true,
-            "Group/\(groupID)/users/\(currentUserID)": ["id": currentUserID, "name": currentUserName, "photoURL": AuthManager.shared.currentUser?.photoURL]
-         ]
-         // atomic write
-         self?.database.updateChildValues(updates) { error, _ in
-            guard error == nil else {
+      database.child("users/\(currentUserID)/top_genre_display").observeSingleEvent(of: .value) { [weak self] topGenreSnapshot in
+         self?.database.child("users/\(currentUserID)/Groups/\(groupID)").observeSingleEvent(of: .value) { [weak self] snapshot in
+            guard (snapshot.value as? Bool) == false else {
                completion(false)
                return
             }
-            completion(true)
+            
+        
+            let updates: [String: Any?] = [
+               //"users/\(currentUserID)/pending_invitations/\(groupID)": nil, // remove the invitation
+               "users/\(currentUserID)/Groups/\(groupID)": true,
+               "Group/\(groupID)/users/\(currentUserID)": ["id": currentUserID,
+                                                           "name": currentUserName,
+                                                           "photoURL": AuthManager.shared.currentUser?.photoURL?.absoluteString,
+                                                           "top_genre_display": topGenreSnapshot.value as? String]
+            ]
+
+            self?.database.updateChildValues(updates) { error, _ in
+               guard error == nil else {
+                  completion(false)
+                  return
+               }
+               completion(true)
+            }
          }
+         
       }
+
    }
    
    public func declinePendingInvitation(_ groupID: String, completion: @escaping ((Bool) -> Void)) {
@@ -322,7 +328,7 @@ extension DatabaseManager {
          return
       }
       
-      database.child("users/\(currentUserID)/pending_invitations/\(groupID)").removeValue() { error, _ in
+      database.child("users/\(currentUserID)/Groups/\(groupID)").removeValue() { error, _ in
          guard error == nil else {
             completion(false)
             return
@@ -340,30 +346,36 @@ extension DatabaseManager {
          return
       }
       
-      guard let groupID = database.child("Group").childByAutoId().key else {
-         completion(false)
-         return
-      }
-      
-      // i have the groupID now
-      // child updates
-      // let childUpdates = users.map { ["/users/\($0.id)/group_invites/" : "\(groupID)"]}
-      var childUpdates = users.reduce([String: Any]()) {
-         var dict = $0
-         dict["users/\($1.id)/pending_invitations/\(groupID)"] = true
-         return dict
-      }
-
-      childUpdates["Group/\(groupID)/admin"] = currentUserID
-      childUpdates["Group/\(groupID)/name"] = name
-      childUpdates["Group/\(groupID)/users/\(currentUserID)"] =  ["id": currentUserID, "name": currentUserName, "photoURL":  AuthManager.shared.currentUser?.photoURL?.absoluteString]
-      childUpdates["users/\(currentUserID)/Groups/\(groupID)"] =  true
-      database.updateChildValues(childUpdates) { error, _ in
-         guard error == nil else {
+      database.child("users/\(currentUserID)/top_genre_display").observeSingleEvent(of: .value) { [weak self] topGenreSnapshot in
+         guard let groupID = self?.database.child("Group").childByAutoId().key else {
             completion(false)
             return
          }
-         completion(true)
+         
+         // i have the groupID now
+         // child updates
+         // let childUpdates = users.map { ["/users/\($0.id)/group_invites/" : "\(groupID)"]}
+         var childUpdates = users.reduce([String: Any]()) {
+            var dict = $0
+            dict["users/\($1.id)/Groups/\(groupID)"] = false
+            return dict
+         }
+         
+         childUpdates["Group/\(groupID)/admin"] = currentUserID
+         childUpdates["Group/\(groupID)/name"] = name
+         childUpdates["Group/\(groupID)/users/\(currentUserID)"] =  ["id": currentUserID,
+                                                                     "name": currentUserName,
+                                                                     "photoURL":  AuthManager.shared.currentUser?.photoURL?.absoluteString,
+                                                                     "top_genre_display": topGenreSnapshot.value as? String]
+         childUpdates["users/\(currentUserID)/Groups/\(groupID)"] =  true
+         self?.database.updateChildValues(childUpdates) { error, _ in
+            guard error == nil else {
+               completion(false)
+               return
+            }
+            completion(true)
+         }
+         
       }
    }
    
@@ -394,7 +406,7 @@ extension DatabaseManager {
       var updates = group.users.reduce([String:Any]()) {
          var dict = $0
          dict["users/\($1.id)/Groups/\(group.id)"] = nil
-         dict["users/\($1.id)/pending_invitations/\(group.id)"] = nil
+         // dict["users/\($1.id)/pending_invitations/\(group.id)"] = nil
          return dict
       }
       
@@ -409,23 +421,8 @@ extension DatabaseManager {
          completion(true)
       }
    }
-   
-   // called initially which is what i want
-   // return id of the group the user was added to
-   public func observeUserAdditionToGroup(completion: @escaping (String) ->Void) {
-      guard let currentUserID = AuthManager.shared.currentUser?.uid else {
-         // user signed out already or the object hasn't been initalized yet
-         // if this fails the observer won't be added so it's good enough
-         // no need to add error handling
-         return
-      }
-      print(currentUserID)
-      database.child("users/\(currentUserID)/Groups").observe(.childAdded) { snapshot in
-         completion(snapshot.key)
-      }
-   }
-   
-   public func observeUserRemovalFromGroup(completion: @escaping ((String) ->Void)) {
+
+   public func observeGroupRemoval(completion: @escaping ((String) ->Void)) {
       guard let currentUserID = AuthManager.shared.currentUser?.uid else {
          // user signed out already or the object hasn't been initalized yet
          // if this fails the observer won't be added so it's good enough
@@ -434,6 +431,13 @@ extension DatabaseManager {
       }
       database.child("users/\(currentUserID)/Groups").observe(.childRemoved) { snapshot in
          completion(snapshot.key)
+      }
+   }
+   
+   public func observeChangesInGroup(with id: String, completition: @escaping (Result<(String, Any?), Error>) -> Void) {
+      database.child("Group/\(id)").observe(.childChanged) { snapshot in
+         
+         completition(.success((snapshot.key, snapshot.value)))
       }
    }
    
@@ -453,7 +457,10 @@ extension DatabaseManager {
          if let usersInfoDict = dict["users"] as? [String: [String: String]] {
             for (id, userInfo) in usersInfoDict {
                if let name = userInfo["name"] {
-                  usersInfo.append(UserInfo(id: id, name: name, photoURL: userInfo["photoURL"]))
+                  usersInfo.append(UserInfo(id: id,
+                                            name: name,
+                                            photoURL: userInfo["photoURL"],
+                                            genreDisplay: userInfo["top_genre_display"]))
                }
             }
             
@@ -462,19 +469,46 @@ extension DatabaseManager {
       }
    }
    
-   public func observePendingInvites(completion: @escaping ((Result<[String], Error>) ->Void)) {
+   public func observeNewGroup(completion: @escaping ((Result<(String, Bool), Error>) ->Void)) {
+      guard let currentUserID = AuthManager.shared.currentUser?.uid else {
+         completion(.failure(AuthManager.AuthError.failedToGetCurrentUser))
+         return
+      }
+      database.child("users/\(currentUserID)/Groups").observe(.childAdded) { snapshot in
+         guard let userHasJoined = snapshot.value as? Bool else {
+            completion(.failure(DatabaseError.failedToFetch))
+            return
+         }
+         completion(.success((snapshot.key, userHasJoined)))
+      }
+   }
+   
+   
+   
+   public func observeInviteAcceptance(completion: @escaping ((Result<String, Error>) ->Void)) {
       guard let currentUserID = AuthManager.shared.currentUser?.uid else {
          completion(.failure(AuthManager.AuthError.failedToGetCurrentUser)) // user signed out already or the object hasn't been initalized yet
          return
       }
-      database.child("users/\(currentUserID)/pending_invitations").observe(.value) { snapshot in
-         guard let group = snapshot.value as? [String: Any] else {
-            completion(.failure(DatabaseError.failedToFetch))
+      database.child("users/\(currentUserID)/Groups").observe(.childChanged) { snapshot in
+         guard let inviteAccepted = (snapshot.value as? Bool), inviteAccepted == true else {
             return
          }
-         completion(.success(group.keys.map { $0 }))
+         completion(.success(snapshot.key))
       }
    }
+   
+   /*
+   public func ObserveInviteRejection(completion: @escaping ((Result<String, Error>) ->Void)) {
+      guard let currentUserID = AuthManager.shared.currentUser?.uid else {
+         completion(.failure(AuthManager.AuthError.failedToGetCurrentUser)) // user signed out already or the object hasn't been initalized yet
+         return
+      }
+      database.child("users/\(currentUserID)/pending_invitations").observe(.childRemoved) { snapshot in
+         completion(.success(snapshot.key))
+      }
+   }
+   */
    
    public func removeMessagesObserver(_ group: String) {
       database.child("conversations/\(group)").removeAllObservers()
@@ -482,6 +516,7 @@ extension DatabaseManager {
    
    // probably don't need error handling for this, if i can't remove the observer it's whatever
    // only have to do this once anyways
+   /*
    public func removeGroupObserver() {
       
       guard let currentUserID = AuthManager.shared.currentUser?.uid else {
@@ -490,6 +525,7 @@ extension DatabaseManager {
       database.child("users/\(currentUserID)/Groups").removeAllObservers()
       
    }
+   */
    
    public func sendMessage(message: Message.ChatMessageItem, to group: String, completion: ((Bool) -> Void)? = nil) {
       guard let currentUserID = AuthManager.shared.currentUser?.uid,

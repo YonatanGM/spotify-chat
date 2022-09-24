@@ -9,7 +9,7 @@ import SwiftUI
 
 struct GenresAnimatedIcon: View {
     let genre: String
-    @State var scale = 0.001
+    // @State var scale = 0.001
     var body: some View {
         ZStack {
             Color.black.opacity(0.25)
@@ -22,22 +22,22 @@ struct GenresAnimatedIcon: View {
    
         .clipShape(Capsule())
 
-        .scaleEffect(scale)
+        // .scaleEffect(scale)
         .shadow(radius: 10)
 
         .foregroundColor(.white)
-        .onAppear {
-            withAnimation(.easeIn(duration: 0.2)) {
-                scale = 1.0
-
-            }
-           
-        }
-        .onDisappear {
-            withAnimation(.easeIn(duration: 0.2)) {
-                scale = 0.001
-            }
-        }
+//        .onAppear {
+//            withAnimation(.easeIn(duration: 0.2)) {
+//                scale = 1.0
+//
+//            }
+//
+//        }
+//        .onDisappear {
+//            withAnimation(.easeIn(duration: 0.2)) {
+//                scale = 0.001
+//            }
+//        }
 
     }
 }

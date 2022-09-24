@@ -19,9 +19,6 @@ struct SwiftyChatView: View {
     @State private var message = ""
     @State private var isEditing = false
     
-    var index: Int! {
-        model.groups.firstIndex(where: { $0.id == groupID })
-    }
  
     
     var currentChatUser: Message.ChatUserItem? {
@@ -59,7 +56,7 @@ struct SwiftyChatView: View {
         }
         .toolbar {
             ToolbarItem(placement: .principal) {
-                UserIconsToolbar(users: model.groups[index].users)
+                UserIconsToolbar(users: model.groups[groupID]?.users ?? [])
       
                 .accessibilityAddTraits(.isHeader)
             }
@@ -78,7 +75,7 @@ struct SwiftyChatView: View {
     private var chatView: some View {
 
         ChatView<Message.ChatMessageItem, Message.ChatUserItem>(
-            messages: Binding(get: { model.groups[index].messages }, set: { _ in }),
+            messages: Binding(get: { model.groups[groupID]?.messages ?? [] }, set: { _ in }),
             scrollToBottom: $scrollToBottom,
             shouldShowGroupChatHeaders: true
         

@@ -41,9 +41,7 @@ struct NewGroupButton: View {
                     
                 }
                 presentSheet = true
-                
             }
-            
         }
         
         .sheet(isPresented: $presentSheet,

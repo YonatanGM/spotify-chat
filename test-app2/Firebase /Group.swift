@@ -8,12 +8,11 @@
 import Foundation
 struct Group {
     let id: String
-    let name: String
+    var name: String
     let admin: String
-    let users: [UserInfo]
+    var users: [UserInfo]
     
-    var pending = false 
+    var pending = false
     var messages = [Message.ChatMessageItem]()
-    var genres_display = [String]()
     
 }
