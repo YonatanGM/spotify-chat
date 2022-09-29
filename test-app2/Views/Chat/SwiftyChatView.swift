@@ -19,12 +19,12 @@ struct SwiftyChatView: View {
     @State private var message = ""
     @State private var isEditing = false
     
- 
+    
     
     var currentChatUser: Message.ChatUserItem? {
         guard let currentUserID = AuthManager.shared.currentUser?.uid,
               let currentUserName = AuthManager.shared.currentUser?.displayName else {
-                return nil
+            return nil
         }
         
         return Message.ChatUserItem(userName: currentUserName,
@@ -35,82 +35,123 @@ struct SwiftyChatView: View {
     
     var body: some View {
         
-        ZStack {
-            
-            LinearGradient(colors: [
-                Color(.sRGB,
-                      red: Double(20) / 255,
-                      green: Double(20) / 255,
-                      blue: Double(20) / 255,
-                      opacity: 0.75),
-                Color(.sRGB,
-                      red: Double(10) / 255,
-                      green: Double(10) / 255,
-                      blue: Double(10) / 255,
-                      opacity: 1)
-
-            ], startPoint: .topLeading, endPoint: .center)
-            .ignoresSafeArea()
-            
-            chatView
-        }
-        .toolbar {
-            ToolbarItem(placement: .principal) {
-                UserIconsToolbar(users: model.groups[groupID]?.users ?? [])
-      
-                .accessibilityAddTraits(.isHeader)
+        chatView
+            .foregroundColor(.white)
+        
+            .overlay(
+                Divider()
+                , alignment: .top)
+            .background(
+                ZStack {
+                    LinearGradient(colors: [
+                        Color(.sRGB,
+                              red: Double(20) / 255,
+                              green: Double(20) / 255,
+                              blue: Double(20) / 255,
+                              opacity: 0.75),
+                        Color(.sRGB,
+                              red: Double(10) / 255,
+                              green: Double(10) / 255,
+                              blue: Double(10) / 255,
+                              opacity: 1)
+                        
+                    ], startPoint: .topLeading, endPoint: .center)
+                    
+                    LinearGradient(colors: [
+                        Color.clear,
+                        Color.backdrop
+                        
+                    ], startPoint: .center, endPoint: .bottom)
+         
+                }
+                .ignoresSafeArea()
+            )
+            .onAppear {
+                if let lastSeenID = model.groups[groupID]?.messages.last?.id {
+                    DatabaseManager.shared.setLastSeen(for: groupID, messageID: lastSeenID)
+                     print("swiftyChat \(lastSeenID)  ")
+                    print(model.groups[groupID]?.messages.last?.messageKind)
+                    
+                }
+             
+                withAnimation {
+                    scrollToBottom = true
+                }
             }
-        }
-        .navigationBarItems(trailing:
-                                Image(systemName: "ellipsis")
-                                    .rotationEffect(Angle(degrees: 90))
-                                    .foregroundColor(.white)
-            
-        )
+      
+  
+
+            .navigationTitle("")
+            .navigationBarTitleDisplayMode(.large)
+            .toolbar {
+                ToolbarItem(placement: .principal) {
+                    UserIconsToolbar(users: model.groups[groupID]?.users ?? [])
+                    
+                    
+                    
+                        .accessibilityAddTraits(.isHeader)
+                }
+            }
+            .navigationBarItems(trailing:
+                                    Image(systemName: "ellipsis")
+                .rotationEffect(Angle(degrees: 90))
+                .foregroundColor(.white)
+                                
+            )
+        //
         
-    
     }
-        
+    
     
     private var chatView: some View {
-
+        
         ChatView<Message.ChatMessageItem, Message.ChatUserItem>(
             messages: Binding(get: { model.groups[groupID]?.messages ?? [] }, set: { _ in }),
             scrollToBottom: $scrollToBottom,
-            shouldShowGroupChatHeaders: true
-        
-        ) {
-
-            InputView(
-                message: $message,
-                isEditing: $isEditing,
-                placeholder: "Type something",
-                onCommit: { messageKind in
-                    if let currentChatUser = currentChatUser {
-                        // get back to this 
-                      
-                        DatabaseManager.shared.sendMessage(message: .init(user: currentChatUser,
-                                                                          messageKind: messageKind,
-                                                                          isSender: true), to: groupID)
+            shouldShowGroupChatHeaders: true,
+            inputView:  {
                 
+                InputView(
+                    message: $message,
+                    isEditing: $isEditing,
+                    placeholder: "Type something",
+                    onCommit: { messageKind in
+                        if let currentChatUser = currentChatUser {
+                            // get back to this
+                            
+                            DatabaseManager.shared.sendMessage(message: .init(user: currentChatUser,
+                                                                              messageKind: messageKind,
+                                                                              isSender: true),
+                                                                              to: groupID)
+                            
+                            
+                            
+                        }
+                        withAnimation(.spring(response: 0.2)) {
+                            scrollToBottom = true
+                        }
                     }
-                    scrollToBottom = true
-                }
-            )
-           
-            .padding([.bottom, .horizontal], 25)
-            .background(Color.backdrop.brightness(0.25))
-            //.padding(.bottom, isEditing ? 0 : 8)
-//            .accentColor(.chatBlue)
-           
-            // .animation(.linear)
-            // .border(.red)
-            .embedInAnyView()
-
-
-            
-        }
-       
+                )
+                
+               
+               // .background(Color.backdrop.brightness(0.25).ignoresSafeArea())
+               // .padding([.vertical], 17)
+                .padding(.leading, 10)
+                .padding(.trailing, 20)
+             
+    
+               
+//                .padding(.bottom, isEditing ? 0 : 10)
+                //            .accentColor(.chatBlue)
+                
+                // .animation(.linear)
+                // .border(.red)
+                .embedInAnyView()
+                
+                
+                
+            })
+        
         
         // ▼ Optional, Present context menu when cell long pressed
         .messageCellContextMenu { message -> AnyView in
@@ -131,9 +172,9 @@ struct SwiftyChatView: View {
         }
         // ▼ Required
         .environmentObject(ChatMessageCellStyle.basicStyle)
-        .listStyle(PlainListStyle())
+        
         // .background(Color.primary.colorInvert())
-
+        
     }
 }
 
@@ -146,9 +187,9 @@ public struct InputView: View {
     @Binding private var message: String
     @Binding private var isEditing: Bool
     private let placeholder: String
-
+    
     @State private var contentSizeThatFits: CGSize = .zero
-
+    
     private var internalAttributedMessage: Binding<NSAttributedString> {
         Binding<NSAttributedString>(
             get: {
@@ -167,7 +208,7 @@ public struct InputView: View {
             }
         )
     }
-
+    
     private var onCommit: ((ChatMessageKind) -> Void)?
     
     public init(
@@ -182,14 +223,14 @@ public struct InputView: View {
         self._contentSizeThatFits = State(initialValue: .zero)
         self.onCommit = onCommit
     }
-
+    
     private var messageEditorHeight: CGFloat {
         min(
             self.contentSizeThatFits.height,
             0.2 * UIScreen.main.bounds.height
         )
     }
-
+    
     private var messageEditorView: some View {
         MultilineTextField(
             attributedText: self.internalAttributedMessage,
@@ -201,30 +242,31 @@ public struct InputView: View {
         }
         .frame(height: self.messageEditorHeight)
     }
-
+    
     private var sendButton: some View {
         Button(action: {
             self.onCommit?(.text(message))
             self.message.removeAll()
         }, label: {
- 
+            
             Image(systemName: "paperplane.fill")
-                
+            
                 .rotationEffect(.degrees(45))
-          
+            
         })
         .foregroundColor(message.isEmpty ? .secondary : .white)
         .disabled(message.isEmpty)
     }
-
+    
     public var body: some View {
-        VStack {
-            Divider()
+        VStack(spacing: 0) {
             HStack {
                 self.messageEditorView
                 self.sendButton
             }
         }
+
+   
     }
     
 }
@@ -238,23 +280,23 @@ extension Color {
 }
 
 let futuraFont = Font.custom("Futura", size: 17)
- 
-internal extension ChatMessageCellStyle {
 
+internal extension ChatMessageCellStyle {
+    
     static let basicStyle = ChatMessageCellStyle(
         incomingTextStyle: .init(
-            textStyle: .init(textColor: .white, font: .footnote),
+            textStyle: .init(textColor: .white),
             textPadding: 12,
             attributedTextStyle: .init(textColor: .black),
-            cellBackgroundColor: Color.chatSpotifyColor,
+            cellBackgroundColor: Color.backdrop,
             cellBorderWidth: 0,
             cellShadowRadius: 0,
             cellRoundedCorners: [.allCorners]
         ),
         outgoingTextStyle: .init(
-            textStyle: .init(textColor: .white, font: futuraFont),
+            textStyle: .init(textColor: .white),
             textPadding: 12,
-            cellBackgroundColor: Color.chatSpotifyColor,
+            cellBackgroundColor: Color.backdrop,
             cellBorderWidth: 0,
             cellShadowRadius: 0,
             cellRoundedCorners: [.allCorners]
@@ -264,13 +306,13 @@ internal extension ChatMessageCellStyle {
                                                      cornerRadius: 16,
                                                      borderColor: Color.clear,
                                                      borderWidth: 0,
-                                                     shadowRadius: 0,
+                                                     shadowRadius: 5,
                                                      shadowColor: Color.clear)),
         outgoingAvatarStyle: .init(imageStyle: .init(imageSize: CGSize(width: 32, height: 32),
                                                      cornerRadius: 16,
                                                      borderColor: Color.clear,
                                                      borderWidth: 0,
-                                                     shadowRadius: 0,
+                                                     shadowRadius: 5,
                                                      shadowColor: Color.clear))
     )
     

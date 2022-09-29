@@ -9,9 +9,18 @@ import SwiftUI
 import UIKit
 
 struct ChatButton: View {
-    let numOfUnseenMessages = 0
+    @EnvironmentObject var model: AppStateModel
+    var numOfUnseenMessages: Int {
+        
+        model.groups.keys.reduce(0) {
+            print($1)
+            print(model.groups[$1]?.unseenCount)
+            return $0 + (model.groups[$1]?.unseenCount ?? 0)
+        }
+    }
     @State var showGroupChat = false
     @State var isTapping: Bool = false
+    @State var lastSeenHandle: UInt?
     
     var body: some View {
         NavigationLink(isActive: $showGroupChat,
@@ -46,15 +55,29 @@ struct ChatButton: View {
             }
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                 withAnimation {
-                    isTapping = false
-                    
-                    
+                    isTapping = false 
                 }
                 showGroupChat = true
 
             }
             
         }
+//        .onChange(of: model.indicesOfLastMessages) { indices in
+//            print(indices)
+//
+//        }
+//        .onAppear {
+//            lastSeenHandle = DatabaseManager.shared.observeLastSeenMessage { (groupID, messageID) in
+//                print(groupID, messageID)
+//
+//
+//            }
+//        }
+//        .onDisappear {
+//            if let handle = lastSeenHandle {
+//                DatabaseManager.shared.removeObserver(with: handle)
+//            }
+//        }
                
     }
        

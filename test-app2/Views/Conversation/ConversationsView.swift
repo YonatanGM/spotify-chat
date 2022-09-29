@@ -51,7 +51,7 @@ struct ConversationsView: View {
                         .scaleEffect(selectedGroup == group.id && isTapping ? 0.9 : 1)
                         .contentShape(Rectangle())
                         .overlay(
-                            // Accept button
+                                              // Accept button
                             ZStack {
                                 if group.pending == true {
                                     HStack {
@@ -66,10 +66,11 @@ struct ConversationsView: View {
                                     )
                                     
                                     .clipShape(Capsule())
-                                    .scaleEffect(isTappingAccept ? 0.9 : 1)
-                                    .brightness(isTappingAccept ? 0.1 : 0)
+                                    .scaleEffect(selectedGroup == id && isTappingAccept ? 0.9 : 1)
+                                    .brightness(selectedGroup == id && isTappingAccept ? 0.1 : 0)
                                     .onTapGesture {
                                         // animation
+                                        selectedGroup = group.id
                                         withAnimation(.easeIn(duration: 0.1)) {
                                             isTappingAccept = true
                                         }
@@ -83,6 +84,23 @@ struct ConversationsView: View {
                                             
                                         }
                                     }
+                                } else {
+//                                    if let unseenCount = model.groups[id]?.unseenCount, unseenCount >= 0 {
+                                        HStack {
+                                            Text("\( model.groups[id]?.unseenCount ?? -1)")
+                                                .font(.headline)
+                                        }
+                                        .padding([.horizontal], 10)
+                                        .padding([.vertical], 7.5)
+                                        .foregroundColor(.white)
+                                        .background(
+                                            Color.backdrop
+                                        )
+                                        
+                                        .clipShape(Capsule())
+                                        .scaleEffect(selectedGroup == id && isTappingAccept ? 0.9 : 1)
+                                        .brightness(selectedGroup == id && isTappingAccept ? 0.1 : 0)
+//                                    }
                                 }
                             }
                             , alignment: .trailing)
@@ -110,16 +128,32 @@ struct ConversationsView: View {
                                             rowTranslationOffset = -1 * Double(UIScreen.main.bounds.width)
                                             
                                         }
-                                       
-                                        DatabaseManager.shared.leaveGroup(id) { success in
-                                            if success == false  {
-                                                withAnimation(.spring(response: 0.2)) {
-                                                    rowTranslationOffset = 0
+                                        
+                                        guard let currentUserID = AuthManager.shared.currentUser?.uid else {
+                                            withAnimation(.spring(response: 0.2)) {
+                                                rowTranslationOffset = 0
+                                            }
+                                            return
+                                        }
+                                        // current user is admin
+                                        if currentUserID == group.admin {
+                                            DatabaseManager.shared.deleteGroup(id) { success in
+                                                if success == false  {
+                                                    withAnimation(.spring(response: 0.2)) {
+                                                        rowTranslationOffset = 0
+                                                    }
+                                                }
+                                            }
+                                        } else {
+                                            DatabaseManager.shared.leaveGroup(id) { success in
+                                                if success == false  {
+                                                    withAnimation(.spring(response: 0.2)) {
+                                                        rowTranslationOffset = 0
+                                                    }
                                                 }
                                             }
                                         }
                                     } else {
-                                        
                                         withAnimation(.spring(response: 0.2)) {
                                             rowTranslationOffset = 0
                                         }

@@ -30,7 +30,6 @@
 		46F5CA6E2808C24000D58C41 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 46F5CA6D2808C24000D58C41 /* Assets.xcassets */; };
 		46F5CA712808C24000D58C41 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 46F5CA702808C24000D58C41 /* Preview Assets.xcassets */; };
 		46F5CA782808DD0D00D58C41 /* AuthManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46F5CA772808DD0D00D58C41 /* AuthManager.swift */; };
-		46F8B3D9284C3B6900EBCD9C /* SwiftyChat in Frameworks */ = {isa = PBXBuildFile; productRef = 46F8B3D8284C3B6900EBCD9C /* SwiftyChat */; };
 		46F8B3DB284C3BA800EBCD9C /* Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46F8B3DA284C3BA800EBCD9C /* Message.swift */; };
 		46F8B3DE284DF95900EBCD9C /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46F8B3DD284DF95900EBCD9C /* Extensions.swift */; };
 		46FD501E281E9D3000505CB7 /* StorageManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46FD501D281E9D3000505CB7 /* StorageManager.swift */; };
@@ -52,6 +51,7 @@
 		9F9C41A028D17E3B009CA948 /* CreateGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F9C419F28D17E3A009CA948 /* CreateGroup.swift */; };
 		9F9C41A328D18AE0009CA948 /* UserCardGroupCreation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F9C41A228D18AE0009CA948 /* UserCardGroupCreation.swift */; };
 		9F9C41A528D18D44009CA948 /* UserCardViewGroupCreation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F9C41A428D18D44009CA948 /* UserCardViewGroupCreation.swift */; };
+		9FA7F86C28E5E2E7004F6A66 /* SwiftyChat in Frameworks */ = {isa = PBXBuildFile; productRef = 9FA7F86B28E5E2E7004F6A66 /* SwiftyChat */; };
 		9FBFACE828CBCD3200C9F179 /* Home.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FBFACE728CBCD3200C9F179 /* Home.swift */; };
 		9FCB86AC28C8AA1C00A96A50 /* PlaylistsResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FCB86AB28C8AA1B00A96A50 /* PlaylistsResponse.swift */; };
 		9FCB86AE28C8D0F600A96A50 /* TrackCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FCB86AD28C8D0F600A96A50 /* TrackCard.swift */; };
@@ -103,6 +103,7 @@
 		9F9C419F28D17E3A009CA948 /* CreateGroup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateGroup.swift; sourceTree = "<group>"; };
 		9F9C41A228D18AE0009CA948 /* UserCardGroupCreation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserCardGroupCreation.swift; sourceTree = "<group>"; };
 		9F9C41A428D18D44009CA948 /* UserCardViewGroupCreation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserCardViewGroupCreation.swift; sourceTree = "<group>"; };
+		9FA7F86A28E5E2CB004F6A66 /* SwiftyChat */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = SwiftyChat; sourceTree = "<group>"; };
 		9FBFACE728CBCD3200C9F179 /* Home.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Home.swift; sourceTree = "<group>"; };
 		9FCB86AB28C8AA1B00A96A50 /* PlaylistsResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaylistsResponse.swift; sourceTree = "<group>"; };
 		9FCB86AD28C8D0F600A96A50 /* TrackCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackCard.swift; sourceTree = "<group>"; };
@@ -117,13 +118,13 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9FA7F86C28E5E2E7004F6A66 /* SwiftyChat in Frameworks */,
 				46F0CC3E280D993000BF1B4B /* SDWebImageSwiftUI in Frameworks */,
 				46B2F95F2816B6130003AA69 /* FirebaseAuth in Frameworks */,
 				46FD5021281E9DEF00505CB7 /* FirebaseStorage in Frameworks */,
 				46EAE403280961AE0061C9BB /* ExternalAccessory.framework in Frameworks */,
 				465B9C332814A17C00665947 /* FirebaseDatabase in Frameworks */,
 				463FEF2C281D60F2005155EE /* JGProgressHUD-SwiftUI in Frameworks */,
-				46F8B3D9284C3B6900EBCD9C /* SwiftyChat in Frameworks */,
 				465B9C312814A17C00665947 /* FirebaseAnalytics in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -205,6 +206,7 @@
 		46F5CA5D2808C23E00D58C41 = {
 			isa = PBXGroup;
 			children = (
+				9FA7F86528E5DCEC004F6A66 /* Packages */,
 				46F5CA682808C23E00D58C41 /* test-app2 */,
 				46F5CA672808C23E00D58C41 /* Products */,
 				46EAE401280961AE0061C9BB /* Frameworks */,
@@ -313,6 +315,14 @@
 			path = CreateGroup;
 			sourceTree = "<group>";
 		};
+		9FA7F86528E5DCEC004F6A66 /* Packages */ = {
+			isa = PBXGroup;
+			children = (
+				9FA7F86A28E5E2CB004F6A66 /* SwiftyChat */,
+			);
+			name = Packages;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -336,7 +346,7 @@
 				46B2F95E2816B6130003AA69 /* FirebaseAuth */,
 				463FEF2B281D60F2005155EE /* JGProgressHUD-SwiftUI */,
 				46FD5020281E9DEF00505CB7 /* FirebaseStorage */,
-				46F8B3D8284C3B6900EBCD9C /* SwiftyChat */,
+				9FA7F86B28E5E2E7004F6A66 /* SwiftyChat */,
 			);
 			productName = "test-app2";
 			productReference = 46F5CA662808C23E00D58C41 /* test-app2.app */;
@@ -373,7 +383,6 @@
 				46F0CC3C280D993000BF1B4B /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */,
 				465B9C2F2814A17C00665947 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 				463FEF2A281D60F2005155EE /* XCRemoteSwiftPackageReference "JGProgressHUD-SwiftUI" */,
-				46F8B3D7284C3B6900EBCD9C /* XCRemoteSwiftPackageReference "SwiftyChat" */,
 			);
 			productRefGroup = 46F5CA672808C23E00D58C41 /* Products */;
 			projectDirPath = "";
@@ -675,14 +684,6 @@
 				kind = branch;
 			};
 		};
-		46F8B3D7284C3B6900EBCD9C /* XCRemoteSwiftPackageReference "SwiftyChat" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/EnesKaraosman/SwiftyChat.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 2.0.0;
-			};
-		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -711,15 +712,14 @@
 			package = 46F0CC3C280D993000BF1B4B /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */;
 			productName = SDWebImageSwiftUI;
 		};
-		46F8B3D8284C3B6900EBCD9C /* SwiftyChat */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 46F8B3D7284C3B6900EBCD9C /* XCRemoteSwiftPackageReference "SwiftyChat" */;
-			productName = SwiftyChat;
-		};
 		46FD5020281E9DEF00505CB7 /* FirebaseStorage */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 465B9C2F2814A17C00665947 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebaseStorage;
+		};
+		9FA7F86B28E5E2E7004F6A66 /* SwiftyChat */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = SwiftyChat;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

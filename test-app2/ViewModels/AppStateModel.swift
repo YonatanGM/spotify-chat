@@ -42,11 +42,20 @@ class AppStateModel: ObservableObject {
     
     
     private var cancellables = Set<AnyCancellable>()
+    private var userObserverHandle: UInt?
 
     // Group
     @Published var groups = [String: Group]()
-    // @Published var groups = [Group]()
-    @Published var pendingGroups = [Group]()
+//    var indicesOfLastMessages: [String: Int] {
+//        return groups.keys.reduce([:]) {
+//            var dict = $0
+//            if let index = groups[$1]?.indexOfLastMessage {
+//                dict[$1] = index
+//            }
+//            return dict
+//        }
+//    }
+
     
     init() {
         // check if spotify is installed
@@ -147,13 +156,6 @@ extension AppStateModel {
                             DatabaseManager.shared.listenForMessages(in: group.id) { result in
                                 switch result {
                                 case .success(let message):
-                                    // find the index
-                                    // shouldn't take too long to find the index hopefully
-                                    /*
-                                    if let index = self?.groups.firstIndex(where: { $0.id == group.id }) {
-                                        self?.groups[index].messages.append(message)
-                                    }
-                                    */
                                     self?.groups[groupID]?.messages.append(message)
                                     
                                 case .failure(_):
@@ -177,40 +179,9 @@ extension AppStateModel {
             self?.groups[groupID] = nil
             // stop observing messages in the room, good!
             DatabaseManager.shared.removeObserver(with: "conversations/\(groupID)")
+            // DatabaseManager.shared.removeObserver(with: "Group/\(groupID)")
         }
         
-        /*
-        DatabaseManager.shared.observeUserAdditionToGroup() { [weak self] groupID in
-            DatabaseManager.shared.getGroup(with: groupID) { result in
-                switch result {
-                case .success(let group):
-                    // self?.groups[group.id] = group
-                    self?.groups.append(group)
-//                    self?.groups.insert(group, at: 0)
-                    DatabaseManager.shared.listenForMessages(in: group.id) { result in
-                        switch result {
-                        case .success(let message):
-                            // find the index
-                            // shouldn't take too long to find the index
-  
-                            if let index = self?.groups.firstIndex(where: { $0.id == group.id }) {
-                                self?.groups[index].messages.append(message)
-                            }
-                            
-                            // self?.groups[group.id] = group
-                            
-                        case .failure(_):
-                            print("failed to get messages in group \(group.id)")
-                        }
-                    }
-                    
-                case .failure(_):
-                    print("failed to get group with id \(groupID)")
-                }
-            }
-            
-        }
-        */
 
         
         DatabaseManager.shared.observeInviteAcceptance() { [weak self] result in
@@ -236,20 +207,14 @@ extension AppStateModel {
             switch result {
                 
             case .success(let room):
-                // stop listening for conversations in the previous room
-                if let currentRoom = self?.currentRoom {
-                    DatabaseManager.shared.removeMessagesObserver(currentRoom)
+                if let handle =  self?.userObserverHandle {
+                    DatabaseManager.shared.removeObserver(with: handle)
                 }
-                
                 self?.currentRoom = room
-                
-                // remove old users
-                self?.suggestedUsers = []
-                
-                // update the users
-                DatabaseManager.shared.getUsers(in: room, completion: { result in
+                self?.userObserverHandle = DatabaseManager.shared.getUsers(in: room, completion: { result in
                     switch result {
                     case .success(let users):
+                        // update the users
                         self?.suggestedUsers = users
                     case .failure(_):
                         print("failed to get users in new room \(room)")
@@ -261,6 +226,16 @@ extension AppStateModel {
                 print(error.localizedDescription)
             }
         }
+        
+        
+        DatabaseManager.shared.observeLastSeenMessage { [weak self] (groupID, messageID) in
+            print(groupID, messageID)
+            print(self?.groups[groupID]?.messages.firstIndex { $0.id == messageID } ?? 0)
+            self?.groups[groupID]?.indexOfLastSeen = self?.groups[groupID]?.messages.firstIndex { $0.id == messageID } ?? 0
+  
+        }
+
+            
     }
     
 }
