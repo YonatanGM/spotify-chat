@@ -23,7 +23,7 @@ struct ConversationsView: View {
             NavigationLink(isActive: $showChat,
                            destination: {
                 if let selectedGroup = selectedGroup {
-                    SwiftyChatView(groupID: selectedGroup)
+                    SwiftyChatView(groupID: selectedGroup, showChat: $showChat)
                 }
             }, label: { EmptyView() })
             
@@ -87,7 +87,7 @@ struct ConversationsView: View {
                                 } else {
 //                                    if let unseenCount = model.groups[id]?.unseenCount, unseenCount >= 0 {
                                         HStack {
-                                            Text("\( model.groups[id]?.unseenCount ?? -1)")
+                                            Text("\( model.groups[id]?.unseenCount ?? 0)")
                                                 .font(.headline)
                                         }
                                         .padding([.horizontal], 10)

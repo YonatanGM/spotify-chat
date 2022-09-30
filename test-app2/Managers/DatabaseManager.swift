@@ -388,6 +388,7 @@ extension DatabaseManager {
       }
       let updates: [String: Any?] = [
          "userInfo/\(currentUserID)/Groups/\(groupID)": nil,
+         "userInfo/\(currentUserID)/lastSeen/\(groupID)": nil,
          "Group/\(groupID)/users/\(currentUserID)": nil,
          "Group/\(groupID)/invitees/\(currentUserID)": nil
       ]
@@ -416,10 +417,12 @@ extension DatabaseManager {
       // remove conversations
       // updates["conversations/\(group.id)"] = nil
       updates.updateValue(nil, forKey: "conversations/\(groupID)")
+      updates.updateValue(nil, forKey: "conversations_ids/\(groupID)")
       database.child("Group/\(groupID)/invitees").observeSingleEvent(of: .value) { [weak self] snapshot in
          if let invitees = snapshot.value as? [String: Any] {
             for id in invitees.keys {
                updates.updateValue(nil, forKey: "userInfo/\(id)/Groups/\(groupID)")
+               updates.updateValue(nil, forKey: "userInfo/\(id)/lastSeen/\(groupID)")
             }
          }
          print(updates)
@@ -587,6 +590,7 @@ extension DatabaseManager {
          break
       }
       
+      var updates = [String: Any]()
       
       let newMessageRef = self.database.child("conversations/\(group)").childByAutoId()
       guard let messageID = newMessageRef.key else {
@@ -604,18 +608,16 @@ extension DatabaseManager {
          "is_read": false
       ]
       
-      newMessageRef.setValue(newMessage, withCompletionBlock: { error, _ in
+      updates["conversations_ids/\(group)/\(messageID)"] = true
+      updates["conversations/\(group)/\(messageID)"] = newMessage
+      database.updateChildValues(updates) { error, _ in
          guard error == nil else {
             completion?(false)
             return
          }
-         
          completion?(true)
-      })
+      }
    }
-   
-   
-   
    
    
    public func observeRoomChange(completion: @escaping (Result<String, Error>) -> Void) {
@@ -837,25 +839,25 @@ extension DatabaseManager {
 // MARK: - Unseen messages
 
 extension DatabaseManager {
-   public func observeLastSeenMessage(completion: @escaping ((String, String) -> Void)) -> UInt? {
-      guard let currentUserID = AuthManager.shared.currentUser?.uid else {
-         return nil
-      }
-      database.child("userInfo/\(currentUserID)/lastSeen").observeSingleEvent(of: .childAdded) { snapshot in
-         if let msgID = snapshot.value as? String {
-            print(snapshot.key, msgID)
-            completion(snapshot.key, msgID)
-         }
-      }
-      let handle = database.child("userInfo/\(currentUserID)/lastSeen").observe(.childChanged) { snapshot in
-         if let msgID = snapshot.value as? String {
-            print(snapshot.key, msgID)
-            completion(snapshot.key, msgID)
-         }
-      }
-      return handle
-   }
    
+   public func observeUnseenMessages(in groupID: String, onChangeOfLastSeenMessage: @escaping (String) -> Void, onChangeOfUnseenCount: @escaping (UInt) -> Void) {
+      
+      guard let currentUserID = AuthManager.shared.currentUser?.uid else {
+         return
+      }
+      database.child("userInfo/\(currentUserID)/lastSeen/\(groupID)").observe(.value) { [weak self] snapshot in
+         self?.database.child("conversations_ids/\(groupID)").removeAllObservers()
+         guard let lastSeenID = snapshot.value as? String else {
+            return
+         }
+         onChangeOfLastSeenMessage(lastSeenID)
+         self?.database.child("conversations_ids/\(groupID)").queryOrderedByKey().queryStarting(afterValue: lastSeenID).observe(.value) { snapshot in
+            onChangeOfUnseenCount(snapshot.childrenCount)
+         }
+      }
+
+   }
+
    public func setLastSeen(for groupID: String, messageID: String) {
       guard let currentUserID = AuthManager.shared.currentUser?.uid else {
          return

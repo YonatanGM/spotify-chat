@@ -14,9 +14,8 @@ import UIKit
 // horizontal scrollable view of the artists following spotify design guideline
 struct TopTracksView: View {
     @EnvironmentObject var model: AppStateModel
-    
+    @Environment(\.scenePhase) private var scenePhase
     var body: some View {
-
         ScrollView(.horizontal, showsIndicators: false) {
             if let topTracksResponse = model.suggestedUsers.first?.topTracks {
                 LazyHStack(alignment: .top) {
@@ -26,9 +25,15 @@ struct TopTracksView: View {
                     }
                 }
             }
-
+        }
+        .onDisappear {
+            model.removePlayer()
         }
         
+        .onChange(of: scenePhase) { phase in
+            model.handlePlackbackOnChangeOfScenePhase(to: phase)
+
+        }
     }
 }
 

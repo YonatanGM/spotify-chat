@@ -32,8 +32,15 @@ class AppStateModel: ObservableObject {
     @Published var currentRoom: String?
     
     
-    @Published  var selectedTrackID: String?
-    @Published  var playingTrackID: String?
+    @Published var selectedTrackID: String?
+
+   
+    // AVPlayer related
+    var avPlayer = AVPlayer(playerItem: nil)
+    @Published var playingTrackID: String?
+    @Published var progress = 0.0
+    @Published var play = false
+    
     // assume spotify is not installed
     @Published var isSpotifyInstalled = false
     
@@ -46,15 +53,6 @@ class AppStateModel: ObservableObject {
 
     // Group
     @Published var groups = [String: Group]()
-//    var indicesOfLastMessages: [String: Int] {
-//        return groups.keys.reduce([:]) {
-//            var dict = $0
-//            if let index = groups[$1]?.indexOfLastMessage {
-//                dict[$1] = index
-//            }
-//            return dict
-//        }
-//    }
 
     
     init() {
@@ -125,6 +123,7 @@ extension AppStateModel {
                         self?.groups[groupID] = group
                         // self?.groups.insert(group, at: 0)
                         // observe change in group child nodes
+                        
                         DatabaseManager.shared.observeChangesInGroup(with: groupID) { result in
                             switch result {
                             
@@ -156,11 +155,18 @@ extension AppStateModel {
                             DatabaseManager.shared.listenForMessages(in: group.id) { result in
                                 switch result {
                                 case .success(let message):
+                                    
                                     self?.groups[groupID]?.messages.append(message)
                                     
                                 case .failure(_):
                                     print("failed to get messages in group \(group.id)")
                                 }
+                            }
+                            
+                            DatabaseManager.shared.observeUnseenMessages(in: group.id) { lastSeenMessageID in
+                                self?.groups[groupID]?.lastSeenMessageID = lastSeenMessageID
+                            } onChangeOfUnseenCount: { unseenCount in
+                                self?.groups[groupID]?.unseenCount = unseenCount
                             }
                         }
                         
@@ -197,6 +203,13 @@ extension AppStateModel {
                         print("failed to get messages in group \(groupID)")
                     }
                 }
+                
+                DatabaseManager.shared.observeUnseenMessages(in: groupID) { lastSeenMessageID in
+                    self?.groups[groupID]?.lastSeenMessageID = lastSeenMessageID
+                } onChangeOfUnseenCount: { unseenCount in
+                    self?.groups[groupID]?.unseenCount = unseenCount
+                }
+                
             case .failure(_):
                 print("error getting id of pending group invite")
             }
@@ -228,14 +241,45 @@ extension AppStateModel {
         }
         
         
-        DatabaseManager.shared.observeLastSeenMessage { [weak self] (groupID, messageID) in
-            print(groupID, messageID)
-            print(self?.groups[groupID]?.messages.firstIndex { $0.id == messageID } ?? 0)
-            self?.groups[groupID]?.indexOfLastSeen = self?.groups[groupID]?.messages.firstIndex { $0.id == messageID } ?? 0
-  
+        // setup the AVPlayer
+        
+        avPlayer.actionAtItemEnd = .pause
+        avPlayer.addPeriodicTimeObserver(forInterval:
+                                                CMTime(seconds: 0.1, preferredTimescale: CMTimeScale(NSEC_PER_SEC)),
+                                             queue: .main,
+                                             using: { [weak self] time in
+            // weird problem here, starts at 0 and jump to 0.1
+            print(time.seconds)
+            self?.progress = time.seconds / 30
+        })
+
+        // add oberver to detect when the preview ends
+        let itemDidPlayToEndTimeObserver = NotificationCenter.default.addObserver(forName: .AVPlayerItemDidPlayToEndTime, object: nil, queue: .main) { [weak self] _ in
+            // seek to beginning
+            self?.play = false
+            self?.avPlayer.pause()
+            self?.avPlayer.seek(to: CMTime(seconds: 0, preferredTimescale: 30))
+
+        }
+        
+        let itemFailedToPlayToEndTimeObserver = NotificationCenter.default.addObserver(forName: .AVPlayerItemFailedToPlayToEndTime, object: nil, queue: .main) { [weak self] _ in
+            // seek to beginning
+            self?.play = false
+            self?.avPlayer.pause()
+            self?.avPlayer.seek(to: CMTime(seconds: 0, preferredTimescale: 30))
+
         }
 
-            
+        let itemPlaybackStalledObserved = NotificationCenter.default.addObserver(forName: .AVPlayerItemPlaybackStalled, object: nil, queue: .main) { [weak self] _ in
+            // seek to beginning
+            self?.play = false
+            self?.avPlayer.pause()
+            self?.avPlayer.seek(to: CMTime(seconds: 0, preferredTimescale: 30))
+
+        }
+        
+
+        
     }
     
 }
@@ -259,5 +303,63 @@ extension AppStateModel {
     }
 }
 
+
+//MARK: - AVPlayer
+extension AppStateModel {
+    
+    public func handlePlayback(of track: Track) {
+        
+        if playingTrackID != track.id {
+            if let urlString = track.preview_url,
+               let url = URL(string: urlString) {
+                let playerItem = AVPlayerItem(url: url)
+                progress = 0.0
+                playingTrackID = track.id
+                avPlayer.pause()
+                avPlayer.seek(to: CMTime(seconds: 0, preferredTimescale: 30))
+                avPlayer.replaceCurrentItem(with: playerItem)
+                // start playing
+                play = true
+                avPlayer.playImmediately(atRate: 1.0)
+            }
+        } else {
+            play = !play
+            if play {
+                avPlayer.playImmediately(atRate: 1.0)
+            } else {
+                if avPlayer.timeControlStatus == .playing {
+                    avPlayer.pause()
+                }
+            }
+        }
+        
+    }
+    
+    public func handlePlackbackOnChangeOfScenePhase(to phase: ScenePhase) {
+        if phase == .background {
+            // pause the player if it's playing when app goes to background
+            if play == true {
+                avPlayer.pause()
+            }
+        } else if phase == .active {
+            // continue playing if the player was paused
+            if play == true {
+                avPlayer.play()
+            }
+        }
+        
+    }
+    
+    public func removePlayer() {
+        play = false
+        progress = 0.0
+        playingTrackID = nil
+        avPlayer.pause()
+        avPlayer.seek(to: CMTime(seconds: 0, preferredTimescale: 30))
+        avPlayer.replaceCurrentItem(with: nil)
+    }
+    
+    
+}
 
 //MARK: - Additional functions

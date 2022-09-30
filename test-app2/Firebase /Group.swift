@@ -15,11 +15,7 @@ struct Group {
     var pending = false
     var messages = [Message.ChatMessageItem]()
     
-    var indexOfLastSeen: Int = 0
-    
-    var unseenCount: Int {
-        print(indexOfLastSeen)
-        return max(0, messages.endIndex - indexOfLastSeen - 1)
-    }
+    var lastSeenMessageID = "-" // should be lexographically smaller than any child by auto id key 
+    var unseenCount: UInt = 0
     
 }

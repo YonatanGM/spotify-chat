@@ -19,6 +19,9 @@ struct SwiftyChatView: View {
     @State private var message = ""
     @State private var isEditing = false
     
+    @State private var showingPopover = false
+    @Binding var showChat: Bool
+    
     
     
     var currentChatUser: Message.ChatUserItem? {
@@ -37,10 +40,6 @@ struct SwiftyChatView: View {
         
         chatView
             .foregroundColor(.white)
-        
-            .overlay(
-                Divider()
-                , alignment: .top)
             .background(
                 ZStack {
                     LinearGradient(colors: [
@@ -66,18 +65,7 @@ struct SwiftyChatView: View {
                 }
                 .ignoresSafeArea()
             )
-            .onAppear {
-                if let lastSeenID = model.groups[groupID]?.messages.last?.id {
-                    DatabaseManager.shared.setLastSeen(for: groupID, messageID: lastSeenID)
-                     print("swiftyChat \(lastSeenID)  ")
-                    print(model.groups[groupID]?.messages.last?.messageKind)
-                    
-                }
-             
-                withAnimation {
-                    scrollToBottom = true
-                }
-            }
+
       
   
 
@@ -93,12 +81,77 @@ struct SwiftyChatView: View {
                 }
             }
             .navigationBarItems(trailing:
-                                    Image(systemName: "ellipsis")
-                .rotationEffect(Angle(degrees: 90))
-                .foregroundColor(.white)
-                                
+                Menu {
+                 
+                if let currentChatUser = currentChatUser {
+                    if currentChatUser.id == model.groups[groupID]?.admin {
+                        Button(action: { }) {
+                            Label("Add user", systemImage: "plus")
+                        }
+                        if #available(iOS 15.0, *) {
+                            Button(role: .destructive, action: {
+                                DatabaseManager.shared.deleteGroup(groupID) { success in
+                                    if success {
+                                        showChat = false
+                                    }
+                                }
+                            }) {
+                                Label("Delete", systemImage: "trash")
+                            }
+                        } else {
+                            // Fallback on earlier versions
+                            Button(action: {
+                                DatabaseManager.shared.deleteGroup(groupID) { success in
+                                    if success {
+                                        showChat = false
+                                    }
+                                }
+                            }) {
+                                Label("Delete", systemImage: "trash")
+                            }
+                        }
+                        
+                    } else {
+                        if #available(iOS 15.0, *) {
+                            Button(role: .destructive, action: {
+                                DatabaseManager.shared.leaveGroup(groupID) { success in
+                                    if success {
+                                        showChat = false
+                                    }
+                                }
+                            }) {
+                                Label("Leave", systemImage: "trash")
+                                    .labelStyle(.titleOnly)
+                            }
+                        } else {
+                            // Fallback on earlier versions
+                            Button(action: {
+                                DatabaseManager.shared.leaveGroup(groupID) { success in
+                                    if success {
+                                        showChat = false
+                                    }
+                                }
+                            }) {
+                                Label("Leave", systemImage: "trash")
+                                    .labelStyle(.titleOnly)
+                            }
+                        }
+                    }
+                        
+                }
+                        
+                        
+                    
+                    
+                } label: {
+                        Image(systemName: "ellipsis")
+                            .rotationEffect(Angle(degrees: 90))
+                            .foregroundColor(.white)
+                            .contentShape(Rectangle())
+                        
+                }
+               
             )
-        //
         
     }
     
@@ -106,7 +159,23 @@ struct SwiftyChatView: View {
     private var chatView: some View {
         
         ChatView<Message.ChatMessageItem, Message.ChatUserItem>(
-            messages: Binding(get: { model.groups[groupID]?.messages ?? [] }, set: { _ in }),
+            messages: Binding(get: { model.groups[groupID]?.messages ?? [] },
+                              set: { _ in }),
+            onMessageCellAppeared: { message in
+                // hope this works fine 
+                if let index = (model.groups[groupID]?.messages.firstIndex { $0.id == message.id }),
+                    let endIndex = model.groups[groupID]?.messages.endIndex {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + Double(index) / Double(endIndex)) {
+                        if let lastSeenMessageID = model.groups[groupID]?.lastSeenMessageID,
+                           message.id > lastSeenMessageID {
+                            DatabaseManager.shared.setLastSeen(for: groupID, messageID: message.id)
+                            // model.groups[groupID]?.lastSeenMessageID = message.id
+                        }
+                    }
+                }
+
+
+            },
             scrollToBottom: $scrollToBottom,
             shouldShowGroupChatHeaders: true,
             inputView:  {
@@ -132,20 +201,8 @@ struct SwiftyChatView: View {
                         }
                     }
                 )
-                
-               
-               // .background(Color.backdrop.brightness(0.25).ignoresSafeArea())
-               // .padding([.vertical], 17)
                 .padding(.leading, 10)
                 .padding(.trailing, 20)
-             
-    
-               
-//                .padding(.bottom, isEditing ? 0 : 10)
-                //            .accentColor(.chatBlue)
-                
-                // .animation(.linear)
-                // .border(.red)
                 .embedInAnyView()
                 
                 

@@ -12,7 +12,7 @@ internal struct ChatMessageCellContainer<Message: ChatMessage>: View {
     
     public let message: Message
     public let size: CGSize
-    
+    public let onMessageCellAppeared: (Message) -> Void
     public let onQuickReplyItemSelected: (QuickReplyItem) -> Void
     public let contactFooterSection: (ContactItem, Message) -> [ContactCellButton]
     public let onTextTappedCallback: () -> AttributedTextTappedCallback

@@ -10,11 +10,10 @@ import UIKit
 
 struct ChatButton: View {
     @EnvironmentObject var model: AppStateModel
-    var numOfUnseenMessages: Int {
-        
+    var numOfUnseenMessages: UInt {
         model.groups.keys.reduce(0) {
-            print($1)
-            print(model.groups[$1]?.unseenCount)
+//            print($1)
+//            print(model.groups[$1]?.unseenCount)
             return $0 + (model.groups[$1]?.unseenCount ?? 0)
         }
     }

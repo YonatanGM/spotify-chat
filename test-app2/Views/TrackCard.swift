@@ -17,16 +17,6 @@ struct TrackCard: View {
     let track: Track
     @State var isTapping: Bool = false
     @State var like = false
-    @State var play = false
-    
-    // Audio player
-    @State var audioPlayer: AVPlayer?
-    @State var itemDidPlayToEndTimeObserver: NSObjectProtocol?
-    @State var itemFailedToPlayToEndTimeObserver: NSObjectProtocol?
-    @State var itemPlaybackStalledObserved: NSObjectProtocol?
-
-    @State private var progress = 0.0
-    
     var spotifyLogoHeight: CGFloat = 20
     var body: some View {
         
@@ -50,8 +40,6 @@ struct TrackCard: View {
                                   blue: Double(24) / 255,
                                   opacity: 1)
                         )
-                    
-                    
                 }
             
                 HStack {
@@ -82,14 +70,9 @@ struct TrackCard: View {
             // .border(.red)
             // spotify logo, audio control and like button
             VStack(spacing: 0) {
-                
-                if let audioPlayer = audioPlayer,
-                   audioPlayer.timeControlStatus == .playing {
-                    ProgressView(value: progress)
+                if model.playingTrackID == track.id && model.progress > 0.0 {
+                    ProgressView(value: model.progress)
                         .padding([.horizontal], spotifyLogoHeight / 2)
-                        
-                        // .border(.red)
-       
                 }
                 HStack {
                     Image("rsz_1spotify_logo_rgb_white")
@@ -123,18 +106,18 @@ struct TrackCard: View {
                                         }
                                     }
                                 }
-                        )
+                    )
                 
-                        .foregroundColor(
-                            like ?
-                                .white:
-                            Color(.sRGB,
-                                  red: Double(186) / 255,
-                                  green: Double(186) / 255,
-                                  blue: Double(186) / 255,
-                                  opacity: 1)
-                        )
-                    Image(systemName: play == true && model.playingTrackID == track.id ? "pause.fill" : "play.fill")
+                    .foregroundColor(
+                        like ?
+                            .white:
+                        Color(.sRGB,
+                              red: Double(186) / 255,
+                              green: Double(186) / 255,
+                              blue: Double(186) / 255,
+                              opacity: 1)
+                    )
+                    Image(systemName: model.play == true && model.playingTrackID == track.id ? "pause.fill" : "play.fill")
                         .foregroundColor(
                             Color(.sRGB,
                                   red: Double(186) / 255,
@@ -143,26 +126,11 @@ struct TrackCard: View {
                                   opacity: 1)
                         
                         )
+                        .contentShape(Rectangle())
                         .highPriorityGesture(
                             TapGesture()
                                 .onEnded {
-                                    if let audioPlayer = audioPlayer {
-                                        if play == false {
-                                            audioPlayer.play()
-                          
-                                            withAnimation(.easeIn(duration: 0.1)) {
-                                                play = true
-                                                model.playingTrackID = track.id
-                                            }
-                                            
-                                        } else {
-                                            audioPlayer.pause()
-                                            withAnimation(.easeIn(duration: 0.1)) {
-                                                play = false
-                                            }
-                                        }
-                                        
-                                    }
+                                    model.handlePlayback(of: track)
                                 }
                         )
                 }
@@ -203,106 +171,7 @@ struct TrackCard: View {
             }
     
         }
-        .onAppear {
-//            APICaller.shared.checkUsersSavedTrack(trackID: track.id) { result in
-//                like = result
-//                
-//            }
-//
-//            // initalize AVPlayer
-//            if let urlString = track.preview_url,
-//               let url = URL(string: urlString) {
-//                audioPlayer = AVPlayer(url: url)
-//                audioPlayer!.actionAtItemEnd = .pause
-//                audioPlayer!.addPeriodicTimeObserver(forInterval:
-//                                                        CMTime(seconds: 0.1, preferredTimescale: CMTimeScale(NSEC_PER_SEC)),
-//                                                     queue: .main,
-//                                                     using: { time in
-//                    // weird problem here, starts at 0 and jump to 0.1
-//                     print(time.seconds)
-//                    progress = time.seconds / 30
-//                })
-//
-//                // add oberver to detect when preview ends
-//                itemDidPlayToEndTimeObserver = NotificationCenter.default.addObserver(forName: .AVPlayerItemDidPlayToEndTime, object: audioPlayer!.currentItem, queue: .main) { _ in
-//                    // seek to beginning
-//                    print("pp:")
-//                    audioPlayer?.pause()
-//                    audioPlayer?.seek(to: CMTime(seconds: 0, preferredTimescale: 30))
-//
-//                }
-//
-//                itemFailedToPlayToEndTimeObserver = NotificationCenter.default.addObserver(forName: .AVPlayerItemFailedToPlayToEndTime, object: audioPlayer!.currentItem, queue: .main) { _ in
-//                    // seek to beginning
-//                    print("pp:x")
-//                    audioPlayer?.pause()
-//                    audioPlayer?.seek(to: CMTime(seconds: 0, preferredTimescale: 30))
-//
-//                }
-//
-//                itemPlaybackStalledObserved = NotificationCenter.default.addObserver(forName: .AVPlayerItemPlaybackStalled, object: audioPlayer!.currentItem, queue: .main) { _ in
-//                    // seek to beginning
-//                    print("pp:")
-//                    audioPlayer?.pause()
-//                    audioPlayer?.seek(to: CMTime(seconds: 0, preferredTimescale: 30))
-//
-//                }
-//
-//
-//
-//            }
-        }
-        .onDisappear {
-//            print("dis")
-//            play = false
-//            audioPlayer?.pause()
-//            audioPlayer?.seek(to: CMTime(seconds: 0, preferredTimescale: 30))
-//
-//            NotificationCenter.default.removeObserver(itemDidPlayToEndTimeObserver!)
-//            NotificationCenter.default.removeObserver(itemFailedToPlayToEndTimeObserver!)
-//            NotificationCenter.default.removeObserver(itemPlaybackStalledObserved!)
-//
-            
-            
-        }
-        .onReceive(model.$playingTrackID) { id in
-//            guard let trackID = id else {
-//                return
-//            }
-//
-//            if track.id != trackID && audioPlayer?.timeControlStatus == .playing {
-//                // stop playing and seek to beginning
-//                play = false
-//                audioPlayer?.pause()
-//                audioPlayer?.seek(to: CMTime(seconds: 0, preferredTimescale: 30))
-//            }
-
-        }
-        
-        .onChange(of: scenePhase) { phase in
-            // check .inactive
-//            if phase == .background {
-//                // pause the player if it's playing when app goes to background
-//                if play == true {
-//                    audioPlayer?.pause()
-//                }
-//            } else if phase == .active {
-//                // continue playing if the player was paused
-//                if play == true {
-//                    audioPlayer?.play()
-//                }
-//            }
-        }
 
     }
 }
 
-
-
-/*
- struct TrackCard_Previews: PreviewProvider {
-     static var previews: some View {
-         TrackCard()
-     }
- }
- */

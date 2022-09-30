@@ -13,7 +13,8 @@ public struct ChatView<Message: ChatMessage, User: ChatUser>: View {
     
     @Binding private var messages: [Message]
     private var inputView: () -> AnyView
-
+    
+    private var onMessageCellAppeared: (Message) -> Void = { _ in }
     private var onMessageCellTapped: (Message) -> Void = { msg in print(msg.messageKind) }
     private var messageCellContextMenu: (Message) -> AnyView = { _ in EmptyView().embedInAnyView() }
     private var onQuickReplyItemSelected: (QuickReplyItem) -> Void = { _ in }
@@ -40,12 +41,17 @@ public struct ChatView<Message: ChatMessage, User: ChatUser>: View {
         GeometryReader { geometry in
             ZStack(alignment: .bottom) {
                 chatView(in: geometry)
+                    .overlay(
+                        Divider()
+                    
+                    
+                        , alignment: .top)
                 inputView()
                     .onPreferenceChange(ContentSizeThatFitsKey.self) {
                         contentSizeThatFits = $0
                     }
                     .frame(height: messageEditorHeight)
-                    .padding(.bottom, 12)
+                    .padding(15)
                 
                 PIPVideoCell<Message>()
             }
@@ -90,17 +96,30 @@ public struct ChatView<Message: ChatMessage, User: ChatUser>: View {
                         chatMessageCellContainer(in: geometry.size, with: message, with: shouldShowDisplayName)
                     }
                     Spacer()
-                        .frame(height: inset.bottom)
+                        .frame(height: messageEditorHeight)
+                        .border(Color.red)
                         .id("bottom")
+                       
                 }
-                .padding(EdgeInsets(top: inset.top, leading: inset.leading, bottom: 0, trailing: inset.trailing))
+                .padding(.bottom, 30)
+                // .padding(EdgeInsets(top: inset.top, leading: inset.leading, bottom: 0, trailing: inset.trailing))
                 .onChange(of: scrollToBottom) { value in
                     if value {
-                        withAnimation {
-                            proxy.scrollTo("bottom")
+                        withAnimation(.easeIn(duration: 0.2)) {
+                            proxy.scrollTo("bottom", anchor: .top)
                         }
-                        scrollToBottom = false
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
+                            scrollToBottom = false
+                        }
                     }
+                }
+                .onAppear {
+                    proxy.scrollTo("bottom", anchor: .top)
+                    /*
+                    DispatchQueue.main.async() {
+                        proxy.scrollTo("bottom", anchor: .bottom)
+                    }
+                    */
                 }
                 .iOS {
                     // Auto Scroll with Keyboard Notification
@@ -122,7 +141,7 @@ public struct ChatView<Message: ChatMessage, User: ChatUser>: View {
             }
         }
         .background(Color.clear)
-            .padding(.bottom, messageEditorHeight + 30)
+        .padding(.bottom, messageEditorHeight + 30)
     }
     
 }
@@ -137,11 +156,13 @@ internal extension ChatView {
         ChatMessageCellContainer(
             message: message,
             size: size,
+            onMessageCellAppeared: onMessageCellAppeared,
             onQuickReplyItemSelected: onQuickReplyItemSelected,
             contactFooterSection: contactCellFooterSection,
             onTextTappedCallback: onAttributedTextTappedCallback,
             onCarouselItemAction: onCarouselItemAction
         )
+        .onAppear { onMessageCellAppeared(message) }
         .onTapGesture { onMessageCellTapped(message) }
         .contextMenu(menuItems: { messageCellContextMenu(message) })
         .modifier(
@@ -213,6 +234,7 @@ public extension ChatView {
     ///   
     init(
         messages: Binding<[Message]>,
+        onMessageCellAppeared: @escaping (Message) -> Void,
         scrollToBottom: Binding<Bool> = .constant(false),
         dateHeaderTimeInterval: TimeInterval = 3600,
         shouldShowGroupChatHeaders: Bool = false,
@@ -229,10 +251,16 @@ public extension ChatView {
         self.dateFormater.doesRelativeDateFormatting = true
         self.dateHeaderTimeInterval = dateHeaderTimeInterval
         self.shouldShowGroupChatHeaders = shouldShowGroupChatHeaders
+        self.onMessageCellAppeared = onMessageCellAppeared
+        
     }
 }
 
 public extension ChatView {
+
+    func onMessageCellAppeared(_ action: @escaping (Message) -> Void) -> Self {
+        then({ $0.onMessageCellAppeared = action })
+    }
     /// Triggered when a ChatMessage is tapped.
     func onMessageCellTapped(_ action: @escaping (Message) -> Void) -> Self {
         then({ $0.onMessageCellTapped = action })
