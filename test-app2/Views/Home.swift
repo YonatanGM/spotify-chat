@@ -40,7 +40,6 @@ struct Home: View {
             .ignoresSafeArea(.all, edges: .all)
             ScrollViewReader { proxy in
                 ScrollView(showsIndicators: false) {
-                    //                GroupsView()
                     UsersView()
                     
                     TopArtistsView()
@@ -51,10 +50,8 @@ struct Home: View {
                     
                     SearchBar(searchText: $searchText)
                         .id(bottomID)
-                    //                        .padding([.bottom])
                     
                 }
-                
                 .overlay(Bar().padding(5), alignment: .top)
                 .onChange(of: model.scrollToBottom) { value in
                     if value == true {

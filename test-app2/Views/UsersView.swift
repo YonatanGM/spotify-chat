@@ -21,9 +21,6 @@ struct UsersView: View {
                     ForEach(model.suggestedUsers.filter { $0.id != currentUserID }, id: \.id) { user in
                         UserCard(user: user)
                             .padding([.horizontal], 1)
-
-
-
                     }
                 }
             }

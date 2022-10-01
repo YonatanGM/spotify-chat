@@ -288,7 +288,7 @@ extension AppStateModel {
     
     func queryUsersByArtistOrTrackName(_ terms: [String], completion: @escaping ([Message.ChatUserItem]) -> Void) {
         // clear previous result
-        self.searchResults = []
+        
         // remove ongoing observers
         DatabaseManager.shared.removeObserver(with: "User")
         // cancel search if it takes too long

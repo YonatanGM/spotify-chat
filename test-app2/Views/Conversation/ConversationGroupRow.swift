@@ -125,7 +125,7 @@ struct ConversationGroupRow: View {
 
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack(spacing: 1) {
-                            ForEach(Array(Set(group.users.compactMap { $0.genreDisplay })).sorted(), id: \.self ) { genre in
+                            ForEach(group.users.compactMap { $0.genreDisplay }.unique, id: \.self ) { genre in
                                      GenresAnimatedIcon(genre: genre)
                             }
                         }

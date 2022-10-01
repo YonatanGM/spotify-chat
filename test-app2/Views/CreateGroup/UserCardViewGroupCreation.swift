@@ -149,23 +149,24 @@ struct UserCardViewGroupCreation: View {
             }
             .padding([.bottom])
             
-            
-            Text("Suggested users")
-                .fontWeight(.light)
-                .font(.title)
-                .padding([.horizontal], 10)
-            ScrollView(.horizontal, showsIndicators: false) {
-                
-                HStack {
-                    ForEach(model.suggestedUsers.filter { $0.id != currentUserID && !addedUsers.contains($0) }, id: \.id) { user in
-                        UserCardGroupCreation(user: user, namespace: animation)
-                            .padding([.horizontal], 1)
-                            .padding([.leading], model.suggestedUsers.first?.id == user.id ? 10 : 0)
-                            .onTapGesture {
-                                withAnimation(.spring(response: 0.5)) {
-                                    addedUsers.append(user)
+            if !model.suggestedUsers.isEmpty {
+                Text("Suggested users")
+                    .fontWeight(.light)
+                    .font(.title)
+                    .padding([.horizontal], 10)
+                ScrollView(.horizontal, showsIndicators: false) {
+                    
+                    HStack {
+                        ForEach(model.suggestedUsers.filter { $0.id != currentUserID && !addedUsers.contains($0) }, id: \.id) { user in
+                            UserCardGroupCreation(user: user, namespace: animation)
+                                .padding([.horizontal], 1)
+                                .padding([.leading], model.suggestedUsers.first?.id == user.id ? 10 : 0)
+                                .onTapGesture {
+                                    withAnimation(.spring(response: 0.5)) {
+                                        addedUsers.append(user)
+                                    }
                                 }
-                            }
+                        }
                     }
                 }
             }
