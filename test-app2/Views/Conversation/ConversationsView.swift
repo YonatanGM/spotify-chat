@@ -18,6 +18,14 @@ struct ConversationsView: View {
     
     @State var rowTranslationOffset = 0.0
     @State var groupBeingDragged: String?
+    
+    // 10 groups max
+    private var canCreateGroups: Bool {
+        guard let currentUserID =  AuthManager.shared.currentUser?.uid else {
+            return false
+        }
+        return model.groups.filter { $0.1.admin == currentUserID }.count <= 10
+    }
     var body: some View {
         ZStack(alignment: .top) {
             NavigationLink(isActive: $showChat,
@@ -85,22 +93,21 @@ struct ConversationsView: View {
                                         }
                                     }
                                 } else {
-//                                    if let unseenCount = model.groups[id]?.unseenCount, unseenCount >= 0 {
-                                        HStack {
-                                            Text("\( model.groups[id]?.unseenCount ?? 0)")
-                                                .font(.headline)
-                                        }
-                                        .padding([.horizontal], 10)
-                                        .padding([.vertical], 7.5)
-                                        .foregroundColor(.white)
-                                        .background(
-                                            Color.backdrop
-                                        )
-                                        
-                                        .clipShape(Capsule())
-                                        .scaleEffect(selectedGroup == id && isTappingAccept ? 0.9 : 1)
-                                        .brightness(selectedGroup == id && isTappingAccept ? 0.1 : 0)
-//                                    }
+                                    HStack {
+                                        Text("\( model.groups[id]?.unseenCount ?? 0)")
+                                            .font(.headline)
+                                    }
+                                    .padding([.horizontal], 10)
+                                    .padding([.vertical], 7.5)
+                                    .foregroundColor(.white)
+                                    .background(
+                                        Color.backdrop
+                                    )
+                                    
+                                    .clipShape(Capsule())
+                                    .scaleEffect(selectedGroup == id && isTappingAccept ? 0.9 : 1)
+                                    .brightness(selectedGroup == id && isTappingAccept ? 0.1 : 0)
+                                    .opacity(model.groups[id]?.unseenCount == 0 ? 0 : 1)
                                 }
                             }
                             , alignment: .trailing)
@@ -176,7 +183,14 @@ struct ConversationsView: View {
         .navigationTitle("Conversations")
         .navigationBarTitleDisplayMode(.inline)
         // bar
-        .navigationBarItems(trailing: NewGroupButton().frame(height: 20))
+        .navigationBarItems(trailing:
+            NewGroupButton()
+                .frame(height: 20)
+                            
+                .disabled(!canCreateGroups)
+            
+                            
+        )
     }
 }
                             

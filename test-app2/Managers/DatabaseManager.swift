@@ -303,6 +303,7 @@ extension DatabaseManager {
         
             let updates: [String: Any?] = [
                "userInfo/\(currentUserID)/Groups/\(groupID)": true,
+               "userInfo/\(currentUserID)/lastSeen/\(groupID)": "-",
                "Group/\(groupID)/users/\(currentUserID)": ["id": currentUserID,
                                                            "name": currentUserName,
                                                            "photoURL": AuthManager.shared.currentUser?.photoURL?.absoluteString,
@@ -368,7 +369,8 @@ extension DatabaseManager {
                                                                      "name": currentUserName,
                                                                      "photoURL":  AuthManager.shared.currentUser?.photoURL?.absoluteString,
                                                                      "top_genre_display": topGenreSnapshot.value as? String]
-         childUpdates["userInfo/\(currentUserID)/Groups/\(groupID)"] =  true
+         childUpdates["userInfo/\(currentUserID)/Groups/\(groupID)"] = true
+         childUpdates["userInfo/\(currentUserID)/lastSeen/\(groupID)"] = "-"
          self?.database.updateChildValues(childUpdates) { error, _ in
             guard error == nil else {
                completion(false)
@@ -413,6 +415,7 @@ extension DatabaseManager {
       var updates = [String: Any?]()
       // updates["Group/\(group.id)"] = nil
       updates.updateValue(nil, forKey: "userInfo/\(currentUserID)/Groups/\(groupID)")
+      updates.updateValue(nil, forKey: "userInfo/\(currentUserID)/lastSeen/\(groupID)")
       updates.updateValue(nil, forKey: "Group/\(groupID)")
       // remove conversations
       // updates["conversations/\(group.id)"] = nil

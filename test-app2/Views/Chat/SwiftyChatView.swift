@@ -96,7 +96,7 @@ struct SwiftyChatView: View {
                                     }
                                 }
                             }) {
-                                Label("Delete", systemImage: "trash")
+                                Label("Delete group", systemImage: "trash")
                             }
                         } else {
                             // Fallback on earlier versions
@@ -107,7 +107,7 @@ struct SwiftyChatView: View {
                                     }
                                 }
                             }) {
-                                Label("Delete", systemImage: "trash")
+                                Label("Delete group", systemImage: "trash")
                             }
                         }
                         

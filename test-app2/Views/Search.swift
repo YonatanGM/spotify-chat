@@ -13,7 +13,6 @@ struct SearchBar: View {
     @Binding var searchText: String
     @EnvironmentObject var model: AppStateModel
     var terms: [String] {
-        
         searchText
             .components(separatedBy: ",")
             .filter { !$0.isEmpty }
@@ -33,12 +32,11 @@ struct SearchBar: View {
                         ForEach(model.searchResults, id: \.id) { user in
                             UserCard(user: user)
                                 .padding([.horizontal], 1)
-//                                .animation(nil)
                         }
                     }
                   
                 }
-                .animation(.spring())
+                .animation(.spring(), value: model.searchResults)
                 .padding(5)
                 if !termsDisplay.isEmpty {
                     ScrollView(.horizontal, showsIndicators: false) {
@@ -94,13 +92,3 @@ struct SearchBar: View {
  }
 
 
-extension Array where Element: Equatable {
-    var unique: [Element] {
-        var uniqueValues: [Element] = []
-        forEach { item in
-            guard !uniqueValues.contains(item) else { return }
-            uniqueValues.append(item)
-        }
-        return uniqueValues
-    }
-}

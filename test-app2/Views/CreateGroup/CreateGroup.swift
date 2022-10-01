@@ -76,7 +76,6 @@ struct CreateGroup: View {
                             .font(.title) +
                         Text(" *").fontWeight(.light).font(.title2).baselineOffset(4).foregroundColor(name.isEmpty ? .white : .clear)
                         
-                            
                         ZStack {
                             Color.backdrop
                             TextField("", text: $name) {
@@ -90,10 +89,8 @@ struct CreateGroup: View {
                         }
                         .foregroundColor(.white)
                         .clipShape(Capsule())
-               
                     }
-
-                    .padding([.horizontal], 10)
+                    .padding([.horizontal], 15)
                     
                     UserCardViewGroupCreation(addedUsers: $addedUsers)
                     

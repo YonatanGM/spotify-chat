@@ -11,26 +11,7 @@ struct NewGroupButton: View {
     @State var isTapping: Bool = false
     @State var presentSheet: Bool = false
     var body: some View {
-        HStack {
-            /*
-            Image(systemName: "plus")
-                .resizable()
-                .scaledToFit()
-             */
-            Text("New group")
-                .font(.headline)
-        }
-        .padding([.horizontal], 10)
-        .padding([.vertical], 7.5)
-        .foregroundColor(.white)
-        .background(
-            Color.backdrop
-        )
-        
-        .clipShape(Capsule())
-        .scaleEffect(isTapping ? 0.9 : 1)
-        .brightness(isTapping ? 0.1 : 0)
-        .onTapGesture {
+        Button(action: {
             // animation
             withAnimation(.easeIn(duration: 0.1)) {
                 isTapping = true
@@ -42,16 +23,17 @@ struct NewGroupButton: View {
                 }
                 presentSheet = true
             }
-        }
+            
+        }, label: {
         
+            Label("New group", systemImage: "plus")
+                .accentColor(.white)
+        })
+        .scaleEffect(isTapping ? 0.9 : 1)
+        .brightness(isTapping ? 0.1 : 0)
         .sheet(isPresented: $presentSheet,
-               onDismiss: {
-            
-            
-        }) {
-            
+               onDismiss: { }) {
             CreateGroup(present: $presentSheet)
-            
         }
         
     }

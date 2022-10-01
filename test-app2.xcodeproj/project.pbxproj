@@ -229,6 +229,7 @@
 				465B9C3428157AD500665947 /* GoogleService-Info.plist */,
 				46F8B3DC284DF93B00EBCD9C /* Resources */,
 				46F5CA692808C23E00D58C41 /* test_app2App.swift */,
+				46F8B3DD284DF95900EBCD9C /* Extensions.swift */,
 				9F17479A28CDBAB50054AE20 /* Firebase  */,
 				461DCBD62823712A009E2F7F /* Spotify */,
 				461DCBD72823714B009E2F7F /* Managers */,
@@ -252,7 +253,6 @@
 			isa = PBXGroup;
 			children = (
 				46F5CA6D2808C24000D58C41 /* Assets.xcassets */,
-				46F8B3DD284DF95900EBCD9C /* Extensions.swift */,
 			);
 			path = Resources;
 			sourceTree = "<group>";

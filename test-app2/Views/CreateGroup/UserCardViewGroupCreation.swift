@@ -17,15 +17,21 @@ struct UserCardViewGroupCreation: View {
     @State var searchText = ""
     @State var searchResults = [Message.ChatUserItem]()
     @Namespace private var animation
-    
-    var currentUserID: String? {
-        AuthManager.shared.currentUser?.uid
+
+    var suggestedUsersDisplay: [Message.ChatUserItem] {
+        guard let currentUserID = AuthManager.shared.currentUser?.uid else { return [] }
+        return model.suggestedUsers.filter { $0.id != currentUserID && !addedUsers.contains($0) }
     }
     
+    var searchResultsDisplay: [Message.ChatUserItem] {
+        guard let currentUserID = AuthManager.shared.currentUser?.uid else { return [] }
+        return searchResults.filter { userFromSearch in
+            userFromSearch.id != currentUserID && !model.suggestedUsers.map { $0.id }.contains(userFromSearch.id)
+        }
+    }
     var body: some View {
         
         VStack(alignment: .leading, spacing: 5) {
-            
             HStack {
                 Spacer()
                 ForEach(addedUsers, id: \.id) { user in
@@ -40,7 +46,6 @@ struct UserCardViewGroupCreation: View {
                                 withAnimation(.spring(response: 0.5))  {
                                     addedUsers = addedUsers.filter { $0.id != user.id}
                                 }
-                                
                             }
                             .overlay(
                                 Image(systemName: "x.circle.fill")
@@ -52,11 +57,9 @@ struct UserCardViewGroupCreation: View {
                         
                     } else {
                         
-                        
                         Image(systemName: "circle.fill")
                             .resizable()
                             .foregroundColor(.gray)
-                        
                             .scaledToFit()
                             .clipShape(Circle())
                             .frame(height: Double(UIScreen.main.bounds.width) / 10)
@@ -82,9 +85,7 @@ struct UserCardViewGroupCreation: View {
                                 
                             }
                             .matchedGeometryEffect(id: "picInitial" + user.id, in: animation)
-                        
                     }
-                    
                 }
                 Spacer()
             }
@@ -93,7 +94,7 @@ struct UserCardViewGroupCreation: View {
             Text("Find")
                 .fontWeight(.light)
                 .font(.title)
-                .padding([.horizontal], 10)
+                .padding([.horizontal], 15)
             
             ZStack {
                 Rectangle()
@@ -104,10 +105,10 @@ struct UserCardViewGroupCreation: View {
                         let terms = searchText
                             .components(separatedBy: ",")
                             .filter { !$0.isEmpty }
+                            .filter { !$0.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
                             .map { $0.lowercased()
                                     .replacingOccurrences(of: "[\\[\\].$#]", with: " ", options: .regularExpression)
                             }
-                        
                         model.queryUsersByArtistOrTrackName(terms) { results in
                             searchResults = results
                         }
@@ -128,13 +129,11 @@ struct UserCardViewGroupCreation: View {
             }
             .frame(height: 40)
             .clipShape(Capsule())
-            .padding([.horizontal], 10)
+            .padding([.horizontal])
             // search results
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack {
-                    ForEach(searchResults.filter { userFromSearch in
-                        !model.suggestedUsers.map { $0.id }.contains(userFromSearch.id)
-                    }, id: \.id) { user in
+                    ForEach(searchResultsDisplay, id: \.id) { user in
                         UserCardGroupCreation(user: user, namespace: animation)
                             .padding([.horizontal], 1)
                             .padding([.leading], searchResults.first?.id == user.id ? 10 : 0)
@@ -152,14 +151,14 @@ struct UserCardViewGroupCreation: View {
             Text("Suggested users")
                 .fontWeight(.light)
                 .font(.title)
-                .padding([.horizontal], 10)
+                .padding([.horizontal], 15)
             ScrollView(.horizontal, showsIndicators: false) {
                 
                 HStack {
-                    ForEach(model.suggestedUsers.filter { $0.id != currentUserID && !addedUsers.contains($0) }, id: \.id) { user in
+                    ForEach(suggestedUsersDisplay, id: \.id) { user in
                         UserCardGroupCreation(user: user, namespace: animation)
                             .padding([.horizontal], 1)
-                            .padding([.leading], model.suggestedUsers.first?.id == user.id ? 10 : 0)
+                            .padding([.leading], suggestedUsersDisplay.first?.id == user.id ? 15 : 0)
                             .onTapGesture {
                                 withAnimation(.spring(response: 0.5)) {
                                     addedUsers.append(user)

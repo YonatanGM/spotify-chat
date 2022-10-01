@@ -17,7 +17,7 @@ struct UsersView: View {
     var body: some View {
         if let currentUserID = currentUserID {
             ScrollView(.horizontal, showsIndicators: false) {
-                HStack {
+                LazyHStack {
                     ForEach(model.suggestedUsers.filter { $0.id != currentUserID }, id: \.id) { user in
                         UserCard(user: user)
                             .padding([.horizontal], 1)
