@@ -46,6 +46,7 @@ struct Home: View {
                     
                     TopTracksView()
                     
+                        
                     Spacer()
                     
                     SearchBar(searchText: $searchText)

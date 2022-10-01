@@ -26,6 +26,7 @@ struct TopTracksView: View {
                 }
             }
         }
+        
         .onDisappear {
             model.removePlayer()
         }

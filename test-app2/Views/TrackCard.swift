@@ -140,6 +140,8 @@ struct TrackCard: View {
             }
             // .border(.blue)
         }
+
+       
         .background(
             Color(.sRGB,
                   red: 1,
@@ -148,6 +150,7 @@ struct TrackCard: View {
                   opacity: 0.05)
         )
         .cornerRadius(5)
+        .padding(.bottom, spotifyLogoHeight / 2)
         .scaleEffect(model.selectedTrackID == track.id && isTapping ? 0.9 : 1)
         .brightness(model.selectedTrackID == track.id && isTapping ? 0.1 : 0)
         
