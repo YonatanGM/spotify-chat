@@ -135,10 +135,6 @@ final class APICaller {
         }
     }
     
-    
-    
-    
-    
     public func getAvailableGenres(completion: @escaping (Result<[String:[String]], Error>) -> Void) {
 
         createRequest(with: URL(string: Constants.baseAPIURL + "/recommendations/available-genre-seeds/"),

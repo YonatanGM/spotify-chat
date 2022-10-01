@@ -33,61 +33,61 @@ struct ConversationGroupRow: View {
     var body: some View {
         
         ZStack {
-            GeometryReader { geometry in
-                ForEach(Array(randomPoints(2).enumerated()), id: \.offset) { index, point in
-                    if group.users.indices.contains(index) {
-                        if group.users[index].id != admin.id {
-                            if let urlString = group.users[index].photoURL,
-                               let url = URL(string: urlString) {
-                                AnimatedImage(url: url)
-                                    .resizable()
-                                    .scaledToFit()
-                                    .clipShape(Circle())
-                                    .frame(width: 30)
-                                    .scaleEffect(1 - Double(point.x))
-                                    .position(x: point.x * geometry.frame(in: .local).width,
-                                              y: point.y * geometry.frame(in: .local).height)
-                                    .opacity(1 - Double(point.x))
-
-                            } else {
-                                Image(systemName: "circle.fill")
-                                    .resizable()
-                                    .foregroundColor(.gray)
-                                    .scaledToFit()
-                                    .clipShape(Circle())
-                                    .frame(width: 30)
-                                    .scaleEffect(1 - Double(point.x))
-                                    .position(x: point.x * geometry.frame(in: .local).width,
-                                              y: point.y * geometry.frame(in: .local).height)
-                                    .opacity(1 - Double(point.x))
-                                    .overlay(
-                                        Text(group.users[index].name.components(separatedBy: " ").reduce("") { ($0.first?.description ?? "") +  ($1.first?.description ?? "")})
-                                            .font(.title)
-                                            .fontWeight(.thin)
-                                            .foregroundColor(.white)
-                                        , alignment: .center)
-
-                                    .opacity(0.75)
-                            }
-                        }
-
-                    } else {
-                        Image(systemName: "circle.fill")
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 30)
-                            .scaleEffect(1 - Double(point.x))
-
-                            .position(x: point.x * geometry.frame(in: .local).width,
-                                      y: point.y * geometry.frame(in: .local).height)
-                            .opacity(1 - Double(point.x))
-                            .foregroundColor(.gray)
-
-                        // .opacity(0.0)
-                    }
-                }
-            }
-            .padding([.vertical], 15)
+//            GeometryReader { geometry in
+//                ForEach(Array(randomPoints(2).enumerated()), id: \.offset) { index, point in
+//                    if group.users.indices.contains(index) {
+//                        if group.users[index].id != admin.id {
+//                            if let urlString = group.users[index].photoURL,
+//                               let url = URL(string: urlString) {
+//                                AnimatedImage(url: url)
+//                                    .resizable()
+//                                    .scaledToFit()
+//                                    .clipShape(Circle())
+//                                    .frame(width: 30)
+//                                    .scaleEffect(1 - Double(point.x))
+//                                    .position(x: point.x * geometry.frame(in: .local).width,
+//                                              y: point.y * geometry.frame(in: .local).height)
+//                                    .opacity(1 - Double(point.x))
+//
+//                            } else {
+//                                Image(systemName: "circle.fill")
+//                                    .resizable()
+//                                    .foregroundColor(.gray)
+//                                    .scaledToFit()
+//                                    .clipShape(Circle())
+//                                    .frame(width: 30)
+//                                    .scaleEffect(1 - Double(point.x))
+//                                    .position(x: point.x * geometry.frame(in: .local).width,
+//                                              y: point.y * geometry.frame(in: .local).height)
+//                                    .opacity(1 - Double(point.x))
+//                                    .overlay(
+//                                        Text(group.users[index].name.components(separatedBy: " ").reduce("") { ($0.first?.description ?? "") +  ($1.first?.description ?? "")})
+//                                            .font(.title)
+//                                            .fontWeight(.thin)
+//                                            .foregroundColor(.white)
+//                                        , alignment: .center)
+//
+//                                    .opacity(0.75)
+//                            }
+//                        }
+//
+//                    } else {
+//                        Image(systemName: "circle.fill")
+//                            .resizable()
+//                            .scaledToFit()
+//                            .frame(width: 30)
+//                            .scaleEffect(1 - Double(point.x))
+//
+//                            .position(x: point.x * geometry.frame(in: .local).width,
+//                                      y: point.y * geometry.frame(in: .local).height)
+//                            .opacity(1 - Double(point.x))
+//                            .foregroundColor(.gray)
+//
+//                        // .opacity(0.0)
+//                    }
+//                }
+//            }
+//            .padding([.vertical], 15)
             HStack {
                 
                 if let urlString = admin.photoURL,

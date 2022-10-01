@@ -36,7 +36,7 @@ struct SearchBar: View {
                     }
                   
                 }
-                .animation(.spring(), value: model.searchResults)
+                .animation(.spring(), value: model.searchResults.count)
                 .padding(5)
                 if !termsDisplay.isEmpty {
                     ScrollView(.horizontal, showsIndicators: false) {

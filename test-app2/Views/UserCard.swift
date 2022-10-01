@@ -18,6 +18,7 @@ struct UserCard: View {
     @State var onlineStatusHandle: UInt?
     @State var isOnline = false
     
+    
     let user: Message.ChatUserItem
     var body: some View {
 
@@ -97,8 +98,8 @@ struct UserCard: View {
                     }
                     
                 }
-                .frame(height: 20)
-                .frame(width: 125)
+                .frame(width: 125, height: 18)
+                .coordinateSpace(name: "artistIcons")
                 .cornerRadius(10)
             }
             .padding([.vertical], 10)

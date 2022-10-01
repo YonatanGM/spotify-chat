@@ -145,12 +145,12 @@
 				9F9C419928D13F76009CA948 /* UserCard.swift */,
 				9F2282EC28D6E4EC0050929E /* UserPicInitials.swift */,
 				9F9C419528CF6BE4009CA948 /* Search.swift */,
+				9F1747BD28CF3C960054AE20 /* ArtistAnimatedIcon.swift */,
 				9F2282C928D630810050929E /* Chat */,
 				9F22828C28D3CB910050929E /* Conversation */,
 				9F22828728D23DCF0050929E /* Buttons */,
 				9F9C41A128D18A52009CA948 /* CreateGroup */,
 				9FD44B9B28CB7B9A0028A408 /* Bar.swift */,
-				9F1747BD28CF3C960054AE20 /* ArtistAnimatedIcon.swift */,
 				46FFD4922826C0750022D1DE /* UIKitWrappers */,
 			);
 			path = Views;
