@@ -73,6 +73,8 @@ struct TrackCard: View {
                 if model.playingTrackID == track.id && model.progress > 0.0 {
                     ProgressView(value: model.progress)
                         .padding([.horizontal], spotifyLogoHeight / 2)
+                        .accentColor(.white)
+ 
                 }
                 HStack {
                     Image("rsz_1spotify_logo_rgb_white")
