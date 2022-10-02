@@ -60,7 +60,7 @@ struct ConversationsView: View {
                         .contentShape(Rectangle())
                         .overlay(
                                               // Accept button
-                            ZStack {
+                            ZStack(alignment: .trailing) {
                                 if group.pending == true {
                                     HStack {
                                         Text("Accept")
@@ -93,28 +93,31 @@ struct ConversationsView: View {
                                         }
                                     }
                                 } else {
-                                    HStack {
-                                        Text("\( model.groups[id]?.unseenCount ?? 0)")
-                                            .font(.headline)
+                                    VStack {
+                                        HStack {
+                                            Text("\( model.groups[id]?.unseenCount ?? 0)")
+                                                .font(.headline)
+                                        }
+                                        .padding([.horizontal], 10)
+                                        .padding([.vertical], 7.5)
+                                        .foregroundColor(.white)
+                                        .background(
+                                            Color.backdrop
+                                        )
+                                        .clipShape(Capsule())
+                                        .scaleEffect(selectedGroup == id && isTappingAccept ? 0.9 : 1)
+                                        .brightness(selectedGroup == id && isTappingAccept ? 0.1 : 0)
+                                        .opacity(model.groups[id]?.unseenCount == 0 ? 0 : 1)
+                                        Spacer()
                                     }
-                                    .padding([.horizontal], 10)
-                                    .padding([.vertical], 7.5)
-                                    .foregroundColor(.white)
-                                    .background(
-                                        Color.backdrop
-                                    )
-                                    
-                                    .clipShape(Capsule())
-                                    .scaleEffect(selectedGroup == id && isTappingAccept ? 0.9 : 1)
-                                    .brightness(selectedGroup == id && isTappingAccept ? 0.1 : 0)
-                                    .opacity(model.groups[id]?.unseenCount == 0 ? 0 : 1)
+                                    Text(AuthManager.shared.currentUser?.uid == group.admin ? "Delete" : "Leave")
+                                        .font(.title2)
+                                        .fontWeight(.light)
+                                        .foregroundColor(.white)
+                                        .opacity(groupBeingDragged == group.id ? 1 - max(0.0, 1 + rowTranslationOffset * 2 /  Double(UIScreen.main.bounds.width)) : 0.0)
+                                        .animation(.spring(response: 1))
+
                                 }
-                 
-                                Text(AuthManager.shared.currentUser?.uid == group.admin ? "Delete" : "Leave")
-                                    .foregroundColor(.white)
-                                    .opacity(groupBeingDragged == group.id ? 1 - max(0.0, 1 + rowTranslationOffset * 2 /  Double(UIScreen.main.bounds.width)) : 0.0)
-                                    .animation(.spring(response: 1))
-        
                             }
                             , alignment: .trailing)
 

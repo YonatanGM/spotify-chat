@@ -29,6 +29,17 @@ struct ConversationGroupRow: View {
         group.users.filter { $0.id == group.admin }.first
     }
 
+    var lastMessage: String? {
+        guard let message = group.messages.last?.messageKind else {
+            return nil
+        }
+        switch message {
+        case .text(let messageString):
+            return messageString
+        default:
+            return nil
+        }
+    }
     
     var body: some View {
         
@@ -116,26 +127,42 @@ struct ConversationGroupRow: View {
                     
                     
                 }
-                VStack(alignment: .leading, spacing: 0) {
-                    Text(group.name)
-                        .font(.largeTitle)
-                        .foregroundColor(.white)
-                        .fontWeight(.light)
+                VStack(alignment: .leading, spacing: 2.5) {
                     Spacer()
-
+                    VStack(alignment: .leading, spacing: -2.5) {
+                        Text(group.name)
+                            .font(.title)
+                            .foregroundColor(.white)
+                            .fontWeight(.semibold)
+                        if let lastMessage = lastMessage, group.pending == false {
+                            Text(lastMessage)
+                                .italic()
+                                .fontWeight(.light)
+                                .foregroundColor(.white)
+                                
+                    
+                        }
+                    }
+                    .padding(.leading, 7.5)
+           
+                    
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack(spacing: 1) {
                             ForEach(group.users.compactMap { $0.genreDisplay }.unique, id: \.self ) { genre in
-                                     GenresAnimatedIcon(genre: genre)
+                                GenresAnimatedIcon(genre: genre)
                             }
                         }
                         
                     }
-                    .frame(height: 20)
                     .clipShape(Capsule())
-                    
 
+                    Spacer()
+
+                    //.border(.green)
+             
                 }
+                
+//                .padding(.vertical)
                 Spacer()
             }
             
