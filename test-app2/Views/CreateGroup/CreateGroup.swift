@@ -58,7 +58,7 @@ struct CreateGroup: View {
                                     isTapping = false
                                 }
                                 
-                                if !name.isEmpty && !addedUsers.isEmpty  {
+                                if !name.isEmpty && !name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && !addedUsers.isEmpty  {
                                     DatabaseManager.shared.createGroup(with: addedUsers, name: name) { result in
                                         if result == true { // group creation is a success
                                             present = false  // hide the sheet
@@ -74,8 +74,9 @@ struct CreateGroup: View {
                         Text("Name of group")
                             .fontWeight(.light)
                             .font(.title) +
-                        Text(" *").fontWeight(.light).font(.title2).baselineOffset(4).foregroundColor(name.isEmpty ? .white : .clear)
+                        Text(" *").fontWeight(.light).font(.title2).baselineOffset(4).foregroundColor(name.isEmpty || name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? .white : .clear)
                         
+
                         ZStack {
                             Color.backdrop
                             TextField("", text: $name) {

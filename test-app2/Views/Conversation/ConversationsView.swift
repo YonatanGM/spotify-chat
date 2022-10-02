@@ -109,8 +109,15 @@ struct ConversationsView: View {
                                     .brightness(selectedGroup == id && isTappingAccept ? 0.1 : 0)
                                     .opacity(model.groups[id]?.unseenCount == 0 ? 0 : 1)
                                 }
+                 
+                                Text(AuthManager.shared.currentUser?.uid == group.admin ? "Delete" : "Leave")
+                                    .foregroundColor(.white)
+                                    .opacity(groupBeingDragged == group.id ? 1 - max(0.0, 1 + rowTranslationOffset * 2 /  Double(UIScreen.main.bounds.width)) : 0.0)
+                                    .animation(.spring(response: 1))
+        
                             }
                             , alignment: .trailing)
+
                             .onTapGesture {
                                 selectedGroup = group.id
                                 // animation
