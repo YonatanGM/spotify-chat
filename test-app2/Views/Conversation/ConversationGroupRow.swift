@@ -139,8 +139,6 @@ struct ConversationGroupRow: View {
                                 .italic()
                                 .fontWeight(.light)
                                 .foregroundColor(.white)
-                                
-                    
                         }
                     }
                     .padding(.leading, 7.5)

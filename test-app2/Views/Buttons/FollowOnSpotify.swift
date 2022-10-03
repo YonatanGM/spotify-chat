@@ -1,0 +1,61 @@
+//
+//  followOnSpotify.swift
+//  test-app2
+//
+//  Created by Yonatan Mamo on 03.10.22.
+//
+
+import SwiftUI
+
+struct FollowOnSpotify: View {
+    @State var isTapping: Bool = false
+    private var logoHeight = 25.0
+    
+    var body: some View {
+        Button(action: {
+            // animation
+            withAnimation(.easeIn(duration: 0.1)) {
+                isTapping = true
+            }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                withAnimation {
+                    isTapping = false
+                }
+                // do something
+            }
+        }, label: {
+
+            HStack(spacing: 0) {
+                Spacer()
+                Text("Follow on")
+                    .font(.headline)
+                    .fontWeight(.bold)
+               
+                Image("Spotify_Logo_RGB_White")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(height: logoHeight)
+                    .padding(.leading, logoHeight / 2)
+    
+                Spacer()
+ 
+            }
+           
+        })
+        .padding(logoHeight / 2)
+        .foregroundColor(.white)
+        .background(
+            Color.backdrop
+        )
+        .clipShape(Capsule())
+        .scaleEffect(isTapping ? 0.9 : 1)
+        .brightness(isTapping ? 0.1 : 0)
+        .shadow(radius: 5)
+    }
+}
+
+struct followOnSpotify_Previews: PreviewProvider {
+    static var previews: some View {
+        FollowOnSpotify()
+    }
+}

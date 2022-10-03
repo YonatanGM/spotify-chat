@@ -47,6 +47,8 @@ class AppStateModel: ObservableObject {
     @Published var scrollToBottom = false
     @Published var searchResults = [Message.ChatUserItem]()
     
+    @Published var currentChatUser: Message.ChatUserItem?
+    
     
     private var cancellables = Set<AnyCancellable>()
     private var userObserverHandle: UInt?
@@ -109,6 +111,17 @@ class AppStateModel: ObservableObject {
 extension AppStateModel {
     
     public func setup() {
+        if let currentUserID = AuthManager.shared.currentUser?.uid {
+            DatabaseManager.shared.getUser(with: currentUserID) { [weak self] result in
+                switch result {
+                case .success(let user):
+                    self?.currentChatUser = user
+                case .failure(_):
+                    print("couldn't get current user")
+                }
+            }
+        }
+      
         DatabaseManager.shared.managePresence()
         
         DatabaseManager.shared.observeNewGroup() { [weak self] result in

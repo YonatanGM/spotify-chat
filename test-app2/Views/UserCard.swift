@@ -24,7 +24,7 @@ struct UserCard: View {
 
         VStack {
             NavigationLink(isActive: $showUserDetail,
-                           destination: { Text(user.userName) },
+                           destination: { UserDetail(user: user) },
                            label: { EmptyView() })
             
             VStack {

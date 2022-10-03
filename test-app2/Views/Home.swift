@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SDWebImageSwiftUI
 
 struct Home: View {
     @State private var searchText = ""
@@ -75,6 +76,26 @@ struct Home: View {
                 }
             }
         }
+        .navigationBarItems(trailing:
+            ZStack {
+                if let currentUser = model.currentChatUser {
+                    if let url = currentUser.avatarURL {
+                        AnimatedImage(url: url)
+                            .resizable()
+                            .scaledToFit()
+                            .clipShape(Circle())
+                            .frame(height: 30)
+                            .shadow(radius: 5)
+                            
+                    } else {
+                        UserPicInitials(name: currentUser.userName)
+                            .frame(height: 30)
+                    }
+                }
+            
+            
+            }
+        )
         
     }
 }

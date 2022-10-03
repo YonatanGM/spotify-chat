@@ -194,7 +194,13 @@ extension DatabaseManager {
             photoURL = URL(string: photoURLString)
          }
          
-         completion(.success(.init(userName: name, avatarURL: photoURL, avatar: nil, id: id, topTracks: topTracksResponse, topArtists: topArtistsResponse, topGenres: topGenres)))
+         completion(.success(.init(userName: name,
+                                   avatarURL: photoURL,
+                                   avatar: nil,
+                                   id: id,
+                                   topTracks: topTracksResponse,
+                                   topArtists: topArtistsResponse,
+                                   topGenres: topGenres)))
          
       }
    }

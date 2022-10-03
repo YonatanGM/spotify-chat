@@ -25,9 +25,6 @@ struct MainView: View {
             } else {
                 Color.white
             }
-          
-            
-        
         }
         .navigationViewStyle(StackNavigationViewStyle())
     }

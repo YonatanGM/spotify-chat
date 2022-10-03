@@ -22,7 +22,6 @@ struct InviteButton: View {
         .background(
             Color.backdrop
         )
-        
         .clipShape(Capsule())
         .scaleEffect(isTapping ? 0.9 : 1)
         .brightness(isTapping ? 0.1 : 0)

@@ -9,6 +9,7 @@ import SwiftUI
 
 struct GenresAnimatedIcon: View {
     let genre: String
+
     var body: some View {
         ZStack {
             Color.black.opacity(0.25)
@@ -20,6 +21,7 @@ struct GenresAnimatedIcon: View {
         }
    
         .clipShape(Capsule())
+        .contentShape(Capsule())
         .shadow(radius: 10)
         .foregroundColor(.white)
 
