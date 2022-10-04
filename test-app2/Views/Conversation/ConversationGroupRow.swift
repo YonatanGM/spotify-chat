@@ -143,16 +143,18 @@ struct ConversationGroupRow: View {
                     }
                     .padding(.leading, 7.5)
            
-                    
-                    ScrollView(.horizontal, showsIndicators: false) {
-                        HStack(spacing: 1) {
-                            ForEach(group.users.compactMap { $0.genreDisplay }.unique, id: \.self ) { genre in
-                                GenresAnimatedIcon(genre: genre)
+                    GeometryReader { geometry in
+                        ScrollView(.horizontal, showsIndicators: false) {
+                            HStack(spacing: 1) {
+                                ForEach(group.users.compactMap { $0.genreDisplay }.unique, id: \.self ) { genre in
+                                    GenresAnimatedIcon(genre: genre, parentFrame: geometry.size)
+                                }
                             }
                         }
-                        
+                        .clipShape(Capsule())
                     }
-                    .clipShape(Capsule())
+                    .frame(height: 15)
+
 
                     Spacer()
 

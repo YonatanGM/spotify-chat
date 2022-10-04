@@ -13,6 +13,7 @@ struct UserDetail: View {
     @State var onlineStatusHandle: UInt?
     @State var isOnline = false
     
+
     var gradient: LinearGradient {
         LinearGradient(colors: [
             Color(.sRGB,
@@ -58,10 +59,6 @@ struct UserDetail: View {
                                    startPoint: .bottom,
                                    endPoint: .top
                                ))
-
-                            
-                            // .offset(y: profilePicHeight / 1.25)
-                            // .border(.red)
                           
                         }
                     )
@@ -117,31 +114,63 @@ struct UserDetail: View {
                         }
                     }
                     VStack {
+                        Spacer()
                         FollowOnSpotify()
                             // .border(.blue)
-                        if let topGenres = user.topGenres {
-                            ScrollView(.horizontal, showsIndicators: false) {
-                                HStack(spacing: 1) {
-                                    ForEach(topGenres, id: \.self ) { genre in
-                                        GenresAnimatedIcon(genre: genre)
-                                            
+                
+                            if let topGenres = user.topGenres {
+                                GeometryReader { geometry in
+                                    
+                                    ScrollView(.horizontal, showsIndicators: false) {
+                                        LazyHStack(spacing: 1) {
+                                            ForEach(topGenres, id: \.self ) { genre in
+                                                GenresAnimatedIcon(genre: genre, parentFrame: geometry.size)
+                                            }
+                                        }
                                     }
+                                    .clipShape(Capsule())
+                                    .coordinateSpace(name: "userDetailGenres")
+                                   
+                                    .padding(.horizontal, 10)
                                 }
+                                .frame(height: 20)
                             }
-                            .clipShape(Capsule())
-                   
                         
-                            .frame(height: 15)
-                            .padding(.horizontal)
-                            
-                        }
                     }
-                    Spacer()
+                    .padding(.bottom)
+                
                 }
                 .padding(.horizontal)
                 .offset(y: -1 * profilePicHeight / 2)
-
-                Spacer()
+                .padding(.bottom, -1 * profilePicHeight / 3)
+                // .border(.red)
+    
+                if let artists = user.topArtists?.items {
+                    VStack(alignment: .leading, spacing: 10) {
+                        Text("Likes")
+                            .font(.largeTitle)
+                            .fontWeight(.light)
+                            .foregroundColor(.white)
+                            .padding(.leading)
+                        TopArtistsView(artists: artists)
+                    }
+                    
+                  
+                }
+                if let tracks = user.topTracks?.items {
+                    VStack(alignment: .leading, spacing: 10) {
+                        Text("Favorite tracks")
+                            .font(.largeTitle)
+                            .fontWeight(.light)
+                            .foregroundColor(.white)
+                            .padding(.leading)
+                        TopTracksView(tracks: tracks)
+                    }
+                  
+                }
+              
+                
+                
             }
             
         }

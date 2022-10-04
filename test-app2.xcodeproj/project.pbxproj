@@ -46,6 +46,7 @@
 		9F61C85028EA4F7C00877B91 /* UserDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F61C84F28EA4F7C00877B91 /* UserDetail.swift */; };
 		9F61C85228EA5F0F00877B91 /* ArtistBackgroundSlideshow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F61C85128EA5F0E00877B91 /* ArtistBackgroundSlideshow.swift */; };
 		9F61C85428EB182A00877B91 /* FollowOnSpotify.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F61C85328EB182A00877B91 /* FollowOnSpotify.swift */; };
+		9F61C85628EBF5B200877B91 /* CurrentUserSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F61C85528EBF5B200877B91 /* CurrentUserSettings.swift */; };
 		9F9C419228CF531F009CA948 /* FindButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F9C419128CF531E009CA948 /* FindButton.swift */; };
 		9F9C419628CF6BE4009CA948 /* Search.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F9C419528CF6BE4009CA948 /* Search.swift */; };
 		9F9C419A28D13F76009CA948 /* UserCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F9C419928D13F76009CA948 /* UserCard.swift */; };
@@ -101,6 +102,7 @@
 		9F61C84F28EA4F7C00877B91 /* UserDetail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDetail.swift; sourceTree = "<group>"; };
 		9F61C85128EA5F0E00877B91 /* ArtistBackgroundSlideshow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArtistBackgroundSlideshow.swift; sourceTree = "<group>"; };
 		9F61C85328EB182A00877B91 /* FollowOnSpotify.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FollowOnSpotify.swift; sourceTree = "<group>"; };
+		9F61C85528EBF5B200877B91 /* CurrentUserSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentUserSettings.swift; sourceTree = "<group>"; };
 		9F9C419128CF531E009CA948 /* FindButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FindButton.swift; sourceTree = "<group>"; };
 		9F9C419528CF6BE4009CA948 /* Search.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Search.swift; sourceTree = "<group>"; };
 		9F9C419928D13F76009CA948 /* UserCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserCard.swift; sourceTree = "<group>"; };
@@ -283,6 +285,7 @@
 				9FD44B9928CB7B140028A408 /* InviteButton.swift */,
 				9F9C419D28D1562E009CA948 /* NewGroupButton.swift */,
 				9F61C85328EB182A00877B91 /* FollowOnSpotify.swift */,
+				9F61C85528EBF5B200877B91 /* CurrentUserSettings.swift */,
 			);
 			path = Buttons;
 			sourceTree = "<group>";
@@ -444,6 +447,7 @@
 				9FCB86AE28C8D0F600A96A50 /* TrackCard.swift in Sources */,
 				9FD44B9828CB683D0028A408 /* ChatButton.swift in Sources */,
 				9F22828E28D3CE5A0050929E /* GenresAnimatedIcon.swift in Sources */,
+				9F61C85628EBF5B200877B91 /* CurrentUserSettings.swift in Sources */,
 				9F17479E28CDBB290054AE20 /* UserInfo.swift in Sources */,
 				9F61C85228EA5F0F00877B91 /* ArtistBackgroundSlideshow.swift in Sources */,
 				46F5CA6A2808C23E00D58C41 /* test_app2App.swift in Sources */,

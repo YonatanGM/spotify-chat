@@ -9,9 +9,15 @@ import SwiftUI
 import SDWebImageSwiftUI
 
 struct Home: View {
+    @EnvironmentObject var model: AppStateModel
     @State private var searchText = ""
     @Namespace var bottomID
-    @EnvironmentObject var model: AppStateModel
+    var suggestedArtists: [Artist] {
+        model.suggestedUsers.compactMap { $0.topArtists?.items.first }
+    }
+    var suggestedTracks: [Track] {
+        model.suggestedUsers.compactMap { $0.topTracks?.items.first }
+    }
     var body: some View {
         ZStack {
             
@@ -43,9 +49,9 @@ struct Home: View {
                 ScrollView(showsIndicators: false) {
                     UsersView()
                     
-                    TopArtistsView()
+                    TopArtistsView(artists: suggestedArtists)
                     
-                    TopTracksView()
+                    TopTracksView(tracks: suggestedTracks)
                     
                         
                     Spacer()
@@ -76,32 +82,8 @@ struct Home: View {
                 }
             }
         }
-        .navigationBarItems(trailing:
-            ZStack {
-                if let currentUser = model.currentChatUser {
-                    if let url = currentUser.avatarURL {
-                        AnimatedImage(url: url)
-                            .resizable()
-                            .scaledToFit()
-                            .clipShape(Circle())
-                            .frame(height: 30)
-                            .shadow(radius: 5)
-                            
-                    } else {
-                        UserPicInitials(name: currentUser.userName)
-                            .frame(height: 30)
-                    }
-                }
-            
-            
-            }
-        )
+        .navigationBarItems(trailing: CurrentUserSettings())
         
     }
 }
 
-struct Home_Previews: PreviewProvider {
-    static var previews: some View {
-        Home()
-    }
-}

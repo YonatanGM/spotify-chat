@@ -15,16 +15,16 @@ import UIKit
 struct TopTracksView: View {
     @EnvironmentObject var model: AppStateModel
     @Environment(\.scenePhase) private var scenePhase
+    var tracks: [Track]
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
-            if let topTracksResponse = model.suggestedUsers.first?.topTracks {
                 LazyHStack(alignment: .top) {
-                    ForEach(topTracksResponse.items, id: \.id) { track in
+                    ForEach(tracks, id: \.id) { track in
                         TrackCard(track: track)
 
                     }
                 }
-            }
+            
         }
         
         .onDisappear {
@@ -35,11 +35,5 @@ struct TopTracksView: View {
             model.handlePlackbackOnChangeOfScenePhase(to: phase)
 
         }
-    }
-}
-
-struct TopArtistsView_Previews: PreviewProvider {
-    static var previews: some View {
-        TopArtistsView()
     }
 }

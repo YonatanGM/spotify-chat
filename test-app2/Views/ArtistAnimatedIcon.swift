@@ -12,12 +12,10 @@ struct ArtistAnimatedIcon: View {
     let url: URL
 
     @State var scale = 0.001
-    @State var shouldAnimate = false
+
     var body: some View {
         AnimatedImage(url: url)
-        
             .resizable()
-            
             .scaledToFill()
             .clipShape(Circle())
             .shadow(radius: 5)
