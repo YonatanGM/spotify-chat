@@ -287,10 +287,7 @@ final class APICaller {
 //                print(data)
 //                print(error)
 //                print((response as? HTTPURLResponse)?.statusCode)
-                guard let data = data,
-                      let httpResponse = response as? HTTPURLResponse,
-                      httpResponse.statusCode == 200,
-                      error == nil else {
+                guard let data = data, error == nil else {
                     completion(false)
 //                    let result = try? JSONSerialization.jsonObject(with: data!)
 //                    print(result)
@@ -306,14 +303,11 @@ final class APICaller {
     
     public func followUser(with id: String, completion: @escaping (Bool) -> Void) {
         createRequest(
-            with: URL(string: Constants.baseAPIURL + "/me/following?type=user?ids=\(id)"),
+            with: URL(string: Constants.baseAPIURL + "/me/following?type=user&ids=\(id)"),
             type: .PUT
         ) { request in
             let task = URLSession.shared.dataTask(with: request) { data, response, error in
-                guard let data = data,
-                      let httpResponse = response as? HTTPURLResponse,
-                      httpResponse.statusCode == 204,
-                      error == nil else {
+                guard let data = data, error == nil else {
                     print((response as? HTTPURLResponse)?.statusCode)
                     completion(false)
                     return
@@ -326,14 +320,11 @@ final class APICaller {
     
     public func unfollowUser(with id: String, completion: @escaping (Bool) -> Void) {
         createRequest(
-            with: URL(string: Constants.baseAPIURL + "/me/following?type=user?ids=\(id)"),
+            with: URL(string: Constants.baseAPIURL + "/me/following?type=user&ids=\(id)"),
             type: .DELETE
         ) { request in
             let task = URLSession.shared.dataTask(with: request) { data, response, error in
-                guard let data = data,
-                      let httpResponse = response as? HTTPURLResponse,
-                      httpResponse.statusCode == 200,
-                      error == nil else {
+                guard let data = data, error == nil else {
                     print((response as? HTTPURLResponse)?.statusCode)
                     completion(false)
                     return
@@ -344,27 +335,27 @@ final class APICaller {
         }
     }
     
-    public func checkIfCurrentUserFollowsUser(with id: String, completion: @escaping (Bool) -> Void) {
+    public func checkIfCurrentUserFollowsUser(with id: String, completion: @escaping (Result<Bool, Error>) -> Void) {
         createRequest(
-            with: URL(string: Constants.baseAPIURL + "/me/following/contains?type=user?ids=\(id)"),
+            with: URL(string: Constants.baseAPIURL + "/me/following/contains?type=user&ids=\(id)"),
             type: .GET
         ) { request in
             let task = URLSession.shared.dataTask(with: request) { data, response, error in
-                guard let data = data,
-                      let httpResponse = response as? HTTPURLResponse,
-                      httpResponse.statusCode == 200,
-                      error == nil else {
+                guard let data = data, error == nil else {
                     print((response as? HTTPURLResponse)?.statusCode)
-                    completion(false)
+                    if let error = error {
+                        print(error)
+                        completion(.failure(error))
+                    }
                     return
                 }
-                guard let result = try? JSONDecoder().decode([Bool].self, from: data).first else {
-                    // let result = try JSONSerialization.jsonObject(with: data, options: .allowFragments)
-                    // print(result)
-                    completion(false)
-                    return
+                do {
+                    if let result = try JSONDecoder().decode([Bool].self, from: data).first {
+                        completion(.success(result))
+                    }
+                } catch let error {
+                    completion(.failure(error))
                 }
-                completion(result)
             }
             task.resume()
         }

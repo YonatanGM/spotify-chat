@@ -9,7 +9,9 @@ import SwiftUI
 
 struct FollowOnSpotify: View {
     @State var isTapping: Bool = false
-    private var logoHeight = 25.0
+    var logoHeight = 25.0
+    let isFollowing: Bool
+    var completion: () -> Void
     
     var body: some View {
         Button(action: {
@@ -22,23 +24,37 @@ struct FollowOnSpotify: View {
                     isTapping = false
                 }
                 // do something
+                completion()
             }
         }, label: {
-
-            HStack(spacing: 0) {
-                Spacer()
-                Text("Follow on")
-                    .font(.headline)
-                    .fontWeight(.bold)
-               
-                Image("Spotify_Logo_RGB_White")
-                    .resizable()
-                    .scaledToFit()
-                    .frame(height: logoHeight)
-                    .padding(.leading, logoHeight / 2)
-    
-                Spacer()
- 
+            if !isFollowing {
+                HStack(spacing: 0) {
+                    Spacer()
+                    Text("Follow on")
+                        .font(.headline)
+                        .fontWeight(.bold)
+                   
+                    Image("Spotify_Logo_RGB_White")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(height: logoHeight)
+                        .padding(.leading, logoHeight / 2)
+                    Spacer()
+                }
+            } else {
+                HStack(spacing: 0) {
+                    Spacer()
+                    Text("Following")
+                        .font(.headline)
+                        .fontWeight(.bold)
+                   
+                    Image("Spotify_Icon_RGB_White-1")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(height: logoHeight)
+                        .padding(.leading, logoHeight / 2)
+                    Spacer()
+                }
             }
            
         })
@@ -51,11 +67,5 @@ struct FollowOnSpotify: View {
         .scaleEffect(isTapping ? 0.9 : 1)
         .brightness(isTapping ? 0.1 : 0)
         .shadow(radius: 5)
-    }
-}
-
-struct followOnSpotify_Previews: PreviewProvider {
-    static var previews: some View {
-        FollowOnSpotify()
     }
 }

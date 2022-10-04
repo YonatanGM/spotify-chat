@@ -12,6 +12,8 @@ struct UserDetail: View {
     let user: Message.ChatUserItem
     @State var onlineStatusHandle: UInt?
     @State var isOnline = false
+    @State var followedByCurrentUser: Bool?
+
     
 
     var gradient: LinearGradient {
@@ -115,7 +117,24 @@ struct UserDetail: View {
                     }
                     VStack {
                         Spacer()
-                        FollowOnSpotify()
+                        if let isFollowing = followedByCurrentUser {
+                            FollowOnSpotify(isFollowing: isFollowing) {
+                                if followedByCurrentUser == true {
+                                    APICaller.shared.unfollowUser(with: user.id) { unfollowed in
+                                        if unfollowed {
+                                            followedByCurrentUser = false
+                                        }
+                                    }
+                                } else {
+                                    APICaller.shared.followUser(with: user.id) { followed in
+                                        if followed {
+                                            followedByCurrentUser = true
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
                             // .border(.blue)
                 
                             if let topGenres = user.topGenres {
@@ -176,10 +195,21 @@ struct UserDetail: View {
         }
         .navigationTitle(user.userName)
         .onAppear {
+            // check if current user follows this user
+            APICaller.shared.checkIfCurrentUserFollowsUser(with: user.id) { result in
+                switch result {
+                case .success(let isFollowing):
+                    followedByCurrentUser = isFollowing
+                case .failure(let error):
+                    print("couldn't check if current user follows user \(user.id): \(error.localizedDescription)")
+                }
+            }
             // check online status
             onlineStatusHandle = DatabaseManager.shared.checkOnlineStatus(for: user.id) { status in
                 isOnline = status
             }
+            
+            
         }
         .onDisappear {
             if let onlineStatusHandle = onlineStatusHandle {

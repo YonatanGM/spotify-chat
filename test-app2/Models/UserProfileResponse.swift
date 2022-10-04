@@ -19,9 +19,6 @@ struct UserProfileResponse: Codable, Identifiable {
     let id: String
     let images: [APIImage]
     let product: String // what is this?
-    
-    
-    
 }
 
 extension UserProfileResponse {

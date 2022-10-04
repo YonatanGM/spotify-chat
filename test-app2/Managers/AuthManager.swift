@@ -23,7 +23,7 @@ final class AuthManager {
         static let tokenAPIURL = "https://accounts.spotify.com/api/token"
         static let redirectURI = "http://localhost:5001/testapp-79467/us-central1/redirect"
         // add the scope for liking tracks here
-        static let scopes = "user-read-private%20user-top-read%20playlist-read-private%20user-library-modify"
+        static let scopes = "user-read-private%20user-top-read%20user-follow-modify%20user-follow-read%20user-library-read%20user-library-modify"
     }
     
     private init() {}
