@@ -33,7 +33,7 @@ struct UserDetail: View {
 
     }
     
-    let profilePicHeight = Double(UIScreen.main.bounds.width) / 3
+    let profilePicHeight = Double(UIScreen.main.bounds.width) / 3.5
     var artistImageUrls: [URL] {
         guard let urls = (user.topArtists?.items
                                 .compactMap { $0.images?.first?.url }
@@ -156,7 +156,7 @@ struct UserDetail: View {
                             }
                         
                     }
-                    .padding(.bottom)
+                    .padding(.bottom, 10)
                 
                 }
                 .padding(.horizontal)

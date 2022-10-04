@@ -47,6 +47,9 @@
 		9F61C85228EA5F0F00877B91 /* ArtistBackgroundSlideshow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F61C85128EA5F0E00877B91 /* ArtistBackgroundSlideshow.swift */; };
 		9F61C85428EB182A00877B91 /* FollowOnSpotify.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F61C85328EB182A00877B91 /* FollowOnSpotify.swift */; };
 		9F61C85628EBF5B200877B91 /* CurrentUserSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F61C85528EBF5B200877B91 /* CurrentUserSettings.swift */; };
+		9F61C85A28EC49B600877B91 /* CurrentUserDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F61C85928EC49B600877B91 /* CurrentUserDetail.swift */; };
+		9F61C85C28EC4B7500877B91 /* SignOut.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F61C85B28EC4B7400877B91 /* SignOut.swift */; };
+		9F61C85E28EC4B8600877B91 /* DeleteAccount.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F61C85D28EC4B8600877B91 /* DeleteAccount.swift */; };
 		9F9C419228CF531F009CA948 /* FindButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F9C419128CF531E009CA948 /* FindButton.swift */; };
 		9F9C419628CF6BE4009CA948 /* Search.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F9C419528CF6BE4009CA948 /* Search.swift */; };
 		9F9C419A28D13F76009CA948 /* UserCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F9C419928D13F76009CA948 /* UserCard.swift */; };
@@ -103,6 +106,9 @@
 		9F61C85128EA5F0E00877B91 /* ArtistBackgroundSlideshow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArtistBackgroundSlideshow.swift; sourceTree = "<group>"; };
 		9F61C85328EB182A00877B91 /* FollowOnSpotify.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FollowOnSpotify.swift; sourceTree = "<group>"; };
 		9F61C85528EBF5B200877B91 /* CurrentUserSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentUserSettings.swift; sourceTree = "<group>"; };
+		9F61C85928EC49B600877B91 /* CurrentUserDetail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentUserDetail.swift; sourceTree = "<group>"; };
+		9F61C85B28EC4B7400877B91 /* SignOut.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignOut.swift; sourceTree = "<group>"; };
+		9F61C85D28EC4B8600877B91 /* DeleteAccount.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeleteAccount.swift; sourceTree = "<group>"; };
 		9F9C419128CF531E009CA948 /* FindButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FindButton.swift; sourceTree = "<group>"; };
 		9F9C419528CF6BE4009CA948 /* Search.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Search.swift; sourceTree = "<group>"; };
 		9F9C419928D13F76009CA948 /* UserCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserCard.swift; sourceTree = "<group>"; };
@@ -152,6 +158,7 @@
 				9FCB86AD28C8D0F600A96A50 /* TrackCard.swift */,
 				9F9C419928D13F76009CA948 /* UserCard.swift */,
 				9F61C84F28EA4F7C00877B91 /* UserDetail.swift */,
+				9F61C85928EC49B600877B91 /* CurrentUserDetail.swift */,
 				9F2282EC28D6E4EC0050929E /* UserPicInitials.swift */,
 				9F9C419528CF6BE4009CA948 /* Search.swift */,
 				9F1747BD28CF3C960054AE20 /* ArtistAnimatedIcon.swift */,
@@ -286,6 +293,8 @@
 				9F9C419D28D1562E009CA948 /* NewGroupButton.swift */,
 				9F61C85328EB182A00877B91 /* FollowOnSpotify.swift */,
 				9F61C85528EBF5B200877B91 /* CurrentUserSettings.swift */,
+				9F61C85B28EC4B7400877B91 /* SignOut.swift */,
+				9F61C85D28EC4B8600877B91 /* DeleteAccount.swift */,
 			);
 			path = Buttons;
 			sourceTree = "<group>";
@@ -429,6 +438,7 @@
 				9F9C41A528D18D44009CA948 /* UserCardViewGroupCreation.swift in Sources */,
 				9F9C419228CF531F009CA948 /* FindButton.swift in Sources */,
 				46F0CC2D280D716C00BF1B4B /* APICaller.swift in Sources */,
+				9F61C85E28EC4B8600877B91 /* DeleteAccount.swift in Sources */,
 				9F9C41A028D17E3B009CA948 /* CreateGroup.swift in Sources */,
 				46EAE3FE28095F3F0061C9BB /* WebView.swift in Sources */,
 				9F17479C28CDBAEF0054AE20 /* Group.swift in Sources */,
@@ -440,10 +450,12 @@
 				9F9C419628CF6BE4009CA948 /* Search.swift in Sources */,
 				9F2282ED28D6E4EC0050929E /* UserPicInitials.swift in Sources */,
 				9FD44B9A28CB7B140028A408 /* InviteButton.swift in Sources */,
+				9F61C85A28EC49B600877B91 /* CurrentUserDetail.swift in Sources */,
 				46F5CA782808DD0D00D58C41 /* AuthManager.swift in Sources */,
 				46476EAB28099A8600C5B880 /* AuthResponse.swift in Sources */,
 				46F8B3DE284DF95900EBCD9C /* Extensions.swift in Sources */,
 				4604EF9C28571E9D000DF914 /* TopArtistsView.swift in Sources */,
+				9F61C85C28EC4B7500877B91 /* SignOut.swift in Sources */,
 				9FCB86AE28C8D0F600A96A50 /* TrackCard.swift in Sources */,
 				9FD44B9828CB683D0028A408 /* ChatButton.swift in Sources */,
 				9F22828E28D3CE5A0050929E /* GenresAnimatedIcon.swift in Sources */,

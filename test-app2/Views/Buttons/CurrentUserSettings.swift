@@ -16,8 +16,8 @@ struct CurrentUserSettings: View {
         ZStack {
             NavigationLink(isActive: $showCurrentUserSettings,
                            destination: {
-                    if let currentUser = model.currentChatUser {
-                        UserDetail(user: currentUser)
+                    if let _ = model.currentChatUser {
+                        CurrentUserDetail()
                     }
             },
                            label: { EmptyView() })
