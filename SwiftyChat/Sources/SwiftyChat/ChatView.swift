@@ -41,11 +41,8 @@ public struct ChatView<Message: ChatMessage, User: ChatUser>: View {
         GeometryReader { geometry in
             ZStack(alignment: .bottom) {
                 chatView(in: geometry)
-                    .overlay(
-                        Divider()
-                    
-                    
-                        , alignment: .top)
+               
+
                 inputView()
                     .onPreferenceChange(ContentSizeThatFitsKey.self) {
                         contentSizeThatFits = $0
@@ -81,6 +78,7 @@ public struct ChatView<Message: ChatMessage, User: ChatUser>: View {
                         if showDateheader {
                             Text(dateFormater.string(from: message.date))
                                 .font(.subheadline)
+                                
                         }
                         
                         if shouldShowDisplayName {
@@ -103,6 +101,7 @@ public struct ChatView<Message: ChatMessage, User: ChatUser>: View {
                 }
                 .padding(.bottom, 30)
                 // .padding(EdgeInsets(top: inset.top, leading: inset.leading, bottom: 0, trailing: inset.trailing))
+                .border(.black)
                 .onChange(of: scrollToBottom) { value in
                     if value {
                         withAnimation(.easeIn(duration: 0.2)) {
@@ -140,8 +139,9 @@ public struct ChatView<Message: ChatMessage, User: ChatUser>: View {
                 }
             }
         }
-        .background(Color.clear)
+ 
         .padding(.bottom, messageEditorHeight + 30)
+    
     }
     
 }

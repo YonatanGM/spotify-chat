@@ -7,6 +7,7 @@
 
 import SwiftUI
 import SDWebImageSwiftUI
+import Introspect
 import SwiftyChat
 
 
@@ -19,139 +20,211 @@ struct SwiftyChatView: View {
     @State private var message = ""
     @State private var isEditing = false
     
-    @State private var showingPopover = false
+    @State var isTapping: Bool = false
     @Binding var showChat: Bool
-    
-    
-    
-    var currentChatUser: Message.ChatUserItem? {
-        guard let currentUserID = AuthManager.shared.currentUser?.uid,
-              let currentUserName = AuthManager.shared.currentUser?.displayName else {
-            return nil
-        }
-        
-        return Message.ChatUserItem(userName: currentUserName,
-                                    avatarURL:  AuthManager.shared.currentUser?.photoURL,
-                                    avatar: nil,
-                                    id: currentUserID)
-    }
+
     
     var body: some View {
-        
-        chatView
-            .foregroundColor(.white)
-            .background(
-                ZStack {
-                    LinearGradient(colors: [
-                        Color(.sRGB,
-                              red: Double(20) / 255,
-                              green: Double(20) / 255,
-                              blue: Double(20) / 255,
-                              opacity: 0.75),
-                        Color(.sRGB,
-                              red: Double(10) / 255,
-                              green: Double(10) / 255,
-                              blue: Double(10) / 255,
-                              opacity: 1)
+        if model.groups[groupID]?.isDm == false {
+            chatView
+                .foregroundColor(.white)
+                .background(
+                    ZStack {
+                        LinearGradient(colors: [
+                            Color(.sRGB,
+                                  red: Double(20) / 255,
+                                  green: Double(20) / 255,
+                                  blue: Double(20) / 255,
+                                  opacity: 0.75),
+                            Color(.sRGB,
+                                  red: Double(10) / 255,
+                                  green: Double(10) / 255,
+                                  blue: Double(10) / 255,
+                                  opacity: 1)
+                            
+                        ], startPoint: .topLeading, endPoint: .center)
                         
-                    ], startPoint: .topLeading, endPoint: .center)
-                    
-                    LinearGradient(colors: [
-                        Color.clear,
-                        Color.backdrop
-                        
-                    ], startPoint: .center, endPoint: .bottom)
-         
-                }
-                .ignoresSafeArea()
-            )
-
-      
-  
-
-            .navigationTitle("")
-            .navigationBarTitleDisplayMode(.large)
-            .toolbar {
-                ToolbarItem(placement: .principal) {
-                    UserIconsToolbar(users: model.groups[groupID]?.users ?? [])
-                    
-                    
-                    
-                        .accessibilityAddTraits(.isHeader)
-                }
-            }
-            .navigationBarItems(trailing:
-                Menu {
-                 
-                if let currentChatUser = currentChatUser {
-                    if currentChatUser.id == model.groups[groupID]?.admin {
-                        Button(action: { }) {
-                            Label("Add user", systemImage: "plus")
-                        }
-                        if #available(iOS 15.0, *) {
-                            Button(role: .destructive, action: {
-                                DatabaseManager.shared.deleteGroup(groupID) { success in
-                                    if success {
-                                        showChat = false
-                                    }
-                                }
-                            }) {
-                                Label("Delete group", systemImage: "trash")
-                            }
-                        } else {
-                            // Fallback on earlier versions
-                            Button(action: {
-                                DatabaseManager.shared.deleteGroup(groupID) { success in
-                                    if success {
-                                        showChat = false
-                                    }
-                                }
-                            }) {
-                                Label("Delete group", systemImage: "trash")
-                            }
-                        }
-                        
-                    } else {
-                        if #available(iOS 15.0, *) {
-                            Button(role: .destructive, action: {
-                                DatabaseManager.shared.leaveGroup(groupID) { success in
-                                    if success {
-                                        showChat = false
-                                    }
-                                }
-                            }) {
-                                Label("Leave", systemImage: "trash")
-                                    .labelStyle(.titleOnly)
-                            }
-                        } else {
-                            // Fallback on earlier versions
-                            Button(action: {
-                                DatabaseManager.shared.leaveGroup(groupID) { success in
-                                    if success {
-                                        showChat = false
-                                    }
-                                }
-                            }) {
-                                Label("Leave", systemImage: "trash")
-                                    .labelStyle(.titleOnly)
-                            }
-                        }
+                        LinearGradient(colors: [
+                            Color.clear,
+                            Color.backdrop
+                            
+                        ], startPoint: .center, endPoint: .bottom)
+             
                     }
-                        
+                    .ignoresSafeArea()
+                )
+                .navigationTitle("")
+                .navigationBarTitleDisplayMode(.large)
+                .toolbar {
+                    ToolbarItem(placement: .principal) {
+                        UserIconsToolbar(users: model.groups[groupID]?.users ?? [])
+                            .accessibilityAddTraits(.isHeader)
+                    }
                 }
+                .navigationBarItems(trailing:
+                    Menu {
+                     
+                        if let currentChatUser = model.currentChatUser {
+                            if currentChatUser.id == model.groups[groupID]?.admin {
+                                Button(action: { }) {
+                                    Label("Add user", systemImage: "plus")
+                                }
+                                if #available(iOS 15.0, *) {
+                                    Button(role: .destructive, action: {
+                                        DatabaseManager.shared.deleteGroup(groupID) { success in
+                                            if success {
+                                                showChat = false
+                                            }
+                                        }
+                                    }) {
+                                        Label("Delete group", systemImage: "trash")
+                                    }
+                                } else {
+                                    // Fallback on earlier versions
+                                    Button(action: {
+                                        DatabaseManager.shared.deleteGroup(groupID) { success in
+                                            if success {
+                                                showChat = false
+                                            }
+                                        }
+                                    }) {
+                                        Label("Delete group", systemImage: "trash")
+                                    }
+                                }
+                                
+                            } else {
+                                if #available(iOS 15.0, *) {
+                                    Button(role: .destructive, action: {
+                                        DatabaseManager.shared.leaveGroup(groupID) { success in
+                                            if success {
+                                                showChat = false
+                                            }
+                                        }
+                                    }) {
+                                        Label("Leave", systemImage: "trash")
+                                            .labelStyle(.titleOnly)
+                                    }
+                                } else {
+                                    // Fallback on earlier versions
+                                    Button(action: {
+                                        DatabaseManager.shared.leaveGroup(groupID) { success in
+                                            if success {
+                                                showChat = false
+                                            }
+                                        }
+                                    }) {
+                                        Label("Leave", systemImage: "trash")
+                                            .labelStyle(.titleOnly)
+                                    }
+                                }
+                            }
+                                
+                        }
                         
+                    } label: {
+                            Image(systemName: "ellipsis")
+                                .rotationEffect(Angle(degrees: 90))
+                                .foregroundColor(.white)
+                                .contentShape(Rectangle())
+                            
+                    }
+                   
+                )
+        } else {
+            chatView
+
+                .background(
+                    ZStack {
+                        LinearGradient(colors: [
+                            Color(.sRGB,
+                                  red: Double(20) / 255,
+                                  green: Double(20) / 255,
+                                  blue: Double(20) / 255,
+                                  opacity: 0.75),
+                            Color(.sRGB,
+                                  red: Double(10) / 255,
+                                  green: Double(10) / 255,
+                                  blue: Double(10) / 255,
+                                  opacity: 1)
+                            
+                        ], startPoint: .topLeading, endPoint: .center)
                         
-                    
-                    
-                } label: {
-                        Image(systemName: "ellipsis")
-                            .rotationEffect(Angle(degrees: 90))
-                            .foregroundColor(.white)
-                            .contentShape(Rectangle())
+                        LinearGradient(colors: [
+                            Color.clear,
+                            Color.backdrop
+                            
+                        ], startPoint: .center, endPoint: .bottom)
+             
+                    }
+                    .ignoresSafeArea()
+                )
+                // .navigationTitle(model.groups[groupID]?.otherUser?.name ?? "")
+                .navigationBarTitleDisplayMode(.inline)
+                .navigationBarBackButtonHidden(true)
+                .navigationBarItems(leading:
+    
+                    HStack {
+                        Image(systemName: "chevron.left")
+                        if let otherUser = model.groups[groupID]?.otherUser {
+                            UserIcon(user: otherUser)
+                                .frame(height: 25)
+                        }
+                        Text(model.groups[groupID]?.otherUser?.name ?? "")
+                            .font(.headline)
+                        Spacer()
+                    }
+                    .foregroundColor(.white)
+                    .scaleEffect(isTapping ? 0.9 : 1)
+                    .opacity(isTapping ? 0.5 : 1)
+                    .contentShape(Rectangle())
+                    .onTapGesture {
+                        withAnimation(.easeIn(duration: 0.1)) {
+                            isTapping = true
+                        }
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                            withAnimation {
+                                isTapping = false
+                            }
+                            showChat = false
+                        }
                         
-                }
-               
-            )
+                    }
+                )
+                .navigationBarItems(trailing:
+                    Menu {
+                        if #available(iOS 15.0, *) {
+                            Button(role: .destructive, action: {
+                                DatabaseManager.shared.deleteGroup(groupID) { success in
+                                    if success {
+                                        showChat = false
+                                    }
+                                }
+                            }) {
+                                Label("Delete chat", systemImage: "trash")
+                            }
+                        } else {
+                            // Fallback on earlier versions
+                            Button(action: {
+                                DatabaseManager.shared.deleteGroup(groupID) { success in
+                                    if success {
+                                        showChat = false
+                                    }
+                                }
+                            }) {
+                                Label("Delete chat", systemImage: "trash")
+                            }
+                        }
+                        
+                    } label: {
+                            Image(systemName: "ellipsis")
+                                .rotationEffect(Angle(degrees: 90))
+                                .foregroundColor(.white)
+                                .contentShape(Rectangle())
+                            
+                    }
+                )
+
+        }
         
     }
     
@@ -185,7 +258,7 @@ struct SwiftyChatView: View {
                     isEditing: $isEditing,
                     placeholder: "Type something",
                     onCommit: { messageKind in
-                        if let currentChatUser = currentChatUser {
+                        if let currentChatUser = model.currentChatUser {
                             // get back to this
                             
                             DatabaseManager.shared.sendMessage(message: .init(user: currentChatUser,
@@ -203,6 +276,7 @@ struct SwiftyChatView: View {
                 )
                 .padding(.leading, 10)
                 .padding(.trailing, 20)
+      
                 .embedInAnyView()
                 
                 
@@ -302,8 +376,10 @@ public struct InputView: View {
     
     private var sendButton: some View {
         Button(action: {
-            self.onCommit?(.text(message))
-            self.message.removeAll()
+            if !message.isEmpty && !message.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                self.onCommit?(.text(message))
+                self.message.removeAll()
+            }
         }, label: {
             
             Image(systemName: "paperplane.fill")
@@ -328,49 +404,3 @@ public struct InputView: View {
     
 }
 
-
-extension Color {
-    static let chatBlue = Color(#colorLiteral(red: 0.1405690908, green: 0.1412397623, blue: 0.25395751, alpha: 1))
-    static let chatSpotifyColor = Color(#colorLiteral(red: 0.1960784314, green: 0.1960784314, blue: 0.1960784314, alpha: 0.5))
-    static let backdrop = Color(#colorLiteral(red: 1, green: 1, blue: 1, alpha: 0.05))
-    static let chatGray = Color(#colorLiteral(red: 0.7861273885, green: 0.7897668481, blue: 0.7986581922, alpha: 1))
-}
-
-let futuraFont = Font.custom("Futura", size: 17)
-
-internal extension ChatMessageCellStyle {
-    
-    static let basicStyle = ChatMessageCellStyle(
-        incomingTextStyle: .init(
-            textStyle: .init(textColor: .white),
-            textPadding: 12,
-            attributedTextStyle: .init(textColor: .black),
-            cellBackgroundColor: Color.backdrop,
-            cellBorderWidth: 0,
-            cellShadowRadius: 0,
-            cellRoundedCorners: [.allCorners]
-        ),
-        outgoingTextStyle: .init(
-            textStyle: .init(textColor: .white),
-            textPadding: 12,
-            cellBackgroundColor: Color.backdrop,
-            cellBorderWidth: 0,
-            cellShadowRadius: 0,
-            cellRoundedCorners: [.allCorners]
-            
-        ),
-        incomingAvatarStyle: .init(imageStyle: .init(imageSize: CGSize(width: 32, height: 32),
-                                                     cornerRadius: 16,
-                                                     borderColor: Color.clear,
-                                                     borderWidth: 0,
-                                                     shadowRadius: 5,
-                                                     shadowColor: Color.clear)),
-        outgoingAvatarStyle: .init(imageStyle: .init(imageSize: CGSize(width: 32, height: 32),
-                                                     cornerRadius: 16,
-                                                     borderColor: Color.clear,
-                                                     borderWidth: 0,
-                                                     shadowRadius: 5,
-                                                     shadowColor: Color.clear))
-    )
-    
-}

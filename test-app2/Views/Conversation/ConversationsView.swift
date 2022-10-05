@@ -26,6 +26,7 @@ struct ConversationsView: View {
         }
         return model.groups.filter { $0.1.admin == currentUserID }.count <= 10
     }
+    
     var body: some View {
         ZStack(alignment: .top) {
             NavigationLink(isActive: $showChat,

@@ -135,7 +135,7 @@ struct UserDetail: View {
                                     }
                                 }
                             }
-                            DM()
+                            DM(recipient: user)
                                 .offset(x: 5)
                   
                             Spacer()
@@ -160,6 +160,7 @@ struct UserDetail: View {
                     }
                     .padding(.bottom, 10)
                 }
+                .padding(.horizontal)
                 .offset(y: -1 * profilePicHeight / 2)
                 .padding(.bottom, -1 * profilePicHeight / 3)
                 
@@ -193,6 +194,7 @@ struct UserDetail: View {
             
         }
         .navigationTitle(user.userName)
+
         .onAppear {
             // check if current user follows this user
             APICaller.shared.checkIfCurrentUserFollowsUser(with: user.id) { result in

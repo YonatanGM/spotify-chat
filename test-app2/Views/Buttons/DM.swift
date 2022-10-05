@@ -8,13 +8,41 @@
 import SwiftUI
 
 struct DM: View {
-    @State var showGroupChat = false
+    @EnvironmentObject var model: AppStateModel
+    @State var showChat = false
     @State var isTapping: Bool = false
+    @State var didCreateGroup = false
+    let recipient: Message.ChatUserItem
+    
+    var groupID: String? {
+        guard let currentUserID = model.currentChatUser?.id else {
+            return nil
+        }
+        return model.groups.filter({ $0.1.name == "\(recipient.id),\(currentUserID)"
+            || $0.1.name == "\(currentUserID),\(recipient.id)" }).first?.0
+    }
+    
     var buttonHeight = 25.0
     
     var body: some View {
-        NavigationLink(isActive: $showGroupChat,
-                       destination: { ConversationsView() },
+        NavigationLink(isActive: $showChat,
+                       destination: {
+                            if let groupID = groupID {
+                                SwiftyChatView(groupID: groupID, showChat: $showChat)
+                                    .onDisappear {
+                                        // if it's a new group and the user navigates back to this view
+                                        // without sending any message
+                                        // delete the group
+                                        if didCreateGroup {
+                                            // check if no message was sent
+                                            if let messages = model.groups[groupID]?.messages, messages.isEmpty {
+                                                DatabaseManager.shared.deleteGroup(groupID) { _ in }
+                                            }
+                                            
+                                        }
+                                    }
+                            }
+                       },
                        label: { EmptyView() })
         HStack(alignment: .center, spacing: 0) {
             Image(systemName: "paperplane.fill")
@@ -37,7 +65,19 @@ struct DM: View {
                 withAnimation {
                     isTapping = false
                 }
-                showGroupChat = true
+                if groupID == nil {
+                    // create the group
+                    // and navigate to the chat view
+                    DatabaseManager.shared.directMessage(user: recipient) { didCreateGroup in
+                        if didCreateGroup == true {
+                            print("created group with user \(recipient.id)")
+                            self.didCreateGroup = true
+                            showChat = true
+                        }
+                    }
+                } else {
+                    showChat = true 
+                }
             }
         }
     }

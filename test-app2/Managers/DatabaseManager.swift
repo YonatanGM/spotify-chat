@@ -388,6 +388,65 @@ extension DatabaseManager {
       }
    }
    
+   public func directMessage(user: Message.ChatUserItem, completion: @escaping ((Bool) ->Void)) {
+      guard let currentUserID = AuthManager.shared.currentUser?.uid,
+            let currentUserName = AuthManager.shared.currentUser?.displayName else {
+         completion(false)
+         return
+      }
+      
+      // check if conversation already exists with the recipient
+      database.child("Group")
+         .queryOrdered(byChild: "name")
+         .queryEqual(toValue: "\(currentUserID),\(user.id)")
+         .observeSingleEvent(of: .value) { [weak self] snapshot in
+            guard !snapshot.exists() else {
+               completion(false)
+               return
+            }
+            self?.database.child("Group")
+               .queryOrdered(byChild: "name")
+               .queryEqual(toValue: "\(user.id),\(currentUserID)")
+               .observeSingleEvent(of: .value) { [weak self] snapshot in
+                  guard !snapshot.exists() else {
+                     completion(false)
+                     return
+                  }
+                  // create the group
+                  self?.database.child("users/\(currentUserID)/top_genre_display").observeSingleEvent(of: .value) { [weak self] topGenreSnapshot in
+                     guard let groupID = self?.database.child("Group").childByAutoId().key else {
+                        completion(false)
+                        return
+                     }
+                     
+                     var childUpdates = [String: Any]()
+                     childUpdates["userInfo/\(user.id)/Groups/\(groupID)"] = false
+                     childUpdates["Group/\(groupID)/invitees/\(user.id)"] = true
+                     childUpdates["Group/\(groupID)/admin"] = currentUserID
+                     childUpdates["Group/\(groupID)/name"] = "\(currentUserID),\(user.id)"
+                     childUpdates["Group/\(groupID)/users/\(currentUserID)"] =  ["id": currentUserID,
+                                                                                 "name": currentUserName,
+                                                                                 "photoURL":  AuthManager.shared.currentUser?.photoURL?.absoluteString,
+                                                                                 "top_genre_display": topGenreSnapshot.value as? String]
+                     
+                     childUpdates["Group/\(groupID)/recipient"] = ["id": user.id,
+                                                                   "name": user.userName,
+                                                                   "photoURL":  user.avatarURL?.absoluteString]
+                     
+                     
+                     childUpdates["userInfo/\(currentUserID)/Groups/\(groupID)"] = true
+                     childUpdates["userInfo/\(currentUserID)/lastSeen/\(groupID)"] = "-"
+                     self?.database.updateChildValues(childUpdates) { error, _ in
+                        guard error == nil else {
+                           completion(false)
+                           return
+                        }
+                        completion(true)
+                     }
+                  }
+               }
+         }
+   }
    
    public func leaveGroup(_ groupID: String, completion: @escaping ((Bool) ->Void)) {
       guard let currentUserID = AuthManager.shared.currentUser?.uid else {
@@ -490,7 +549,14 @@ extension DatabaseManager {
             }
             
          }
-         completition(.success(Group(id: id, name: name, admin: admin, users: usersInfo)))
+         var recipient: UserInfo?
+         if let recipientDict = dict["recipient"] as? [String: String] {
+            if let id = recipientDict["id"],
+               let name = recipientDict["name"] {
+               recipient = .init(id: id, name: name, photoURL: recipientDict["photoURL"], genreDisplay: nil)
+            }
+         }
+         completition(.success(Group(id: id, name: name, admin: admin, users: usersInfo, recipient: recipient)))
       }
    }
    
@@ -523,17 +589,6 @@ extension DatabaseManager {
       }
    }
    
-   /*
-   public func ObserveInviteRejection(completion: @escaping ((Result<String, Error>) ->Void)) {
-      guard let currentUserID = AuthManager.shared.currentUser?.uid else {
-         completion(.failure(AuthManager.AuthError.failedToGetCurrentUser)) // user signed out already or the object hasn't been initalized yet
-         return
-      }
-      database.child("users/\(currentUserID)/pending_invitations").observe(.childRemoved) { snapshot in
-         completion(.success(snapshot.key))
-      }
-   }
-   */
    
    public func removeMessagesObserver(_ group: String) {
       database.child("conversations/\(group)").removeAllObservers()

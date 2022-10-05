@@ -41,7 +41,7 @@
 		9F22828E28D3CE5A0050929E /* GenresAnimatedIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F22828D28D3CE5A0050929E /* GenresAnimatedIcon.swift */; };
 		9F2282AE28D4D45A0050929E /* ConversationGroupRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F2282AD28D4D45A0050929E /* ConversationGroupRow.swift */; };
 		9F2282E928D6E3650050929E /* UserIconsToolbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F2282E828D6E3640050929E /* UserIconsToolbar.swift */; };
-		9F2282EB28D6E3A50050929E /* UserIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F2282EA28D6E3A50050929E /* UserIcon.swift */; };
+		9F2282EB28D6E3A50050929E /* UserIconAnimated.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F2282EA28D6E3A50050929E /* UserIconAnimated.swift */; };
 		9F2282ED28D6E4EC0050929E /* UserPicInitials.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F2282EC28D6E4EC0050929E /* UserPicInitials.swift */; };
 		9F61C85028EA4F7C00877B91 /* UserDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F61C84F28EA4F7C00877B91 /* UserDetail.swift */; };
 		9F61C85228EA5F0F00877B91 /* ArtistBackgroundSlideshow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F61C85128EA5F0E00877B91 /* ArtistBackgroundSlideshow.swift */; };
@@ -51,6 +51,8 @@
 		9F61C85C28EC4B7500877B91 /* SignOut.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F61C85B28EC4B7400877B91 /* SignOut.swift */; };
 		9F61C85E28EC4B8600877B91 /* DeleteAccount.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F61C85D28EC4B8600877B91 /* DeleteAccount.swift */; };
 		9F61C86028EC726600877B91 /* DM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F61C85F28EC726600877B91 /* DM.swift */; };
+		9F61C86628EDB52800877B91 /* UserIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F61C86528EDB52800877B91 /* UserIcon.swift */; };
+		9F61C86B28EDDCBA00877B91 /* Introspect in Frameworks */ = {isa = PBXBuildFile; productRef = 9F61C86A28EDDCBA00877B91 /* Introspect */; };
 		9F9C419228CF531F009CA948 /* FindButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F9C419128CF531E009CA948 /* FindButton.swift */; };
 		9F9C419628CF6BE4009CA948 /* Search.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F9C419528CF6BE4009CA948 /* Search.swift */; };
 		9F9C419A28D13F76009CA948 /* UserCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F9C419928D13F76009CA948 /* UserCard.swift */; };
@@ -101,7 +103,7 @@
 		9F22828D28D3CE5A0050929E /* GenresAnimatedIcon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenresAnimatedIcon.swift; sourceTree = "<group>"; };
 		9F2282AD28D4D45A0050929E /* ConversationGroupRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationGroupRow.swift; sourceTree = "<group>"; };
 		9F2282E828D6E3640050929E /* UserIconsToolbar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserIconsToolbar.swift; sourceTree = "<group>"; };
-		9F2282EA28D6E3A50050929E /* UserIcon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserIcon.swift; sourceTree = "<group>"; };
+		9F2282EA28D6E3A50050929E /* UserIconAnimated.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserIconAnimated.swift; sourceTree = "<group>"; };
 		9F2282EC28D6E4EC0050929E /* UserPicInitials.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserPicInitials.swift; sourceTree = "<group>"; };
 		9F61C84F28EA4F7C00877B91 /* UserDetail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDetail.swift; sourceTree = "<group>"; };
 		9F61C85128EA5F0E00877B91 /* ArtistBackgroundSlideshow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArtistBackgroundSlideshow.swift; sourceTree = "<group>"; };
@@ -111,6 +113,7 @@
 		9F61C85B28EC4B7400877B91 /* SignOut.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignOut.swift; sourceTree = "<group>"; };
 		9F61C85D28EC4B8600877B91 /* DeleteAccount.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeleteAccount.swift; sourceTree = "<group>"; };
 		9F61C85F28EC726600877B91 /* DM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DM.swift; sourceTree = "<group>"; };
+		9F61C86528EDB52800877B91 /* UserIcon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserIcon.swift; sourceTree = "<group>"; };
 		9F9C419128CF531E009CA948 /* FindButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FindButton.swift; sourceTree = "<group>"; };
 		9F9C419528CF6BE4009CA948 /* Search.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Search.swift; sourceTree = "<group>"; };
 		9F9C419928D13F76009CA948 /* UserCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserCard.swift; sourceTree = "<group>"; };
@@ -135,6 +138,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				9FA7F86C28E5E2E7004F6A66 /* SwiftyChat in Frameworks */,
+				9F61C86B28EDDCBA00877B91 /* Introspect in Frameworks */,
 				46F0CC3E280D993000BF1B4B /* SDWebImageSwiftUI in Frameworks */,
 				46B2F95F2816B6130003AA69 /* FirebaseAuth in Frameworks */,
 				46FD5021281E9DEF00505CB7 /* FirebaseStorage in Frameworks */,
@@ -167,11 +171,11 @@
 				9F61C85128EA5F0E00877B91 /* ArtistBackgroundSlideshow.swift */,
 				9F22828D28D3CE5A0050929E /* GenresAnimatedIcon.swift */,
 				46EAE3FD28095F3F0061C9BB /* WebView.swift */,
+				9FD44B9B28CB7B9A0028A408 /* Bar.swift */,
 				9F2282C928D630810050929E /* Chat */,
 				9F22828C28D3CB910050929E /* Conversation */,
 				9F22828728D23DCF0050929E /* Buttons */,
 				9F9C41A128D18A52009CA948 /* CreateGroup */,
-				9FD44B9B28CB7B9A0028A408 /* Bar.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -315,7 +319,8 @@
 			isa = PBXGroup;
 			children = (
 				9F2282E828D6E3640050929E /* UserIconsToolbar.swift */,
-				9F2282EA28D6E3A50050929E /* UserIcon.swift */,
+				9F2282EA28D6E3A50050929E /* UserIconAnimated.swift */,
+				9F61C86528EDB52800877B91 /* UserIcon.swift */,
 				4685CEBF285106CC00EE5376 /* SwiftyChatView.swift */,
 			);
 			path = Chat;
@@ -363,6 +368,7 @@
 				463FEF2B281D60F2005155EE /* JGProgressHUD-SwiftUI */,
 				46FD5020281E9DEF00505CB7 /* FirebaseStorage */,
 				9FA7F86B28E5E2E7004F6A66 /* SwiftyChat */,
+				9F61C86A28EDDCBA00877B91 /* Introspect */,
 			);
 			productName = "test-app2";
 			productReference = 46F5CA662808C23E00D58C41 /* test-app2.app */;
@@ -399,6 +405,7 @@
 				46F0CC3C280D993000BF1B4B /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */,
 				465B9C2F2814A17C00665947 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 				463FEF2A281D60F2005155EE /* XCRemoteSwiftPackageReference "JGProgressHUD-SwiftUI" */,
+				9F61C86928EDDCBA00877B91 /* XCRemoteSwiftPackageReference "SwiftUI-Introspect" */,
 			);
 			productRefGroup = 46F5CA672808C23E00D58C41 /* Products */;
 			projectDirPath = "";
@@ -429,7 +436,7 @@
 			files = (
 				9F9C419A28D13F76009CA948 /* UserCard.swift in Sources */,
 				9F61C85028EA4F7C00877B91 /* UserDetail.swift in Sources */,
-				9F2282EB28D6E3A50050929E /* UserIcon.swift in Sources */,
+				9F2282EB28D6E3A50050929E /* UserIconAnimated.swift in Sources */,
 				46F0CC48280DCEED00BF1B4B /* TopTracksResponse.swift in Sources */,
 				463FEF26281D4242005155EE /* DatabaseManager.swift in Sources */,
 				9F2282E928D6E3650050929E /* UserIconsToolbar.swift in Sources */,
@@ -475,6 +482,7 @@
 				46F0CC42280DCAE300BF1B4B /* TopArtistsResponse.swift in Sources */,
 				46FDC2D728268418002EB494 /* AppStateModel.swift in Sources */,
 				9F1747BE28CF3C970054AE20 /* ArtistAnimatedIcon.swift in Sources */,
+				9F61C86628EDB52800877B91 /* UserIcon.swift in Sources */,
 				46FD501E281E9D3000505CB7 /* StorageManager.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -708,6 +716,14 @@
 				kind = branch;
 			};
 		};
+		9F61C86928EDDCBA00877B91 /* XCRemoteSwiftPackageReference "SwiftUI-Introspect" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/siteline/SwiftUI-Introspect.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.1.4;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -740,6 +756,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 465B9C2F2814A17C00665947 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebaseStorage;
+		};
+		9F61C86A28EDDCBA00877B91 /* Introspect */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 9F61C86928EDDCBA00877B91 /* XCRemoteSwiftPackageReference "SwiftUI-Introspect" */;
+			productName = Introspect;
 		};
 		9FA7F86B28E5E2E7004F6A66 /* SwiftyChat */ = {
 			isa = XCSwiftPackageProductDependency;

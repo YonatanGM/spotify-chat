@@ -18,4 +18,28 @@ struct Group {
     var lastSeenMessageID = "-" // should be lexographically smaller than any child by auto id key 
     var unseenCount: UInt = 0
     
+    // Direct messaging 
+    var recipient: UserInfo?
+
+    
+}
+
+// Direct message
+
+extension Group {
+    
+    var isDm: Bool {
+        recipient != nil
+    }
+    
+    var otherUser: UserInfo? {
+        guard let currentUserID = AuthManager.shared.currentUser?.uid else {
+            return nil
+        }
+        if currentUserID == self.admin {
+            return self.recipient
+        } else {
+            return self.users.first { $0.id == self.admin }
+        }
+    }
 }

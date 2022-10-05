@@ -22,10 +22,10 @@ struct UserIconsToolbar: View {
                         HStack(spacing: 0) {
                             ForEach(Array(users.enumerated()), id: \.offset) { index, user in
                                 if index == users.count / 2 {
-                                    UserIcon(user: user)
+                                    UserIconAnimated(user: user)
                                         .id(middleID)
                                 } else {
-                                    UserIcon(user: user)
+                                    UserIconAnimated(user: user)
                                 }
                             }
                         }

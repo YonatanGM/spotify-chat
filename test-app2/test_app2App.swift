@@ -41,6 +41,9 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         // firebase
         UINavigationBar.appearance().barTintColor = UIColor(.chatSpotifyColor)
         UINavigationBar.appearance().tintColor  = .white
+        // UINavigationBar.appearance().scrollEdgeAppearance = UINavigationBar.appearance().standardAppearance
+            
+            //.scrollEdgeAppearance = navigationBar.standardAppearance
    
         // navBarAppearance.configureWithOpaqueBackground()
         // navBarAppearance.backgroundColor = .gray

@@ -8,8 +8,14 @@
 import SwiftUI
 import SDWebImageSwiftUI
 
-struct UserIcon: View {
+struct UserIconAnimated: View {
     let user: UserInfo
+    @State var scale = 0.0
+    
+    private func scaleAmount(posX: Double) -> Double {
+        return abs(UIScreen.main.bounds.size.width / 2 - posX) / (UIScreen.main.bounds.size.width / 2)
+    }
+    
     @State var onlineStatusHandle: UInt?
     @State var isOnline = false
     
@@ -34,7 +40,22 @@ struct UserIcon: View {
                         }
                         .frame(width: geometry.size.width, height: geometry.size.height, alignment: .center)
                     }
-                    .opacity(isOnline ? 1.0 : 0.0 )
+                    .opacity(isOnline ? 1.0 : 0.0)
+                )
+                .scaleEffect(max(0.01, 1 - scale))
+                .overlay(
+                    GeometryReader { geometry in
+                        Color.clear
+                            .onChange(of: geometry.frame(in: .global).midX) { _ in
+                                withAnimation(.easeIn) {
+                                    scale = scaleAmount(posX: geometry.frame(in: .global).midX)
+                                }
+                            }
+                            .onAppear {
+                                scale = scaleAmount(posX: geometry.frame(in: .global).midX)
+                            }
+                    }
+                    
                 )
                 .onAppear {
                     // check online status
@@ -63,7 +84,22 @@ struct UserIcon: View {
                         }
                         .frame(width: geometry.size.width, height: geometry.size.height, alignment: .center)
                     }
-                    .opacity(isOnline ? 1.0 : 0.0 )
+                    .opacity(isOnline ? 1.0 : 0.0)
+                )
+                .scaleEffect(max(0.01, 1 - scale))
+                .overlay(
+                    GeometryReader { geometry in
+                        Color.clear
+                            .onChange(of: geometry.frame(in: .global).midX) { _ in
+                                withAnimation(.easeIn) {
+                                    scale = scaleAmount(posX: geometry.frame(in: .global).midX)
+                                }
+                            }
+                            .onAppear {
+                                scale = scaleAmount(posX: geometry.frame(in: .global).midX)
+                            }
+                    }
+                    
                 )
                 .onAppear {
                     // check online status
