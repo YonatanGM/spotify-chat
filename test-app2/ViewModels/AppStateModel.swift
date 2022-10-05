@@ -48,7 +48,7 @@ class AppStateModel: ObservableObject {
     @Published var searchResults = [Message.ChatUserItem]()
     
     @Published var currentChatUser: Message.ChatUserItem?
-
+    
     
     
     private var cancellables = Set<AnyCancellable>()

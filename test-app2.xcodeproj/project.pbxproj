@@ -50,6 +50,7 @@
 		9F61C85A28EC49B600877B91 /* CurrentUserDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F61C85928EC49B600877B91 /* CurrentUserDetail.swift */; };
 		9F61C85C28EC4B7500877B91 /* SignOut.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F61C85B28EC4B7400877B91 /* SignOut.swift */; };
 		9F61C85E28EC4B8600877B91 /* DeleteAccount.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F61C85D28EC4B8600877B91 /* DeleteAccount.swift */; };
+		9F61C86028EC726600877B91 /* DM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F61C85F28EC726600877B91 /* DM.swift */; };
 		9F9C419228CF531F009CA948 /* FindButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F9C419128CF531E009CA948 /* FindButton.swift */; };
 		9F9C419628CF6BE4009CA948 /* Search.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F9C419528CF6BE4009CA948 /* Search.swift */; };
 		9F9C419A28D13F76009CA948 /* UserCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F9C419928D13F76009CA948 /* UserCard.swift */; };
@@ -109,6 +110,7 @@
 		9F61C85928EC49B600877B91 /* CurrentUserDetail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentUserDetail.swift; sourceTree = "<group>"; };
 		9F61C85B28EC4B7400877B91 /* SignOut.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignOut.swift; sourceTree = "<group>"; };
 		9F61C85D28EC4B8600877B91 /* DeleteAccount.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeleteAccount.swift; sourceTree = "<group>"; };
+		9F61C85F28EC726600877B91 /* DM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DM.swift; sourceTree = "<group>"; };
 		9F9C419128CF531E009CA948 /* FindButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FindButton.swift; sourceTree = "<group>"; };
 		9F9C419528CF6BE4009CA948 /* Search.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Search.swift; sourceTree = "<group>"; };
 		9F9C419928D13F76009CA948 /* UserCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserCard.swift; sourceTree = "<group>"; };
@@ -295,6 +297,7 @@
 				9F61C85528EBF5B200877B91 /* CurrentUserSettings.swift */,
 				9F61C85B28EC4B7400877B91 /* SignOut.swift */,
 				9F61C85D28EC4B8600877B91 /* DeleteAccount.swift */,
+				9F61C85F28EC726600877B91 /* DM.swift */,
 			);
 			path = Buttons;
 			sourceTree = "<group>";
@@ -431,6 +434,7 @@
 				463FEF26281D4242005155EE /* DatabaseManager.swift in Sources */,
 				9F2282E928D6E3650050929E /* UserIconsToolbar.swift in Sources */,
 				9F9C41A328D18AE0009CA948 /* UserCardGroupCreation.swift in Sources */,
+				9F61C86028EC726600877B91 /* DM.swift in Sources */,
 				461DCBCF2823439E009E2F7F /* UserProfileResponse.swift in Sources */,
 				46F5CA6C2808C23E00D58C41 /* MainView.swift in Sources */,
 				4685CEC0285106CC00EE5376 /* SwiftyChatView.swift in Sources */,

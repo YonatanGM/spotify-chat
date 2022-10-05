@@ -91,10 +91,9 @@ struct CurrentUserDetail: View {
                                         }
                                         .opacity(isOnline ? 1.0 : 0.0 )
                                     )
-                                    // .border(.blue)
                             } else {
                                 UserPicInitials(name: user.userName)
-                                    .frame(height: Double(UIScreen.main.bounds.width) / 3)
+                                    .frame(height: profilePicHeight)
                                     .shadow(radius: 5)
                                     .overlay(
                                         GeometryReader { geometry in
@@ -106,8 +105,7 @@ struct CurrentUserDetail: View {
                                                     .foregroundColor(.green)
                                                     .offset(x: cos(Angle(degrees: -45).radians) * geometry.size.width / 2,
                                                             y: sin(Angle(degrees: -45).radians) * geometry.size.height / 2)
-                                                
-                                                
+
                                             }
                                             .frame(width: geometry.size.width, height: geometry.size.height, alignment: .center)
                                         }
@@ -136,12 +134,10 @@ struct CurrentUserDetail: View {
                                     }
                                     .clipShape(Capsule())
                                     .coordinateSpace(name: "userDetailGenres")
-                                   
                                     .padding(.horizontal, 10)
                                 }
                                 .frame(height: 20)
                             }
-                            
                         }
                         .padding(.bottom, 10)
                     }

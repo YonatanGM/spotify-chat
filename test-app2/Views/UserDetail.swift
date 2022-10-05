@@ -94,7 +94,7 @@ struct UserDetail: View {
                                 // .border(.blue)
                         } else {
                             UserPicInitials(name: user.userName)
-                                .frame(height: Double(UIScreen.main.bounds.width) / 3)
+                                .frame(height: profilePicHeight)
                                 .shadow(radius: 5)
                                 .overlay(
                                     GeometryReader { geometry in
@@ -115,55 +115,54 @@ struct UserDetail: View {
                                 )
                         }
                     }
-                    VStack {
+                    VStack(alignment: .leading) {
                         Spacer()
-                        if let isFollowing = followedByCurrentUser {
-                            FollowOnSpotify(isFollowing: isFollowing) {
-                                if followedByCurrentUser == true {
-                                    APICaller.shared.unfollowUser(with: user.id) { unfollowed in
-                                        if unfollowed {
-                                            followedByCurrentUser = false
+                        HStack {
+                            if let isFollowing = followedByCurrentUser {
+                                FollowOnSpotify(isFollowing: isFollowing) {
+                                    if followedByCurrentUser == true {
+                                        APICaller.shared.unfollowUser(with: user.id) { unfollowed in
+                                            if unfollowed {
+                                                followedByCurrentUser = false
+                                            }
                                         }
-                                    }
-                                } else {
-                                    APICaller.shared.followUser(with: user.id) { followed in
-                                        if followed {
-                                            followedByCurrentUser = true
-                                        }
-                                    }
-                                }
-                            }
-                        }
-
-                            // .border(.blue)
-                
-                            if let topGenres = user.topGenres {
-                                GeometryReader { geometry in
-                                    
-                                    ScrollView(.horizontal, showsIndicators: false) {
-                                        LazyHStack(spacing: 1) {
-                                            ForEach(topGenres, id: \.self ) { genre in
-                                                GenresAnimatedIcon(genre: genre, parentFrame: geometry.size)
+                                    } else {
+                                        APICaller.shared.followUser(with: user.id) { followed in
+                                            if followed {
+                                                followedByCurrentUser = true
                                             }
                                         }
                                     }
-                                    .clipShape(Capsule())
-                                    .coordinateSpace(name: "userDetailGenres")
-                                   
-                                    .padding(.horizontal, 10)
                                 }
-                                .frame(height: 20)
                             }
+                            DM()
+                                .offset(x: 5)
+                  
+                            Spacer()
+                        }
+                        .padding(.bottom, 1)
                         
+                        if let topGenres = user.topGenres {
+                            GeometryReader { geometry in
+                                ScrollView(.horizontal, showsIndicators: false) {
+                                    LazyHStack(spacing: 1) {
+                                        ForEach(topGenres, id: \.self ) { genre in
+                                            GenresAnimatedIcon(genre: genre, parentFrame: geometry.size)
+                                        }
+                                    }
+                                }
+                                .clipShape(Capsule())
+                                .coordinateSpace(name: "userDetailGenres")
+                                .padding(.horizontal, 10)
+                            }
+                            .frame(height: 20)
+                        }
                     }
                     .padding(.bottom, 10)
-                
                 }
-                .padding(.horizontal)
                 .offset(y: -1 * profilePicHeight / 2)
                 .padding(.bottom, -1 * profilePicHeight / 3)
-                // .border(.red)
-    
+                
                 if let artists = user.topArtists?.items {
                     VStack(alignment: .leading, spacing: 10) {
                         Text("Likes")

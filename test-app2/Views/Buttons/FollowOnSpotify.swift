@@ -29,36 +29,38 @@ struct FollowOnSpotify: View {
         }, label: {
             if !isFollowing {
                 HStack(spacing: 0) {
-                    Spacer()
+
                     Text("Follow on")
                         .font(.headline)
-                        .fontWeight(.bold)
-                   
+                        // .fontWeight(.bold)
+                        // .font(.system(size: 15, weight: .bold, design: .default))
                     Image("Spotify_Logo_RGB_White")
                         .resizable()
                         .scaledToFit()
                         .frame(height: logoHeight)
+                        // .border(.red)
                         .padding(.leading, logoHeight / 2)
-                    Spacer()
+       
                 }
             } else {
                 HStack(spacing: 0) {
-                    Spacer()
+ 
                     Text("Following")
                         .font(.headline)
-                        .fontWeight(.bold)
+                        // .fontWeight(.bold)
+                        // .font(.system(size: 12, weight: .bold, design: .default))
                    
                     Image("Spotify_Icon_RGB_White-1")
                         .resizable()
                         .scaledToFit()
                         .frame(height: logoHeight)
                         .padding(.leading, logoHeight / 2)
-                    Spacer()
+   
                 }
             }
            
         })
-        .padding(logoHeight / 2)
+         .padding(logoHeight / 2)
         .foregroundColor(.white)
         .background(
             Color.backdrop
