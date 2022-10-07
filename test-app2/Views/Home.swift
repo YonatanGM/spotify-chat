@@ -19,19 +19,35 @@ struct Home: View {
         model.suggestedUsers.compactMap { $0.topTracks?.items.first }
     }
     var body: some View {
-        ZStack {
-            
+        ScrollViewReader { proxy in
+            ScrollView(showsIndicators: false) {
+                UsersView()
+                TopArtistsView(artists: suggestedArtists)
+                TopTracksView(tracks: suggestedTracks)
+                Spacer()
+                SearchBar(searchText: $searchText)
+                    .id(bottomID)
+            }
+            .overlay(Bar().padding(5), alignment: .top)
+            .onChange(of: model.scrollToBottom) { value in
+                if value == true {
+                    withAnimation {
+                        proxy.scrollTo(bottomID)
+                    }
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                        withAnimation {
+                            model.scrollToBottom = false
+                        }
+                    }
+                }
+            }
+            .onChange(of: model.searchResults) { _ in
+                proxy.scrollTo(bottomID)
+                
+            }
+        }
+        .background(
             LinearGradient(colors: [
-                //                Color(.sRGB,
-                //                      red: Double(30) / 255,
-                //                      green: Double(15) / 255,
-                //                      blue: Double(25) / 255,
-                //                      opacity: 0.8),
-                //                Color(.sRGB,
-                //                      red: Double(20) / 255,
-                //                      green: Double(15) / 255,
-                //                      blue: Double(25) / 255,
-                //                      opacity: 1)
                 Color(.sRGB,
                       red: Double(20) / 255,
                       green: Double(20) / 255,
@@ -45,43 +61,7 @@ struct Home: View {
                 
             ], startPoint: .topLeading, endPoint: .center)
             .ignoresSafeArea(.all, edges: .all)
-            ScrollViewReader { proxy in
-                ScrollView(showsIndicators: false) {
-                    UsersView()
-                    
-                    TopArtistsView(artists: suggestedArtists)
-                    
-                    TopTracksView(tracks: suggestedTracks)
-                    
-                        
-                    Spacer()
-                    
-                    SearchBar(searchText: $searchText)
-                        .id(bottomID)
-                    
-                }
-                .overlay(Bar().padding(5), alignment: .top)
-                .onChange(of: model.scrollToBottom) { value in
-                    if value == true {
-                        withAnimation {
-                            proxy.scrollTo(bottomID)
-                        }
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                            withAnimation {
-                                model.scrollToBottom = false
-                            }
-                        }
-                    }
-                    
-                    
-                    
-                }
-                .onChange(of: model.searchResults) { _ in
-                    proxy.scrollTo(bottomID)
-                    
-                }
-            }
-        }
+        )
         .navigationBarItems(trailing: CurrentUserSettings())
         
     }

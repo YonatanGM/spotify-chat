@@ -9,10 +9,10 @@ import SwiftUI
 import SDWebImageSwiftUI
 
 struct UserDetail: View {
+    @EnvironmentObject var model: AppStateModel
     let user: Message.ChatUserItem
     @State var onlineStatusHandle: UInt?
     @State var isOnline = false
-    @State var followedByCurrentUser: Bool?
 
     
 
@@ -118,18 +118,18 @@ struct UserDetail: View {
                     VStack(alignment: .leading) {
                         Spacer()
                         HStack {
-                            if let isFollowing = followedByCurrentUser {
+                            if let isFollowing = model.followedUsers[user.id] {
                                 FollowOnSpotify(isFollowing: isFollowing) {
-                                    if followedByCurrentUser == true {
-                                        APICaller.shared.unfollowUser(with: user.id) { unfollowed in
-                                            if unfollowed {
-                                                followedByCurrentUser = false
+                                    if isFollowing {
+                                        APICaller.shared.unfollowUser(with: user.id) { successfullyUnfollowed in
+                                            if successfullyUnfollowed {
+                                                model.followedUsers[user.id] = false
                                             }
                                         }
                                     } else {
-                                        APICaller.shared.followUser(with: user.id) { followed in
-                                            if followed {
-                                                followedByCurrentUser = true
+                                        APICaller.shared.followUser(with: user.id) { successfullyFollowed in
+                                            if successfullyFollowed {
+                                                model.followedUsers[user.id] = true
                                             }
                                         }
                                     }
@@ -137,7 +137,6 @@ struct UserDetail: View {
                             }
                             DM(recipient: user)
                                 .offset(x: 5)
-                  
                             Spacer()
                         }
                         .padding(.bottom, 1)
@@ -197,20 +196,23 @@ struct UserDetail: View {
 
         .onAppear {
             // check if current user follows this user
-            APICaller.shared.checkIfCurrentUserFollowsUser(with: user.id) { result in
-                switch result {
-                case .success(let isFollowing):
-                    followedByCurrentUser = isFollowing
-                case .failure(let error):
-                    print("couldn't check if current user follows user \(user.id): \(error.localizedDescription)")
+            if model.followedUsers[user.id] == nil {
+                // api call
+                APICaller.shared.checkIfCurrentUserFollowsUsers(with: [user.id]) { result in
+                    switch result {
+                    case .success(let dict):
+                        DispatchQueue.main.async {
+                            model.followedUsers[user.id] = dict[user.id]
+                        }
+                    case .failure(let error):
+                        print("couldn't check if current user follows user \(user.id): \(error.localizedDescription)")
+                    }
                 }
             }
             // check online status
             onlineStatusHandle = DatabaseManager.shared.checkOnlineStatus(for: user.id) { status in
                 isOnline = status
             }
-            
-            
         }
         .onDisappear {
             if let onlineStatusHandle = onlineStatusHandle {

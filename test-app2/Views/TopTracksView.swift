@@ -26,6 +26,7 @@ struct TopTracksView: View {
                 }
             
         }
+        .frame(minHeight: 0, maxHeight: .greatestFiniteMagnitude)
         
         .onDisappear {
             model.removePlayer()

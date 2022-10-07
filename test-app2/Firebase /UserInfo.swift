@@ -13,5 +13,5 @@ struct UserInfo {
     let id: String
     let name: String
     let photoURL: String?
-    let genreDisplay: String? 
+    let genreDisplay: String?
 }

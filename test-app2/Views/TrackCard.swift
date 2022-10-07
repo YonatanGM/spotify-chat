@@ -16,7 +16,6 @@ struct TrackCard: View {
     @Environment(\.scenePhase) private var scenePhase
     let track: Track
     @State var isTapping: Bool = false
-    @State var like = false
     var spotifyLogoHeight: CGFloat = 20
     var body: some View {
         
@@ -82,7 +81,7 @@ struct TrackCard: View {
                         .scaledToFit()
                         .frame(height: spotifyLogoHeight)
                     Spacer()
-                    Image(systemName: like ? "heart.fill" : "heart")
+                    Image(systemName: model.likedTracks[track.id] == true ? "heart.fill" : "heart")
                         .resizable()
                         .scaledToFit()
                         .frame(width: 18, height: 18)
@@ -90,28 +89,33 @@ struct TrackCard: View {
                         .highPriorityGesture(
                             TapGesture()
                                 .onEnded {
-                                    if like == false {
-                                        APICaller.shared.addToLikedSongs(trackID: track.id) { result in
-                                            if result == true {
-                                                withAnimation(.easeIn(duration: 0.1)) {
-                                                    like = true
+                                    if let isLiked = model.likedTracks[track.id] {
+                                        if !isLiked {
+                                            APICaller.shared.addToLikedSongs(trackID: track.id) { successfullyAddedToLikedSongs in
+                                                if successfullyAddedToLikedSongs {
+                                                    withAnimation(.easeIn(duration: 0.1)) {
+                                                        DispatchQueue.main.async {
+                                                            model.likedTracks[track.id] = true
+                                                        }
+                                                    }
                                                 }
                                             }
-                                        }
-                                    } else {
-                                        APICaller.shared.removeFromLikedSongs(trackID: track.id) { result in
-                                            if result == true {
-                                                withAnimation(.easeIn(duration: 0.1)) {
-                                                    like = false
+                                        } else {
+                                            APICaller.shared.removeFromLikedSongs(trackID: track.id) { successfullyRemovedFromLikedSongs in
+                                                if successfullyRemovedFromLikedSongs {
+                                                    withAnimation(.easeIn(duration: 0.1)) {
+                                                        DispatchQueue.main.async {
+                                                            model.likedTracks[track.id] = false
+                                                        }
+                                                    }
                                                 }
                                             }
                                         }
                                     }
                                 }
                     )
-                
                     .foregroundColor(
-                        like ?
+                        model.likedTracks[track.id] == true ?
                             .white:
                         Color(.sRGB,
                               red: Double(186) / 255,
@@ -119,6 +123,8 @@ struct TrackCard: View {
                               blue: Double(186) / 255,
                               opacity: 1)
                     )
+                    .opacity(model.likedTracks[track.id] != nil ? 1 : .leastNonzeroMagnitude)
+                    
                     Image(systemName: model.play == true && model.playingTrackID == track.id ? "pause.fill" : "play.fill")
                         .foregroundColor(
                             Color(.sRGB,
@@ -175,6 +181,24 @@ struct TrackCard: View {
                 }
             }
     
+        }
+        
+        .onAppear {
+            if model.likedTracks[track.id] == nil {
+                // api call
+                APICaller.shared.checkIfUserHasSavedTracks(with: [track.id]) { result in
+                    switch result {
+                    case .success(let dict):
+                        DispatchQueue.main.async {
+                            model.likedTracks[track.id] = dict[track.id]
+                        }
+                    case .failure(let error):
+                        print("couldn't check if user has saved track \(track.id): \(error.localizedDescription)")
+                    }
+                     
+                }
+                
+            }
         }
 
     }

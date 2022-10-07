@@ -25,6 +25,7 @@ struct SwiftyChatView: View {
 
     
     var body: some View {
+       
         if model.groups[groupID]?.isDm == false {
             chatView
                 .foregroundColor(.white)

@@ -7,7 +7,9 @@
 
 import SwiftUI
 import Firebase
+import FirebaseFunctions
 import JGProgressHUD_SwiftUI
+
 
 
 @main
@@ -52,13 +54,14 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         // UINavigationBar.appearance().scrollEdgeAppearance = navBarAppearance
   
         FirebaseApp.configure()
-        Auth.auth().useEmulator(withHost: "localhost", port: 9091)
-        
+        Auth.auth().useEmulator(withHost: "localhost", port: 9092)
+        Functions.functions().useEmulator(withHost: "localhost", port: 5002)
+           //  .useFunctionsEmulator(origin: "http://localhost:5001")
 
         // revisit this
         // clear firebase auth cache
-        if UserDefaults.standard.value(forKey: "appFirstTimeOpened") == nil {
-            UserDefaults.standard.setValue(true, forKey: "appFirstTimeOpened")
+        if UserDefaults.standard.value(forKey: "firstTimeOpeningApp") == nil {
+            UserDefaults.standard.setValue(true, forKey: "firstTimeOpeningApp")
             try? Auth.auth().signOut()
         }
         

@@ -6,9 +6,10 @@
 	<array>
 		<string>spotify</string>
 	</array>
-	<key>CFBundleIdentifier</key>
-	<string></string>
 	<key>NSAppTransportSecurity</key>
-	<dict/>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<true/>
+	</dict>
 </dict>
 </plist>

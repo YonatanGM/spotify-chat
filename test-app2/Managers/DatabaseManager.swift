@@ -19,7 +19,7 @@ class DatabaseManager {
    static let shared = DatabaseManager()
    
    // private let database = Database.database().reference()
-   private let database = Database.database(url: "http://localhost:5010?ns=testapp-79467-default-rtdb").reference()
+   private let database = Database.database(url: "http://localhost:5011?ns=testapp-79467-default-rtdb").reference()
    
    // var messageHandles = [String: UInt]() // to unregister them
    

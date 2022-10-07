@@ -48,6 +48,8 @@ class AppStateModel: ObservableObject {
     @Published var searchResults = [Message.ChatUserItem]()
     
     @Published var currentChatUser: Message.ChatUserItem?
+    @Published var likedTracks = [String: Bool]()
+    @Published var followedUsers = [String: Bool]()
     
     
     
@@ -243,10 +245,35 @@ extension AppStateModel {
                     case .success(let users):
                         // update the users
                         self?.suggestedUsers = users
+                       
+                        APICaller.shared.checkIfCurrentUserFollowsUsers(with: users.map { $0.id }) { result in
+                            switch result {
+                            case .success(let followedUsers):
+                                DispatchQueue.main.async {
+                                    self?.followedUsers = followedUsers
+                                }
+                                
+                            case .failure(let error):
+                                print("failed to check if current user follows users with ids \(users.map { $0.id }.joined(separator: ",")): \(error.localizedDescription)")
+                            }
+                        }
+                        
+                        let trackIDs =  users.compactMap { $0.topTracks?.items.first?.id }
+                        APICaller.shared.checkIfUserHasSavedTracks(with: trackIDs) { result in
+                            switch result {
+                            case .success(let likedTracks):
+                                DispatchQueue.main.async {
+                                    self?.likedTracks = likedTracks
+                                }
+                                
+                            case .failure(let error):
+                                print("failed to check if current user liked tracks with ids \(trackIDs.joined(separator: ",")): \(error.localizedDescription)")
+                            }
+                        }
+                        
                     case .failure(_):
                         print("failed to get users in new room \(room)")
                     }
-                    
                 })
                 
             case .failure(let error):

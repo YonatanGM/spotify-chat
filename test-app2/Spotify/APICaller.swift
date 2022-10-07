@@ -277,29 +277,7 @@ final class APICaller {
         }
     }
     
-    // FIXME: fix this function
-    public func checkUsersSavedTrack(trackID: String, completion: @escaping (Bool) -> Void) {
-        createRequest(
-            with: URL(string: Constants.baseAPIURL + "/me/tracks/contains/?ids=\(trackID)"),
-            type: .GET
-        ) { request in
-            let task = URLSession.shared.dataTask(with: request) { data, response, error in
-//                print(data)
-//                print(error)
-//                print((response as? HTTPURLResponse)?.statusCode)
-                guard let data = data, error == nil else {
-                    completion(false)
-//                    let result = try? JSONSerialization.jsonObject(with: data!)
-//                    print(result)
 
-                    return
-                }
-                
-                completion(true)
-            }
-            task.resume()
-        }
-    }
     
     public func followUser(with id: String, completion: @escaping (Bool) -> Void) {
         createRequest(
@@ -325,7 +303,7 @@ final class APICaller {
         ) { request in
             let task = URLSession.shared.dataTask(with: request) { data, response, error in
                 guard let data = data, error == nil else {
-                    print((response as? HTTPURLResponse)?.statusCode)
+                    // print((response as? HTTPURLResponse)?.statusCode)
                     completion(false)
                     return
                 }
@@ -335,24 +313,48 @@ final class APICaller {
         }
     }
     
-    public func checkIfCurrentUserFollowsUser(with id: String, completion: @escaping (Result<Bool, Error>) -> Void) {
+    public func checkIfCurrentUserFollowsUsers(with ids: [String], completion: @escaping (Result<[String: Bool], Error>) -> Void) {
         createRequest(
-            with: URL(string: Constants.baseAPIURL + "/me/following/contains?type=user&ids=\(id)"),
+            with: URL(string: Constants.baseAPIURL + "/me/following/contains?type=user&ids=\(ids.joined(separator: ","))"),
             type: .GET
         ) { request in
             let task = URLSession.shared.dataTask(with: request) { data, response, error in
                 guard let data = data, error == nil else {
-                    print((response as? HTTPURLResponse)?.statusCode)
+                    // print((response as? HTTPURLResponse)?.statusCode)
                     if let error = error {
-                        print(error)
+                        // print(error)
                         completion(.failure(error))
                     }
                     return
                 }
                 do {
-                    if let result = try JSONDecoder().decode([Bool].self, from: data).first {
-                        completion(.success(result))
+                    let result = try JSONDecoder().decode([Bool].self, from: data)
+                    completion(.success(Dictionary(uniqueKeysWithValues: zip(ids, result))))
+                } catch let error {
+                    completion(.failure(error))
+                }
+            }
+            task.resume()
+        }
+    }
+    
+    public func checkIfUserHasSavedTracks(with ids: [String], completion: @escaping (Result<[String: Bool], Error>) -> Void) {
+        createRequest(
+            with: URL(string: Constants.baseAPIURL + "/me/tracks/contains/?ids=\(ids.joined(separator: ","))"),
+            type: .GET
+        ) { request in
+            let task = URLSession.shared.dataTask(with: request) { data, response, error in
+                guard let data = data, error == nil else {
+                    // print((response as? HTTPURLResponse)?.statusCode)
+                    if let error = error {
+                        // print(error)
+                        completion(.failure(error))
                     }
+                    return
+                }
+                do {
+                    let result = try JSONDecoder().decode([Bool].self, from: data)
+                    completion(.success(Dictionary(uniqueKeysWithValues: zip(ids, result))))
                 } catch let error {
                     completion(.failure(error))
                 }

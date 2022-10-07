@@ -101,7 +101,6 @@ public struct ChatView<Message: ChatMessage, User: ChatUser>: View {
                 }
                 .padding(.bottom, 30)
                 // .padding(EdgeInsets(top: inset.top, leading: inset.leading, bottom: 0, trailing: inset.trailing))
-                .border(.black)
                 .onChange(of: scrollToBottom) { value in
                     if value {
                         withAnimation(.easeIn(duration: 0.2)) {
