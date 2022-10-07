@@ -47,7 +47,7 @@ class AppStateModel: ObservableObject {
     @Published var scrollToBottom = false
     @Published var searchResults = [Message.ChatUserItem]()
     
-    @Published var currentChatUser: Message.ChatUserItem?
+    @Published var currentUser: Message.ChatUserItem?
     @Published var likedTracks = [String: Bool]()
     @Published var followedUsers = [String: Bool]()
     
@@ -118,7 +118,7 @@ extension AppStateModel {
             DatabaseManager.shared.getUser(with: currentUserID) { [weak self] result in
                 switch result {
                 case .success(let user):
-                    self?.currentChatUser = user
+                    self?.currentUser = user
                 case .failure(_):
                     print("couldn't get current user")
                 }

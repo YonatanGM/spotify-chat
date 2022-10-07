@@ -15,7 +15,7 @@ struct DM: View {
     let recipient: Message.ChatUserItem
     
     var groupID: String? {
-        guard let currentUserID = model.currentChatUser?.id else {
+        guard let currentUserID = model.currentUser?.id else {
             return nil
         }
         return model.groups.filter({ $0.1.name == "\(recipient.id),\(currentUserID)"

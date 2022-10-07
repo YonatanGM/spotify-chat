@@ -16,12 +16,12 @@ struct CurrentUserSettings: View {
         ZStack {
             NavigationLink(isActive: $showCurrentUserSettings,
                            destination: {
-                    if let _ = model.currentChatUser {
+                    if let _ = model.currentUser {
                         CurrentUserDetail()
                     }
             },
                            label: { EmptyView() })
-            if let currentUser = model.currentChatUser {
+            if let currentUser = model.currentUser {
                 if let url = currentUser.avatarURL {
                     AnimatedImage(url: url)
                         .resizable()

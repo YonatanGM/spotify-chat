@@ -65,7 +65,7 @@ struct SwiftyChatView: View {
                 .navigationBarItems(trailing:
                     Menu {
                      
-                        if let currentChatUser = model.currentChatUser {
+                        if let currentChatUser = model.currentUser {
                             if currentChatUser.id == model.groups[groupID]?.admin {
                                 Button(action: { }) {
                                     Label("Add user", systemImage: "plus")
@@ -259,7 +259,7 @@ struct SwiftyChatView: View {
                     isEditing: $isEditing,
                     placeholder: "Type something",
                     onCommit: { messageKind in
-                        if let currentChatUser = model.currentChatUser {
+                        if let currentChatUser = model.currentUser {
                             // get back to this
                             
                             DatabaseManager.shared.sendMessage(message: .init(user: currentChatUser,

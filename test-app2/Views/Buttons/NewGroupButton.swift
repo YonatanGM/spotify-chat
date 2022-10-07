@@ -8,29 +8,15 @@
 import SwiftUI
 
 struct NewGroupButton: View {
-    @State var isTapping: Bool = false
     @State var presentSheet: Bool = false
     var body: some View {
-        Button(action: {
-            // animation
-            withAnimation(.easeIn(duration: 0.1)) {
-                isTapping = true
-            }
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                withAnimation {
-                    isTapping = false
-                    
-                }
-                presentSheet = true
-            }
-            
-        }, label: {
-        
+        Button {
+            presentSheet = true
+        } label: {
             Label("New group", systemImage: "plus")
-                .accentColor(.white)
-        })
-        .scaleEffect(isTapping ? 0.9 : 1)
-        .brightness(isTapping ? 0.1 : 0)
+                .foregroundColor(.white)
+        }
+        .buttonStyle(.borderless)
         .sheet(isPresented: $presentSheet,
                onDismiss: { }) {
             CreateGroup(present: $presentSheet)

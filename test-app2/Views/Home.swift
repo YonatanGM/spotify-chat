@@ -46,6 +46,7 @@ struct Home: View {
                 
             }
         }
+        .navigationBarItems(trailing: CurrentUserSettings())
         .background(
             LinearGradient(colors: [
                 Color(.sRGB,
@@ -62,7 +63,6 @@ struct Home: View {
             ], startPoint: .topLeading, endPoint: .center)
             .ignoresSafeArea(.all, edges: .all)
         )
-        .navigationBarItems(trailing: CurrentUserSettings())
         
     }
 }

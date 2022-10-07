@@ -32,7 +32,7 @@ struct CurrentUserDetail: View {
     
     let profilePicHeight = Double(UIScreen.main.bounds.width) / 3.5
     var artistImageUrls: [URL] {
-        guard let user = model.currentChatUser else {
+        guard let user = model.currentUser else {
             return []
         }
         guard let urls = (user.topArtists?.items
@@ -44,7 +44,7 @@ struct CurrentUserDetail: View {
     }
     var body: some View {
         ZStack {
-            if let user = model.currentChatUser {
+            if let user = model.currentUser {
                 gradient.ignoresSafeArea(.all, edges: .all)
                 ScrollView(.vertical, showsIndicators: false) {
                     ArtistBackgroundSlideshow(urls: artistImageUrls)
