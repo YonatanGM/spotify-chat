@@ -33,17 +33,7 @@ struct ConversationGroupRow: View {
         ZStack {
             if !group.isDm {
                 HStack {
-                    if let urlString = admin.photoURL,
-                       let url = URL(string: urlString) {
-                        AnimatedImage(url: url)
-                            .resizable()
-                            .scaledToFit()
-                            .clipShape(Circle())
-                            .shadow(radius: 5)
-                            
-                    } else {
-                        UserPicInitials(name: admin.name)
-                    }
+                    UserBubbles(users: group.users)
                     
                     VStack(alignment: .leading, spacing: 2.5) {
                         Spacer()

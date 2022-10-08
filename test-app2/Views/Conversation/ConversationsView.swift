@@ -93,7 +93,8 @@ struct ConversationsView: View {
                                     if currentUserID == group.admin {
                                         Image(systemName: "trash")
                                     } else {
-                                        Image(systemName: "person.crop.circle.fill.badge.minus")
+                                        Text("Leave")
+                                        // Image(systemName: "person.crop.circle.fill.badge.minus")
                                     }
                                 } else {
                                     Image(systemName: "trash")

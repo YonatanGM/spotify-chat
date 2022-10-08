@@ -21,7 +21,9 @@ struct UserPicInitials: View {
                     .font(.largeTitle)
                     .fontWeight(.thin)
                     .foregroundColor(.white)
-                    
+                    .minimumScaleFactor(0.01)
+                    .lineLimit(1)
+                    .padding(5)
             , alignment: .center)
     }
 }
