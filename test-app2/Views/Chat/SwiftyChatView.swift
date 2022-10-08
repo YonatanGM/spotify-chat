@@ -277,11 +277,7 @@ struct SwiftyChatView: View {
                 )
                 .padding(.leading, 10)
                 .padding(.trailing, 20)
-      
                 .embedInAnyView()
-                
-                
-                
             })
         
         
@@ -304,9 +300,6 @@ struct SwiftyChatView: View {
         }
         // ▼ Required
         .environmentObject(ChatMessageCellStyle.basicStyle)
-        
-        // .background(Color.primary.colorInvert())
-        
     }
 }
 

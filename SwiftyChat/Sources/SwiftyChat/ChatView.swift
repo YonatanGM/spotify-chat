@@ -39,19 +39,22 @@ public struct ChatView<Message: ChatMessage, User: ChatUser>: View {
     
     public var body: some View {
         GeometryReader { geometry in
-            ZStack(alignment: .bottom) {
+            ScrollView(.vertical, showsIndicators: false) {
                 chatView(in: geometry)
-               
-
+            }
+            .overlay(
                 inputView()
                     .onPreferenceChange(ContentSizeThatFitsKey.self) {
                         contentSizeThatFits = $0
                     }
                     .frame(height: messageEditorHeight)
                     .padding(15)
+                , alignment: .bottom)
+
+
                 
-                PIPVideoCell<Message>()
-            }
+                // PIPVideoCell<Message>()
+            
             .iOS { $0.keyboardAwarePadding() }
         }
         .environmentObject(DeviceOrientationInfo())
@@ -61,84 +64,82 @@ public struct ChatView<Message: ChatMessage, User: ChatUser>: View {
     }
     
     @ViewBuilder private func chatView(in geometry: GeometryProxy) -> some View {
-        ScrollView(.vertical, showsIndicators: false) {
-            ScrollViewReader { proxy in
-                LazyVStack {
-                    ForEach(messages) { message in
-                        let showDateheader = shouldShowDateHeader(
-                            messages: messages,
-                            thisMessage: message
-                        )
-                        let shouldShowDisplayName = shouldShowDisplayName(
-                            messages: messages,
-                            thisMessage: message,
-                            dateHeaderShown: showDateheader
-                        )
-                        
-                        if showDateheader {
-                            Text(dateFormater.string(from: message.date))
-                                .font(.subheadline)
-                                
-                        }
-                        
-                        if shouldShowDisplayName {
-                            Text(message.user.userName)
-                                .font(.caption)
-                                .multilineTextAlignment(.trailing)
-                                .frame(
-                                    maxWidth: geometry.size.width * (UIDevice.isLandscape ? 0.6 : 0.75),
-                                    minHeight: 1,
-                                    alignment: message.isSender ? .trailing: .leading
-                                )
-                        }
-                        chatMessageCellContainer(in: geometry.size, with: message, with: shouldShowDisplayName)
-                    }
-                    Spacer()
-                        .frame(height: messageEditorHeight)
-                        .border(Color.red)
-                        .id("bottom")
-                       
-                }
-                .padding(.bottom, 30)
-                // .padding(EdgeInsets(top: inset.top, leading: inset.leading, bottom: 0, trailing: inset.trailing))
-                .onChange(of: scrollToBottom) { value in
-                    if value {
-                        withAnimation(.easeIn(duration: 0.2)) {
-                            proxy.scrollTo("bottom", anchor: .top)
-                        }
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
-                            scrollToBottom = false
-                        }
-                    }
-                }
-                .onAppear {
-                    proxy.scrollTo("bottom", anchor: .top)
-                    /*
-                    DispatchQueue.main.async() {
-                        proxy.scrollTo("bottom", anchor: .bottom)
-                    }
-                    */
-                }
-                .iOS {
-                    // Auto Scroll with Keyboard Notification
-                    $0.onReceive(
-                        NotificationCenter.default.publisher(for: UIResponder.keyboardWillShowNotification)
-                            .debounce(for: .milliseconds(400), scheduler: RunLoop.main),
-                        perform: { _ in
-                            if !isKeyboardActive {
-                                isKeyboardActive = true
-                                scrollToBottom = true
-                            }
-                        }
+        
+        ScrollViewReader { proxy in
+            LazyVStack {
+                ForEach(messages) { message in
+                    let showDateheader = shouldShowDateHeader(
+                        messages: messages,
+                        thisMessage: message
                     )
-                    .onReceive(
-                        NotificationCenter.default.publisher(for: UIResponder.keyboardWillHideNotification),
-                        perform: { _ in isKeyboardActive = false }
+                    let shouldShowDisplayName = shouldShowDisplayName(
+                        messages: messages,
+                        thisMessage: message,
+                        dateHeaderShown: showDateheader
                     )
+                    
+                    if showDateheader {
+                        Text(dateFormater.string(from: message.date))
+                            .font(.subheadline)
+                            
+                    }
+                    
+                    if shouldShowDisplayName {
+                        Text(message.user.userName)
+                            .font(.caption)
+                            .multilineTextAlignment(.trailing)
+                            .frame(
+                                maxWidth: geometry.size.width * (UIDevice.isLandscape ? 0.6 : 0.75),
+                                minHeight: 1,
+                                alignment: message.isSender ? .trailing: .leading
+                            )
+                    }
+                    chatMessageCellContainer(in: geometry.size, with: message, with: shouldShowDisplayName)
+                }
+                Spacer()
+                    .frame(height: messageEditorHeight)
+                    .border(Color.red)
+                    .id("bottom")
+                   
+            }
+            .padding(.bottom, 30)
+            // .padding(EdgeInsets(top: inset.top, leading: inset.leading, bottom: 0, trailing: inset.trailing))
+            .onChange(of: scrollToBottom) { value in
+                if value {
+                    withAnimation(.easeIn(duration: 0.2)) {
+                        proxy.scrollTo("bottom", anchor: .top)
+                    }
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
+                        scrollToBottom = false
+                    }
                 }
             }
+            .onAppear {
+                proxy.scrollTo("bottom", anchor: .top)
+                /*
+                DispatchQueue.main.async() {
+                    proxy.scrollTo("bottom", anchor: .bottom)
+                }
+                */
+            }
+            .iOS {
+                // Auto Scroll with Keyboard Notification
+                $0.onReceive(
+                    NotificationCenter.default.publisher(for: UIResponder.keyboardWillShowNotification)
+                        .debounce(for: .milliseconds(400), scheduler: RunLoop.main),
+                    perform: { _ in
+                        if !isKeyboardActive {
+                            isKeyboardActive = true
+                            scrollToBottom = true
+                        }
+                    }
+                )
+                .onReceive(
+                    NotificationCenter.default.publisher(for: UIResponder.keyboardWillHideNotification),
+                    perform: { _ in isKeyboardActive = false }
+                )
+            }
         }
- 
         .padding(.bottom, messageEditorHeight + 30)
     
     }

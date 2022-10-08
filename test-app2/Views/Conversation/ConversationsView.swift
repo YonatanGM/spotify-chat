@@ -83,7 +83,7 @@ struct ConversationsView: View {
                     .swipeActions(edge: .trailing) {
                         if let currentUserID = AuthManager.shared.currentUser?.uid {
                             Button {
-                                if currentUserID == group.admin {
+                                if currentUserID == group.admin || group.pending {
                                      DatabaseManager.shared.deleteGroup(id) { _ in }
                                  } else {
                                      DatabaseManager.shared.leaveGroup(id) { _ in }
