@@ -43,6 +43,7 @@
 		9F5E969928EFC4AC00BBEB78 /* FirebaseDatabase in Frameworks */ = {isa = PBXBuildFile; productRef = 9F5E969828EFC4AC00BBEB78 /* FirebaseDatabase */; };
 		9F5E969B28EFC4AC00BBEB78 /* FirebaseFunctions in Frameworks */ = {isa = PBXBuildFile; productRef = 9F5E969A28EFC4AC00BBEB78 /* FirebaseFunctions */; };
 		9F60625E28F0963800320BF9 /* UserBubbles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F60625D28F0963800320BF9 /* UserBubbles.swift */; };
+		9F60629728F1190D00320BF9 /* ArtistCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F60629628F1190C00320BF9 /* ArtistCard.swift */; };
 		9F61C85028EA4F7C00877B91 /* UserDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F61C84F28EA4F7C00877B91 /* UserDetail.swift */; };
 		9F61C85228EA5F0F00877B91 /* ArtistBackgroundSlideshow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F61C85128EA5F0E00877B91 /* ArtistBackgroundSlideshow.swift */; };
 		9F61C85428EB182A00877B91 /* FollowOnSpotify.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F61C85328EB182A00877B91 /* FollowOnSpotify.swift */; };
@@ -52,7 +53,6 @@
 		9F61C85E28EC4B8600877B91 /* DeleteAccount.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F61C85D28EC4B8600877B91 /* DeleteAccount.swift */; };
 		9F61C86028EC726600877B91 /* DM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F61C85F28EC726600877B91 /* DM.swift */; };
 		9F61C86628EDB52800877B91 /* UserIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F61C86528EDB52800877B91 /* UserIcon.swift */; };
-		9F61C86B28EDDCBA00877B91 /* Introspect in Frameworks */ = {isa = PBXBuildFile; productRef = 9F61C86A28EDDCBA00877B91 /* Introspect */; };
 		9F9C419228CF531F009CA948 /* FindButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F9C419128CF531E009CA948 /* FindButton.swift */; };
 		9F9C419628CF6BE4009CA948 /* Search.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F9C419528CF6BE4009CA948 /* Search.swift */; };
 		9F9C419A28D13F76009CA948 /* UserCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F9C419928D13F76009CA948 /* UserCard.swift */; };
@@ -106,6 +106,7 @@
 		9F2282EA28D6E3A50050929E /* UserIconAnimated.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserIconAnimated.swift; sourceTree = "<group>"; };
 		9F2282EC28D6E4EC0050929E /* UserPicInitials.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserPicInitials.swift; sourceTree = "<group>"; };
 		9F60625D28F0963800320BF9 /* UserBubbles.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserBubbles.swift; sourceTree = "<group>"; };
+		9F60629628F1190C00320BF9 /* ArtistCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArtistCard.swift; sourceTree = "<group>"; };
 		9F61C84F28EA4F7C00877B91 /* UserDetail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDetail.swift; sourceTree = "<group>"; };
 		9F61C85128EA5F0E00877B91 /* ArtistBackgroundSlideshow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArtistBackgroundSlideshow.swift; sourceTree = "<group>"; };
 		9F61C85328EB182A00877B91 /* FollowOnSpotify.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FollowOnSpotify.swift; sourceTree = "<group>"; };
@@ -140,7 +141,6 @@
 			files = (
 				9FA7F86C28E5E2E7004F6A66 /* SwiftyChat in Frameworks */,
 				9F5E969728EFC4AC00BBEB78 /* FirebaseAuth in Frameworks */,
-				9F61C86B28EDDCBA00877B91 /* Introspect in Frameworks */,
 				9F5E969B28EFC4AC00BBEB78 /* FirebaseFunctions in Frameworks */,
 				46F0CC3E280D993000BF1B4B /* SDWebImageSwiftUI in Frameworks */,
 				46EAE403280961AE0061C9BB /* ExternalAccessory.framework in Frameworks */,
@@ -163,6 +163,7 @@
 				4604EF9F2857216F000DF914 /* TopTracksView.swift */,
 				9FCB86AD28C8D0F600A96A50 /* TrackCard.swift */,
 				9F9C419928D13F76009CA948 /* UserCard.swift */,
+				9F60629628F1190C00320BF9 /* ArtistCard.swift */,
 				9F61C84F28EA4F7C00877B91 /* UserDetail.swift */,
 				9F61C85928EC49B600877B91 /* CurrentUserDetail.swift */,
 				9F2282EC28D6E4EC0050929E /* UserPicInitials.swift */,
@@ -170,8 +171,8 @@
 				9F1747BD28CF3C960054AE20 /* ArtistAnimatedIcon.swift */,
 				9F61C85128EA5F0E00877B91 /* ArtistBackgroundSlideshow.swift */,
 				9F22828D28D3CE5A0050929E /* GenresAnimatedIcon.swift */,
-				46EAE3FD28095F3F0061C9BB /* WebView.swift */,
 				9FD44B9B28CB7B9A0028A408 /* Bar.swift */,
+				46EAE3FD28095F3F0061C9BB /* WebView.swift */,
 				9F2282C928D630810050929E /* Chat */,
 				9F22828C28D3CB910050929E /* Conversation */,
 				9F22828728D23DCF0050929E /* Buttons */,
@@ -365,7 +366,6 @@
 				46F0CC3D280D993000BF1B4B /* SDWebImageSwiftUI */,
 				463FEF2B281D60F2005155EE /* JGProgressHUD-SwiftUI */,
 				9FA7F86B28E5E2E7004F6A66 /* SwiftyChat */,
-				9F61C86A28EDDCBA00877B91 /* Introspect */,
 				9F5E969628EFC4AC00BBEB78 /* FirebaseAuth */,
 				9F5E969828EFC4AC00BBEB78 /* FirebaseDatabase */,
 				9F5E969A28EFC4AC00BBEB78 /* FirebaseFunctions */,
@@ -404,7 +404,6 @@
 			packageReferences = (
 				46F0CC3C280D993000BF1B4B /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */,
 				463FEF2A281D60F2005155EE /* XCRemoteSwiftPackageReference "JGProgressHUD-SwiftUI" */,
-				9F61C86928EDDCBA00877B91 /* XCRemoteSwiftPackageReference "SwiftUI-Introspect" */,
 				9F5E969528EFC4AC00BBEB78 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 			);
 			productRefGroup = 46F5CA672808C23E00D58C41 /* Products */;
@@ -462,6 +461,7 @@
 				9F2282ED28D6E4EC0050929E /* UserPicInitials.swift in Sources */,
 				9FD44B9A28CB7B140028A408 /* InviteButton.swift in Sources */,
 				9F61C85A28EC49B600877B91 /* CurrentUserDetail.swift in Sources */,
+				9F60629728F1190D00320BF9 /* ArtistCard.swift in Sources */,
 				46F5CA782808DD0D00D58C41 /* AuthManager.swift in Sources */,
 				46476EAB28099A8600C5B880 /* AuthResponse.swift in Sources */,
 				46F8B3DE284DF95900EBCD9C /* Extensions.swift in Sources */,
@@ -717,14 +717,6 @@
 				minimumVersion = 9.0.0;
 			};
 		};
-		9F61C86928EDDCBA00877B91 /* XCRemoteSwiftPackageReference "SwiftUI-Introspect" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/siteline/SwiftUI-Introspect.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 0.1.4;
-			};
-		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -752,11 +744,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 9F5E969528EFC4AC00BBEB78 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebaseFunctions;
-		};
-		9F61C86A28EDDCBA00877B91 /* Introspect */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 9F61C86928EDDCBA00877B91 /* XCRemoteSwiftPackageReference "SwiftUI-Introspect" */;
-			productName = Introspect;
 		};
 		9FA7F86B28E5E2E7004F6A66 /* SwiftyChat */ = {
 			isa = XCSwiftPackageProductDependency;

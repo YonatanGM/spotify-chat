@@ -15,6 +15,7 @@ struct UserIconsToolbar: View {
     @State var drag: CGSize = .zero
     let users: [UserInfo]
     var body: some View {
+        
         HStack {
             ScrollViewReader { proxy in
                 GeometryReader { geometry in
@@ -38,7 +39,7 @@ struct UserIconsToolbar: View {
                 }
             }
         }
-        .frame(width: 150, height: 40)
+        
     }
 }
 

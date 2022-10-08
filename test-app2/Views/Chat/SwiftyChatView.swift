@@ -7,9 +7,7 @@
 
 import SwiftUI
 import SDWebImageSwiftUI
-import Introspect
 import SwiftyChat
-
 
 struct SwiftyChatView: View {
     @EnvironmentObject var model: AppStateModel
@@ -54,72 +52,44 @@ struct SwiftyChatView: View {
                     }
                     .ignoresSafeArea()
                 )
+
                 .navigationTitle("")
                 .navigationBarTitleDisplayMode(.large)
+                
                 .toolbar {
                     ToolbarItem(placement: .principal) {
+                   
                         UserIconsToolbar(users: model.groups[groupID]?.users ?? [])
+                            .frame(width: 150, height: 40)
                             .accessibilityAddTraits(.isHeader)
                     }
                 }
                 .navigationBarItems(trailing:
                     Menu {
                      
-                        if let currentChatUser = model.currentUser {
-                            if currentChatUser.id == model.groups[groupID]?.admin {
-                                Button(action: { }) {
-                                    Label("Add user", systemImage: "plus")
-                                }
-                                if #available(iOS 15.0, *) {
-                                    Button(role: .destructive, action: {
-                                        DatabaseManager.shared.deleteGroup(groupID) { success in
-                                            if success {
-                                                showChat = false
-                                            }
+                        if let currentUserID = AuthManager.shared.currentUser?.uid {
+                            if currentUserID == model.groups[groupID]?.admin {
+                                Button(role: .destructive, action: {
+                                    DatabaseManager.shared.deleteGroup(groupID) { success in
+                                        if success {
+                                            showChat = false
                                         }
-                                    }) {
-                                        Label("Delete group", systemImage: "trash")
                                     }
-                                } else {
-                                    // Fallback on earlier versions
-                                    Button(action: {
-                                        DatabaseManager.shared.deleteGroup(groupID) { success in
-                                            if success {
-                                                showChat = false
-                                            }
-                                        }
-                                    }) {
-                                        Label("Delete group", systemImage: "trash")
-                                    }
+                                }) {
+                                    Label("Delete group", systemImage: "trash")
                                 }
-                                
                             } else {
-                                if #available(iOS 15.0, *) {
-                                    Button(role: .destructive, action: {
-                                        DatabaseManager.shared.leaveGroup(groupID) { success in
-                                            if success {
-                                                showChat = false
-                                            }
+                                Button(role: .destructive, action: {
+                                    DatabaseManager.shared.leaveGroup(groupID) { success in
+                                        if success {
+                                            showChat = false
                                         }
-                                    }) {
-                                        Label("Leave", systemImage: "trash")
-                                            .labelStyle(.titleOnly)
                                     }
-                                } else {
-                                    // Fallback on earlier versions
-                                    Button(action: {
-                                        DatabaseManager.shared.leaveGroup(groupID) { success in
-                                            if success {
-                                                showChat = false
-                                            }
-                                        }
-                                    }) {
-                                        Label("Leave", systemImage: "trash")
-                                            .labelStyle(.titleOnly)
-                                    }
+                                }) {
+                                    Label("Leave", systemImage: "trash")
+                                        .labelStyle(.titleOnly)
                                 }
                             }
-                                
                         }
                         
                     } label: {
@@ -127,9 +97,8 @@ struct SwiftyChatView: View {
                                 .rotationEffect(Angle(degrees: 90))
                                 .foregroundColor(.white)
                                 .contentShape(Rectangle())
-                            
+
                     }
-                   
                 )
         } else {
             chatView
@@ -159,63 +128,36 @@ struct SwiftyChatView: View {
                     }
                     .ignoresSafeArea()
                 )
-                // .navigationTitle(model.groups[groupID]?.otherUser?.name ?? "")
+
                 .navigationBarTitleDisplayMode(.inline)
-                .navigationBarBackButtonHidden(true)
-                .navigationBarItems(leading:
-    
-                    HStack {
-                        Image(systemName: "chevron.left")
-                        if let otherUser = model.groups[groupID]?.otherUser {
-                            UserIcon(user: otherUser)
-                                .frame(height: 25)
-                        }
-                        Text(model.groups[groupID]?.otherUser?.name ?? "")
-                            .font(.headline)
-                        Spacer()
-                    }
-                    .foregroundColor(.white)
-                    .scaleEffect(isTapping ? 0.9 : 1)
-                    .opacity(isTapping ? 0.5 : 1)
-                    .contentShape(Rectangle())
-                    .onTapGesture {
-                        withAnimation(.easeIn(duration: 0.1)) {
-                            isTapping = true
-                        }
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                            withAnimation {
-                                isTapping = false
+                .toolbar {
+                    ToolbarItem(placement: .principal) {
+                        HStack {
+                            if let otherUser = model.groups[groupID]?.otherUser {
+                                UserIcon(user: otherUser)
+                                    .frame(height: 25)
                             }
-                            showChat = false
+                            Text(model.groups[groupID]?.otherUser?.name ?? "")
+                                .font(.headline)
+                            Spacer()
                         }
-                        
+                        .padding(.leading, -10)
+                      
+                        .foregroundColor(.white)
                     }
-                )
+                }
                 .navigationBarItems(trailing:
                     Menu {
-                        if #available(iOS 15.0, *) {
-                            Button(role: .destructive, action: {
-                                DatabaseManager.shared.deleteGroup(groupID) { success in
-                                    if success {
-                                        showChat = false
-                                    }
+                        Button(role: .destructive, action: {
+                            DatabaseManager.shared.deleteGroup(groupID) { success in
+                                if success {
+                                    showChat = false
                                 }
-                            }) {
-                                Label("Delete chat", systemImage: "trash")
                             }
-                        } else {
-                            // Fallback on earlier versions
-                            Button(action: {
-                                DatabaseManager.shared.deleteGroup(groupID) { success in
-                                    if success {
-                                        showChat = false
-                                    }
-                                }
-                            }) {
-                                Label("Delete chat", systemImage: "trash")
-                            }
+                        }) {
+                            Label("Delete chat", systemImage: "trash")
                         }
-                        
+                     
                     } label: {
                             Image(systemName: "ellipsis")
                                 .rotationEffect(Angle(degrees: 90))
@@ -377,7 +319,6 @@ public struct InputView: View {
         }, label: {
             
             Image(systemName: "paperplane.fill")
-            
                 .rotationEffect(.degrees(45))
             
         })
@@ -392,9 +333,6 @@ public struct InputView: View {
                 self.sendButton
             }
         }
-
-   
     }
-    
 }
 

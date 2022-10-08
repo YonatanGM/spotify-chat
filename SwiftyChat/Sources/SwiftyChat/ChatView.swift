@@ -50,11 +50,7 @@ public struct ChatView<Message: ChatMessage, User: ChatUser>: View {
                     .frame(height: messageEditorHeight)
                     .padding(15)
                 , alignment: .bottom)
-
-
-                
                 // PIPVideoCell<Message>()
-            
             .iOS { $0.keyboardAwarePadding() }
         }
         .environmentObject(DeviceOrientationInfo())

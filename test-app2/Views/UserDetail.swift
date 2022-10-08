@@ -8,6 +8,7 @@
 import SwiftUI
 import SDWebImageSwiftUI
 
+
 struct UserDetail: View {
     @EnvironmentObject var model: AppStateModel
     let user: Message.ChatUserItem
@@ -123,13 +124,17 @@ struct UserDetail: View {
                                     if isFollowing {
                                         APICaller.shared.unfollowUser(with: user.id) { successfullyUnfollowed in
                                             if successfullyUnfollowed {
-                                                model.followedUsers[user.id] = false
+                                                DispatchQueue.main.async {
+                                                    model.followedUsers[user.id] = false
+                                                }
                                             }
                                         }
                                     } else {
                                         APICaller.shared.followUser(with: user.id) { successfullyFollowed in
                                             if successfullyFollowed {
-                                                model.followedUsers[user.id] = true
+                                                DispatchQueue.main.async {
+                                                    model.followedUsers[user.id] = true
+                                                }
                                             }
                                         }
                                     }
@@ -192,8 +197,10 @@ struct UserDetail: View {
             }
             
         }
-        .navigationTitle(user.userName)
-
+     
+//        .navigationBarTitle("user.userName\")
+         .navigationTitle(user.userName)
+        
         .onAppear {
             // check if current user follows this user
             if model.followedUsers[user.id] == nil {

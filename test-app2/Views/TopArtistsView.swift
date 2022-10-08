@@ -25,50 +25,27 @@ struct TopArtistsView: View {
         ScrollView(.horizontal, showsIndicators: false) {
             LazyHStack(spacing: 30) {
                 ForEach(artists, id: \.id) { artist in
-                    if let urlString = artist.images?.first?.url,
-                       let url = URL(string: urlString) {
-                            VStack {
-                                AnimatedImage(url: url)
-                                    .resizable()
-                                    .scaledToFill()
-                                    .clipShape(Circle())
-                                    .frame(height: Double(UIScreen.main.bounds.width) / 3)
-                                Spacer()
-                                HStack {
-                                    Spacer()
-                                    VStack(alignment: .leading) {
-                                        Text(artist.name)
-                                            .font(.body)
-                                            .foregroundColor(.white)
-                                            .lineLimit(1)
-                                    
-                                    }
-                                    Spacer()
-                                }
-                                Spacer()
-                                    
+                    ArtistCard(artist: artist)
+                        .scaleEffect(selectedTrackID == artist.id && isTapping ? 0.9 : 1)
+                        .brightness(selectedTrackID == artist.id && isTapping ? 0.1 : 0)
+                        .onTapGesture {
+                            selectedTrackID = artist.id
+                            // animation
+                            withAnimation(.easeIn(duration: 0.1)) {
+                                isTapping = true
                             }
-                            .cornerRadius(5)
-                            .scaleEffect(selectedTrackID == artist.id && isTapping ? 0.9 : 1)
-                            .brightness(selectedTrackID == artist.id && isTapping ? 0.1 : 0)
-                            .onTapGesture {
-                                selectedTrackID = artist.id
-                                // animation
-                                withAnimation(.easeIn(duration: 0.1)) {
-                                    isTapping = true
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                                withAnimation {
+                                    isTapping = false
                                 }
-                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                                    withAnimation {
-                                        isTapping = false
-                                    }
-                                    // open spotify
-                                    if let url = URL(string: artist.external_urls["spotify"]!) {
-                                        UIApplication.shared.open(url)
-                                    }
+                                // open spotify
+                                if let url = URL(string: artist.external_urls["spotify"]!) {
+                                    UIApplication.shared.open(url)
                                 }
-                               
                             }
-                    }
+
+                        }
+                    
                 }
             }
         }

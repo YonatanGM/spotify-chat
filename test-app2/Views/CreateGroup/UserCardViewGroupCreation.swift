@@ -57,21 +57,8 @@ struct UserCardViewGroupCreation: View {
                         
                     } else {
                         
-                        Image(systemName: "circle.fill")
-                            .resizable()
-                            .foregroundColor(.gray)
-                            .scaledToFit()
-                            .clipShape(Circle())
+                        UserPicInitials(name: user.userName)
                             .frame(height: Double(UIScreen.main.bounds.width) / 10)
-                            .shadow(radius: 5)
-                            .overlay(
-                                Text(user.userName.components(separatedBy: " ").reduce("") { ($0.first?.description ?? "") +  ($1.first?.description ?? "")})
-                                    .font(.title)
-                                    .fontWeight(.thin)
-                                    .foregroundColor(.white)
-                  
-                                    
-                            , alignment: .center)
                             .overlay(
                                 Image(systemName: "x.circle.fill")
                                     .resizable()

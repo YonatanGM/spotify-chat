@@ -34,6 +34,8 @@ struct FollowOnSpotify: View {
                         .font(.headline)
                         // .fontWeight(.bold)
                         // .font(.system(size: 15, weight: .bold, design: .default))
+                        .minimumScaleFactor(0.9)
+                        .lineLimit(1)
                     Image("Spotify_Logo_RGB_White")
                         .resizable()
                         .scaledToFit()
@@ -47,6 +49,8 @@ struct FollowOnSpotify: View {
  
                     Text("Following")
                         .font(.headline)
+                        .minimumScaleFactor(0.9)
+                        .lineLimit(1)
                         // .fontWeight(.bold)
                         // .font(.system(size: 12, weight: .bold, design: .default))
                    

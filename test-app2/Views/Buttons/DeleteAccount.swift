@@ -26,10 +26,9 @@ struct DeleteAccount: View {
         }, label: {
             HStack(spacing: 0) {
                 Text("Delete profile")
-                    // .font(.headline)
-                    .font(.system(size: 15, weight: .bold, design: .default))
-                    // .fontWeight(.bold)
-                   // .foregroundColor(.red.opacity(1))
+                     .font(.headline)
+                     .minimumScaleFactor(0.5)
+                     .lineLimit(1)
                 
             }
         })

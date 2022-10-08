@@ -26,9 +26,9 @@ struct SignOut: View {
         }, label: {
             HStack(spacing: 0) {
                 Text("Log out")
-                    // .font(.headline)
-                    // .fontWeight(.bold)
-                    .font(.system(size: 15, weight: .bold, design: .default))
+                    .font(.headline)
+                    .minimumScaleFactor(0.5)
+                    .lineLimit(1)
             }
         })
         .padding(buttonHeight / 2)
