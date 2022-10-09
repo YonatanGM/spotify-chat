@@ -10,18 +10,25 @@ import SwiftUI
 struct TrackMetadata: View {
     let track: Track
     var body: some View {
-        VStack(alignment: .leading) {
-            Text(track.name)
-                .font(.footnote)
-                // .fontWeight(.semibold)
-                .foregroundColor(.white)
-            Text(track.artists.map { $0.name }.joined(separator: ", "))
-                .font(.caption)
-                .foregroundColor(.white.opacity(0.75))
-            if let album = track.album {
-                Text(album.name)
+        VStack(alignment: .leading, spacing: 0) {
+            ScrollView(.horizontal, showsIndicators: false) {
+                Text(track.name)
+                    .padding(.bottom, 2)
+                    .font(.footnote)
+                    // .fontWeight(.semibold)
+                    .foregroundColor(.white)
+            }
+            ScrollView(.horizontal, showsIndicators: false) {
+                Text(track.artists.map { $0.name }.joined(separator: ", "))
                     .font(.caption)
                     .foregroundColor(.white.opacity(0.75))
+            }
+            if let album = track.album {
+                ScrollView(.horizontal, showsIndicators: false) {
+                    Text(album.name)
+                        .font(.caption)
+                        .foregroundColor(.white.opacity(0.75))
+                }
             }
         }
     }
