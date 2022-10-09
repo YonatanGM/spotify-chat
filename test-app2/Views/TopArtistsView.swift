@@ -11,7 +11,7 @@ import UIKit
 
 
 
-// horizontal scrollable view of the artists following spotify developer guideline
+// horizontal scrollable view of the artists
 struct TopArtistsView: View {
     @EnvironmentObject var model: AppStateModel
     var artists: [Artist]

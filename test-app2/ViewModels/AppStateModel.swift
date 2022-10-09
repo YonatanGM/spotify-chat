@@ -290,7 +290,7 @@ extension AppStateModel {
                                              queue: .main,
                                              using: { [weak self] time in
             // weird problem here, starts at 0 and jump to 0.1
-            print(time.seconds)
+            // print(time.seconds)
             self?.progress = time.seconds / 30
         })
 

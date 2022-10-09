@@ -8,6 +8,7 @@
 import SwiftUI
 import SDWebImageSwiftUI
 import SwiftyChat
+import Introspect
 
 struct SwiftyChatView: View {
     @EnvironmentObject var model: AppStateModel
@@ -25,6 +26,7 @@ struct SwiftyChatView: View {
     var body: some View {
        
         if model.groups[groupID]?.isDm == false {
+            
             chatView
                 .foregroundColor(.white)
                 .background(
@@ -52,18 +54,27 @@ struct SwiftyChatView: View {
                     }
                     .ignoresSafeArea()
                 )
-
-                .navigationTitle("")
-                .navigationBarTitleDisplayMode(.large)
-                
+              
+//                .introspectNavigationController { navigationController in
+//                     let frame =  navigationController.navigationBar.frame
+//                   //  navigationController.navigationBar.setBackgroundImage(UIImage(), for: UIBarMetrics.default)
+//                    let navController = navigationController.topViewController
+//                    navigationController.navigationBar.standardAppearance.configureWithOpaqueBackground()
+//                    navigationController.navigationBar.standardAppearance.backgroundColor = UIColor(.chatSpotifyColor.opacity(1))
+//
+//                    navigationController.navigationBar.shadowImage = UIImage()
+//                    navigationController.navigationBar.scrollEdgeAppearance?.shadowColor = .clear
+//                    // navigationController.navigationBar.setBackgroundImage(UIImage(), for: .default)
+//                }
                 .toolbar {
                     ToolbarItem(placement: .principal) {
-                   
+                
                         UserIconsToolbar(users: model.groups[groupID]?.users ?? [])
-                            .frame(width: 150, height: 40)
+                            .frame(width: 150, height: 25)
                             .accessibilityAddTraits(.isHeader)
                     }
                 }
+
                 .navigationBarItems(trailing:
                     Menu {
                      

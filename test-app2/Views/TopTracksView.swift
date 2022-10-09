@@ -11,27 +11,25 @@ import UIKit
 
 
 
-// horizontal scrollable view of the artists following spotify design guideline
+// horizontal scrollable view of the tracks following spotify design guideline
 struct TopTracksView: View {
     @EnvironmentObject var model: AppStateModel
     @Environment(\.scenePhase) private var scenePhase
     var tracks: [Track]
     var body: some View {
-        ScrollView(.horizontal, showsIndicators: false) {
-                LazyHStack(alignment: .top) {
-                    ForEach(tracks, id: \.id) { track in
-                        TrackCard(track: track)
-
-                    }
-                }
-            
-        }
-        .frame(minHeight: 0, maxHeight: .greatestFiniteMagnitude)
         
+        ScrollView(.horizontal, showsIndicators: false) {
+            LazyHStack(alignment: .top) {
+                ForEach(tracks, id: \.id) { track in
+                    TrackCard(track: track)
+
+                }
+            }
+        }
+        .frame(height: 380) // hardcoding this till i find a better way
         .onDisappear {
             model.removePlayer()
         }
-        
         .onChange(of: scenePhase) { phase in
             model.handlePlackbackOnChangeOfScenePhase(to: phase)
 

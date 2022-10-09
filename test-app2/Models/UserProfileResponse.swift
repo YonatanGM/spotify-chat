@@ -10,22 +10,17 @@ import Foundation
 
 
 struct UserProfileResponse: Codable, Identifiable {
-    let country: String // is this always available 
+    let country: String // is this always available, seems like
     let display_name: String
-    let email: String?
+    let email: String?  // shouldn't be optional
     let explicit_content: [String: Bool] // what is this?
-    let external_urls: [String: String]
+    // let external_urls: [String: String]
     // let followers: [String: Codable?]
     let id: String
     let images: [APIImage]
     let product: String // what is this?
 }
 
-extension UserProfileResponse {
-    var firebaseStorageProfilePictureName: String {
-        return "\(id)_profile_picture.png"
-    }
-}
 
 public struct APIImage: Codable {
     let url: String

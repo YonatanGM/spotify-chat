@@ -22,14 +22,15 @@ public struct Track: Codable {
     // let disc_number: Int
     // let duration_ms: Int
     let explicit: Bool
-    let uri: String
+    // 5let uri: String
+    let available_markets: [String]?
 }
 
 
 
 public struct Album: Codable {
     // let album_type: String
-    let available_markets: [String]? // check this 
+    // let available_markets: [String]? // check this
     let id: String
     var images: [APIImage]
     let name: String

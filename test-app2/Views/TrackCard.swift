@@ -16,18 +16,21 @@ struct TrackCard: View {
     @Environment(\.scenePhase) private var scenePhase
     let track: Track
     @State var isTapping: Bool = false
+    // @State var isAnimating: Bool = false
+    @State var likeUnlikeMessage: String?
     var spotifyLogoHeight: CGFloat = 20
+    @State var cardHeight: CGFloat?
     var body: some View {
         
         VStack(spacing: 0) {
-            VStack {
+            VStack(alignment: .leading) {
                 if let urlString = track.album?.images.first?.url,
                    let url = URL(string: urlString) {
-                     AnimatedImage(url: url)
-                    // Image(systemName: "Rectangle.fill")
+                    AnimatedImage(url: url)
                         .resizable()
                         .scaledToFit()
-                
+                        .frame(width: Double(UIScreen.main.bounds.width) / 1.75,
+                               height: Double(UIScreen.main.bounds.width) / 1.75)
                 } else {
                     // probably don't need this
                     Image(systemName: "Rectangle.fill")
@@ -40,40 +43,24 @@ struct TrackCard: View {
                                   opacity: 1)
                         )
                 }
-            
-                HStack {
-                    
-                    VStack(alignment: .leading) {
-                        Text(track.name)
-                            .font(.caption)
-                            .foregroundColor(.white)
-                            .lineLimit(1)
-                        Text(track.artists.map {$0.name}.joined(separator: ", "))
-                            .font(.caption2)
-                            .foregroundColor(
-                                Color(.sRGB,
-                                      red: Double(167) / 255,
-                                      green: Double(167) / 255,
-                                      blue: Double(167) / 255,
-                                      opacity: 1)
-                            )
-                            .fixedSize(horizontal: false, vertical: true)
-                    
-                    }
-                    
-                    Spacer()
-                }
+                TrackMetadata(track: track)
             }
-            .frame(height: Double(UIScreen.main.bounds.width) / 1.5)
-            .padding(spotifyLogoHeight / 2)
-            // .border(.red)
+            .frame(width: Double(UIScreen.main.bounds.width) / 1.75)
+            .padding([.horizontal, .top], spotifyLogoHeight / 2)
+            
             // spotify logo, audio control and like button
-            VStack(spacing: 0) {
+            VStack(alignment: .leading, spacing: 0) {
                 if model.playingTrackID == track.id && model.progress > 0.0 {
                     ProgressView(value: model.progress)
-                        .padding([.horizontal], spotifyLogoHeight / 2)
+                        .padding([.horizontal, .top], spotifyLogoHeight / 2)
                         .accentColor(.white)
  
+                }
+                if let message = likeUnlikeMessage {
+                    Text(message)
+                        .foregroundColor(.white.opacity(0.75))
+                        .font(.caption2)
+                        .padding([.horizontal, .top], spotifyLogoHeight / 2)
                 }
                 HStack {
                     Image("rsz_1spotify_logo_rgb_white")
@@ -93,9 +80,15 @@ struct TrackCard: View {
                                         if !isLiked {
                                             APICaller.shared.addToLikedSongs(trackID: track.id) { successfullyAddedToLikedSongs in
                                                 if successfullyAddedToLikedSongs {
-                                                    withAnimation(.easeIn(duration: 0.1)) {
-                                                        DispatchQueue.main.async {
-                                                            model.likedTracks[track.id] = true
+                                                    DispatchQueue.main.async {
+                                                        model.likedTracks[track.id] = true
+                                                        withAnimation(.easeIn(duration: 0.2)) {
+                                                            likeUnlikeMessage = "Added to Liked Songs"
+                                                        }
+                                                        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                                                            withAnimation(.easeIn(duration: 0.2)) {
+                                                                likeUnlikeMessage = nil
+                                                            }
                                                         }
                                                     }
                                                 }
@@ -103,9 +96,15 @@ struct TrackCard: View {
                                         } else {
                                             APICaller.shared.removeFromLikedSongs(trackID: track.id) { successfullyRemovedFromLikedSongs in
                                                 if successfullyRemovedFromLikedSongs {
-                                                    withAnimation(.easeIn(duration: 0.1)) {
-                                                        DispatchQueue.main.async {
-                                                            model.likedTracks[track.id] = false
+                                                    DispatchQueue.main.async {
+                                                        model.likedTracks[track.id] = false
+                                                        withAnimation(.easeIn(duration: 0.2)) {
+                                                            likeUnlikeMessage = "Removed from Liked Songs"
+                                                        }
+                                                        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                                                            withAnimation(.easeIn(duration: 0.2)) {
+                                                                likeUnlikeMessage = nil
+                                                            }
                                                         }
                                                     }
                                                 }
@@ -123,7 +122,7 @@ struct TrackCard: View {
                               blue: Double(186) / 255,
                               opacity: 1)
                     )
-                    .opacity(model.likedTracks[track.id] != nil ? 1 : .leastNonzeroMagnitude)
+                    .opacity(model.likedTracks[track.id] != nil ? 1 : 0)
                     
                     Image(systemName: model.play == true && model.playingTrackID == track.id ? "pause.fill" : "play.fill")
                         .foregroundColor(
@@ -144,24 +143,15 @@ struct TrackCard: View {
                 }
                 // logo exclusion zone from top
                 .padding(spotifyLogoHeight / 2)
-                // .border(.red)
-            }
-            // .border(.blue)
-        }
+                
 
-       
-        .background(
-            Color(.sRGB,
-                  red: 1,
-                  green: 1,
-                  blue: 1,
-                  opacity: 0.05)
-        )
+            }
+        }
+        .animation(.easeIn(duration: 0.2), value: model.playingTrackID == track.id && model.progress > 0.0)
+        .background(.white.opacity(0.05))
         .cornerRadius(5)
-        .padding(.bottom, spotifyLogoHeight / 2)
         .scaleEffect(model.selectedTrackID == track.id && isTapping ? 0.9 : 1)
         .brightness(model.selectedTrackID == track.id && isTapping ? 0.1 : 0)
-        
         .onTapGesture {
             model.selectedTrackID = track.id
             // animation
