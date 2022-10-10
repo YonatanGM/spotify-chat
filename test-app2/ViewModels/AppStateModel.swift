@@ -236,15 +236,20 @@ extension AppStateModel {
             switch result {
                 
             case .success(let room):
+                /*
                 if let handle =  self?.userObserverHandle {
                     DatabaseManager.shared.removeObserver(with: handle)
                 }
+                */
                 self?.currentRoom = room
-                self?.userObserverHandle = DatabaseManager.shared.getUsers(in: room, completion: { result in
+                DatabaseManager.shared.getUsers(in: room, completion: { result in
                     switch result {
                     case .success(let users):
                         // update the users
                         self?.suggestedUsers = users
+                        if let currentUser = users.first { $0.id == AuthManager.shared.currentUser?.uid } {
+                            self?.currentUser = currentUser
+                        }
                        
                         APICaller.shared.checkIfCurrentUserFollowsUsers(with: users.map { $0.id }) { result in
                             switch result {

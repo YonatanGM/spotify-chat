@@ -101,13 +101,16 @@ extension DatabaseManager {
                   
                   let userUpdates: [String: Any] = [
                      "users/\(profile.id)/id": profile.id, //redundant but whatever
-                     "users/\(profile.id)/name": profile.display_name,
+                     "users/\(profile.id)/name": profile.display_name ?? profile.email,
                      "users/\(profile.id)/email": profile.email,
+                     "users/\(profile.id)/country": profile.country,
+                     "users/\(profile.id)/filter_enabled": profile.explicit_content["filter_enabled"],
                      "users/\(profile.id)/profile_picture": profile.images.first?.url,
                      "users/\(profile.id)/top_artists": topArtists,
                      "users/\(profile.id)/top_tracks": topTracks,
                      "users/\(profile.id)/top_genres": Array(topGenres),
-                     "users/\(profile.id)/top_genre_display": topArtistsResponse.items.first?.genres?.first,
+                     "users/\(profile.id)/top_genre_display": topArtistsResponse.items.first?.genres?.first
+                    
                      
                   ]
                   
@@ -142,6 +145,46 @@ extension DatabaseManager {
       }
    }
    
+   /// refetch current user from spotify and updates it's data in the database
+   @available(*, renamed: "refreshUser()")
+   public func refreshUser(completion: @escaping ((Bool) ->Void)) -> Void {
+      APICaller.shared.getCurrentUserProfile { [weak self] result in
+         switch result {
+         case .success(let profile):
+            // delete and reinsert the user
+            self?.database.child("users/\(profile.id)").setValue(nil) { error, _ in
+               guard error == nil else {
+                  completion(false)
+                  return
+               }
+               self?.insertUser(with: profile) { result in
+                  completion(result)
+               }
+            }
+         case .failure(_):
+            completion(false)
+            return
+         }
+      }
+   }
+   
+   public func refreshUser() async -> Bool {
+      return await withCheckedContinuation { continuation in
+         refreshUser() { result in
+            continuation.resume(returning: result)
+         }
+      }
+   }
+   
+   
+   public func insertUser(with profile: UserProfileResponse) async -> Bool {
+      return await withCheckedContinuation { continuation in
+         insertUser(with: profile) { result in
+            continuation.resume(returning: result)
+         }
+      }
+   }
+   
    
    public enum DatabaseError: Error {
       case failedToFetch
@@ -161,7 +204,9 @@ extension DatabaseManager {
          
          guard let user = snapshot.value as? [String: Any],
                let name = user["name"] as? String,
-               let id = user["id"] as? String else {
+               let id = user["id"] as? String,
+               let country = user["country"] as? String,
+               let filterEnabled = user["filter_enabled"] as? Bool else {
             completion(.failure(Self.DatabaseError.failedToFetch))
             return
          }
@@ -194,20 +239,22 @@ extension DatabaseManager {
             photoURL = URL(string: photoURLString)
          }
          
-         completion(.success(.init(userName: name,
+         completion(.success(.init(id: id,
+                                   userName: name,
                                    avatarURL: photoURL,
                                    avatar: nil,
-                                   id: id,
                                    topTracks: topTracksResponse,
                                    topArtists: topArtistsResponse,
-                                   topGenres: topGenres)))
+                                   topGenres: topGenres,
+                                   country: country,
+                                   filterEnabled: filterEnabled)))
          
       }
    }
    
-   public func getUsers(in room: String, completion: @escaping (Result<[Message.ChatUserItem], Error>) -> Void) -> UInt {
+   public func getUsers(in room: String, completion: @escaping (Result<[Message.ChatUserItem], Error>) -> Void) {
       
-      let handle = self.database.child("users").queryOrdered(byChild: "room").queryEqual(toValue: "\(room)").observe(.value) { [weak self] snapshot in
+      self.database.child("users").queryOrdered(byChild: "room").queryEqual(toValue: "\(room)").observeSingleEvent(of: .value) { [weak self] snapshot in
          
          var users = [Message.ChatUserItem]()
          guard let usersDict = snapshot.value as? [String: [String: Any]] else {
@@ -217,7 +264,9 @@ extension DatabaseManager {
          
          for user in usersDict.values {
             if let name = user["name"] as? String,
-               let id = user["id"] as? String {
+               let id = user["id"] as? String,
+               let country = user["country"] as? String,
+               let filterEnabled = user["filter_enabled"] as? Bool {
                
                var topTracksResponse: TopTracksResponse?
                var topArtistsResponse: TopArtistsResponse?
@@ -247,7 +296,7 @@ extension DatabaseManager {
                   photoURL = URL(string: photoURLString)
                }
                
-               users.append(.init(userName: name, avatarURL: photoURL, avatar: nil, id: id, topTracks: topTracksResponse, topArtists: topArtistsResponse, topGenres: topGenres))
+               users.append(.init(id: id, userName: name, avatarURL: photoURL, avatar: nil, topTracks: topTracksResponse, topArtists: topArtistsResponse, topGenres: topGenres, country: country, filterEnabled: filterEnabled))
                
             } else {
                // shouldn't happen
@@ -256,7 +305,6 @@ extension DatabaseManager {
          }
          completion(.success(users))
       }
-      return handle
    }
 
    
@@ -686,7 +734,7 @@ extension DatabaseManager {
    
    public func observeRoomChange(completion: @escaping (Result<String, Error>) -> Void) {
       guard let currentUserID = AuthManager.shared.currentUser?.uid else {
-         completion(.failure(AuthManager.AuthError.failedToGetCurrentUser)) // user signed out already or the object hasn't been initalized yet
+         completion(.failure(AuthManager.AuthError.failedToGetCurrentUser)) // user signed out or the object hasn't been initalized yet
          return
       }
       
@@ -709,7 +757,7 @@ extension DatabaseManager {
    /// listens for newly added messages. At first, all messages are fetched at once, then it the event only triggers for new messages.
    public func listenForMessages(in group: String, completion: @escaping (Result<Message.ChatMessageItem, Error>) -> Void) {
       guard let currentUserID = AuthManager.shared.currentUser?.uid else {
-         // user signed out already or the object hasn't been initalized yet
+         // user signed out or the object hasn't been initalized yet
          completion(.failure(AuthManager.AuthError.failedToGetCurrentUser))
          return
       }
@@ -744,7 +792,7 @@ extension DatabaseManager {
                if let avatarURLString = dictionary["sender_profile_pic_url"] as? String {
                   avatarURL = URL(string: avatarURLString)
                }
-               let sender = Message.ChatUserItem(userName: senderName, avatarURL: avatarURL, avatar: nil, id: senderID)
+               let sender = Message.ChatUserItem(id: senderID, userName: senderName, avatarURL: avatarURL)
                completion(.success(Message.ChatMessageItem(user: sender, messageKind: finalKind, isSender: senderID == currentUserID, date: date, id: messageID)))
             }
             
@@ -827,7 +875,7 @@ extension DatabaseManager {
                         photoURL = URL(string: photoURLString)
                      }
                      
-                     usersCurrentQuery.append(.init(userName: name, avatarURL: photoURL, avatar: nil, id: id, topTracks: topTracksResponse, topArtists: topArtistsResponse, topGenres: topGenres))
+                     usersCurrentQuery.append(.init(id: id, userName: name, avatarURL: photoURL, avatar: nil, topTracks: topTracksResponse, topArtists: topArtistsResponse, topGenres: topGenres))
                      
                   }
                }

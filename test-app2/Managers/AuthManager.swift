@@ -23,7 +23,7 @@ final class AuthManager {
         static let tokenAPIURL = "https://accounts.spotify.com/api/token"
         static let redirectURI = "https://localhost:5001/testapp-79467/us-central1/redirect"
         // add the scope for liking tracks here
-        static let scopes = "user-read-private%20user-top-read%20user-follow-modify%20user-follow-read%20user-library-read%20user-library-modify"
+        static let scopes = "user-read-email%20user-read-private%20user-top-read%20user-follow-modify%20user-follow-read%20user-library-read%20user-library-modify"
     }
     
     private init() {}
@@ -252,7 +252,7 @@ extension AuthManager {
          
         // do spotify login first, then firebase stuff
         // simply call the getUserProfile to get the uid.
-        APICaller.shared.getUserProfile { result in
+        APICaller.shared.getCurrentUserProfile { result in
             
             switch result {
             case .success(let profile):
@@ -276,21 +276,21 @@ extension AuthManager {
                             
                             // set user display name
                             let changeRequest = result.user.createProfileChangeRequest()
-                            changeRequest.displayName = profile.display_name 
+                            if let displayName = profile.display_name {
+                                changeRequest.displayName = displayName
+                            } else {
+                                changeRequest.displayName = profile.email
+                            }
                             if let url = profile.images.first?.url {
                                 changeRequest.photoURL = URL(string: url)
                             }
                             changeRequest.commitChanges { error in
                                 if let error = error {
-                                    print("couldn't set user displayName/photoURL", error.localizedDescription)
+                                    print("couldn't set current user's displayName/photoURL", error.localizedDescription)
                                 }
                             }
                             // update email
-                            if let email = profile.email {
-                                result.user.updateEmail(to: email)
-                            }
-                            
-                    
+                            result.user.updateEmail(to: profile.email)
                             // UserDefaults.standard.set(profile.display_name, forKey: "display_name")
                             completion?(.success(profile))
                             return

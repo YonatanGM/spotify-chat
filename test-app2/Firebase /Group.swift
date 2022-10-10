@@ -6,6 +6,7 @@
 //
 
 import Foundation
+
 struct Group {
     let id: String
     var name: String

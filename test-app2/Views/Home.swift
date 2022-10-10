@@ -12,21 +12,53 @@ struct Home: View {
     @EnvironmentObject var model: AppStateModel
     @State private var searchText = ""
     @Namespace var bottomID
+    
     var suggestedArtists: [Artist] {
         model.suggestedUsers.compactMap { $0.topArtists?.items.first }
     }
     var suggestedTracks: [Track] {
         model.suggestedUsers.compactMap { $0.topTracks?.items.first }
     }
+    
+    @State var canRefresh = true
+
+    
     var body: some View {
         ScrollViewReader { proxy in
-            ScrollView(showsIndicators: false) {
+            List {
                 UsersView()
+                    .listRowSeparatorTint(.clear)
+                    .listRowBackground(Color.clear)
+                    .listRowInsets(EdgeInsets(.zero))
                 TopArtistsView(artists: suggestedArtists)
+                    .listRowSeparatorTint(.clear)
+                    .listRowBackground(Color.clear)
+                    .listRowInsets(EdgeInsets(.zero))
                 TopTracksView(tracks: suggestedTracks)
-                Spacer()
+                    .listRowSeparatorTint(.clear)
+                    .listRowBackground(Color.clear)
+                    .listRowInsets(EdgeInsets(.zero))
+
                 SearchBar(searchText: $searchText)
+                    .listRowSeparatorTint(.clear)
+                    .listRowBackground(Color.clear)
+                    .listRowInsets(EdgeInsets(.zero))
                     .id(bottomID)
+            }
+            .listStyle(.plain)
+            .refreshable {
+                // can only refresh every 5 minutes, might decrease this later
+                guard canRefresh else { return }
+                await DatabaseManager.shared.refreshUser { didRefresh in
+                    if didRefresh {
+                        canRefresh = false
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 300) {
+                           canRefresh = true
+                        }
+                    }
+                    
+                }
+
             }
             .overlay(Bar().padding(5), alignment: .top)
             .onChange(of: model.scrollToBottom) { value in

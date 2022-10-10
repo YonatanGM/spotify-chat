@@ -10,12 +10,9 @@ import SwiftUI
 
 struct UsersView: View {
     @EnvironmentObject var model: AppStateModel
-    var currentUserID: String? {
-        AuthManager.shared.currentUser?.uid
-    }
     
     var body: some View {
-        if let currentUserID = currentUserID {
+        if let currentUserID =  AuthManager.shared.currentUser?.uid {
             ScrollView(.horizontal, showsIndicators: false) {
                 LazyHStack {
                     ForEach(model.suggestedUsers.filter { $0.id != currentUserID }, id: \.id) { user in

@@ -14,7 +14,4 @@ struct UserInfo {
     let name: String
     let photoURL: String?
     let genreDisplay: String?
-    
-    var size: CGFloat = .zero
-    var offset = CGSize.zero
 }

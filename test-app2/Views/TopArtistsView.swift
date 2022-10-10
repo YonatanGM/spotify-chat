@@ -18,8 +18,6 @@ struct TopArtistsView: View {
     @State var selectedTrackID: String?
     @State var isTapping: Bool = false
     
-
-    
     var body: some View {
 
         ScrollView(.horizontal, showsIndicators: false) {

@@ -44,7 +44,7 @@ final class APICaller {
         }
     }
     
-    public func getUserProfile(completion: @escaping (Result<UserProfileResponse, Error>) -> Void) {
+    public func getCurrentUserProfile(completion: @escaping (Result<UserProfileResponse, Error>) -> Void) {
 
         createRequest(with: URL(string: Constants.baseAPIURL + "/me"),
                       type: .GET) { request in
@@ -64,6 +64,8 @@ final class APICaller {
                     
                 } catch {
                     print(error.localizedDescription)
+                    print(response)
+                    print( print((response as? HTTPURLResponse)?.statusCode))
                     completion(.failure(error))
                 }
             }
