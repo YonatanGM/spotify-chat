@@ -23,12 +23,13 @@ struct CurrentUserSettings: View {
                         .resizable()
                         .scaledToFit()
                         .clipShape(Circle())
-                        .frame(height: 30)
-                        .shadow(radius: 5)
+                        .frame(height: 25)
+                        .shadow(radius: 2.5)
                         
                 } else {
                     UserPicInitials(name: currentUser.userName)
-                        .frame(height: 30)
+                        .frame(height: 25)
+                        .shadow(radius: 2.5)
                 }
             }
         }

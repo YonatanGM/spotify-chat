@@ -9,6 +9,7 @@ import SwiftUI
 import SDWebImageSwiftUI
 
 struct Home: View {
+    
     @EnvironmentObject var model: AppStateModel
     @State private var searchText = ""
     @Namespace var bottomID
@@ -21,7 +22,13 @@ struct Home: View {
     }
     
     @State var canRefresh = true
+    init() {
+        //Use this if NavigationBarTitle is with Large Font
+       //  UINavigationBar.appearance().largeTitleTextAttributes = [.font : UIFont(name: "logoRegular", size: 20)!]
 
+        //Use this if NavigationBarTitle is with displayMode = .inline
+        //UINavigationBar.appearance().titleTextAttributes = [.font : UIFont(name: "Georgia-Bold", size: 20)!]
+    }
     
     var body: some View {
         ScrollViewReader { proxy in
@@ -49,16 +56,13 @@ struct Home: View {
             .refreshable {
                 // can only refresh every 5 minutes, might decrease this later
                 guard canRefresh else { return }
-                await DatabaseManager.shared.refreshUser { didRefresh in
-                    if didRefresh {
-                        canRefresh = false
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 300) {
-                           canRefresh = true
-                        }
+                let didRefresh = await DatabaseManager.shared.refreshUser()
+                if didRefresh {
+                    canRefresh = false
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 300) {
+                       canRefresh = true
                     }
-                    
                 }
-
             }
             .overlay(Bar().padding(5), alignment: .top)
             .onChange(of: model.scrollToBottom) { value in
@@ -78,6 +82,7 @@ struct Home: View {
                 
             }
         }
+        .navigationTitle("yz")
         .navigationBarItems(trailing: CurrentUserSettings())
         .background(
             LinearGradient(colors: [

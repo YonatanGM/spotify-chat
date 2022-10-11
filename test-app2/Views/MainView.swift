@@ -20,8 +20,6 @@ struct MainView: View {
                     .navigationTitle("Login")
             } else if model.signInStatus == .signedIn {
                 Home()
-                    .navigationTitle("App name")
-               
             } else {
                 Color.white
             }

@@ -46,6 +46,8 @@
 		9F60629728F1190D00320BF9 /* ArtistCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F60629628F1190C00320BF9 /* ArtistCard.swift */; };
 		9F60629A28F1D53F00320BF9 /* Introspect in Frameworks */ = {isa = PBXBuildFile; productRef = 9F60629928F1D53F00320BF9 /* Introspect */; };
 		9F60629C28F317F500320BF9 /* TrackMetadata.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F60629B28F317F500320BF9 /* TrackMetadata.swift */; };
+		9F6062C528F4E7CA00320BF9 /* logoRegular.otf in Resources */ = {isa = PBXBuildFile; fileRef = 9F6062C428F4E7C900320BF9 /* logoRegular.otf */; };
+		9F6062C728F51F7100320BF9 /* logoRegular2.otf in Resources */ = {isa = PBXBuildFile; fileRef = 9F6062C628F51F7100320BF9 /* logoRegular2.otf */; };
 		9F61C85028EA4F7C00877B91 /* UserDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F61C84F28EA4F7C00877B91 /* UserDetail.swift */; };
 		9F61C85228EA5F0F00877B91 /* ArtistBackgroundSlideshow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F61C85128EA5F0E00877B91 /* ArtistBackgroundSlideshow.swift */; };
 		9F61C85428EB182A00877B91 /* FollowOnSpotify.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F61C85328EB182A00877B91 /* FollowOnSpotify.swift */; };
@@ -110,6 +112,8 @@
 		9F60625D28F0963800320BF9 /* UserBubbles.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserBubbles.swift; sourceTree = "<group>"; };
 		9F60629628F1190C00320BF9 /* ArtistCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArtistCard.swift; sourceTree = "<group>"; };
 		9F60629B28F317F500320BF9 /* TrackMetadata.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackMetadata.swift; sourceTree = "<group>"; };
+		9F6062C428F4E7C900320BF9 /* logoRegular.otf */ = {isa = PBXFileReference; lastKnownFileType = file; name = logoRegular.otf; path = ../../../../../../Documents/logoRegular.otf; sourceTree = "<group>"; };
+		9F6062C628F51F7100320BF9 /* logoRegular2.otf */ = {isa = PBXFileReference; lastKnownFileType = file; name = logoRegular2.otf; path = ../../../../../../Documents/logoRegular2.otf; sourceTree = "<group>"; };
 		9F61C84F28EA4F7C00877B91 /* UserDetail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDetail.swift; sourceTree = "<group>"; };
 		9F61C85128EA5F0E00877B91 /* ArtistBackgroundSlideshow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArtistBackgroundSlideshow.swift; sourceTree = "<group>"; };
 		9F61C85328EB182A00877B91 /* FollowOnSpotify.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FollowOnSpotify.swift; sourceTree = "<group>"; };
@@ -258,6 +262,7 @@
 				46EAE3FF2809619D0061C9BB /* Info.plist */,
 				465B9C3428157AD500665947 /* GoogleService-Info.plist */,
 				46F8B3DC284DF93B00EBCD9C /* Resources */,
+				9F6062BA28F4BCA700320BF9 /* Fonts */,
 				46F5CA692808C23E00D58C41 /* test_app2App.swift */,
 				46F8B3DD284DF95900EBCD9C /* Extensions.swift */,
 				9F17479A28CDBAB50054AE20 /* Firebase  */,
@@ -331,6 +336,15 @@
 				4685CEBF285106CC00EE5376 /* SwiftyChatView.swift */,
 			);
 			path = Chat;
+			sourceTree = "<group>";
+		};
+		9F6062BA28F4BCA700320BF9 /* Fonts */ = {
+			isa = PBXGroup;
+			children = (
+				9F6062C428F4E7C900320BF9 /* logoRegular.otf */,
+				9F6062C628F51F7100320BF9 /* logoRegular2.otf */,
+			);
+			path = Fonts;
 			sourceTree = "<group>";
 		};
 		9F9C41A128D18A52009CA948 /* CreateGroup */ = {
@@ -427,7 +441,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9F6062C728F51F7100320BF9 /* logoRegular2.otf in Resources */,
 				46F5CA712808C24000D58C41 /* Preview Assets.xcassets in Resources */,
+				9F6062C528F4E7CA00320BF9 /* logoRegular.otf in Resources */,
 				46F5CA6E2808C24000D58C41 /* Assets.xcassets in Resources */,
 				465B9C3528157AD500665947 /* GoogleService-Info.plist in Resources */,
 			);
