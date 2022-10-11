@@ -21,58 +21,70 @@ struct SwiftyChatView: View {
     
     @State var isTapping: Bool = false
     @Binding var showChat: Bool
-
+    
+    @State private var navigationControllerDefault: UINavigationController?
+    
+    @State private var navigationController: UINavigationController?
     
     var body: some View {
        
         if model.groups[groupID]?.isDm == false {
-            
-            chatView
-                .foregroundColor(.white)
+            VStack(spacing: 0) {
+                HStack {
+                    Spacer()
+                    Text(model.groups[groupID]?.name ?? "")
+                        // .font(.headline)
+                        .padding(.top, -5)
+                        .padding(.bottom, 5)
+                    Spacer()
+                }
+                //.border(.red)
                 .background(
-                    ZStack {
-                        LinearGradient(colors: [
-                            Color(.sRGB,
-                                  red: Double(20) / 255,
-                                  green: Double(20) / 255,
-                                  blue: Double(20) / 255,
-                                  opacity: 0.75),
-                            Color(.sRGB,
-                                  red: Double(10) / 255,
-                                  green: Double(10) / 255,
-                                  blue: Double(10) / 255,
-                                  opacity: 1)
-                            
-                        ], startPoint: .topLeading, endPoint: .center)
+                    Color(.sRGB, red: 65 / 255, green: 65 / 255, blue: 65 / 255, opacity: 1)
+                        .shadow(radius: 1)
+                        .edgesIgnoringSafeArea(.top)
                         
-                        LinearGradient(colors: [
-                            Color.clear,
-                            Color.backdrop
-                            
-                        ], startPoint: .center, endPoint: .bottom)
-             
-                    }
-                    .ignoresSafeArea()
                 )
-              
-//                .introspectNavigationController { navigationController in
-//                     let frame =  navigationController.navigationBar.frame
-//                   //  navigationController.navigationBar.setBackgroundImage(UIImage(), for: UIBarMetrics.default)
-//                    let navController = navigationController.topViewController
-//                    navigationController.navigationBar.standardAppearance.configureWithOpaqueBackground()
-//                    navigationController.navigationBar.standardAppearance.backgroundColor = UIColor(.chatSpotifyColor.opacity(1))
-//
-//                    navigationController.navigationBar.shadowImage = UIImage()
-//                    navigationController.navigationBar.scrollEdgeAppearance?.shadowColor = .clear
-//                    // navigationController.navigationBar.setBackgroundImage(UIImage(), for: .default)
-//                }
+
+                chatView
+            }
+            .foregroundColor(.white)
+            .background(
+                ZStack {
+                    LinearGradient(colors: [
+                        Color(.sRGB,
+                              red: Double(20) / 255,
+                              green: Double(20) / 255,
+                              blue: Double(20) / 255,
+                              opacity: 0.75),
+                        Color(.sRGB,
+                              red: Double(10) / 255,
+                              green: Double(10) / 255,
+                              blue: Double(10) / 255,
+                              opacity: 1)
+
+                    ], startPoint: .topLeading, endPoint: .center)
+
+                    LinearGradient(colors: [
+                        Color.clear,
+                        Color.backdrop
+
+                    ], startPoint: .center, endPoint: .bottom)
+             
+         
+                }
+                .edgesIgnoringSafeArea(.all)
+                
+            )
                 .toolbar {
                     ToolbarItem(placement: .principal) {
                 
                         UserIconsToolbar(users: model.groups[groupID]?.users ?? [])
                             .frame(width: 150, height: 25)
                             .accessibilityAddTraits(.isHeader)
+                            // .border(.red)
                     }
+                    
                 }
 
                 .navigationBarItems(trailing:

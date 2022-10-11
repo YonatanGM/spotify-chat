@@ -41,6 +41,7 @@ public struct ChatView<Message: ChatMessage, User: ChatUser>: View {
         GeometryReader { geometry in
             ScrollView(.vertical, showsIndicators: false) {
                 chatView(in: geometry)
+                    .padding(.top)
             }
             .overlay(
                 inputView()

@@ -22,13 +22,7 @@ struct Home: View {
     }
     
     @State var canRefresh = true
-    init() {
-        //Use this if NavigationBarTitle is with Large Font
-       //  UINavigationBar.appearance().largeTitleTextAttributes = [.font : UIFont(name: "logoRegular", size: 20)!]
 
-        //Use this if NavigationBarTitle is with displayMode = .inline
-        //UINavigationBar.appearance().titleTextAttributes = [.font : UIFont(name: "Georgia-Bold", size: 20)!]
-    }
     
     var body: some View {
         ScrollViewReader { proxy in
