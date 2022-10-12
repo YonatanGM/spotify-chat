@@ -76,8 +76,9 @@ struct Home: View {
                 
             }
         }
-        .navigationTitle("yz")
+        .navigationTitle("⁢⁢\u{180E} \u{17B4} \u{115F}")
         .navigationBarItems(trailing: CurrentUserSettings())
+  
         .background(
             LinearGradient(colors: [
                 Color(.sRGB,
