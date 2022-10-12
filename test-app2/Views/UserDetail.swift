@@ -199,7 +199,8 @@ struct UserDetail: View {
         }
      
 //        .navigationBarTitle("user.userName\")
-         .navigationTitle(user.userName)
+         
+        .navigationTitle(user.userName)
         
         .onAppear {
             // check if current user follows this user

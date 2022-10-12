@@ -663,7 +663,7 @@ extension DatabaseManager {
       }
       
       var messageContent = ""
-      let dateString = DateFormatter.dateFormatter.string(from: message.date)
+      // let dateString = DateFormatter.dateFormatter.string(from: message.date)
       switch message.messageKind {
       case .text(let content):
          messageContent = content
@@ -709,11 +709,13 @@ extension DatabaseManager {
          completion?(false)
          return
       }
+      
+//      let a = ServerValue.timestamp()
       let newMessage: [String: Any] = [
          "id": messageID,
          "type": message.messageKind.description,
          "content": messageContent,
-         "date": dateString,
+         "timestamp": ServerValue.timestamp(),
          "sender_id": currentUserID,
          "sender_name": currentUserName,
          "sender_profile_pic_url":  AuthManager.shared.currentUser?.photoURL?.absoluteString,
@@ -774,9 +776,9 @@ extension DatabaseManager {
             let senderID = dictionary["sender_id"] as? String,
             let senderName = dictionary["sender_name"] as? String,
             let type = dictionary["type"] as? String,
-            let dateString = dictionary["date"] as? String,
-            let date = DateFormatter.dateFormatter.date(from: dateString) {
+            let timeInterval = dictionary["timestamp"] as? TimeInterval {
             
+            let date = Date(timeIntervalSince1970: timeInterval / 1000)
             var kind: ChatMessageKind?
             // won't be supporting photo/video/audio
             // location seems useful

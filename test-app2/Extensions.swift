@@ -9,21 +9,6 @@ import Foundation
 import SwiftyChat
 import SwiftUI
 
-
-extension DateFormatter {
-    static let dateFormatter: DateFormatter = {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "YYYY-MM-dd"
-        return dateFormatter
-    }()
-
-    static let displayDateFormatter: DateFormatter = {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateStyle = .medium
-        return dateFormatter
-    }()
-}
-
 extension Array where Element: Equatable {
     var unique: [Element] {
         var uniqueValues: [Element] = []
@@ -81,3 +66,5 @@ extension ChatMessageCellStyle {
     )
     
 }
+
+

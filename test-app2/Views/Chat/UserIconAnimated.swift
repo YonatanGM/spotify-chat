@@ -33,7 +33,7 @@ struct UserIconAnimated: View {
                             Image(systemName: "circle.fill")
                                 .resizable()
                                 .scaledToFit()
-                                .frame(width: 10)
+                                .frame(width: 5)
                                 .foregroundColor(.green)
                                 .offset(x: cos(Angle(degrees: -45).radians) * geometry.size.width / 2,
                                         y: sin(Angle(degrees: -45).radians) * geometry.size.height / 2)
@@ -77,7 +77,7 @@ struct UserIconAnimated: View {
                             Image(systemName: "circle.fill")
                                 .resizable()
                                 .scaledToFit()
-                                .frame(width: 10)
+                                .frame(width: 5)
                                 .foregroundColor(.green)
                                 .offset(x: cos(Angle(degrees: -45).radians) * geometry.size.width / 2,
                                         y: sin(Angle(degrees: -45).radians) * geometry.size.height / 2)

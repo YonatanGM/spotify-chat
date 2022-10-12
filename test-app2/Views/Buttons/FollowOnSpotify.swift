@@ -118,8 +118,8 @@ extension FollowOnSpotify {
         bezierPath.addCurve(to: CGPoint(x: 167.74, y: 83.98), controlPoint1: CGPoint(x: 130.25, y: 167.72), controlPoint2: CGPoint(x: 167.74, y: 130.23))
         bezierPath.addCurve(to: CGPoint(x: 84, y: 0.24), controlPoint1: CGPoint(x: 167.74, y: 37.73), controlPoint2: CGPoint(x: 130.25, y: 0.24))
         bezierPath.close()
-        fillColor2.setFill()
-        bezierPath.fill()
+ 
+        
 
 
         //// Bezier 2 Drawing
@@ -146,8 +146,8 @@ extension FollowOnSpotify {
         bezier2Path.addCurve(to: CGPoint(x: 252.89, y: 100.5), controlPoint1: CGPoint(x: 242.02, y: 123.92), controlPoint2: CGPoint(x: 252.89, y: 114.73))
         bezier2Path.addCurve(to: CGPoint(x: 228.09, y: 77.55), controlPoint1: CGPoint(x: 252.89, y: 88.48), controlPoint2: CGPoint(x: 245.71, y: 81.83))
         bezier2Path.close()
-        fillColor2.setFill()
-        bezier2Path.fill()
+
+        
 
 
         //// Bezier 3 Drawing
@@ -173,8 +173,7 @@ extension FollowOnSpotify {
         bezier3Path.addCurve(to: CGPoint(x: 318.22, y: 93.66), controlPoint1: CGPoint(x: 304.5, y: 124.03), controlPoint2: CGPoint(x: 318.22, y: 113.6))
         bezier3Path.addCurve(to: CGPoint(x: 290.95, y: 63.29), controlPoint1: CGPoint(x: 318.22, y: 73.72), controlPoint2: CGPoint(x: 304.5, y: 63.29))
         bezier3Path.close()
-        fillColor2.setFill()
-        bezier3Path.fill()
+
 
 
         //// Bezier 4 Drawing
@@ -191,8 +190,7 @@ extension FollowOnSpotify {
         bezier4Path.addCurve(to: CGPoint(x: 384.38, y: 93.66), controlPoint1: CGPoint(x: 370.67, y: 124.14), controlPoint2: CGPoint(x: 384.38, y: 110.75))
         bezier4Path.addCurve(to: CGPoint(x: 353.37, y: 63.29), controlPoint1: CGPoint(x: 384.38, y: 76.63), controlPoint2: CGPoint(x: 370.76, y: 63.29))
         bezier4Path.close()
-        fillColor2.setFill()
-        bezier4Path.fill()
+
 
 
         //// Bezier 5 Drawing
@@ -224,8 +222,7 @@ extension FollowOnSpotify {
         bezier5Path.addLine(to: CGPoint(x: 422.59, y: 65.42))
         bezier5Path.addCurve(to: CGPoint(x: 421.64, y: 64.47), controlPoint1: CGPoint(x: 422.59, y: 64.9), controlPoint2: CGPoint(x: 422.17, y: 64.47))
         bezier5Path.close()
-        fillColor2.setFill()
-        bezier5Path.fill()
+
 
 
         //// Bezier 6 Drawing
@@ -271,20 +268,17 @@ extension FollowOnSpotify {
         bezier6Path.addCurve(to: CGPoint(x: 493.4, y: 64.53), controlPoint1: CGPoint(x: 494.14, y: 64.77), controlPoint2: CGPoint(x: 493.79, y: 64.53))
         bezier6Path.addLine(to: CGPoint(x: 471.28, y: 64.53))
         bezier6Path.close()
-        fillColor2.setFill()
-        bezier6Path.fill()
+
 
 
         //// Rectangle Drawing
         let rectanglePath = UIBezierPath(roundedRect: CGRect(x: 428.62, y: 64.45, width: 14.85, height: 58.4), cornerRadius: 1)
-        fillColor2.setFill()
-        rectanglePath.fill()
+
 
 
         //// Oval Drawing
         let ovalPath = UIBezierPath(ovalIn: CGRect(x: 426.8, y: 38.75, width: 18.6, height: 18.6))
-        fillColor2.setFill()
-        ovalPath.fill()
+
 
 
         //// Bezier 7 Drawing
@@ -320,8 +314,7 @@ extension FollowOnSpotify {
         bezier7Path.addCurve(to: CGPoint(x: 558.68, y: 73.47), controlPoint1: CGPoint(x: 554.69, y: 64.36), controlPoint2: CGPoint(x: 558.68, y: 68.47))
         bezier7Path.addCurve(to: CGPoint(x: 549.52, y: 82.63), controlPoint1: CGPoint(x: 558.68, y: 78.46), controlPoint2: CGPoint(x: 554.64, y: 82.63))
         bezier7Path.close()
-        fillColor2.setFill()
-        bezier7Path.fill()
+
         
         var path = Path()
         path.addPath(Path(bezierPath.cgPath))
@@ -374,8 +367,7 @@ extension FollowOnSpotify {
         bezierPath.addCurve(to: CGPoint(x: 167.49, y: 83.74), controlPoint1: CGPoint(x: 129.99, y: 167.49), controlPoint2: CGPoint(x: 167.49, y: 130))
         bezierPath.addCurve(to: CGPoint(x: 83.74, y: 0), controlPoint1: CGPoint(x: 167.49, y: 37.49), controlPoint2: CGPoint(x: 129.99, y: 0))
         bezierPath.close()
-        fillColor2.setFill()
-        bezierPath.fill()
+
         
         var path = Path()
         path.addPath(Path(bezierPath.cgPath))

@@ -77,13 +77,12 @@ public struct ChatView<Message: ChatMessage, User: ChatUser>: View {
                     
                     if showDateheader {
                         Text(dateFormater.string(from: message.date))
-                            .font(.subheadline)
-                            
+                            .font(.subheadline) 
                     }
                     
                     if shouldShowDisplayName {
                         Text(message.user.userName)
-                            .font(.caption)
+                 
                             .multilineTextAlignment(.trailing)
                             .frame(
                                 maxWidth: geometry.size.width * (UIDevice.isLandscape ? 0.6 : 0.75),
@@ -100,6 +99,7 @@ public struct ChatView<Message: ChatMessage, User: ChatUser>: View {
                    
             }
             .padding(.bottom, 30)
+            .foregroundColor(.white)
             // .padding(EdgeInsets(top: inset.top, leading: inset.leading, bottom: 0, trailing: inset.trailing))
             .onChange(of: scrollToBottom) { value in
                 if value {

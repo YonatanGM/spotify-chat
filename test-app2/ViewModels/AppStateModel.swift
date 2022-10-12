@@ -323,11 +323,7 @@ extension AppStateModel {
             self?.avPlayer.seek(to: CMTime(seconds: 0, preferredTimescale: 30))
 
         }
-        
-
-        
     }
-    
 }
 
 extension AppStateModel {

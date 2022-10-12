@@ -33,22 +33,20 @@ struct SwiftyChatView: View {
                 HStack {
                     Spacer()
                     Text(model.groups[groupID]?.name ?? "")
-                        // .font(.headline)
+                    // .font(.headline)
                         .padding(.top, -5)
                         .padding(.bottom, 5)
+                        .foregroundColor(.white)
                     Spacer()
                 }
-                //.border(.red)
                 .background(
                     Color(.sRGB, red: 65 / 255, green: 65 / 255, blue: 65 / 255, opacity: 1)
                         .shadow(radius: 1)
                         .edgesIgnoringSafeArea(.top)
-                        
                 )
-
                 chatView
+                
             }
-            .foregroundColor(.white)
             .background(
                 ZStack {
                     LinearGradient(colors: [
@@ -62,67 +60,61 @@ struct SwiftyChatView: View {
                               green: Double(10) / 255,
                               blue: Double(10) / 255,
                               opacity: 1)
-
+                        
                     ], startPoint: .topLeading, endPoint: .center)
-
+                    
                     LinearGradient(colors: [
                         Color.clear,
                         Color.backdrop
-
                     ], startPoint: .center, endPoint: .bottom)
-             
-         
+
                 }
                 .edgesIgnoringSafeArea(.all)
-                
             )
-                .toolbar {
-                    ToolbarItem(placement: .principal) {
-                
-                        UserIconsToolbar(users: model.groups[groupID]?.users ?? [])
-                            .frame(width: 150, height: 25)
-                            .accessibilityAddTraits(.isHeader)
-                            // .border(.red)
-                    }
+            .toolbar {
+                ToolbarItem(placement: .principal) {
                     
+                    UserIconsToolbar(users: model.groups[groupID]?.users ?? [])
+                        .frame(width: 150, height: 25)
+                        .accessibilityAddTraits(.isHeader)
+                    // .border(.red)
                 }
-
-                .navigationBarItems(trailing:
-                    Menu {
-                     
-                        if let currentUserID = AuthManager.shared.currentUser?.uid {
-                            if currentUserID == model.groups[groupID]?.admin {
-                                Button(role: .destructive, action: {
-                                    DatabaseManager.shared.deleteGroup(groupID) { success in
-                                        if success {
-                                            showChat = false
-                                        }
+            }
+            .navigationBarItems(trailing:
+                Menu {
+                
+                    if let currentUserID = AuthManager.shared.currentUser?.uid {
+                        if currentUserID == model.groups[groupID]?.admin {
+                            Button(role: .destructive, action: {
+                                DatabaseManager.shared.deleteGroup(groupID) { success in
+                                    if success {
+                                        showChat = false
                                     }
-                                }) {
-                                    Label("Delete group", systemImage: "trash")
                                 }
-                            } else {
-                                Button(role: .destructive, action: {
-                                    DatabaseManager.shared.leaveGroup(groupID) { success in
-                                        if success {
-                                            showChat = false
-                                        }
+                            }) {
+                                Label("Delete group", systemImage: "trash")
+                            }
+                        } else {
+                            Button(role: .destructive, action: {
+                                DatabaseManager.shared.leaveGroup(groupID) { success in
+                                    if success {
+                                        showChat = false
                                     }
-                                }) {
-                                    Label("Leave", systemImage: "trash")
-                                        .labelStyle(.titleOnly)
                                 }
+                            }) {
+                                Label("Leave", systemImage: "trash")
+                                    .labelStyle(.titleOnly)
                             }
                         }
-                        
-                    } label: {
-                            Image(systemName: "ellipsis")
-                                .rotationEffect(Angle(degrees: 90))
-                                .foregroundColor(.white)
-                                .contentShape(Rectangle())
-
                     }
-                )
+                } label: {
+                    Image(systemName: "ellipsis")
+                        .rotationEffect(Angle(degrees: 90))
+                        .foregroundColor(.white)
+                        .contentShape(Rectangle())
+                    
+                }
+            )
         } else {
             chatView
 
@@ -151,7 +143,6 @@ struct SwiftyChatView: View {
                     }
                     .ignoresSafeArea()
                 )
-
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbar {
                     ToolbarItem(placement: .principal) {
@@ -165,7 +156,6 @@ struct SwiftyChatView: View {
                             Spacer()
                         }
                         .padding(.leading, -10)
-                      
                         .foregroundColor(.white)
                     }
                 }
@@ -186,7 +176,6 @@ struct SwiftyChatView: View {
                                 .rotationEffect(Angle(degrees: 90))
                                 .foregroundColor(.white)
                                 .contentShape(Rectangle())
-                            
                     }
                 )
 
@@ -212,8 +201,6 @@ struct SwiftyChatView: View {
                         }
                     }
                 }
-
-
             },
             scrollToBottom: $scrollToBottom,
             shouldShowGroupChatHeaders: true,
@@ -231,9 +218,6 @@ struct SwiftyChatView: View {
                                                                               messageKind: messageKind,
                                                                               isSender: true),
                                                                               to: groupID)
-                            
-                            
-                            
                         }
                         withAnimation(.spring(response: 0.2)) {
                             scrollToBottom = true
