@@ -8,7 +8,6 @@
 import SwiftUI
 import SDWebImageSwiftUI
 import SwiftyChat
-import Introspect
 
 struct SwiftyChatView: View {
     @EnvironmentObject var model: AppStateModel

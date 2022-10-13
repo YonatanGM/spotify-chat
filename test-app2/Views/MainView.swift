@@ -16,12 +16,25 @@ struct MainView: View {
                 
         NavigationView {
             if model.signInStatus == .signedOut || model.signInStatus == .signingIn {
-                LoginView()
-                    .navigationTitle("Login")
+                Login()
             } else if model.signInStatus == .signedIn {
                 Home()
+                    .navigationTitle("⁢⁢\u{17B5} \u{17B4} \u{115F}")
             } else {
-                Color.white
+                LinearGradient(colors: [
+                    Color(.sRGB,
+                          red: Double(20) / 255,
+                          green: Double(20) / 255,
+                          blue: Double(20) / 255,
+                          opacity: 0.6),
+                    Color(.sRGB,
+                          red: Double(10) / 255,
+                          green: Double(10) / 255,
+                          blue: Double(10) / 255,
+                          opacity: 1)
+                    
+                ], startPoint: .topLeading, endPoint: .center)
+                .edgesIgnoringSafeArea(.all)
             }
         }
         .navigationViewStyle(StackNavigationViewStyle())

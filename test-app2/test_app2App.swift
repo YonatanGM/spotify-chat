@@ -24,6 +24,7 @@ struct test_app2App: App {
         WindowGroup {
             MainView()
                 .environmentObject(settings)
+                .preferredColorScheme(.light)
      
         }
     }

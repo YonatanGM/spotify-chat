@@ -17,7 +17,7 @@
 		4685CEC0285106CC00EE5376 /* SwiftyChatView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4685CEBF285106CC00EE5376 /* SwiftyChatView.swift */; };
 		46EAE3FE28095F3F0061C9BB /* WebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46EAE3FD28095F3F0061C9BB /* WebView.swift */; };
 		46EAE403280961AE0061C9BB /* ExternalAccessory.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 46EAE402280961AE0061C9BB /* ExternalAccessory.framework */; };
-		46ED90ED2825250B0064E5BE /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46ED90EC2825250B0064E5BE /* LoginView.swift */; };
+		46ED90ED2825250B0064E5BE /* Login.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46ED90EC2825250B0064E5BE /* Login.swift */; };
 		46F0CC2D280D716C00BF1B4B /* APICaller.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46F0CC2C280D716C00BF1B4B /* APICaller.swift */; };
 		46F0CC3E280D993000BF1B4B /* SDWebImageSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = 46F0CC3D280D993000BF1B4B /* SDWebImageSwiftUI */; };
 		46F0CC42280DCAE300BF1B4B /* TopArtistsResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46F0CC41280DCAE300BF1B4B /* TopArtistsResponse.swift */; };
@@ -44,7 +44,6 @@
 		9F5E969B28EFC4AC00BBEB78 /* FirebaseFunctions in Frameworks */ = {isa = PBXBuildFile; productRef = 9F5E969A28EFC4AC00BBEB78 /* FirebaseFunctions */; };
 		9F60625E28F0963800320BF9 /* UserBubbles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F60625D28F0963800320BF9 /* UserBubbles.swift */; };
 		9F60629728F1190D00320BF9 /* ArtistCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F60629628F1190C00320BF9 /* ArtistCard.swift */; };
-		9F60629A28F1D53F00320BF9 /* Introspect in Frameworks */ = {isa = PBXBuildFile; productRef = 9F60629928F1D53F00320BF9 /* Introspect */; };
 		9F60629C28F317F500320BF9 /* TrackMetadata.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F60629B28F317F500320BF9 /* TrackMetadata.swift */; };
 		9F6062EF28F6432400320BF9 /* logoRegular.otf in Resources */ = {isa = PBXBuildFile; fileRef = 9F6062EE28F6432400320BF9 /* logoRegular.otf */; };
 		9F6062F328F6508B00320BF9 /* logoRegular2.otf in Resources */ = {isa = PBXBuildFile; fileRef = 9F6062F228F6508B00320BF9 /* logoRegular2.otf */; };
@@ -57,6 +56,7 @@
 		9F61C85E28EC4B8600877B91 /* DeleteAccount.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F61C85D28EC4B8600877B91 /* DeleteAccount.swift */; };
 		9F61C86028EC726600877B91 /* DM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F61C85F28EC726600877B91 /* DM.swift */; };
 		9F61C86628EDB52800877B91 /* UserIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F61C86528EDB52800877B91 /* UserIcon.swift */; };
+		9F99827928F84A88004F2559 /* Logos.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F99827828F84A88004F2559 /* Logos.swift */; };
 		9F9C419228CF531F009CA948 /* FindButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F9C419128CF531E009CA948 /* FindButton.swift */; };
 		9F9C419628CF6BE4009CA948 /* Search.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F9C419528CF6BE4009CA948 /* Search.swift */; };
 		9F9C419A28D13F76009CA948 /* UserCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F9C419928D13F76009CA948 /* UserCard.swift */; };
@@ -87,7 +87,7 @@
 		46EAE3FF2809619D0061C9BB /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		46EAE400280961AE0061C9BB /* test-app2.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "test-app2.entitlements"; sourceTree = "<group>"; };
 		46EAE402280961AE0061C9BB /* ExternalAccessory.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ExternalAccessory.framework; path = System/Library/Frameworks/ExternalAccessory.framework; sourceTree = SDKROOT; };
-		46ED90EC2825250B0064E5BE /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
+		46ED90EC2825250B0064E5BE /* Login.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Login.swift; sourceTree = "<group>"; };
 		46F0CC2C280D716C00BF1B4B /* APICaller.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APICaller.swift; sourceTree = "<group>"; };
 		46F0CC41280DCAE300BF1B4B /* TopArtistsResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopArtistsResponse.swift; sourceTree = "<group>"; };
 		46F0CC47280DCEED00BF1B4B /* TopTracksResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopTracksResponse.swift; sourceTree = "<group>"; };
@@ -123,6 +123,7 @@
 		9F61C85D28EC4B8600877B91 /* DeleteAccount.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeleteAccount.swift; sourceTree = "<group>"; };
 		9F61C85F28EC726600877B91 /* DM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DM.swift; sourceTree = "<group>"; };
 		9F61C86528EDB52800877B91 /* UserIcon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserIcon.swift; sourceTree = "<group>"; };
+		9F99827828F84A88004F2559 /* Logos.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logos.swift; sourceTree = "<group>"; };
 		9F9C419128CF531E009CA948 /* FindButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FindButton.swift; sourceTree = "<group>"; };
 		9F9C419528CF6BE4009CA948 /* Search.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Search.swift; sourceTree = "<group>"; };
 		9F9C419928D13F76009CA948 /* UserCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserCard.swift; sourceTree = "<group>"; };
@@ -151,7 +152,6 @@
 				9F5E969B28EFC4AC00BBEB78 /* FirebaseFunctions in Frameworks */,
 				46F0CC3E280D993000BF1B4B /* SDWebImageSwiftUI in Frameworks */,
 				46EAE403280961AE0061C9BB /* ExternalAccessory.framework in Frameworks */,
-				9F60629A28F1D53F00320BF9 /* Introspect in Frameworks */,
 				9F5E969928EFC4AC00BBEB78 /* FirebaseDatabase in Frameworks */,
 				463FEF2C281D60F2005155EE /* JGProgressHUD-SwiftUI in Frameworks */,
 			);
@@ -165,7 +165,7 @@
 			children = (
 				46F5CA6B2808C23E00D58C41 /* MainView.swift */,
 				9FBFACE728CBCD3200C9F179 /* Home.swift */,
-				46ED90EC2825250B0064E5BE /* LoginView.swift */,
+				46ED90EC2825250B0064E5BE /* Login.swift */,
 				9FD44B9528CB3E170028A408 /* UsersView.swift */,
 				4604EF9B28571E9D000DF914 /* TopArtistsView.swift */,
 				4604EF9F2857216F000DF914 /* TopTracksView.swift */,
@@ -265,6 +265,7 @@
 				9F6062BA28F4BCA700320BF9 /* Fonts */,
 				46F5CA692808C23E00D58C41 /* test_app2App.swift */,
 				46F8B3DD284DF95900EBCD9C /* Extensions.swift */,
+				9F99827828F84A88004F2559 /* Logos.swift */,
 				9F17479A28CDBAB50054AE20 /* Firebase  */,
 				461DCBD62823712A009E2F7F /* Spotify */,
 				461DCBD72823714B009E2F7F /* Managers */,
@@ -388,7 +389,6 @@
 				9F5E969628EFC4AC00BBEB78 /* FirebaseAuth */,
 				9F5E969828EFC4AC00BBEB78 /* FirebaseDatabase */,
 				9F5E969A28EFC4AC00BBEB78 /* FirebaseFunctions */,
-				9F60629928F1D53F00320BF9 /* Introspect */,
 			);
 			productName = "test-app2";
 			productReference = 46F5CA662808C23E00D58C41 /* test-app2.app */;
@@ -425,7 +425,6 @@
 				46F0CC3C280D993000BF1B4B /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */,
 				463FEF2A281D60F2005155EE /* XCRemoteSwiftPackageReference "JGProgressHUD-SwiftUI" */,
 				9F5E969528EFC4AC00BBEB78 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
-				9F60629828F1D53F00320BF9 /* XCRemoteSwiftPackageReference "SwiftUI-Introspect" */,
 			);
 			productRefGroup = 46F5CA672808C23E00D58C41 /* Products */;
 			projectDirPath = "";
@@ -458,6 +457,7 @@
 			files = (
 				9F9C419A28D13F76009CA948 /* UserCard.swift in Sources */,
 				9F61C85028EA4F7C00877B91 /* UserDetail.swift in Sources */,
+				9F99827928F84A88004F2559 /* Logos.swift in Sources */,
 				9F2282EB28D6E3A50050929E /* UserIconAnimated.swift in Sources */,
 				46F0CC48280DCEED00BF1B4B /* TopTracksResponse.swift in Sources */,
 				463FEF26281D4242005155EE /* DatabaseManager.swift in Sources */,
@@ -475,7 +475,7 @@
 				9F9C41A028D17E3B009CA948 /* CreateGroup.swift in Sources */,
 				46EAE3FE28095F3F0061C9BB /* WebView.swift in Sources */,
 				9F17479C28CDBAEF0054AE20 /* Group.swift in Sources */,
-				46ED90ED2825250B0064E5BE /* LoginView.swift in Sources */,
+				46ED90ED2825250B0064E5BE /* Login.swift in Sources */,
 				9F61C85428EB182A00877B91 /* FollowOnSpotify.swift in Sources */,
 				9F9C419C28D1529D009CA948 /* ConversationsView.swift in Sources */,
 				46F8B3DB284C3BA800EBCD9C /* Message.swift in Sources */,
@@ -645,6 +645,7 @@
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = UIInterfaceOrientationPortrait;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.5;
@@ -677,6 +678,7 @@
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = UIInterfaceOrientationPortrait;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.5;
@@ -741,14 +743,6 @@
 				minimumVersion = 9.0.0;
 			};
 		};
-		9F60629828F1D53F00320BF9 /* XCRemoteSwiftPackageReference "SwiftUI-Introspect" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/siteline/SwiftUI-Introspect.git";
-			requirement = {
-				branch = master;
-				kind = branch;
-			};
-		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -776,11 +770,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 9F5E969528EFC4AC00BBEB78 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebaseFunctions;
-		};
-		9F60629928F1D53F00320BF9 /* Introspect */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 9F60629828F1D53F00320BF9 /* XCRemoteSwiftPackageReference "SwiftUI-Introspect" */;
-			productName = Introspect;
 		};
 		9FA7F86B28E5E2E7004F6A66 /* SwiftyChat */ = {
 			isa = XCSwiftPackageProductDependency;

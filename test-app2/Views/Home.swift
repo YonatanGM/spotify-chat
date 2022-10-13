@@ -76,9 +76,7 @@ struct Home: View {
                 
             }
         }
-        .navigationTitle("⁢⁢\u{17B5} \u{17B4} \u{115F}")
         .navigationBarItems(trailing: CurrentUserSettings())
-  
         .background(
             LinearGradient(colors: [
                 Color(.sRGB,
