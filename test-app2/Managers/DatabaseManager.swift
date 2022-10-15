@@ -592,7 +592,6 @@ extension DatabaseManager {
                                             genreDisplay: userInfo["top_genre_display"]))
                }
             }
-            
          }
          var recipient: UserInfo?
          if let recipientDict = dict["recipient"] as? [String: String] {
@@ -760,7 +759,9 @@ extension DatabaseManager {
          completion(.failure(AuthManager.AuthError.failedToGetCurrentUser))
          return
       }
-      database.child("conversations/\(group)").queryLimited(toLast: Self.maxNumOfMessagesToFetch).observe(.childAdded, with: { snapshot in
+      database.child("conversations/\(group)")
+         .queryOrderedByKey()
+         .queryLimited(toLast: Self.maxNumOfMessagesToFetch).observe(.childAdded, with: { snapshot in
          // let enumerator = snapshot.children
          
          // print("sss", enumerator.allObjects.count)
@@ -851,7 +852,6 @@ extension DatabaseManager {
                      case .success(let user):
                         fulfill(user)
                      case .failure(_):
-                        // don't do anything
                         fulfill(nil)
                      }
                   }
