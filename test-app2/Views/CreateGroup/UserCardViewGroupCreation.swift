@@ -24,11 +24,24 @@ struct UserCardViewGroupCreation: View {
     }
     
     var searchResultsDisplay: [Message.ChatUserItem] {
-        guard let currentUserID = AuthManager.shared.currentUser?.uid else { return [] }
-        return searchResults.filter { userFromSearch in
-            userFromSearch.id != currentUserID && !model.suggestedUsers.map { $0.id }.contains(userFromSearch.id)
+        // guard let currentUserID = AuthManager.shared.currentUser?.uid else { return [] }
+        return searchResults.filter { foundUser in
+            !addedUsers.contains(foundUser) // && !model.suggestedUsers.map { $0.id  }.contains(userFromSearch.id)
         }
     }
+    
+    var terms: [String] {
+        searchText
+            .components(separatedBy: ",")
+            .filter { !$0.isEmpty }
+            .filter { !$0.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
+            .map {
+                $0.lowercased().replacingOccurrences(of: "[\\[\\].$#]", with: " ", options: .regularExpression)
+            }
+    }
+    
+    @State var termsDisplay = [String]()
+    
     var body: some View {
         
         VStack(alignment: .leading, spacing: 5) {
@@ -40,7 +53,7 @@ struct UserCardViewGroupCreation: View {
                             .resizable()
                             .scaledToFit()
                             .clipShape(Circle())
-                            .frame(height: Double(UIScreen.main.bounds.width) / 10)
+                            .frame(height: Double(UIScreen.main.bounds.width) / 12)
                             .shadow(radius: 5)
                             .onTapGesture {
                                 withAnimation(.spring(response: 0.5))  {
@@ -58,7 +71,7 @@ struct UserCardViewGroupCreation: View {
                     } else {
                         
                         UserPicInitials(name: user.userName)
-                            .frame(height: Double(UIScreen.main.bounds.width) / 10)
+                            .frame(height: Double(UIScreen.main.bounds.width) / 12)
                             .overlay(
                                 Image(systemName: "x.circle.fill")
                                     .resizable()
@@ -69,7 +82,6 @@ struct UserCardViewGroupCreation: View {
                                 withAnimation(.spring(response: 0.5))  {
                                     addedUsers = addedUsers.filter { $0.id != user.id}
                                 }
-                                
                             }
                             .matchedGeometryEffect(id: "picInitial" + user.id, in: animation)
                     }
@@ -77,53 +89,69 @@ struct UserCardViewGroupCreation: View {
                 Spacer()
             }
             .frame(height: 50)
+            .padding([.horizontal], 10)
             
             Text("Find")
                 .fontWeight(.light)
                 .font(.title)
-                .padding([.horizontal], 15)
+                .padding([.horizontal], 10)
             
-            ZStack {
-                Rectangle()
-                    .foregroundColor(.backdrop)
-                HStack {
-                    Image(systemName: "magnifyingglass")
-                    TextField("Search", text: $searchText) {
-                        let terms = searchText
-                            .components(separatedBy: ",")
-                            .filter { !$0.isEmpty }
-                            .filter { !$0.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
-                            .map { $0.lowercased()
-                                    .replacingOccurrences(of: "[\\[\\].$#]", with: " ", options: .regularExpression)
-                            }
-                        model.queryUsersByArtistOrTrackName(terms) { results in
-                            searchResults = results
-                        }
-                        
-                    }
-                    
-                    .accentColor(.white)
-                    .keyboardType(.webSearch)
-                    .disableAutocorrection(true)
-                    .onChange(of: searchText) {
-                        if $0.isEmpty {
-                            searchResults = []
+            // search bar
+            HStack {
+                Image(systemName: "magnifyingglass")
+                TextField("Search", text: $searchText) {
+                    // guard termsDisplay != terms else { return }
+                    termsDisplay = terms
+                    DatabaseManager.shared.queryUsersByArtistOrTrackName(terms) { terms, users in
+                        if self.terms == terms {
+                            searchResults = users
                         }
                     }
                 }
-                .foregroundColor(.white)
-                .padding(.leading, 13)
+                .accentColor(.white)
+                .keyboardType(.webSearch)
+                .disableAutocorrection(true)
+                .onChange(of: searchText) {
+                    if $0.isEmpty {
+                        searchResults = []
+                        termsDisplay = []
+                    }
+                }
             }
+            .foregroundColor(.white)
+            .padding(.leading, 13)
             .frame(height: 40)
+            .background(Color.backdrop)
             .clipShape(Capsule())
-            .padding([.horizontal])
+            .padding([.horizontal], 10)
+            
+            // search terms
+            if !termsDisplay.isEmpty {
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack {
+                        ForEach(termsDisplay.unique, id: \.self) { term in
+                            Button(term){}
+                                .buttonStyle(.bordered)
+                                .buttonBorderShape(.capsule)
+                                .foregroundColor(.white)
+                                .allowsHitTesting(false)
+                        }
+                        
+                    }
+                    .animation(.spring(), value: termsDisplay)
+                }
+                .clipShape(Capsule())
+                .padding(.leading, 10)
+                .padding(.vertical, 5)
+            }
+            
             // search results
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack {
                     ForEach(searchResultsDisplay, id: \.id) { user in
                         UserCardGroupCreation(user: user, namespace: animation)
-                            .padding([.horizontal], 1)
-                            .padding([.leading], searchResults.first?.id == user.id ? 10 : 0)
+                            .padding(.horizontal, 1)
+                             .padding(.leading, searchResultsDisplay.first?.id == user.id ? 10 : 0)
                             .onTapGesture {
                                 withAnimation(.spring(response: 0.5)) {
                                     addedUsers.append(user)
@@ -133,28 +161,6 @@ struct UserCardViewGroupCreation: View {
                 }
 
             }
-            .padding([.bottom])
-            
-            Text("Suggested users")
-                .fontWeight(.light)
-                .font(.title)
-                .padding([.horizontal], 15)
-            ScrollView(.horizontal, showsIndicators: false) {
-                
-                HStack {
-                    ForEach(suggestedUsersDisplay, id: \.id) { user in
-                        UserCardGroupCreation(user: user, namespace: animation)
-                            .padding([.horizontal], 1)
-                            .padding([.leading], suggestedUsersDisplay.first?.id == user.id ? 15 : 0)
-                            .onTapGesture {
-                                withAnimation(.spring(response: 0.5)) {
-                                    addedUsers.append(user)
-                                }
-                            }
-                    }
-                }
-            }
-            
             Spacer()
         }
     }

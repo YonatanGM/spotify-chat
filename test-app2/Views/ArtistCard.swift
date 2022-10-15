@@ -18,23 +18,22 @@ struct ArtistCard: View {
                     .resizable()
                     .scaledToFill()
                     .clipShape(Circle())
-                    .frame(height: Double(UIScreen.main.bounds.width) / 3)
+                    
                 Spacer()
                 HStack {
                     Spacer()
                     VStack(alignment: .leading) {
                         Text(artist.name)
-                            .font(.body)
+                            .font(.footnote)
+                            .fontWeight(.bold)
                             .foregroundColor(.white)
-                            .lineLimit(1)
-
+                            .lineLimit(2)
                     }
                     Spacer()
                 }
                 Spacer()
-
             }
-            .cornerRadius(5)
+            .frame(width: Double(UIScreen.main.bounds.width) / 3)
         }
     }
 }

@@ -20,10 +20,7 @@ struct FindButton: View {
         .padding([.horizontal], 10)
         .padding([.vertical], 7.5)
         .foregroundColor(.white)
-        .background(
-            Color.backdrop
-        )
-        
+        .background(Color.backdrop)
         .clipShape(Capsule())
         .scaleEffect(isTapping ? 0.9 : 1)
         .brightness(isTapping ? 0.1 : 0)

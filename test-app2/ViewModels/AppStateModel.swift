@@ -246,7 +246,8 @@ extension AppStateModel {
                     switch result {
                     case .success(let users):
                         // update the users
-                        self?.suggestedUsers = users
+                        
+                        self?.suggestedUsers = users.filter { $0.id != AuthManager.shared.currentUser?.uid }
                         if let currentUser = users.first { $0.id == AuthManager.shared.currentUser?.uid } {
                             self?.currentUser = currentUser
                         }
@@ -322,25 +323,6 @@ extension AppStateModel {
             self?.avPlayer.pause()
             self?.avPlayer.seek(to: CMTime(seconds: 0, preferredTimescale: 30))
 
-        }
-    }
-}
-
-extension AppStateModel {
-    
-    func queryUsersByArtistOrTrackName(_ terms: [String], completion: @escaping ([Message.ChatUserItem]) -> Void) {
-        // clear previous result
-        
-        // remove ongoing observers
-        DatabaseManager.shared.removeObserver(with: "User")
-        // cancel search if it takes too long
-        DispatchQueue.main.asyncAfter(deadline: .now() + 10) {
-            DatabaseManager.shared.removeObserver(with: "User")
-        }
-        DatabaseManager.shared.queryUsersByArtistOrTrackName(terms) { results in
-            // self?.searchResults = results
-            completion(results)
-            
         }
     }
 }

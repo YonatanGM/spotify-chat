@@ -33,7 +33,7 @@ struct UserCard: View {
                         .resizable()
                         .scaledToFit()
                         .clipShape(Circle())
-                        .frame(height: Double(UIScreen.main.bounds.width) / 3)
+                        
                         .shadow(radius: 5)
                         .overlay(
                             GeometryReader { geometry in
@@ -54,7 +54,7 @@ struct UserCard: View {
                         )
                 } else {
                     UserPicInitials(name: user.userName)
-                        .frame(height: Double(UIScreen.main.bounds.width) / 3)
+  
                         .overlay(
                             GeometryReader { geometry in
                                 ZStack {
@@ -77,9 +77,10 @@ struct UserCard: View {
                 HStack {
                     Spacer()
                     Text(user.userName)
-                        .font(.body)
+                        .font(.footnote)
+                        .fontWeight(.bold)
                         .foregroundColor(.white)
-                        .lineLimit(1)
+                        .lineLimit(2)
                     Spacer()
                     
                 }
@@ -90,8 +91,6 @@ struct UserCard: View {
                                 if let urlString = artist.images?.first?.url,
                                    let url = URL(string: urlString) {
                                     ArtistAnimatedIcon(url: url)
-                                    
-                                    
                                 }
                             }
                         }
@@ -102,9 +101,9 @@ struct UserCard: View {
                 .coordinateSpace(name: "artistIcons")
                 .cornerRadius(10)
             }
+            .frame(width: Double(UIScreen.main.bounds.width) / 3)
             .padding([.vertical], 10)
             .padding([.horizontal])
-            
         }
         .background(Color.backdrop)
         .cornerRadius(5)

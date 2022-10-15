@@ -13,9 +13,9 @@ struct TrackMetadata: View {
         VStack(alignment: .leading, spacing: 0) {
             ScrollView(.horizontal, showsIndicators: false) {
                 Text(track.name)
-                    .padding(.bottom, 2)
                     .font(.footnote)
-                    // .fontWeight(.semibold)
+                    // .fontWeight(.bold)
+                    .padding(.bottom, 2)
                     .foregroundColor(.white)
             }
             ScrollView(.horizontal, showsIndicators: false) {

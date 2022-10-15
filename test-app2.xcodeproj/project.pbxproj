@@ -57,6 +57,7 @@
 		9F61C86028EC726600877B91 /* DM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F61C85F28EC726600877B91 /* DM.swift */; };
 		9F61C86628EDB52800877B91 /* UserIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F61C86528EDB52800877B91 /* UserIcon.swift */; };
 		9F99827928F84A88004F2559 /* Logos.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F99827828F84A88004F2559 /* Logos.swift */; };
+		9F99829628FB00ED004F2559 /* Promises in Frameworks */ = {isa = PBXBuildFile; productRef = 9F99829528FB00ED004F2559 /* Promises */; };
 		9F9C419228CF531F009CA948 /* FindButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F9C419128CF531E009CA948 /* FindButton.swift */; };
 		9F9C419628CF6BE4009CA948 /* Search.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F9C419528CF6BE4009CA948 /* Search.swift */; };
 		9F9C419A28D13F76009CA948 /* UserCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F9C419928D13F76009CA948 /* UserCard.swift */; };
@@ -149,6 +150,7 @@
 			files = (
 				9FA7F86C28E5E2E7004F6A66 /* SwiftyChat in Frameworks */,
 				9F5E969728EFC4AC00BBEB78 /* FirebaseAuth in Frameworks */,
+				9F99829628FB00ED004F2559 /* Promises in Frameworks */,
 				9F5E969B28EFC4AC00BBEB78 /* FirebaseFunctions in Frameworks */,
 				46F0CC3E280D993000BF1B4B /* SDWebImageSwiftUI in Frameworks */,
 				46EAE403280961AE0061C9BB /* ExternalAccessory.framework in Frameworks */,
@@ -389,6 +391,7 @@
 				9F5E969628EFC4AC00BBEB78 /* FirebaseAuth */,
 				9F5E969828EFC4AC00BBEB78 /* FirebaseDatabase */,
 				9F5E969A28EFC4AC00BBEB78 /* FirebaseFunctions */,
+				9F99829528FB00ED004F2559 /* Promises */,
 			);
 			productName = "test-app2";
 			productReference = 46F5CA662808C23E00D58C41 /* test-app2.app */;
@@ -425,6 +428,7 @@
 				46F0CC3C280D993000BF1B4B /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */,
 				463FEF2A281D60F2005155EE /* XCRemoteSwiftPackageReference "JGProgressHUD-SwiftUI" */,
 				9F5E969528EFC4AC00BBEB78 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+				9F99829428FB00ED004F2559 /* XCRemoteSwiftPackageReference "promises" */,
 			);
 			productRefGroup = 46F5CA672808C23E00D58C41 /* Products */;
 			projectDirPath = "";
@@ -743,6 +747,14 @@
 				minimumVersion = 9.0.0;
 			};
 		};
+		9F99829428FB00ED004F2559 /* XCRemoteSwiftPackageReference "promises" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/google/promises";
+			requirement = {
+				kind = exactVersion;
+				version = 2.1.1;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -770,6 +782,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 9F5E969528EFC4AC00BBEB78 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebaseFunctions;
+		};
+		9F99829528FB00ED004F2559 /* Promises */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 9F99829428FB00ED004F2559 /* XCRemoteSwiftPackageReference "promises" */;
+			productName = Promises;
 		};
 		9FA7F86B28E5E2E7004F6A66 /* SwiftyChat */ = {
 			isa = XCSwiftPackageProductDependency;

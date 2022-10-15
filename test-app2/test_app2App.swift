@@ -35,14 +35,13 @@ class AppDelegate: NSObject, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
         
         // navigation bar apearance
-         UINavigationBar.appearance().barTintColor = UIColor(.chatSpotifyColor)
-         UINavigationBar.appearance().tintColor  = .white
+        UINavigationBar.appearance().barTintColor = UIColor(.chatSpotifyColor)
+        UINavigationBar.appearance().tintColor  = .white
 
         UINavigationBar.appearance().largeTitleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.white, .font : UIFont(name: "Glyphter", size: UIFont.preferredFont(forTextStyle: .largeTitle).pointSize)!]
-//
+
         UINavigationBar.appearance().titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.white, .font : UIFont(name: "Glyphter2", size: UIFont.preferredFont(forTextStyle: .headline).pointSize)!]
 
-       
         // back button
         UIBarButtonItem.appearance().setTitleTextAttributes([NSAttributedString.Key.font: UIFont(name: "Glyphter2", size: UIFont.preferredFont(forTextStyle: .headline).pointSize)!], for: .normal)
         

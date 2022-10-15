@@ -12,6 +12,14 @@ import SwiftUI
 struct SearchBar: View {
     @Binding var searchText: String
     @EnvironmentObject var model: AppStateModel
+    
+    var searchResultsDisplay: [Message.ChatUserItem] {
+        guard let currentUserID = AuthManager.shared.currentUser?.uid else { return [] }
+        return model.searchResults.filter { foundUser in
+            foundUser.id != currentUserID
+        }
+    }
+    
     var terms: [String] {
         searchText
             .components(separatedBy: ",")
@@ -25,19 +33,19 @@ struct SearchBar: View {
     @State var termsDisplay = [String]()
     
     var body: some View {
-        VStack(spacing: 0) {
+        VStack(spacing: 10) {
             if !model.searchResults.isEmpty {
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack {
-                        ForEach(model.searchResults, id: \.id) { user in
+                        ForEach(searchResultsDisplay, id: \.id) { user in
                             UserCard(user: user)
-                                .padding([.horizontal], 1)
+                                .padding(.horizontal, 1)
+                                .padding(.leading, user.id == searchResultsDisplay.first?.id ? 10 : 0)
                         }
                     }
                   
                 }
                 .animation(.spring(), value: model.searchResults.count)
-                .padding(5)
                 if !termsDisplay.isEmpty {
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack {
@@ -55,38 +63,38 @@ struct SearchBar: View {
                                 .clipShape(Capsule())
                             }
                         }
-                        .animation(.spring())
+                        .animation(.spring(), value: termsDisplay)
                     }
-                    .padding(5)
+                    .clipShape(Capsule())
+                    .padding(.horizontal, 10)
                 }
             }
             
-            ZStack {
-                    Rectangle()
-                       .foregroundColor(.backdrop)
-                 HStack {
-                     Image(systemName: "magnifyingglass")
-                     TextField("Search", text: $searchText) {
-                         model.queryUsersByArtistOrTrackName(terms) { results in
-                             model.searchResults = results
-                             termsDisplay = terms
-                         }
-                     }
-                     .accentColor(.white)
-                     .keyboardType(.webSearch)
-                     .disableAutocorrection(true)
-                     .onChange(of: searchText) {
-                         if $0.isEmpty {
-                             model.searchResults = []
+            HStack {
+                 Image(systemName: "magnifyingglass")
+                 TextField("Search", text: $searchText) {
+                     termsDisplay = terms
+                     DatabaseManager.shared.queryUsersByArtistOrTrackName(terms) { terms, users in
+                         if self.terms == terms {
+                             model.searchResults = users
                          }
                      }
                  }
-                 .foregroundColor(.white)
-                 .padding(.leading, 13)
+                 .accentColor(.white)
+                 .keyboardType(.webSearch)
+                 .disableAutocorrection(true)
+                 .onChange(of: searchText) {
+                     if $0.isEmpty {
+                         model.searchResults = []
+                     }
+                 }
              }
+             .foregroundColor(.white)
+             .padding(.leading, 13)
              .frame(height: 40)
+             .background(Color.backdrop)
              .clipShape(Capsule())
-             .padding(5)
+             .padding([.horizontal, .bottom], 10)
         }
      }
  }

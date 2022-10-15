@@ -31,20 +31,25 @@ struct Home: View {
                     .listRowSeparatorTint(.clear)
                     .listRowBackground(Color.clear)
                     .listRowInsets(EdgeInsets(.zero))
+                    .border(.red)
                 TopArtistsView(artists: suggestedArtists)
                     .listRowSeparatorTint(.clear)
                     .listRowBackground(Color.clear)
                     .listRowInsets(EdgeInsets(.zero))
+                    .border(.red)
                 TopTracksView(tracks: suggestedTracks)
                     .listRowSeparatorTint(.clear)
                     .listRowBackground(Color.clear)
                     .listRowInsets(EdgeInsets(.zero))
+                    .border(.red)
 
                 SearchBar(searchText: $searchText)
                     .listRowSeparatorTint(.clear)
                     .listRowBackground(Color.clear)
                     .listRowInsets(EdgeInsets(.zero))
                     .id(bottomID)
+                    .padding(.bottom, 5)
+                    .border(.red)
             }
             .listStyle(.plain)
             .refreshable {
@@ -72,10 +77,13 @@ struct Home: View {
                 }
             }
             .onChange(of: model.searchResults) { _ in
-                proxy.scrollTo(bottomID)
+          
+                proxy.scrollTo(bottomID, anchor: .bottom)
                 
             }
+          
         }
+       // .animation(.spring(), value: model.searchResults.count)
         .navigationBarItems(trailing: CurrentUserSettings())
         .background(
             LinearGradient(colors: [

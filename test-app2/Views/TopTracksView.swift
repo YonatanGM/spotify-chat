@@ -22,7 +22,8 @@ struct TopTracksView: View {
             LazyHStack(alignment: .top) {
                 ForEach(tracks, id: \.id) { track in
                     TrackCard(track: track)
-
+                        .padding(.horizontal, 1)
+                        .padding(.leading, track.id == tracks.first?.id ? 10 : 0)
                 }
             }
         }

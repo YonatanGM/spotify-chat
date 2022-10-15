@@ -24,6 +24,7 @@ struct TopArtistsView: View {
             LazyHStack(spacing: 30) {
                 ForEach(artists, id: \.id) { artist in
                     ArtistCard(artist: artist)
+                        .padding(.leading, artist.id == artists.first?.id ? 10 : 0)
                         .scaleEffect(selectedTrackID == artist.id && isTapping ? 0.9 : 1)
                         .brightness(selectedTrackID == artist.id && isTapping ? 0.1 : 0)
                         .onTapGesture {
