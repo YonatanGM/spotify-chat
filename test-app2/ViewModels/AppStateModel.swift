@@ -13,6 +13,7 @@ import Combine
 import SpriteKit
 import SwiftyChat
 import AVKit
+import BetterSafariView
 
 
 class AppStateModel: ObservableObject {
@@ -88,17 +89,26 @@ class AppStateModel: ObservableObject {
         }
     }
     
-    func signIn(completion: @escaping (Bool) -> Void) -> WebView? {
-        guard let url = AuthManager.shared.signInUrl else {
-            return nil
-        }
-        return WebView(url: url) { [weak self] didStartAuthFlow in
-            DispatchQueue.main.async {
-                if didStartAuthFlow {
-                    self?.signInStatus = .signingIn
-                }
+    func signIn() -> WebAuthenticationSession {
+        return WebAuthenticationSession(
+            url: AuthManager.shared.signInUrl!,
+            callbackURLScheme: "chat-for-spotify-login"
+        ) { [weak self] callbackURL, error in
+            
+            print(callbackURL, error)
+            guard error == nil,
+                  let url = callbackURL,
+                  let code = URLComponents(string: url.absoluteString)?.queryItems?.first(where: {
+                      $0.name == "code" })?.value else {
+                return
             }
+            self?.signInStatus = .signingIn
+            AuthManager.shared.handleAuthorizationCodeFlow(code: code) { success in
+                print("user logged in and inserted in database")
+            }
+            
         }
+        .prefersEphemeralWebBrowserSession(false)
     }
     
     func signOut() {

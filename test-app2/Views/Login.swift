@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import BetterSafariView
 
 struct Login: View {
     
@@ -44,23 +45,31 @@ struct Login: View {
                 .brightness(isTapping ? 0.1 : 0)
                 .shadow(radius: 5)
             }
-            .sheet(isPresented: $presentLogin,
-                   onDismiss: {
-                // presentLoginFailedAlert = !AuthManager.shared.isSignedIn
-            }) {
-                model.signIn { success in
-                    presentLogin = false
-                    presentLoginFailedAlert = !success
-                }
-  
-                .overlay {
-                    if model.signInStatus == .signingIn {
-                        ProgressView()
-    
-                    }
-    
+            .webAuthenticationSession(isPresented: $presentLogin) {
+                model.signIn() 
+            }
+            .overlay {
+                if model.signInStatus == .signingIn {
+                    ProgressView()
                 }
             }
+//            .sheet(isPresented: $presentLogin,
+//                   onDismiss: {
+//                // presentLoginFailedAlert = !AuthManager.shared.isSignedIn
+//            }) {
+//                model.signIn { success in
+//                    presentLogin = false
+//                    presentLoginFailedAlert = !success
+//                }
+//
+//                .overlay {
+//                    if model.signInStatus == .signingIn {
+//                        ProgressView()
+//
+//                    }
+//
+//                }
+//            }
             .alert(isPresented: $presentLoginFailedAlert) {
                 Alert(title: Text("Oops"),
                       message: Text("Something went wrong when signing in."),

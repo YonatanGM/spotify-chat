@@ -21,7 +21,7 @@ final class AuthManager {
         static let clientID = "0a1b68ee7fdf43f287d15f82d31af2a7"
         static let clientSecret = "d446b893026d4021998ce6b161933057"
         static let tokenAPIURL = "https://accounts.spotify.com/api/token"
-        static let redirectURI = "https://localhost:5001/testapp-79467/us-central1/redirect"
+        static let redirectURI = "chat-for-spotify-login://callback"
         // add the scope for liking tracks here
         static let scopes = "user-read-email%20user-read-private%20user-top-read%20user-follow-modify%20user-follow-read%20user-library-read%20user-library-modify"
     }
@@ -231,13 +231,13 @@ extension AuthManager {
             guard let data = data, error == nil else {
                 // completion(.failure(APIError.failedToGetData))
                 completion(.failure(AuthError.failedToGetFirebaseToken))
-                print("etto,", error?.localizedDescription)
+                // print("etto,", error?.localizedDescription)
                 return
             }
             
             do {
                 let result = try JSONDecoder().decode([String: String].self, from: data)
-                print("tokkk, ", result["token"])
+                // print("tokkk, ", result["token"])
                 completion(.success(result["token"]!))
                 
             } catch {
@@ -317,7 +317,7 @@ extension AuthManager {
  
             AuthManager.shared.firebaseLogIn { result in
                 switch result {
-                case .failure(let error):
+                case .failure(_):
                     completion(false)
                     return
                     
