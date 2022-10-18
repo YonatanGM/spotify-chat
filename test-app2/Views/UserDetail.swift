@@ -14,9 +14,7 @@ struct UserDetail: View {
     let user: Message.ChatUserItem
     @State var onlineStatusHandle: UInt?
     @State var isOnline = false
-
     
-
     var gradient: LinearGradient {
         LinearGradient(colors: [
             Color(.sRGB,

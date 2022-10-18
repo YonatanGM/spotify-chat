@@ -13,18 +13,21 @@ struct DM: View {
     @State var didCreateGroup = false
     let recipient: Message.ChatUserItem
     
+    @State var navigateToChat = false
+    
     var group: Group? {
         guard let currentUserID = AuthManager.shared.currentUser?.uid else {
             return nil
         }
         return model.groups.filter({ $0.1.name == "\(recipient.id),\(currentUserID)"
             || $0.1.name == "\(currentUserID),\(recipient.id)" }).first?.1
+      
     }
     
     var buttonHeight = 25.0
     
     var body: some View {
-        NavigationLink(isActive: $model.showChat,
+        NavigationLink(isActive: $navigateToChat,
                        destination: {
                             if let groupID = group?.id {
                                 SwiftyChatView(groupID: groupID)
@@ -37,12 +40,13 @@ struct DM: View {
                                             if let messages = model.groups[groupID]?.messages, messages.isEmpty {
                                                 DatabaseManager.shared.deleteGroup(groupID) { _ in }
                                             }
-                                            
+
                                         }
                                     }
                             }
                        },
                        label: { EmptyView() })
+        .isDetailLink(false)
         HStack(alignment: .center, spacing: 0) {
             Image(systemName: "paperplane.fill")
                 .resizable()
@@ -71,7 +75,7 @@ struct DM: View {
                         if didCreateGroup == true {
                             print("created group with user \(recipient.id)")
                             self.didCreateGroup = true
-                            model.showChat = true
+                            navigateToChat = true
                         }
                     }
                 }
@@ -87,10 +91,10 @@ struct DM: View {
                 }
                 if group.pending == true {
                     DatabaseManager.shared.acceptPendingInvitation(group.id) { success in
-                        model.showChat = true
+                        navigateToChat = true
                     }
                 } else {
-                    model.showChat = true 
+                    navigateToChat = true
                 }
             }
         }

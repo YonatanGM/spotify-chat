@@ -21,6 +21,9 @@ public struct ChatView<Message: ChatMessage, User: ChatUser>: View {
     private var contactCellFooterSection: (ContactItem, Message) -> [ContactCellButton] = { _, _ in [] }
     private var onAttributedTextTappedCallback: () -> AttributedTextTappedCallback = { return AttributedTextTappedCallback() }
     private var onCarouselItemAction: (CarouselItemButton, Message) -> Void = { (_, _) in }
+    
+    public var onAvatarTapped: ((Message.User) -> Void)?
+    
     private var inset: EdgeInsets
     private var dateFormater: DateFormatter = DateFormatter()
     private var dateHeaderTimeInterval: TimeInterval
@@ -77,12 +80,13 @@ public struct ChatView<Message: ChatMessage, User: ChatUser>: View {
                     
                     if showDateheader {
                         Text(dateFormater.string(from: message.date))
-                            .font(.subheadline) 
+                            .font(.footnote)
+                            .fontWeight(.light)
                     }
                     
                     if shouldShowDisplayName {
                         Text(message.user.userName)
-                 
+                            .font(.footnote)
                             .multilineTextAlignment(.trailing)
                             .frame(
                                 maxWidth: geometry.size.width * (UIDevice.isLandscape ? 0.6 : 0.75),
@@ -111,14 +115,14 @@ public struct ChatView<Message: ChatMessage, User: ChatUser>: View {
                     }
                 }
             }
-            .onAppear {
-                proxy.scrollTo("bottom", anchor: .top)
-                /*
-                DispatchQueue.main.async() {
-                    proxy.scrollTo("bottom", anchor: .bottom)
-                }
-                */
-            }
+//            .onAppear {
+//                 proxy.scrollTo("bottom", anchor: .top)
+//                /*
+//                DispatchQueue.main.async() {
+//                    proxy.scrollTo("bottom", anchor: .bottom)
+//                }
+//                */
+//            }
             .iOS {
                 // Auto Scroll with Keyboard Notification
                 $0.onReceive(
@@ -167,7 +171,8 @@ internal extension ChatView {
                 message: message,
                 showAvatarForMessage: shouldShowAvatarForMessage(
                     forThisMessage: avatarShow
-                )
+                ),
+                onAvatarTapped: onAvatarTapped
             )
         )
         .modifier(MessageHorizontalSpaceModifier(messageKind: message.messageKind, isSender: message.isSender))
@@ -235,6 +240,7 @@ public extension ChatView {
         scrollToBottom: Binding<Bool> = .constant(false),
         dateHeaderTimeInterval: TimeInterval = 3600,
         shouldShowGroupChatHeaders: Bool = false,
+        onAvatarTapped: ((Message.User) -> Void)?,
         inputView: @escaping () -> AnyView,
         inset: EdgeInsets = .init()
     ) {
@@ -248,7 +254,9 @@ public extension ChatView {
         self.dateFormater.doesRelativeDateFormatting = true
         self.dateHeaderTimeInterval = dateHeaderTimeInterval
         self.shouldShowGroupChatHeaders = shouldShowGroupChatHeaders
+        
         self.onMessageCellAppeared = onMessageCellAppeared
+        self.onAvatarTapped = onAvatarTapped
         
     }
 }

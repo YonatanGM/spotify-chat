@@ -37,7 +37,7 @@ struct MainView: View {
                 .edgesIgnoringSafeArea(.all)
             }
         }
-        .navigationViewStyle(StackNavigationViewStyle())
+        .navigationViewStyle(.stack)
     }
 }
 

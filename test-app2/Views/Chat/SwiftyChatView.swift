@@ -25,8 +25,19 @@ struct SwiftyChatView: View {
     
     @State private var navigationController: UINavigationController?
     
+    @State private var navigateToUserDetail = false
+    @State private var tappedUser: Message.ChatUserItem?
+    
     var body: some View {
-       
+        NavigationLink(isActive: $navigateToUserDetail,
+                       destination: {
+                            if let tappedUser = tappedUser {
+                                UserDetail(user: tappedUser)
+                            }
+                
+                        },
+                       label: { EmptyView() })
+        
         if model.groups[groupID]?.isDm == false {
             VStack(spacing: 0) {
                 HStack {
@@ -69,6 +80,9 @@ struct SwiftyChatView: View {
 
                 }
                 .edgesIgnoringSafeArea(.all)
+                .onAppear {
+                    scrollToBottom = true
+                }
             )
             .toolbar {
                 ToolbarItem(placement: .principal) {
@@ -76,7 +90,6 @@ struct SwiftyChatView: View {
                     UserIconsToolbar(users: model.groups[groupID]?.users ?? [])
                         .frame(width: 150, height: 25)
                         .accessibilityAddTraits(.isHeader)
-                    // .border(.red)
                 }
             }
             .navigationBarItems(trailing:
@@ -115,8 +128,7 @@ struct SwiftyChatView: View {
                 }
             )
         } else if model.groups[groupID]?.isDm == true {
-            chatView
-
+            chatViewDM
                 .background(
                     ZStack {
                         LinearGradient(colors: [
@@ -143,6 +155,9 @@ struct SwiftyChatView: View {
                     .ignoresSafeArea()
                 )
                 .navigationBarTitleDisplayMode(.inline)
+                .onAppear {
+                    scrollToBottom = true
+                }
                 .toolbar {
                     ToolbarItem(placement: .principal) {
                         HStack {
@@ -230,6 +245,98 @@ struct SwiftyChatView: View {
             },
             scrollToBottom: $scrollToBottom,
             shouldShowGroupChatHeaders: true,
+            onAvatarTapped: { tappedUser in
+                
+                DatabaseManager.shared.getUser(with: tappedUser.id) { result in
+                    switch result {
+                    case .success(let user):
+                        self.tappedUser = user
+                        navigateToUserDetail = true
+                    case .failure(let error):
+                        print("couldn't get user with id \(tappedUser.id): \(error.localizedDescription)")
+                    }
+                }
+            },
+            inputView: {
+                
+                InputView(
+                    message: $message,
+                    isEditing: $isEditing,
+                    placeholder: "Type something",
+                    onCommit: { messageKind in
+                        if let currentChatUser = model.currentUser {
+                            // get back to this
+                            
+                            DatabaseManager.shared.sendMessage(message: .init(user: currentChatUser,
+                                                                              messageKind: messageKind,
+                                                                              isSender: true),
+                                                                              to: groupID)
+                        }
+                        withAnimation(.spring(response: 0.2)) {
+                            scrollToBottom = true
+                        }
+                    }
+                )
+                .padding(.leading, 10)
+                .padding(.trailing, 20)
+                .embedInAnyView()
+            })
+        
+        
+        // ▼ Optional, Present context menu when cell long pressed
+        .messageCellContextMenu { message -> AnyView in
+            switch message.messageKind {
+            case .text(let text):
+                return Button(action: {
+                    print("Copy Context Menu tapped!!")
+                    UIPasteboard.general.string = text
+                }) {
+                    Text("Copy")
+                    Image(systemName: "doc.on.doc")
+                }.embedInAnyView()
+            default:
+                // If you don't want to implement contextMenu action
+                // for a specific case, simply return EmptyView like below;
+                return EmptyView().embedInAnyView()
+            }
+        }
+        // ▼ Required
+        .environmentObject(ChatMessageCellStyle.basicStyle)
+    }
+    
+    
+    private var chatViewDM: some View {
+        
+        ChatView<Message.ChatMessageItem, Message.ChatUserItem>(
+            messages: Binding(get: { model.groups[groupID]?.messages ?? [] },
+                              set: { _ in }),
+            onMessageCellAppeared: { message in
+                // hope this works fine
+                if let index = (model.groups[groupID]?.messages.firstIndex { $0.id == message.id }),
+                    let endIndex = model.groups[groupID]?.messages.endIndex {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + Double(index) / Double(endIndex)) {
+                        if let lastSeenMessageID = model.groups[groupID]?.lastSeenMessageID,
+                           message.id > lastSeenMessageID {
+                            DatabaseManager.shared.setLastSeen(for: groupID, messageID: message.id)
+                            // model.groups[groupID]?.lastSeenMessageID = message.id
+                        }
+                    }
+                }
+            },
+            scrollToBottom: $scrollToBottom,
+            shouldShowGroupChatHeaders: false,
+            onAvatarTapped: { tappedUser in
+                
+                DatabaseManager.shared.getUser(with: tappedUser.id) { result in
+                    switch result {
+                    case .success(let user):
+                        self.tappedUser = user
+                        navigateToUserDetail = true
+                    case .failure(let error):
+                        print("couldn't get user with id \(tappedUser.id): \(error.localizedDescription)")
+                    }
+                }
+            },
             inputView:  {
                 
                 InputView(
@@ -369,3 +476,42 @@ public struct InputView: View {
     }
 }
 
+extension SwiftyChatView {
+    
+    private var chatMessageStyle: ChatMessageCellStyle {
+        ChatMessageCellStyle(
+            incomingTextStyle: .init(
+                textStyle: .init(textColor: .white),
+                textPadding: 12,
+                attributedTextStyle: .init(textColor: .black),
+                cellBackgroundColor: Color.backdrop,
+                cellBorderWidth: 0,
+                cellShadowRadius: 0,
+                cellRoundedCorners: [.allCorners]
+            ),
+            outgoingTextStyle: .init(
+                textStyle: .init(textColor: .white),
+                textPadding: 12,
+                cellBackgroundColor: Color.backdrop,
+                cellBorderWidth: 0,
+                cellShadowRadius: 0,
+                cellRoundedCorners: [.allCorners]
+                
+            ),
+            incomingAvatarStyle: .init(imageStyle: .init(imageSize: CGSize(width: 32, height: 32),
+                                                         cornerRadius: 16,
+                                                         borderColor: Color.clear,
+                                                         borderWidth: 0,
+                                                         shadowRadius: 5,
+                                                         shadowColor: Color.clear)),
+            outgoingAvatarStyle: .init(imageStyle: .init(imageSize: CGSize(width: 32, height: 32),
+                                                         cornerRadius: 16,
+                                                         borderColor: Color.clear,
+                                                         borderWidth: 0,
+                                                         shadowRadius: 5,
+                                                         shadowColor: Color.clear))
+        )
+    }
+    
+    
+}

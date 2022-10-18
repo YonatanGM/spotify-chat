@@ -10,8 +10,7 @@ import SwiftUI
 struct ConversationsView: View {
     @EnvironmentObject var model: AppStateModel
     @State var isTapping = false
-    
-    @State var selectedGroup: String?
+
     
     
     
@@ -29,7 +28,7 @@ struct ConversationsView: View {
     var body: some View {
         NavigationLink(isActive: $model.showChat,
                        destination: {
-                            if let selectedGroup = selectedGroup {
+                            if let selectedGroup = model.selectedGroup {
                                 SwiftyChatView(groupID: selectedGroup)
                             }
                         },
@@ -38,14 +37,14 @@ struct ConversationsView: View {
         List {
             ForEach(model.groups.sorted { $0.0 > $1.0 }, id: \.key) { id, group in
                 ConversationGroupRow(group: group)
-                    .listRowBackground(Color.backdrop.brightness(selectedGroup == group.id && isTapping ? 0.3: 0))
+                    .listRowBackground(Color.backdrop.brightness(model.selectedGroup == group.id && isTapping ? 0.3: 0))
                     .listRowInsets(.init(top: 10, leading: 10, bottom: 10, trailing: 10))
-                    .scaleEffect(selectedGroup == group.id && isTapping ? 0.9 : 1)
+                    .scaleEffect(model.selectedGroup == group.id && isTapping ? 0.9 : 1)
                     .contentShape(Rectangle())
                     .overlay(alignment: .trailing) {
                         if group.pending {
                             Button("Accept") {
-                                selectedGroup = group.id
+                                model.selectedGroup = group.id
                                 DatabaseManager.shared.acceptPendingInvitation(group.id) { _ in }
                             }
                             .buttonStyle(.bordered)
@@ -56,7 +55,7 @@ struct ConversationsView: View {
                     .overlay(alignment: .trailing) {
                         if let unseenCount = group.unseenCount, unseenCount > 0 {
                             Button("\(unseenCount)") {
-                                selectedGroup = group.id
+                                model.selectedGroup = group.id
                                 DatabaseManager.shared.acceptPendingInvitation(group.id) { _ in }
                             }
                             .buttonStyle(.bordered)
@@ -66,7 +65,7 @@ struct ConversationsView: View {
                         }
                     }
                     .onTapGesture {
-                        selectedGroup = group.id
+                        model.selectedGroup = group.id
                         // animation
                         withAnimation(.easeIn(duration: 0.1)) {
                             isTapping = true

@@ -55,6 +55,8 @@ class AppStateModel: ObservableObject {
     @Published var showChat = false
     
     
+    @Published var selectedGroup: String?
+    
     private var cancellables = Set<AnyCancellable>()
     private var userObserverHandle: UInt?
 

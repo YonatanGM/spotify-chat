@@ -33,6 +33,8 @@ internal struct AvatarModifier<Message: ChatMessage, User: ChatUser>: ViewModifi
     
     public let showAvatarForMessage: Bool
     
+    public var onAvatarTapped: ((Message.User) -> Void)?
+    
     private var alignToMessageBottom: some View {
         VStack {
             Spacer()
@@ -55,27 +57,35 @@ internal struct AvatarModifier<Message: ChatMessage, User: ChatUser>: ViewModifi
         }
     }
     
+    
+    
     private var avatar: some View {
         let imageStyle = currentStyle.imageStyle
-        return avatarImage
-            .frame(
-                width: imageStyle.imageSize.width,
-                height: imageStyle.imageSize.height
-            )
-            .scaledToFit()
-            .cornerRadius(imageStyle.cornerRadius)
-            .overlay(
-                RoundedRectangle(cornerRadius: imageStyle.cornerRadius)
-                    .stroke(
-                        showAvatarForMessage ? imageStyle.borderColor: Color.clear,
-                        lineWidth: imageStyle.borderWidth
-                    )
-                    .shadow(
-                        color: showAvatarForMessage ? imageStyle.shadowColor: Color.clear,
-                        radius: imageStyle.shadowRadius
-                    )
-            )
-
+        return Button {
+            print("tapped")
+            onAvatarTapped?(message.user)
+        } label: {
+            avatarImage
+                .frame(
+                    width: imageStyle.imageSize.width,
+                    height: imageStyle.imageSize.height
+                )
+                .scaledToFit()
+                .cornerRadius(imageStyle.cornerRadius)
+                .overlay(
+                    RoundedRectangle(cornerRadius: imageStyle.cornerRadius)
+                        .stroke(
+                            showAvatarForMessage ? imageStyle.borderColor: Color.clear,
+                            lineWidth: imageStyle.borderWidth
+                        )
+                        .shadow(
+                            color: showAvatarForMessage ? imageStyle.shadowColor: Color.clear,
+                            radius: imageStyle.shadowRadius
+                        )
+                )
+        }
+        .buttonStyle(.borderless)
+        .disabled(message.isSender)
     }
     
     private var blankAvatar: some View {
