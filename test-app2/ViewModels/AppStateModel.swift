@@ -52,6 +52,7 @@ class AppStateModel: ObservableObject {
     @Published var likedTracks = [String: Bool]()
     @Published var followedUsers = [String: Bool]()
     
+    @Published var showChat = false
     
     
     private var cancellables = Set<AnyCancellable>()
@@ -211,6 +212,7 @@ extension AppStateModel {
             self?.groups[groupID] = nil
             // stop observing messages in the room, good!
             DatabaseManager.shared.removeObserver(with: "conversations/\(groupID)")
+            DatabaseManager.shared.removeObserver(with: "Group/\(groupID)")
             // DatabaseManager.shared.removeObserver(with: "Group/\(groupID)")
         }
         

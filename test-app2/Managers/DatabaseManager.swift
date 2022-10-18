@@ -478,7 +478,7 @@ extension DatabaseManager {
                                                                    "name": user.userName,
                                                                    "photoURL":  user.avatarURL?.absoluteString]
                      
-                     
+                     childUpdates["Group/\(groupID)/invitees/\(currentUserID)"] = true
                      childUpdates["userInfo/\(currentUserID)/Groups/\(groupID)"] = true
                      childUpdates["userInfo/\(currentUserID)/lastSeen/\(groupID)"] = "-"
                      self?.database.updateChildValues(childUpdates) { error, _ in
@@ -498,6 +498,8 @@ extension DatabaseManager {
          completion(false)
          return
       }
+//      removeObserver(with: "Group/\(groupID)")
+//      removeObserver(with: "conversations/\(groupID)")
       let updates: [String: Any?] = [
          "userInfo/\(currentUserID)/Groups/\(groupID)": nil,
          "userInfo/\(currentUserID)/lastSeen/\(groupID)": nil,
@@ -521,7 +523,9 @@ extension DatabaseManager {
          completion(false)
          return
       }
-      
+//      removeObserver(with: "conversations/\(groupID)")
+//      removeObserver(with: "Group/\(groupID)")
+    
       var updates = [String: Any?]()
       // updates["Group/\(group.id)"] = nil
       updates.updateValue(nil, forKey: "userInfo/\(currentUserID)/Groups/\(groupID)")
@@ -533,12 +537,14 @@ extension DatabaseManager {
       updates.updateValue(nil, forKey: "conversations_ids/\(groupID)")
       database.child("Group/\(groupID)/invitees").observeSingleEvent(of: .value) { [weak self] snapshot in
          if let invitees = snapshot.value as? [String: Any] {
+           
             for id in invitees.keys {
+               // print(id)
                updates.updateValue(nil, forKey: "userInfo/\(id)/Groups/\(groupID)")
                updates.updateValue(nil, forKey: "userInfo/\(id)/lastSeen/\(groupID)")
             }
          }
-         print(updates)
+         // print(updates)
          self?.database.updateChildValues(updates) { error, _ in
             guard error == nil else {
                completion(false)

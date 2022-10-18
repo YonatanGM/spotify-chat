@@ -19,7 +19,7 @@ struct SwiftyChatView: View {
     @State private var isEditing = false
     
     @State var isTapping: Bool = false
-    @Binding var showChat: Bool
+
     
     @State private var navigationControllerDefault: UINavigationController?
     
@@ -87,7 +87,7 @@ struct SwiftyChatView: View {
                             Button(role: .destructive, action: {
                                 DatabaseManager.shared.deleteGroup(groupID) { success in
                                     if success {
-                                        showChat = false
+                                        model.showChat = false
                                     }
                                 }
                             }) {
@@ -97,7 +97,7 @@ struct SwiftyChatView: View {
                             Button(role: .destructive, action: {
                                 DatabaseManager.shared.leaveGroup(groupID) { success in
                                     if success {
-                                        showChat = false
+                                        model.showChat = false
                                     }
                                 }
                             }) {
@@ -114,7 +114,7 @@ struct SwiftyChatView: View {
                     
                 }
             )
-        } else {
+        } else if model.groups[groupID]?.isDm == true {
             chatView
 
                 .background(
@@ -163,7 +163,7 @@ struct SwiftyChatView: View {
                         Button(role: .destructive, action: {
                             DatabaseManager.shared.deleteGroup(groupID) { success in
                                 if success {
-                                    showChat = false
+                                    model.showChat = false
                                 }
                             }
                         }) {
@@ -178,6 +178,33 @@ struct SwiftyChatView: View {
                     }
                 )
 
+        } else {
+            ZStack {
+                LinearGradient(colors: [
+                    Color(.sRGB,
+                          red: Double(20) / 255,
+                          green: Double(20) / 255,
+                          blue: Double(20) / 255,
+                          opacity: 0.75),
+                    Color(.sRGB,
+                          red: Double(10) / 255,
+                          green: Double(10) / 255,
+                          blue: Double(10) / 255,
+                          opacity: 1)
+                    
+                ], startPoint: .topLeading, endPoint: .center)
+                
+                LinearGradient(colors: [
+                    Color.clear,
+                    Color.backdrop
+                    
+                ], startPoint: .center, endPoint: .bottom)
+     
+            }
+            .ignoresSafeArea()
+            .onAppear {
+                model.showChat = false
+            }
         }
         
     }

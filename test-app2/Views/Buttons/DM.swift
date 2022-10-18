@@ -9,26 +9,25 @@ import SwiftUI
 
 struct DM: View {
     @EnvironmentObject var model: AppStateModel
-    @State var showChat = false
     @State var isTapping: Bool = false
     @State var didCreateGroup = false
     let recipient: Message.ChatUserItem
     
-    var groupID: String? {
+    var group: Group? {
         guard let currentUserID = AuthManager.shared.currentUser?.uid else {
             return nil
         }
         return model.groups.filter({ $0.1.name == "\(recipient.id),\(currentUserID)"
-            || $0.1.name == "\(currentUserID),\(recipient.id)" }).first?.0
+            || $0.1.name == "\(currentUserID),\(recipient.id)" }).first?.1
     }
     
     var buttonHeight = 25.0
     
     var body: some View {
-        NavigationLink(isActive: $showChat,
+        NavigationLink(isActive: $model.showChat,
                        destination: {
-                            if let groupID = groupID {
-                                SwiftyChatView(groupID: groupID, showChat: $showChat)
+                            if let groupID = group?.id {
+                                SwiftyChatView(groupID: groupID)
                                     .onDisappear {
                                         // if it's a new group and the user navigates back to this view
                                         // without sending any message
@@ -58,6 +57,27 @@ struct DM: View {
         .scaleEffect(isTapping ? 0.9 : 1)
         .brightness(isTapping ? 0.1 : 0)
         .onTapGesture {
+            guard let group = group else {
+                // create the group
+                // and navigate to the chat view
+                withAnimation(.easeIn(duration: 0.1)) {
+                    isTapping = true
+                }
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                    withAnimation {
+                        isTapping = false
+                    }
+                    DatabaseManager.shared.directMessage(user: recipient) { didCreateGroup in
+                        if didCreateGroup == true {
+                            print("created group with user \(recipient.id)")
+                            self.didCreateGroup = true
+                            model.showChat = true
+                        }
+                    }
+                }
+                return
+            }
+
             withAnimation(.easeIn(duration: 0.1)) {
                 isTapping = true
             }
@@ -65,18 +85,12 @@ struct DM: View {
                 withAnimation {
                     isTapping = false
                 }
-                if groupID == nil {
-                    // create the group
-                    // and navigate to the chat view
-                    DatabaseManager.shared.directMessage(user: recipient) { didCreateGroup in
-                        if didCreateGroup == true {
-                            print("created group with user \(recipient.id)")
-                            self.didCreateGroup = true
-                            showChat = true
-                        }
+                if group.pending == true {
+                    DatabaseManager.shared.acceptPendingInvitation(group.id) { success in
+                        model.showChat = true
                     }
                 } else {
-                    showChat = true 
+                    model.showChat = true 
                 }
             }
         }

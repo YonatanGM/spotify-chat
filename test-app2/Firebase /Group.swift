@@ -30,7 +30,8 @@ struct Group {
 extension Group {
     
     var isDm: Bool {
-        recipient != nil
+        return recipient != nil
+        
     }
     
     var otherUser: UserInfo? {

@@ -12,7 +12,7 @@ struct ConversationsView: View {
     @State var isTapping = false
     
     @State var selectedGroup: String?
-    @State var showChat = false
+    
     
     
     @State var rowTranslationOffset = 0.0
@@ -27,10 +27,10 @@ struct ConversationsView: View {
     }
     
     var body: some View {
-        NavigationLink(isActive: $showChat,
+        NavigationLink(isActive: $model.showChat,
                        destination: {
                             if let selectedGroup = selectedGroup {
-                                SwiftyChatView(groupID: selectedGroup, showChat: $showChat)
+                                SwiftyChatView(groupID: selectedGroup)
                             }
                         },
                        label: { EmptyView() })
@@ -76,14 +76,14 @@ struct ConversationsView: View {
                                 isTapping = false
                             }
                             if group.pending == false {
-                                showChat = true
+                                model.showChat = true
                             }
                         }
                     }
                     .swipeActions(edge: .trailing) {
                         if let currentUserID = AuthManager.shared.currentUser?.uid {
                             Button {
-                                if currentUserID == group.admin || group.pending {
+                                if currentUserID == group.admin || group.isDm {
                                      DatabaseManager.shared.deleteGroup(id) { _ in }
                                  } else {
                                      DatabaseManager.shared.leaveGroup(id) { _ in }
