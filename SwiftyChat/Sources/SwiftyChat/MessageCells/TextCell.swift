@@ -22,7 +22,7 @@ internal struct TextCell<Message: ChatMessage>: View {
     }
     
     private let enabledDetectors: [DetectorType] = [
-        .address, .date, .phoneNumber, .url, .transitInformation
+        // .address, .date, .phoneNumber, .url, .transitInformation
     ]
     
     private var maxWidth: CGFloat {

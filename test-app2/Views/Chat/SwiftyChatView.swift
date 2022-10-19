@@ -262,7 +262,7 @@ struct SwiftyChatView: View {
                 InputView(
                     message: $message,
                     isEditing: $isEditing,
-                    placeholder: "Type something",
+                    placeholder: "Message",
                     onCommit: { messageKind in
                         if let currentChatUser = model.currentUser {
                             // get back to this
@@ -342,7 +342,7 @@ struct SwiftyChatView: View {
                 InputView(
                     message: $message,
                     isEditing: $isEditing,
-                    placeholder: "Type something",
+                    placeholder: "Message",
                     onCommit: { messageKind in
                         if let currentChatUser = model.currentUser {
                             // get back to this
@@ -476,42 +476,3 @@ public struct InputView: View {
     }
 }
 
-extension SwiftyChatView {
-    
-    private var chatMessageStyle: ChatMessageCellStyle {
-        ChatMessageCellStyle(
-            incomingTextStyle: .init(
-                textStyle: .init(textColor: .white),
-                textPadding: 12,
-                attributedTextStyle: .init(textColor: .black),
-                cellBackgroundColor: Color.backdrop,
-                cellBorderWidth: 0,
-                cellShadowRadius: 0,
-                cellRoundedCorners: [.allCorners]
-            ),
-            outgoingTextStyle: .init(
-                textStyle: .init(textColor: .white),
-                textPadding: 12,
-                cellBackgroundColor: Color.backdrop,
-                cellBorderWidth: 0,
-                cellShadowRadius: 0,
-                cellRoundedCorners: [.allCorners]
-                
-            ),
-            incomingAvatarStyle: .init(imageStyle: .init(imageSize: CGSize(width: 32, height: 32),
-                                                         cornerRadius: 16,
-                                                         borderColor: Color.clear,
-                                                         borderWidth: 0,
-                                                         shadowRadius: 5,
-                                                         shadowColor: Color.clear)),
-            outgoingAvatarStyle: .init(imageStyle: .init(imageSize: CGSize(width: 32, height: 32),
-                                                         cornerRadius: 16,
-                                                         borderColor: Color.clear,
-                                                         borderWidth: 0,
-                                                         shadowRadius: 5,
-                                                         shadowColor: Color.clear))
-        )
-    }
-    
-    
-}

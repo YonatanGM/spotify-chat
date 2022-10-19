@@ -44,19 +44,29 @@ public struct ChatView<Message: ChatMessage, User: ChatUser>: View {
         GeometryReader { geometry in
             ScrollView(.vertical, showsIndicators: false) {
                 chatView(in: geometry)
-                    .padding(.top)
+                    .padding(.top, 2 * messageEditorHeight)
             }
+//            .background(Color.red)
+            .offset(y: -messageEditorHeight - 10)
+
+ 
+            
             .overlay(
+
+                
                 inputView()
                     .onPreferenceChange(ContentSizeThatFitsKey.self) {
                         contentSizeThatFits = $0
                     }
-                    .frame(height: messageEditorHeight)
-                    .padding(15)
+                    
+                    .frame(height: messageEditorHeight + 10)
+               
+                    //.background(Color.white.blendMode(.destinationOver))
                 , alignment: .bottom)
                 // PIPVideoCell<Message>()
             .iOS { $0.keyboardAwarePadding() }
         }
+        .padding(.bottom)
         .environmentObject(DeviceOrientationInfo())
         .environmentObject(VideoManager<Message>())
         .edgesIgnoringSafeArea(.bottom)
@@ -97,32 +107,31 @@ public struct ChatView<Message: ChatMessage, User: ChatUser>: View {
                     chatMessageCellContainer(in: geometry.size, with: message, with: shouldShowDisplayName)
                 }
                 Spacer()
-                    .frame(height: messageEditorHeight)
-                    .border(Color.red)
+                    .frame(height: 100)
                     .id("bottom")
                    
             }
-            .padding(.bottom, 30)
+            .padding(.bottom, messageEditorHeight)
             .foregroundColor(.white)
             // .padding(EdgeInsets(top: inset.top, leading: inset.leading, bottom: 0, trailing: inset.trailing))
             .onChange(of: scrollToBottom) { value in
                 if value {
                     withAnimation(.easeIn(duration: 0.2)) {
-                        proxy.scrollTo("bottom", anchor: .top)
+                        proxy.scrollTo("bottom", anchor: .bottom)
                     }
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
                         scrollToBottom = false
                     }
                 }
             }
-//            .onAppear {
-//                 proxy.scrollTo("bottom", anchor: .top)
-//                /*
-//                DispatchQueue.main.async() {
-//                    proxy.scrollTo("bottom", anchor: .bottom)
-//                }
-//                */
-//            }
+            .onAppear {
+                 proxy.scrollTo("bottom", anchor: .top)
+                /*
+                DispatchQueue.main.async() {
+                    proxy.scrollTo("bottom", anchor: .bottom)
+                }
+                */
+            }
             .iOS {
                 // Auto Scroll with Keyboard Notification
                 $0.onReceive(
