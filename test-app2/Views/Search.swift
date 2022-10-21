@@ -8,11 +8,11 @@
 import Foundation
 import UIKit
 import SwiftUI
+import SwiftyChat
 
 struct SearchBar: View {
     @Binding var searchText: String
     @EnvironmentObject var model: AppStateModel
-    
     var searchResultsDisplay: [Message.ChatUserItem] {
         guard let currentUserID = AuthManager.shared.currentUser?.uid else { return [] }
         return model.searchResults.filter { foundUser in
@@ -79,9 +79,11 @@ struct SearchBar: View {
                              model.searchResults = users
                          }
                      }
+                     
                  }
                  .accentColor(.white)
                  .keyboardType(.webSearch)
+                 .submitLabel(.search)
                  .disableAutocorrection(true)
                  .onChange(of: searchText) {
                      if $0.isEmpty {
@@ -95,8 +97,9 @@ struct SearchBar: View {
              .background(Color.backdrop)
              .clipShape(Capsule())
              .padding([.horizontal, .bottom], 10)
+             
         }
+   
      }
  }
-
 
