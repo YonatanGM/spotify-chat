@@ -175,8 +175,6 @@ struct UserDetail: View {
                             .padding(.leading)
                         TopArtistsView(artists: artists)
                     }
-                    
-                  
                 }
                 if let tracks = user.topTracks?.items {
                     VStack(alignment: .leading, spacing: 10) {

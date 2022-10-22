@@ -36,11 +36,11 @@ struct CreateGroup: View {
                 }
                 .padding([.top, .trailing], 10)
                 
-                VStack(alignment: .leading, spacing: 5) {
+                VStack(alignment: .leading, spacing: 7.5) {
                     Text("Name of group")
-                        .fontWeight(.light)
-                        .font(.title) +
-                    Text(" *").fontWeight(.light).font(.title2).baselineOffset(4).foregroundColor(name.isEmpty || name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? .white : .clear)
+                        // .fontWeight(.light)
+                        .font(Font.custom("Modulus-Bold", size: 30)) +
+                    Text("*").font(.title).fontWeight(.light).baselineOffset(4).foregroundColor(name.isEmpty || name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? .white : .clear)
                     TextField("", text: $name) {}
                         .accentColor(.white)
                         .disableAutocorrection(true)

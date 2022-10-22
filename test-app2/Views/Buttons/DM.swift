@@ -52,9 +52,9 @@ struct DM: View {
                 .resizable()
                 .scaledToFit()
                 .frame(height: buttonHeight)
-                .scaleEffect(0.5)
+                .scaleEffect(0.7)
         }
-        .padding(buttonHeight / 5)
+        .padding(buttonHeight / 2)
         .foregroundColor(.white)
         .background(Color.backdrop)
         .clipShape(Capsule())

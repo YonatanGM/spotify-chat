@@ -26,7 +26,9 @@ struct SearchBar: View {
             .filter { !$0.isEmpty }
             .filter { !$0.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
             .map {
-                $0.lowercased().replacingOccurrences(of: "[\\[\\].$#]", with: " ", options: .regularExpression)
+                $0.lowercased()
+                    .trimmingCharacters(in: .whitespacesAndNewlines)
+                    .replacingOccurrences(of: "[\\[\\].$#]", with: " ", options: .regularExpression)
             }
     }
     
@@ -46,30 +48,30 @@ struct SearchBar: View {
                   
                 }
                 .animation(.spring(), value: model.searchResults.count)
-                if !termsDisplay.isEmpty {
-                    ScrollView(.horizontal, showsIndicators: false) {
-                        HStack {
-                            ForEach(termsDisplay.unique, id: \.self) { term in
-                                HStack {
-                                    Text(term)
-                                        .font(.body)
-                                }
-                                .padding([.horizontal], 10)
-                                .padding([.vertical], 7.5)
-                                .foregroundColor(.white)
-                                .background(
-                                    Color.backdrop
-                                )
-                                .clipShape(Capsule())
-                            }
-                        }
-                        .animation(.spring(), value: termsDisplay)
-                    }
-                    .clipShape(Capsule())
-                    .padding(.horizontal, 10)
-                }
             }
-            
+            if !termsDisplay.isEmpty {
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack {
+                        ForEach(termsDisplay.unique, id: \.self) { term in
+                            HStack {
+                                Text(term)
+                                    .font(.body)
+                            }
+                            .padding([.horizontal], 10)
+                            .padding([.vertical], 7.5)
+                            .foregroundColor(.white)
+                            .background(
+                                Color.backdrop
+                            )
+                            .clipShape(Capsule())
+                        }
+                    }
+                    .animation(.spring(), value: termsDisplay)
+                }
+                .clipShape(Capsule())
+                .padding(.horizontal, 10)
+            }
+
             HStack {
                  Image(systemName: "magnifyingglass")
                  TextField("Search", text: $searchText) {
@@ -88,6 +90,7 @@ struct SearchBar: View {
                  .onChange(of: searchText) {
                      if $0.isEmpty {
                          model.searchResults = []
+                         termsDisplay = []
                      }
                  }
              }

@@ -36,7 +36,9 @@ struct UserCardViewGroupCreation: View {
             .filter { !$0.isEmpty }
             .filter { !$0.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
             .map {
-                $0.lowercased().replacingOccurrences(of: "[\\[\\].$#]", with: " ", options: .regularExpression)
+                $0.lowercased()
+                    .trimmingCharacters(in: .whitespacesAndNewlines)
+                    .replacingOccurrences(of: "[\\[\\].$#]", with: " ", options: .regularExpression)
             }
     }
     
@@ -90,77 +92,80 @@ struct UserCardViewGroupCreation: View {
             }
             .frame(height: 50)
             .padding([.horizontal], 10)
-            
-            Text("Find")
-                .fontWeight(.light)
-                .font(.title)
-                .padding([.horizontal], 10)
+//            
+//            Text("Find")
+//                .font(Font.custom("Modulus", size: 30))
+//                .padding([.horizontal], 10)
             
             // search bar
-            HStack {
-                Image(systemName: "magnifyingglass")
-                TextField("Search", text: $searchText) {
-                    // guard termsDisplay != terms else { return }
-                    termsDisplay = terms
-                    DatabaseManager.shared.queryUsersByArtistOrTrackName(terms) { terms, users in
-                        if self.terms == terms {
-                            searchResults = users
-                        }
-                    }
-                }
-                .accentColor(.white)
-                .keyboardType(.webSearch)
-                .disableAutocorrection(true)
-                .onChange(of: searchText) {
-                    if $0.isEmpty {
-                        searchResults = []
-                        termsDisplay = []
-                    }
-                }
-            }
-            .foregroundColor(.white)
-            .padding(.leading, 13)
-            .frame(height: 40)
-            .background(Color.backdrop)
-            .clipShape(Capsule())
-            .padding([.horizontal], 10)
-            
-            // search terms
-            if !termsDisplay.isEmpty {
-                ScrollView(.horizontal, showsIndicators: false) {
-                    HStack {
-                        ForEach(termsDisplay.unique, id: \.self) { term in
-                            Button(term){}
-                                .buttonStyle(.bordered)
-                                .buttonBorderShape(.capsule)
-                                .foregroundColor(.white)
-                                .allowsHitTesting(false)
-                        }
-                        
-                    }
-                    .animation(.spring(), value: termsDisplay)
-                }
-                .clipShape(Capsule())
-                .padding(.leading, 10)
-                .padding(.vertical, 5)
-            }
-            
-            // search results
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack {
-                    ForEach(searchResultsDisplay, id: \.id) { user in
-                        UserCardGroupCreation(user: user, namespace: animation)
-                            .padding(.horizontal, 1)
-                             .padding(.leading, searchResultsDisplay.first?.id == user.id ? 10 : 0)
-                            .onTapGesture {
-                                withAnimation(.spring(response: 0.5)) {
-                                    addedUsers.append(user)
-                                }
+            VStack(spacing: 7.5) {
+                // search results
+                if !searchResultsDisplay.isEmpty {
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack {
+                            ForEach(searchResultsDisplay, id: \.id) { user in
+                                UserCardGroupCreation(user: user, namespace: animation)
+                                    .padding(.horizontal, 1)
+                                     .padding(.leading, searchResultsDisplay.first?.id == user.id ? 10 : 0)
+                                    .onTapGesture {
+                                        withAnimation(.spring(response: 0.5)) {
+                                            addedUsers.append(user)
+                                        }
+                                    }
                             }
+                        }
+
                     }
                 }
-
+                // search terms
+                if !termsDisplay.isEmpty {
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack {
+                            ForEach(termsDisplay.unique, id: \.self) { term in
+                                Button(term){}
+                                    .buttonStyle(.bordered)
+                                    .buttonBorderShape(.capsule)
+                                    .foregroundColor(.white)
+                                    .allowsHitTesting(false)
+                            }
+                            
+                        }
+                        .animation(.spring(), value: termsDisplay)
+                    }
+                    .clipShape(Capsule())
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 5)
+                }
+                HStack {
+                    Image(systemName: "magnifyingglass")
+                    TextField("Search", text: $searchText) {
+                        // guard termsDisplay != terms else { return }
+                        termsDisplay = terms
+                        DatabaseManager.shared.queryUsersByArtistOrTrackName(terms) { terms, users in
+                            if self.terms == terms {
+                                searchResults = users
+                            }
+                        }
+                    }
+                    .accentColor(.white)
+                    .keyboardType(.webSearch)
+                    .disableAutocorrection(true)
+                    .onChange(of: searchText) {
+                        if $0.isEmpty {
+                            searchResults = []
+                            termsDisplay = []
+                        }
+                    }
+                }
+                .foregroundColor(.white)
+                .padding(.leading, 13)
+                .frame(height: 40)
+                .background(Color.backdrop)
+                .clipShape(Capsule())
+                .padding([.horizontal], 10)
             }
+            .header(title: "Find", subtitle: "Find people that share your music taste")
+
             Spacer()
         }
     }

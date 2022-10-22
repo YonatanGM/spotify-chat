@@ -31,7 +31,8 @@ struct SwiftyChatView: View {
     var body: some View {
         NavigationLink(isActive: $navigateToUserDetail,
                        destination: {
-                            if let tappedUser = tappedUser {
+
+            if let tappedUser = tappedUser {
                                 UserDetail(user: tappedUser)
                             }
                 

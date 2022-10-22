@@ -831,6 +831,8 @@ extension DatabaseManager {
       guard !searchTerms.isEmpty else { return }
 
       let idPomises = searchTerms.reduce([Promise<[String]>]()) { result, term in
+         print(term)
+         return
          result +
             [Promise<[String]> { [weak self] fulfill, reject in
                self?.database.child("search/\(term)")
@@ -849,7 +851,7 @@ extension DatabaseManager {
       
       all(idPomises).then { ids in
          let uniqueIDs = Set(ids.reduce([String]()) { $0 + $1 }).sorted().filter { $0 != currentUserID }
-         
+         print(uniqueIDs)
          let userPromises = uniqueIDs.reduce([Promise<Message.ChatUserItem?>]()) { result, id in
             result +
                [Promise<Message.ChatUserItem?> { [weak self] fulfill, reject in

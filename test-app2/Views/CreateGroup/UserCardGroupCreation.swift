@@ -40,11 +40,12 @@ struct UserCardGroupCreation: View {
                                 }
                                 .frame(width: geometry.size.width, height: geometry.size.height, alignment: .center)
                             }
-                            .opacity(isOnline ? 1.0 : 0.0 )
+                            .opacity(isOnline ? 1.0 : 0.0 )  
                         )
                         .matchedGeometryEffect(id: user.id, in: namespace)
                 } else {
                     UserPicInitials(name: user.userName)
+                        .frame(height: Double(UIScreen.main.bounds.width) / 3)
                         .overlay(
                             GeometryReader { geometry in
                                 ZStack {

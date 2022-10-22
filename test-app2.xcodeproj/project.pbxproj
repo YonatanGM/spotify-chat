@@ -75,6 +75,8 @@
 		9FD44B9828CB683D0028A408 /* ChatButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FD44B9728CB683D0028A408 /* ChatButton.swift */; };
 		9FD44B9A28CB7B140028A408 /* InviteButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FD44B9928CB7B140028A408 /* InviteButton.swift */; };
 		9FD44B9C28CB7B9A0028A408 /* Bar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FD44B9B28CB7B9A0028A408 /* Bar.swift */; };
+		9FF4384F29038A7C005FBFD0 /* Modulus-Bold.otf in Resources */ = {isa = PBXBuildFile; fileRef = 9FF4384E29038A7C005FBFD0 /* Modulus-Bold.otf */; };
+		9FF4385029048040005FBFD0 /* Modulus_Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 9FF4384C290378A3005FBFD0 /* Modulus_Medium.ttf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -142,6 +144,8 @@
 		9FD44B9728CB683D0028A408 /* ChatButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatButton.swift; sourceTree = "<group>"; };
 		9FD44B9928CB7B140028A408 /* InviteButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InviteButton.swift; sourceTree = "<group>"; };
 		9FD44B9B28CB7B9A0028A408 /* Bar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Bar.swift; sourceTree = "<group>"; };
+		9FF4384C290378A3005FBFD0 /* Modulus_Medium.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = Modulus_Medium.ttf; path = "../../../../../../Downloads/Modulus-www.Dfonts.org/Modulus_Medium.ttf"; sourceTree = "<group>"; };
+		9FF4384E29038A7C005FBFD0 /* Modulus-Bold.otf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Modulus-Bold.otf"; path = "../../../../../../Downloads/Modulus-www.Dfonts.org/Modulus-Bold.otf"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -347,7 +351,9 @@
 			isa = PBXGroup;
 			children = (
 				9F6062EE28F6432400320BF9 /* logoRegular.otf */,
+				9FF4384E29038A7C005FBFD0 /* Modulus-Bold.otf */,
 				9F6062F228F6508B00320BF9 /* logoRegular2.otf */,
+				9FF4384C290378A3005FBFD0 /* Modulus_Medium.ttf */,
 			);
 			path = Fonts;
 			sourceTree = "<group>";
@@ -448,7 +454,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9FF4385029048040005FBFD0 /* Modulus_Medium.ttf in Resources */,
 				46F5CA712808C24000D58C41 /* Preview Assets.xcassets in Resources */,
+				9FF4384F29038A7C005FBFD0 /* Modulus-Bold.otf in Resources */,
 				9F6062EF28F6432400320BF9 /* logoRegular.otf in Resources */,
 				9F6062F328F6508B00320BF9 /* logoRegular2.otf in Resources */,
 				46F5CA6E2808C24000D58C41 /* Assets.xcassets in Resources */,

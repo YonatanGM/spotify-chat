@@ -34,14 +34,14 @@ struct FollowOnSpotify: View {
                         .font(.headline)
                         // .fontWeight(.bold)
                         // .font(.system(size: 15, weight: .bold, design: .default))
-                        .minimumScaleFactor(0.9)
+                        // .minimumScaleFactor(0.9)
                         .lineLimit(1)
-                    spotifyWhiteLogo.applying(CGAffineTransform(scaleX: 3.33 * logoHeight, y: logoHeight))
-//                    Image("Spotify_Logo_RGB_White")
+                    spotifyWhiteIcon.applying(CGAffineTransform(scaleX: logoHeight, y: logoHeight))
+//                    Image("Spotify_Icon_RGB_White-1")
 //                        .resizable()
 //                        .scaledToFit()
-                        .frame(width: 3.33 * logoHeight, height: logoHeight)
-                        // .border(.red)
+                        .frame(width: logoHeight, height: logoHeight)
+//                        .border(.red)
                         .padding(.leading, logoHeight / 2)
        
                 }
@@ -49,7 +49,7 @@ struct FollowOnSpotify: View {
                 HStack(spacing: 0) {
                     Text("Following")
                         .font(.headline)
-                        .minimumScaleFactor(0.9)
+                        // .minimumScaleFactor(0.9)
                         .lineLimit(1)
                         // .fontWeight(.bold)
                         // .font(.system(size: 12, weight: .bold, design: .default))

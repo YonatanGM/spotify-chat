@@ -90,6 +90,12 @@ struct Home: View {
           
         }
         .iOS { $0.dismissKeyboardOnTappingOutside() }
+        .onAppear {
+            for family in UIFont.familyNames.sorted() {
+                let names = UIFont.fontNames(forFamilyName: family)
+                print("Family: \(family) Font names: \(names)")
+            }
+        }
        // .animation(.spring(), value: model.searchResults.count)
         .navigationBarItems(trailing: CurrentUserSettings())
         .background(
@@ -118,8 +124,9 @@ struct CustomSection: ViewModifier {
     func body(content: Content) -> some View {
         VStack(alignment: .leading, spacing: 2) {
             Text(title)
-                .font(.largeTitle)
-                .fontWeight(.medium)
+                // .font(.largeTitle)
+                .font(Font.custom("Modulus-Bold", size: 35))
+                // .fontWeight(.medium)
                 .foregroundColor(.white)
                 .padding(.horizontal, 10)
             if let subtitle = subtitle {

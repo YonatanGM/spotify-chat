@@ -80,7 +80,7 @@ struct UserCard: View {
                         .font(.footnote)
                         .fontWeight(.bold)
                         .foregroundColor(.white)
-                        .lineLimit(2)
+                        .lineLimit(1)
                     Spacer()
                     
                 }

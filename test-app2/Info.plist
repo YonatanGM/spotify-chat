@@ -26,6 +26,8 @@
 	<array>
 		<string>logoRegular.otf</string>
 		<string>logoRegular2.otf</string>
+		<string>Modulus_Medium.ttf</string>
+		<string>Modulus-Bold.otf</string>
 	</array>
 	<key>UIStatusBarStyle</key>
 	<string>UIStatusBarStyleLightContent</string>
