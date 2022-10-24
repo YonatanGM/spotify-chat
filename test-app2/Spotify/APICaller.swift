@@ -59,13 +59,13 @@ final class APICaller {
                 do {
                     let result = try JSONDecoder().decode(UserProfileResponse.self, from: data)
                     // let result = try JSONSerialization.jsonObject(with: data, options: .allowFragments)
-                    // print(result)
+                     print(result)
                     completion(.success(result))
                     
                 } catch {
-                    print(error.localizedDescription)
-                    print(response)
-                    print( print((response as? HTTPURLResponse)?.statusCode))
+                     print(error.localizedDescription)
+                     print(response)
+                     print( print((response as? HTTPURLResponse)?.statusCode))
                     completion(.failure(error))
                 }
             }
@@ -94,10 +94,10 @@ final class APICaller {
                 
                 do {
                     let result = try JSONDecoder().decode(TopArtistsResponse.self, from: data)
-                    print("top artist", result.items.map { $0.name })
+                    // print("top artist", result.items.map { $0.name })
                     completion(.success(result))
                 } catch {
-                    print(error.localizedDescription)
+                    // print(error.localizedDescription)
                     completion(.failure(error))
                     
                 }
@@ -124,7 +124,7 @@ final class APICaller {
                 do {
                     let result = try JSONDecoder().decode(TopTracksResponse.self, from: data)
                     // let result = try JSONSerialization.jsonObject(with: data)
-                    print("top track", result.items.map { $0.album })
+                    // print("top track", result.items.map { $0.album })
                     completion(.success(result))
                 } catch {
                     print(error.localizedDescription)
@@ -150,9 +150,9 @@ final class APICaller {
                 }
                 
                 do {
-                    print("ddd*", data)
+                    // print("ddd*", data)
                     let result = try JSONDecoder().decode([String:[String]].self, from: data)
-                    print("res*", result["genres"])
+                    // print("res*", result["genres"])
                     completion(.success(result))
                 } catch {
                     print(error.localizedDescription)
@@ -174,7 +174,7 @@ final class APICaller {
                 let uniqueGenres = genres.reduce([]) {
                     return Set($0).union(Set($1))
                 }
-                print("topGenres", uniqueGenres)
+                // print("topGenres", uniqueGenres)
                 
                 completition(.success(Array(uniqueGenres)))
             case .failure(let error):
@@ -246,7 +246,7 @@ final class APICaller {
                       let httpResponse = response as? HTTPURLResponse,
                       httpResponse.statusCode == 200,
                       error == nil else {
-                    print((response as? HTTPURLResponse)?.statusCode)
+                    // print((response as? HTTPURLResponse)?.statusCode)
                     completion(false)
                     return
                 }
@@ -288,7 +288,7 @@ final class APICaller {
         ) { request in
             let task = URLSession.shared.dataTask(with: request) { data, response, error in
                 guard let data = data, error == nil else {
-                    print((response as? HTTPURLResponse)?.statusCode)
+                    // print((response as? HTTPURLResponse)?.statusCode)
                     completion(false)
                     return
                 }

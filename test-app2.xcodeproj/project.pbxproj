@@ -13,7 +13,6 @@
 		463FEF26281D4242005155EE /* DatabaseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 463FEF25281D4242005155EE /* DatabaseManager.swift */; };
 		463FEF2C281D60F2005155EE /* JGProgressHUD-SwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = 463FEF2B281D60F2005155EE /* JGProgressHUD-SwiftUI */; };
 		46476EAB28099A8600C5B880 /* AuthResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46476EAA28099A8600C5B880 /* AuthResponse.swift */; };
-		465B9C3528157AD500665947 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 465B9C3428157AD500665947 /* GoogleService-Info.plist */; };
 		4685CEC0285106CC00EE5376 /* SwiftyChatView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4685CEBF285106CC00EE5376 /* SwiftyChatView.swift */; };
 		46EAE3FE28095F3F0061C9BB /* WebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46EAE3FD28095F3F0061C9BB /* WebView.swift */; };
 		46EAE403280961AE0061C9BB /* ExternalAccessory.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 46EAE402280961AE0061C9BB /* ExternalAccessory.framework */; };
@@ -77,6 +76,7 @@
 		9FD44B9C28CB7B9A0028A408 /* Bar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FD44B9B28CB7B9A0028A408 /* Bar.swift */; };
 		9FF4384F29038A7C005FBFD0 /* Modulus-Bold.otf in Resources */ = {isa = PBXBuildFile; fileRef = 9FF4384E29038A7C005FBFD0 /* Modulus-Bold.otf */; };
 		9FF4385029048040005FBFD0 /* Modulus_Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 9FF4384C290378A3005FBFD0 /* Modulus_Medium.ttf */; };
+		9FF4385229050A5D005FBFD0 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 9FF4385129050A5D005FBFD0 /* GoogleService-Info.plist */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -85,7 +85,6 @@
 		461DCBCE2823439E009E2F7F /* UserProfileResponse.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserProfileResponse.swift; sourceTree = "<group>"; };
 		463FEF25281D4242005155EE /* DatabaseManager.swift */ = {isa = PBXFileReference; indentWidth = 3; lastKnownFileType = sourcecode.swift; path = DatabaseManager.swift; sourceTree = "<group>"; };
 		46476EAA28099A8600C5B880 /* AuthResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthResponse.swift; sourceTree = "<group>"; };
-		465B9C3428157AD500665947 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		4685CEBF285106CC00EE5376 /* SwiftyChatView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftyChatView.swift; sourceTree = "<group>"; };
 		46EAE3FD28095F3F0061C9BB /* WebView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebView.swift; sourceTree = "<group>"; };
 		46EAE3FF2809619D0061C9BB /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
@@ -146,6 +145,7 @@
 		9FD44B9B28CB7B9A0028A408 /* Bar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Bar.swift; sourceTree = "<group>"; };
 		9FF4384C290378A3005FBFD0 /* Modulus_Medium.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = Modulus_Medium.ttf; path = "../../../../../../Downloads/Modulus-www.Dfonts.org/Modulus_Medium.ttf"; sourceTree = "<group>"; };
 		9FF4384E29038A7C005FBFD0 /* Modulus-Bold.otf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Modulus-Bold.otf"; path = "../../../../../../Downloads/Modulus-www.Dfonts.org/Modulus-Bold.otf"; sourceTree = "<group>"; };
+		9FF4385129050A5D005FBFD0 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../../../../Downloads/GoogleService-Info.plist"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -268,7 +268,7 @@
 			children = (
 				46EAE400280961AE0061C9BB /* test-app2.entitlements */,
 				46EAE3FF2809619D0061C9BB /* Info.plist */,
-				465B9C3428157AD500665947 /* GoogleService-Info.plist */,
+				9FF4385129050A5D005FBFD0 /* GoogleService-Info.plist */,
 				46F8B3DC284DF93B00EBCD9C /* Resources */,
 				9F6062BA28F4BCA700320BF9 /* Fonts */,
 				46F5CA692808C23E00D58C41 /* test_app2App.swift */,
@@ -460,7 +460,7 @@
 				9F6062EF28F6432400320BF9 /* logoRegular.otf in Resources */,
 				9F6062F328F6508B00320BF9 /* logoRegular2.otf in Resources */,
 				46F5CA6E2808C24000D58C41 /* Assets.xcassets in Resources */,
-				465B9C3528157AD500665947 /* GoogleService-Info.plist in Resources */,
+				9FF4385229050A5D005FBFD0 /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -650,6 +650,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CODE_SIGN_ENTITLEMENTS = "test-app2/test-app2.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
@@ -670,7 +671,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "io.github.yonatangm.test-app";
+				PRODUCT_BUNDLE_IDENTIFIER = "io.github.yonatangm.chat-for-spotify";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -683,6 +684,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CODE_SIGN_ENTITLEMENTS = "test-app2/test-app2.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
@@ -703,7 +705,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "io.github.yonatangm.test-app";
+				PRODUCT_BUNDLE_IDENTIFIER = "io.github.yonatangm.chat-for-spotify";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;

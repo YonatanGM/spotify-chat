@@ -17,12 +17,10 @@ final class AuthManager {
     
     private var refreshingToken = false
     struct Constants {
-        // revisit this
         static let clientID = "0a1b68ee7fdf43f287d15f82d31af2a7"
         static let clientSecret = "d446b893026d4021998ce6b161933057"
         static let tokenAPIURL = "https://accounts.spotify.com/api/token"
         static let redirectURI = "chat-for-spotify-login://callback"
-        // add the scope for liking tracks here
         static let scopes = "user-read-email%20user-read-private%20user-top-read%20user-follow-modify%20user-follow-read%20user-library-read%20user-library-modify"
     }
     
@@ -221,7 +219,9 @@ extension AuthManager {
     
     public func getFirebaseCustomToken(for uid: String, completion: @escaping (Result<String, Error>) -> Void) {
         guard let projectID = FirebaseApp.app()?.options.projectID,
-              let url = URL(string: "http://localhost:5002/\(projectID)/us-central1/token?uid=\(uid)") else {
+              // let url = URL(string: "http://localhost:5002/\(projectID)/us-central1/token?uid=\(uid)") else {
+              
+              let url = URL(string: "https://us-central1-testapp-79467.cloudfunctions.net/token?uid=\(uid)") else {
             return
         }
 
@@ -236,11 +236,14 @@ extension AuthManager {
             }
             
             do {
+                
                 let result = try JSONDecoder().decode([String: String].self, from: data)
                 // print("tokkk, ", result["token"])
+                print(data, response)
                 completion(.success(result["token"]!))
                 
             } catch {
+                print(data, response)
                 completion(.failure(AuthError.failedToConvertFirebaseTokenJSONToString))
             }
         }
@@ -263,6 +266,7 @@ extension AuthManager {
                     switch result {
                     case .failure(let error):
                         completion?(.failure(error))
+                        print(error.localizedDescription)
                         return
                         
                     case .success(let token):

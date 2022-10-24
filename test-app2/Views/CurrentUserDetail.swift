@@ -117,7 +117,7 @@ struct CurrentUserDetail: View {
                             Spacer()
                             HStack {
                                 SignOut()
-                                DeleteAccount()
+                                // DeleteAccount()
                                 Spacer()
                             }
                             
@@ -142,8 +142,8 @@ struct CurrentUserDetail: View {
                         .padding(.bottom, 10)
                     }
                     .padding(.horizontal)
-//                    .offset(y: -1 * profilePicHeight / 2)
-//                    .padding(.bottom, -1 * profilePicHeight / 3)
+                    .offset(y: -1 * profilePicHeight / 2)
+                    .padding(.bottom, -1 * profilePicHeight / 3)
                     // .border(.red)
                     if let artists = user.topArtists?.items {
                         VStack(alignment: .leading, spacing: 10) {

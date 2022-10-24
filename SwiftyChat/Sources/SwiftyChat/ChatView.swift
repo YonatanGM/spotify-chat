@@ -109,9 +109,10 @@ public struct ChatView<Message: ChatMessage, User: ChatUser>: View {
                 Spacer()
                     .frame(height: 100)
                     .id("bottom")
+                    
                    
             }
-            .padding(.bottom, messageEditorHeight)
+            .padding(.bottom, 100)
             .foregroundColor(.white)
             // .padding(EdgeInsets(top: inset.top, leading: inset.leading, bottom: 0, trailing: inset.trailing))
             .onChange(of: scrollToBottom) { value in
@@ -125,7 +126,7 @@ public struct ChatView<Message: ChatMessage, User: ChatUser>: View {
                 }
             }
             .onAppear {
-                 proxy.scrollTo("bottom", anchor: .top)
+                proxy.scrollTo("bottom", anchor: .bottom)
                 /*
                 DispatchQueue.main.async() {
                     proxy.scrollTo("bottom", anchor: .bottom)

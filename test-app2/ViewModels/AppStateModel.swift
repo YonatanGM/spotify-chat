@@ -98,7 +98,7 @@ class AppStateModel: ObservableObject {
             callbackURLScheme: "chat-for-spotify-login"
         ) { [weak self] callbackURL, error in
             
-            print(callbackURL, error)
+            // print(callbackURL, error)
             guard error == nil,
                   let url = callbackURL,
                   let code = URLComponents(string: url.absoluteString)?.queryItems?.first(where: {
@@ -107,6 +107,7 @@ class AppStateModel: ObservableObject {
             }
             self?.signInStatus = .signingIn
             AuthManager.shared.handleAuthorizationCodeFlow(code: code) { success in
+                print(success)
                 print("user logged in and inserted in database")
             }
             
@@ -262,7 +263,7 @@ extension AppStateModel {
                         // update the users
                         
                         self?.suggestedUsers = users.filter { $0.id != AuthManager.shared.currentUser?.uid }
-                        if let currentUser = users.first { $0.id == AuthManager.shared.currentUser?.uid } {
+                        if let currentUser = (users.first { $0.id == AuthManager.shared.currentUser?.uid }) {
                             self?.currentUser = currentUser
                         }
                        

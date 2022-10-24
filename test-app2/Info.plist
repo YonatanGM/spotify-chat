@@ -8,7 +8,7 @@
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
 			<key>CFBundleURLName</key>
-			<string>io.github.yonatangm.test-app</string>
+			<string>io.github.yonatangm.chat-for-spotify</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
 				<string>chat-for-spotify-login</string>

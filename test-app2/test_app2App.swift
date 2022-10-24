@@ -14,9 +14,6 @@ import JGProgressHUD_SwiftUI
 
 @main
 struct test_app2App: App {
-    init() {
-        
-    }
     @StateObject var settings = AppStateModel()
     @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate: AppDelegate
     var body: some Scene {
@@ -59,8 +56,8 @@ class AppDelegate: NSObject, UIApplicationDelegate {
 
         // firebase
         FirebaseApp.configure()
-        Auth.auth().useEmulator(withHost: "localhost", port: 9092)
-        Functions.functions().useEmulator(withHost: "localhost", port: 5002)
+        // Auth.auth().useEmulator(withHost: "localhost", port: 9092)
+        // Functions.functions().useEmulator(withHost: "localhost", port: 5002)
 
         // revisit this
         // clear firebase auth cache
