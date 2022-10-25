@@ -953,3 +953,30 @@ extension DatabaseManager {
       database.child("userInfo/\(currentUserID)/lastSeen/\(groupID)").setValue(messageID)
    }
 }
+
+
+// MARK: - Block users
+
+extension DatabaseManager {
+   
+   public func blockUser(with id: String) {
+      guard let currentUserID = AuthManager.shared.currentUser?.uid else {
+         return
+      }
+      database.child("userInfo/\(currentUserID)/blocked/\(id)").setValue(true)
+   }
+   
+   public func observeBlockedUsers(completion: @escaping ([String]) -> Void) {
+      guard let currentUserID = AuthManager.shared.currentUser?.uid else {
+         return
+      }
+      database.child("userInfo/\(currentUserID)/blocked").observe(.value) { snapshot in
+         guard let ids = (snapshot.value as? [String: Bool])?.keys else {
+            return
+         }
+         completion(Array(ids))
+         
+      }
+   }
+
+}

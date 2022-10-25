@@ -185,6 +185,27 @@ struct SwiftyChatView: View {
                         }) {
                             Label("Delete chat", systemImage: "trash")
                         }
+                
+                        Button(action: {
+                            print("report")
+                            
+                        }) {
+                            Text("Report")
+                            Image(systemName: "exclamationmark.bubble")
+                        }
+                        Button(action: {
+                            guard let otherUser = model.groups[groupID]?.otherUser?.id else { return }
+                            DatabaseManager.shared.blockUser(with: otherUser)
+                            DatabaseManager.shared.deleteGroup(groupID) { success in
+                                if success {
+                                    model.showChat = false
+                                }
+                            }
+                            
+                        }) {
+                            Text("Block")
+                            Image(systemName: "person.fill.xmark")
+                        }
                      
                     } label: {
                             Image(systemName: "ellipsis")
@@ -192,6 +213,7 @@ struct SwiftyChatView: View {
                                 .foregroundColor(.white)
                                 .contentShape(Rectangle())
                     }
+                                    
                 )
 
         } else {
@@ -232,7 +254,7 @@ struct SwiftyChatView: View {
             messages: Binding(get: { model.groups[groupID]?.messages ?? [] },
                               set: { _ in }),
             onMessageCellAppeared: { message in
-                // hope this works fine 
+                // hope this works fine
                 if let index = (model.groups[groupID]?.messages.firstIndex { $0.id == message.id }),
                     let endIndex = model.groups[groupID]?.messages.endIndex {
                     DispatchQueue.main.asyncAfter(deadline: .now() + Double(index) / Double(endIndex)) {
@@ -281,19 +303,38 @@ struct SwiftyChatView: View {
                 .padding(.leading, 10)
                 .padding(.trailing, 20)
                 .embedInAnyView()
-            })
-        
-        
+        })
+
         // ▼ Optional, Present context menu when cell long pressed
         .messageCellContextMenu { message -> AnyView in
             switch message.messageKind {
             case .text(let text):
-                return Button(action: {
-                    print("Copy Context Menu tapped!!")
-                    UIPasteboard.general.string = text
-                }) {
-                    Text("Copy")
-                    Image(systemName: "doc.on.doc")
+                return
+                VStack {
+                    Button(action: {
+                        // print("Copy Context Menu tapped!!")
+                        UIPasteboard.general.string = text
+                    }) {
+                        Text("Copy")
+                        Image(systemName: "doc.on.doc")
+                    }
+     
+                    if !message.isSender {
+                        Button(action: {
+                            print("report")
+                            
+                        }) {
+                            Text("Report")
+                            Image(systemName: "exclamationmark.bubble")
+                        }
+                        
+                        Button(action: {
+                            DatabaseManager.shared.blockUser(with: message.user.id)
+                        }) {
+                            Text("Block")
+                            Image(systemName: "person.fill.xmark")
+                        }
+                    }
                 }.embedInAnyView()
             default:
                 // If you don't want to implement contextMenu action
@@ -361,19 +402,44 @@ struct SwiftyChatView: View {
                 .padding(.leading, 10)
                 .padding(.trailing, 20)
                 .embedInAnyView()
-            })
+        })
         
         
         // ▼ Optional, Present context menu when cell long pressed
         .messageCellContextMenu { message -> AnyView in
             switch message.messageKind {
             case .text(let text):
-                return Button(action: {
-                    print("Copy Context Menu tapped!!")
-                    UIPasteboard.general.string = text
-                }) {
-                    Text("Copy")
-                    Image(systemName: "doc.on.doc")
+                return
+                VStack {
+                    Button(action: {
+                        // print("Copy Context Menu tapped!!")
+                        UIPasteboard.general.string = text
+                    }) {
+                        Text("Copy")
+                        Image(systemName: "doc.on.doc")
+                    }
+                    if !message.isSender {
+                        Button(action: {
+                            print("report")
+                            
+                        }) {
+                            Text("Report")
+                            Image(systemName: "exclamationmark.bubble")
+                        }
+                        
+                        Button(action: {
+                            DatabaseManager.shared.blockUser(with: message.user.id)
+                            DatabaseManager.shared.deleteGroup(groupID) { success in
+                                if success {
+                                    model.showChat = false
+                                }
+                            }
+                            
+                        }) {
+                            Text("Block")
+                            Image(systemName: "person.fill.xmark")
+                        }
+                    }
                 }.embedInAnyView()
             default:
                 // If you don't want to implement contextMenu action

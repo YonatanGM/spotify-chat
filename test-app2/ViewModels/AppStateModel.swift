@@ -29,8 +29,8 @@ class AppStateModel: ObservableObject {
     
     // @Published private(set) var users = [Message.ChatUserItem]()
     @Published var suggestedUsers = [Message.ChatUserItem]()
-    @Published var messages = [Message.ChatMessageItem]()
     @Published var currentRoom: String?
+    
     
     
     @Published var selectedTrackID: String?
@@ -51,6 +51,7 @@ class AppStateModel: ObservableObject {
     @Published var currentUser: Message.ChatUserItem?
     @Published var likedTracks = [String: Bool]()
     @Published var followedUsers = [String: Bool]()
+    @Published var blockedUsers = [String]()
     
     @Published var showChat = false
     
@@ -141,7 +142,18 @@ extension AppStateModel {
       
         DatabaseManager.shared.managePresence()
         
+        DatabaseManager.shared.observeBlockedUsers { [weak self] ids in
+            self?.blockedUsers = ids
+            self?.suggestedUsers.removeAll { ids.contains($0.id) }
+            if let groups = self?.groups {
+                for (id, group) in groups {
+                    self?.groups[id]?.messages = group.messages.filter { !ids.contains($0.user.id) }
+                }
+            }
+        }
+        
         DatabaseManager.shared.observeNewGroup() { [weak self] result in
+            guard let blockedUsers = self?.blockedUsers else { return }
             switch result {
             case .success(let (groupID, userHasJoined)):
                 
@@ -185,8 +197,9 @@ extension AppStateModel {
                             DatabaseManager.shared.listenForMessages(in: group.id) { result in
                                 switch result {
                                 case .success(let message):
-                                    
-                                    self?.groups[groupID]?.messages.append(message)
+                                    if !blockedUsers.contains(message.user.id) {
+                                        self?.groups[groupID]?.messages.append(message)
+                                    }
                                     
                                 case .failure(_):
                                     print("failed to get messages in group \(group.id)")
@@ -199,6 +212,8 @@ extension AppStateModel {
                                 self?.groups[groupID]?.unseenCount = unseenCount
                             }
                         }
+                        
+
                         
                     case .failure(_):
                         print("failed to get group with id \(groupID)")
@@ -216,6 +231,9 @@ extension AppStateModel {
             // stop observing messages in the room, good!
             DatabaseManager.shared.removeObserver(with: "conversations/\(groupID)")
             DatabaseManager.shared.removeObserver(with: "Group/\(groupID)")
+            if let currentUserID = AuthManager.shared.currentUser?.uid {
+                DatabaseManager.shared.removeObserver(with: "userInfo/\(currentUserID)/blocked")
+            }
             // DatabaseManager.shared.removeObserver(with: "Group/\(groupID)")
         }
         
@@ -224,6 +242,7 @@ extension AppStateModel {
         DatabaseManager.shared.observeInviteAcceptance() { [weak self] result in
             switch result {
             case .success(let groupID):
+                guard let group = self?.groups[groupID] else { return }
                 self?.groups[groupID]?.pending = false 
                 DatabaseManager.shared.listenForMessages(in: groupID) { result in
                     switch result {
@@ -263,6 +282,10 @@ extension AppStateModel {
                         // update the users
                         
                         self?.suggestedUsers = users.filter { $0.id != AuthManager.shared.currentUser?.uid }
+                        if let blockedUsers = self?.blockedUsers {
+                            self?.suggestedUsers.removeAll { blockedUsers.contains($0.id) }
+                        }
+                       
                         if let currentUser = (users.first { $0.id == AuthManager.shared.currentUser?.uid }) {
                             self?.currentUser = currentUser
                         }
@@ -314,6 +337,8 @@ extension AppStateModel {
             // print(time.seconds)
             self?.progress = time.seconds / 30
         })
+        
+
 
         // add oberver to detect when the preview ends
         let itemDidPlayToEndTimeObserver = NotificationCenter.default.addObserver(forName: .AVPlayerItemDidPlayToEndTime, object: nil, queue: .main) { [weak self] _ in
