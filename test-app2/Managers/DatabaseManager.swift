@@ -943,8 +943,19 @@ extension DatabaseManager {
             onChangeOfUnseenCount(snapshot.childrenCount)
          }
       }
-
    }
+   
+   public func getLastSeen(in groupID: String, completion: @escaping (String) -> Void) {
+      
+      guard let currentUserID = AuthManager.shared.currentUser?.uid else { return }
+      database.child("userInfo/\(currentUserID)/lastSeen/\(groupID)").observeSingleEvent(of: .value) { snapshot in
+         guard let lastSeenID = snapshot.value as? String else {
+            return
+         }
+         completion(lastSeenID)
+      }
+   }
+
 
    public func setLastSeen(for groupID: String, messageID: String) {
       guard let currentUserID = AuthManager.shared.currentUser?.uid else {
@@ -971,6 +982,19 @@ extension DatabaseManager {
          return
       }
       database.child("userInfo/\(currentUserID)/blocked").observe(.value) { snapshot in
+         guard let ids = (snapshot.value as? [String: Bool])?.keys else {
+            return
+         }
+         completion(Array(ids))
+         
+      }
+   }
+   
+   public func getBlockedUsers(completion: @escaping ([String]) -> Void) {
+      guard let currentUserID = AuthManager.shared.currentUser?.uid else {
+         return
+      }
+      database.child("userInfo/\(currentUserID)/blocked").observeSingleEvent(of: .value) { snapshot in
          guard let ids = (snapshot.value as? [String: Bool])?.keys else {
             return
          }

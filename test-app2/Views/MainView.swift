@@ -15,7 +15,7 @@ struct MainView: View {
     var body: some View {
                 
         NavigationView {
-            if model.signInStatus == .signedOut || model.signInStatus == .signingIn {
+            if model.signInStatus == .signedOut || model.signInStatus == .signingIn || model.finishedLoadingOfSuggestedUsers == false {
                 Login()
             } else if model.signInStatus == .signedIn {
                 Home()

@@ -43,6 +43,8 @@ struct DM: View {
 
                                         }
                                     }
+                                    // necessary to pop back to home view if user blocks other user 
+                                    .onChange(of: model.groups[groupID] == nil) { _ in }
                             }
                        },
                        label: { EmptyView() })

@@ -63,6 +63,8 @@ class AppStateModel: ObservableObject {
 
     // Group
     @Published var groups = [String: Group]()
+    
+    @Published var finishedLoadingOfSuggestedUsers = false
 
     
     init() {
@@ -153,7 +155,7 @@ extension AppStateModel {
         }
         
         DatabaseManager.shared.observeNewGroup() { [weak self] result in
-            guard let blockedUsers = self?.blockedUsers else { return }
+            
             switch result {
             case .success(let (groupID, userHasJoined)):
                 
@@ -195,15 +197,26 @@ extension AppStateModel {
                         }
                         if userHasJoined {
                             DatabaseManager.shared.listenForMessages(in: group.id) { result in
-                                switch result {
-                                case .success(let message):
-                                    if !blockedUsers.contains(message.user.id) {
-                                        self?.groups[groupID]?.messages.append(message)
+                                DatabaseManager.shared.getLastSeen(in: group.id) { lastSeenID in
+                                    DatabaseManager.shared.getBlockedUsers { blockedUserIDs in
+                                        switch result {
+                                        case .success(let message):
+                                            if !blockedUserIDs.contains(message.user.id) {
+                                                self?.groups[groupID]?.messages.append(message)
+                                            } else if let ids = self?.blockedUsers, !ids.contains(message.user.id) {
+                                                self?.groups[groupID]?.messages.append(message)
+                                            } else if message.id > lastSeenID {
+                                                DatabaseManager.shared.setLastSeen(for: groupID, messageID: message.id)
+                                            }
+                                            
+                                        case .failure(_):
+                                            print("failed to get messages in group \(group.id)")
+                                        }
+                                        
                                     }
-                                    
-                                case .failure(_):
-                                    print("failed to get messages in group \(group.id)")
+
                                 }
+
                             }
                             
                             DatabaseManager.shared.observeUnseenMessages(in: group.id) { lastSeenMessageID in
@@ -245,12 +258,24 @@ extension AppStateModel {
                 guard let group = self?.groups[groupID] else { return }
                 self?.groups[groupID]?.pending = false 
                 DatabaseManager.shared.listenForMessages(in: groupID) { result in
-                    switch result {
-                    case .success(let message):
-                        self?.groups[groupID]?.messages.append(message)
-                        
-                    case .failure(_):
-                        print("failed to get messages in group \(groupID)")
+                    DatabaseManager.shared.getLastSeen(in: group.id) { lastSeenID in
+                        DatabaseManager.shared.getBlockedUsers { blockedUserIDs in
+                            switch result {
+                            case .success(let message):
+                                if !blockedUserIDs.contains(message.user.id) {
+                                    self?.groups[groupID]?.messages.append(message)
+                                } else if let ids = self?.blockedUsers, !ids.contains(message.user.id) {
+                                    self?.groups[groupID]?.messages.append(message)
+                                } else if message.id > lastSeenID {
+                                    DatabaseManager.shared.setLastSeen(for: groupID, messageID: message.id)
+                                }
+                                
+                            case .failure(_):
+                                print("failed to get messages in group \(group.id)")
+                            }
+                            
+                        }
+
                     }
                 }
                 
@@ -286,9 +311,12 @@ extension AppStateModel {
                             self?.suggestedUsers.removeAll { blockedUsers.contains($0.id) }
                         }
                        
+                        
                         if let currentUser = (users.first { $0.id == AuthManager.shared.currentUser?.uid }) {
                             self?.currentUser = currentUser
                         }
+                        
+                        
                        
                         APICaller.shared.checkIfCurrentUserFollowsUsers(with: users.map { $0.id }) { result in
                             switch result {
@@ -313,6 +341,10 @@ extension AppStateModel {
                             case .failure(let error):
                                 print("failed to check if current user liked tracks with ids \(trackIDs.joined(separator: ",")): \(error.localizedDescription)")
                             }
+                        }
+                        
+                        if self?.finishedLoadingOfSuggestedUsers == false {
+                            self?.finishedLoadingOfSuggestedUsers = true
                         }
                         
                     case .failure(_):

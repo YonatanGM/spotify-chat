@@ -196,11 +196,7 @@ struct SwiftyChatView: View {
                         Button(action: {
                             guard let otherUser = model.groups[groupID]?.otherUser?.id else { return }
                             DatabaseManager.shared.blockUser(with: otherUser)
-                            DatabaseManager.shared.deleteGroup(groupID) { success in
-                                if success {
-                                    model.showChat = false
-                                }
-                            }
+                            DatabaseManager.shared.deleteGroup(groupID) { _ in }
                             
                         }) {
                             Text("Block")
@@ -429,11 +425,7 @@ struct SwiftyChatView: View {
                         
                         Button(action: {
                             DatabaseManager.shared.blockUser(with: message.user.id)
-                            DatabaseManager.shared.deleteGroup(groupID) { success in
-                                if success {
-                                    model.showChat = false
-                                }
-                            }
+                            DatabaseManager.shared.deleteGroup(groupID) { _ in }
                             
                         }) {
                             Text("Block")

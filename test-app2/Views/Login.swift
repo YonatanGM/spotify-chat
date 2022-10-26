@@ -25,34 +25,36 @@ struct Login: View {
                     .font(Font.custom("Glyphter", size: UIFont.preferredFont(forTextStyle: .largeTitle).pointSize))
                 Spacer()
             }
-            Button(action: {
-                presentLogin = true
-            }) {
-                HStack(spacing: 0) {
-                    Text("Login with")
-                        .font(.title2)
-                        .fontWeight(.bold)
-                        .minimumScaleFactor(0.9)
-                        .lineLimit(1)
-                    spotifyWhiteLogo.applying(CGAffineTransform(scaleX: 3.33 * logoHeight, y: logoHeight))
-                        .frame(width: 3.33 * logoHeight, height: logoHeight)
-                        .padding(.leading, logoHeight / 2)
+            if model.signInStatus == .signedOut {
+                Button(action: {
+                    presentLogin = true
+                }) {
+                    HStack(spacing: 0) {
+                        Text("Login with")
+                            .font(.title2)
+                            .fontWeight(.bold)
+                            .minimumScaleFactor(0.9)
+                            .lineLimit(1)
+                        spotifyWhiteLogo.applying(CGAffineTransform(scaleX: 3.33 * logoHeight, y: logoHeight))
+                            .frame(width: 3.33 * logoHeight, height: logoHeight)
+                            .padding(.leading, logoHeight / 2)
+                    }
+                    .padding(logoHeight / 2)
+                    .background(Color.backdrop)
+                    .clipShape(Capsule())
+                    .scaleEffect(isTapping ? 0.9 : 1)
+                    .brightness(isTapping ? 0.1 : 0)
+                    .shadow(radius: 5)
                 }
-                .padding(logoHeight / 2)
-                .background(Color.backdrop)
-                .clipShape(Capsule())
-                .scaleEffect(isTapping ? 0.9 : 1)
-                .brightness(isTapping ? 0.1 : 0)
-                .shadow(radius: 5)
-            }
-            .webAuthenticationSession(isPresented: $presentLogin) {
-                model.signIn() 
-            }
-            .overlay {
-                if model.signInStatus == .signingIn {
-                    ProgressView()
+                .webAuthenticationSession(isPresented: $presentLogin) {
+                    model.signIn()
                 }
             }
+//            .overlay {
+//                if model.signInStatus == .signingIn {
+//                    ProgressView()
+//                }
+//            }
 //            .sheet(isPresented: $presentLogin,
 //                   onDismiss: {
 //                // presentLoginFailedAlert = !AuthManager.shared.isSignedIn
@@ -70,11 +72,11 @@ struct Login: View {
 //
 //                }
 //            }
-            .alert(isPresented: $presentLoginFailedAlert) {
-                Alert(title: Text("Oops"),
-                      message: Text("Something went wrong when signing in."),
-                      dismissButton: .default(Text("Dismiss")))
-            }
+//            .alert(isPresented: $presentLoginFailedAlert) {
+//                Alert(title: Text("Oops"),
+//                      message: Text("Something went wrong when signing in."),
+//                      dismissButton: .default(Text("Dismiss")))
+//            }
             
             Spacer()
         }
