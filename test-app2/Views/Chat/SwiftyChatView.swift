@@ -184,14 +184,6 @@ struct SwiftyChatView: View {
                     }) {
                         Label("Delete chat", systemImage: "trash")
                     }
-                    
-                    Button(action: {
-                        print("report")
-                        
-                    }) {
-                        Text("Report")
-                        Image(systemName: "exclamationmark.bubble")
-                    }
                     Button(action: {
                         guard let otherUser = model.groups[groupID]?.otherUser?.id else { return }
                         DatabaseManager.shared.blockUser(with: otherUser)

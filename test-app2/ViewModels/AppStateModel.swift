@@ -201,8 +201,10 @@ extension AppStateModel {
                                     DatabaseManager.shared.observeMessages(in: group.id) { result in
                                         switch result {
                                         case .success(let message):
-                                            guard let ids = self?.blockedUsers, !ids.contains(message.user.id) && !blockedUserIDs.contains(message.user.id) else {
-                                                DatabaseManager.shared.setLastSeen(for: groupID, messageID: message.id)
+                                            guard let ids = self?.blockedUsers, !ids.contains(message.user.id) || !blockedUserIDs.contains(message.user.id) else {
+                                                if message.id > self?.groups[groupID]?.lastSeenMessageID ?? lastSeenID {
+                                                    DatabaseManager.shared.setLastSeen(for: groupID, messageID: message.id)
+                                                }
                                                 return
                                             }
                                             self?.groups[groupID]?.messages.append(message)
@@ -269,8 +271,10 @@ extension AppStateModel {
                         DatabaseManager.shared.observeMessages(in: groupID) { result in
                             switch result {
                             case .success(let message):
-                                guard let ids = self?.blockedUsers, !ids.contains(message.user.id) && !blockedUserIDs.contains(message.user.id) else {
-                                    DatabaseManager.shared.setLastSeen(for: groupID, messageID: message.id)
+                                guard let ids = self?.blockedUsers, !ids.contains(message.user.id) || !blockedUserIDs.contains(message.user.id) else {
+                                    if message.id > self?.groups[groupID]?.lastSeenMessageID ?? lastSeenID {
+                                        DatabaseManager.shared.setLastSeen(for: groupID, messageID: message.id)
+                                    }
                                     return
                                 }
                                 self?.groups[groupID]?.messages.append(message)

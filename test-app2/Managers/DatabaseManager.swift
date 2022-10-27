@@ -824,6 +824,7 @@ extension DatabaseManager {
       database.child("conversations/\(group)")
          .queryOrdered(byChild: "moderated")
          .queryEqual(toValue: true)
+         .queryLimited(toLast: 1)
          .observe(.childAdded, with: { [weak self] snapshot in
          // let enumerator = snapshot.children
          
@@ -861,7 +862,7 @@ extension DatabaseManager {
                completion(.success(Message.ChatMessageItem(user: sender, messageKind: finalKind, isSender: senderID == currentUserID, date: date, id: messageID)))
                // moderation is completed at this point
                // remove the moderated flag
-               self?.database.child("conversations/\(group)/\(messageID)/moderated").setValue(nil)
+               // self?.database.child("conversations/\(group)/\(messageID)/moderated").setValue(nil)
             }
             
          }
@@ -1036,6 +1037,7 @@ extension DatabaseManager {
          return
       }
       database.child("userInfo/\(currentUserID)/blocked/\(id)").setValue(true)
+      database.child("userInfo/\(id)/blocked/\(currentUserID)").setValue(true)
    }
    
    public func observeBlockedUsers(completion: @escaping ([String]) -> Void) {
