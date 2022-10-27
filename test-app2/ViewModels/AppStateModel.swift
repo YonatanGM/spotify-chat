@@ -196,27 +196,34 @@ extension AppStateModel {
                             }
                         }
                         if userHasJoined {
-                            DatabaseManager.shared.listenForMessages(in: group.id) { result in
-                                DatabaseManager.shared.getLastSeen(in: group.id) { lastSeenID in
-                                    DatabaseManager.shared.getBlockedUsers { blockedUserIDs in
+                            DatabaseManager.shared.getLastSeen(in: group.id) { lastSeenID in
+                                DatabaseManager.shared.getBlockedUsers { blockedUserIDs in
+                                    DatabaseManager.shared.observeMessages(in: group.id) { result in
                                         switch result {
                                         case .success(let message):
-                                            if !blockedUserIDs.contains(message.user.id) {
-                                                self?.groups[groupID]?.messages.append(message)
-                                            } else if let ids = self?.blockedUsers, !ids.contains(message.user.id) {
-                                                self?.groups[groupID]?.messages.append(message)
-                                            } else if message.id > lastSeenID {
+                                            guard let ids = self?.blockedUsers, !ids.contains(message.user.id) && !blockedUserIDs.contains(message.user.id) else {
                                                 DatabaseManager.shared.setLastSeen(for: groupID, messageID: message.id)
+                                                return
                                             }
+                                            self?.groups[groupID]?.messages.append(message)
                                             
                                         case .failure(_):
                                             print("failed to get messages in group \(group.id)")
                                         }
-                                        
                                     }
-
                                 }
-
+                            }
+                            
+                            DatabaseManager.shared.observeMessageModeration(in: groupID) { [weak self] result in
+                                switch result {
+                                case .success(let moderatedMessage):
+                                    print(moderatedMessage)
+                                    if let index = (self?.groups[groupID]?.messages.firstIndex { $0.id == moderatedMessage.id }) {
+                                        self?.groups[groupID]?.messages[index] = moderatedMessage
+                                    }
+                                case .failure(_):
+                                    print("failed to get moderated meesage in group \(group.id)")
+                                }
                             }
                             
                             DatabaseManager.shared.observeUnseenMessages(in: group.id) { lastSeenMessageID in
@@ -256,26 +263,33 @@ extension AppStateModel {
             switch result {
             case .success(let groupID):
                 guard let group = self?.groups[groupID] else { return }
-                self?.groups[groupID]?.pending = false 
-                DatabaseManager.shared.listenForMessages(in: groupID) { result in
-                    DatabaseManager.shared.getLastSeen(in: group.id) { lastSeenID in
-                        DatabaseManager.shared.getBlockedUsers { blockedUserIDs in
+                self?.groups[groupID]?.pending = false
+                DatabaseManager.shared.getLastSeen(in: group.id) { lastSeenID in
+                    DatabaseManager.shared.getBlockedUsers { blockedUserIDs in
+                        DatabaseManager.shared.observeMessages(in: groupID) { result in
                             switch result {
                             case .success(let message):
-                                if !blockedUserIDs.contains(message.user.id) {
-                                    self?.groups[groupID]?.messages.append(message)
-                                } else if let ids = self?.blockedUsers, !ids.contains(message.user.id) {
-                                    self?.groups[groupID]?.messages.append(message)
-                                } else if message.id > lastSeenID {
+                                guard let ids = self?.blockedUsers, !ids.contains(message.user.id) && !blockedUserIDs.contains(message.user.id) else {
                                     DatabaseManager.shared.setLastSeen(for: groupID, messageID: message.id)
+                                    return
                                 }
+                                self?.groups[groupID]?.messages.append(message)
                                 
                             case .failure(_):
                                 print("failed to get messages in group \(group.id)")
                             }
-                            
                         }
-
+                    }
+                }
+                
+                DatabaseManager.shared.observeMessageModeration(in: groupID) { [weak self] result in
+                    switch result {
+                    case .success(let moderatedMessage):
+                        if let index = (self?.groups[groupID]?.messages.firstIndex { $0.id == moderatedMessage.id }) {
+                            self?.groups[groupID]?.messages[index] = moderatedMessage
+                        }
+                    case .failure(_):
+                        print("failed to get moderated meesage in group \(group.id)")
                     }
                 }
                 

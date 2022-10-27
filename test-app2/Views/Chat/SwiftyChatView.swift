@@ -19,7 +19,7 @@ struct SwiftyChatView: View {
     @State private var isEditing = false
     
     @State var isTapping: Bool = false
-
+    
     
     @State private var navigationControllerDefault: UINavigationController?
     
@@ -31,12 +31,12 @@ struct SwiftyChatView: View {
     var body: some View {
         NavigationLink(isActive: $navigateToUserDetail,
                        destination: {
-
+            
             if let tappedUser = tappedUser {
-                                UserDetail(user: tappedUser)
-                            }
-                
-                        },
+                UserDetail(user: tappedUser)
+            }
+            
+        },
                        label: { EmptyView() })
         
         if model.groups[groupID]?.isDm == false {
@@ -78,7 +78,7 @@ struct SwiftyChatView: View {
                         Color.clear,
                         Color.backdrop
                     ], startPoint: .center, endPoint: .bottom)
-
+                    
                 }
                 .edgesIgnoringSafeArea(.all)
                 .onAppear {
@@ -94,40 +94,39 @@ struct SwiftyChatView: View {
                 }
             }
             .navigationBarItems(trailing:
-                Menu {
+                                    Menu {
                 
-                    if let currentUserID = AuthManager.shared.currentUser?.uid {
-                        if currentUserID == model.groups[groupID]?.admin {
-                            Button(role: .destructive, action: {
-                                DatabaseManager.shared.deleteGroup(groupID) { success in
-                                    if success {
-                                        model.showChat = false
-                                    }
+                if let currentUserID = AuthManager.shared.currentUser?.uid {
+                    if currentUserID == model.groups[groupID]?.admin {
+                        Button(role: .destructive, action: {
+                            DatabaseManager.shared.deleteGroup(groupID) { success in
+                                if success {
+                                    model.showChat = false
                                 }
-                            }) {
-                                Label("Delete group", systemImage: "trash")
                             }
-                        } else {
-                            Button(role: .destructive, action: {
-                                DatabaseManager.shared.leaveGroup(groupID) { success in
-                                    if success {
-                                        model.showChat = false
-                                    }
+                        }) {
+                            Label("Delete group", systemImage: "trash")
+                        }
+                    } else {
+                        Button(role: .destructive, action: {
+                            DatabaseManager.shared.leaveGroup(groupID) { success in
+                                if success {
+                                    model.showChat = false
                                 }
-                            }) {
-                                Label("Leave", systemImage: "trash")
-                                    .labelStyle(.titleOnly)
                             }
+                        }) {
+                            Label("Leave", systemImage: "trash")
+                                .labelStyle(.titleOnly)
                         }
                     }
-                } label: {
-                    Image(systemName: "ellipsis")
-                        .rotationEffect(Angle(degrees: 90))
-                        .foregroundColor(.white)
-                        .contentShape(Rectangle())
-                    
                 }
-            )
+            } label: {
+                Image(systemName: "ellipsis")
+                    .rotationEffect(Angle(degrees: 90))
+                    .foregroundColor(.white)
+                    .contentShape(Rectangle())
+                
+            })
         } else if model.groups[groupID]?.isDm == true {
             chatViewDM
                 .background(
@@ -151,9 +150,9 @@ struct SwiftyChatView: View {
                             Color.backdrop
                             
                         ], startPoint: .center, endPoint: .bottom)
-             
+                        
                     }
-                    .ignoresSafeArea()
+                        .ignoresSafeArea()
                 )
                 .navigationBarTitleDisplayMode(.inline)
                 .onAppear {
@@ -175,43 +174,41 @@ struct SwiftyChatView: View {
                     }
                 }
                 .navigationBarItems(trailing:
-                    Menu {
-                        Button(role: .destructive, action: {
-                            DatabaseManager.shared.deleteGroup(groupID) { success in
-                                if success {
-                                    model.showChat = false
-                                }
+                                        Menu {
+                    Button(role: .destructive, action: {
+                        DatabaseManager.shared.deleteGroup(groupID) { success in
+                            if success {
+                                model.showChat = false
                             }
-                        }) {
-                            Label("Delete chat", systemImage: "trash")
                         }
-                
-                        Button(action: {
-                            print("report")
-                            
-                        }) {
-                            Text("Report")
-                            Image(systemName: "exclamationmark.bubble")
-                        }
-                        Button(action: {
-                            guard let otherUser = model.groups[groupID]?.otherUser?.id else { return }
-                            DatabaseManager.shared.blockUser(with: otherUser)
-                            DatabaseManager.shared.deleteGroup(groupID) { _ in }
-                            
-                        }) {
-                            Text("Block")
-                            Image(systemName: "person.fill.xmark")
-                        }
-                     
-                    } label: {
-                            Image(systemName: "ellipsis")
-                                .rotationEffect(Angle(degrees: 90))
-                                .foregroundColor(.white)
-                                .contentShape(Rectangle())
+                    }) {
+                        Label("Delete chat", systemImage: "trash")
                     }
-                                    
-                )
-
+                    
+                    Button(action: {
+                        print("report")
+                        
+                    }) {
+                        Text("Report")
+                        Image(systemName: "exclamationmark.bubble")
+                    }
+                    Button(action: {
+                        guard let otherUser = model.groups[groupID]?.otherUser?.id else { return }
+                        DatabaseManager.shared.blockUser(with: otherUser)
+                        DatabaseManager.shared.deleteGroup(groupID) { _ in }
+                        
+                    }) {
+                        Text("Block")
+                        Image(systemName: "person.fill.xmark")
+                    }
+                    
+                } label: {
+                    Image(systemName: "ellipsis")
+                        .rotationEffect(Angle(degrees: 90))
+                        .foregroundColor(.white)
+                        .contentShape(Rectangle())
+                })
+            
         } else {
             ZStack {
                 LinearGradient(colors: [
@@ -233,14 +230,13 @@ struct SwiftyChatView: View {
                     Color.backdrop
                     
                 ], startPoint: .center, endPoint: .bottom)
-     
+                
             }
             .ignoresSafeArea()
             .onAppear {
                 model.showChat = false
             }
         }
-        
     }
     
     
@@ -252,7 +248,7 @@ struct SwiftyChatView: View {
             onMessageCellAppeared: { message in
                 // hope this works fine
                 if let index = (model.groups[groupID]?.messages.firstIndex { $0.id == message.id }),
-                    let endIndex = model.groups[groupID]?.messages.endIndex {
+                   let endIndex = model.groups[groupID]?.messages.endIndex {
                     DispatchQueue.main.asyncAfter(deadline: .now() + Double(index) / Double(endIndex)) {
                         if let lastSeenMessageID = model.groups[groupID]?.lastSeenMessageID,
                            message.id > lastSeenMessageID {
@@ -289,7 +285,7 @@ struct SwiftyChatView: View {
                             DatabaseManager.shared.sendMessage(message: .init(user: currentChatUser,
                                                                               messageKind: messageKind,
                                                                               isSender: true),
-                                                                              to: groupID)
+                                                               to: groupID)
                         }
                         withAnimation(.spring(response: 0.2)) {
                             scrollToBottom = true
@@ -299,8 +295,8 @@ struct SwiftyChatView: View {
                 .padding(.leading, 10)
                 .padding(.trailing, 20)
                 .embedInAnyView()
-        })
-
+            })
+        
         // ▼ Optional, Present context menu when cell long pressed
         .messageCellContextMenu { message -> AnyView in
             switch message.messageKind {
@@ -314,7 +310,7 @@ struct SwiftyChatView: View {
                         Text("Copy")
                         Image(systemName: "doc.on.doc")
                     }
-     
+                    
                     if !message.isSender {
                         Button(action: {
                             print("report")
@@ -351,7 +347,7 @@ struct SwiftyChatView: View {
             onMessageCellAppeared: { message in
                 // hope this works fine
                 if let index = (model.groups[groupID]?.messages.firstIndex { $0.id == message.id }),
-                    let endIndex = model.groups[groupID]?.messages.endIndex {
+                   let endIndex = model.groups[groupID]?.messages.endIndex {
                     DispatchQueue.main.asyncAfter(deadline: .now() + Double(index) / Double(endIndex)) {
                         if let lastSeenMessageID = model.groups[groupID]?.lastSeenMessageID,
                            message.id > lastSeenMessageID {
@@ -388,7 +384,7 @@ struct SwiftyChatView: View {
                             DatabaseManager.shared.sendMessage(message: .init(user: currentChatUser,
                                                                               messageKind: messageKind,
                                                                               isSender: true),
-                                                                              to: groupID)
+                                                               to: groupID)
                         }
                         withAnimation(.spring(response: 0.2)) {
                             scrollToBottom = true
@@ -397,8 +393,9 @@ struct SwiftyChatView: View {
                 )
                 .padding(.leading, 10)
                 .padding(.trailing, 20)
+               
                 .embedInAnyView()
-        })
+            })
         
         
         // ▼ Optional, Present context menu when cell long pressed

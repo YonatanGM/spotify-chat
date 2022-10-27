@@ -760,7 +760,7 @@ extension DatabaseManager {
    
    
    /// listens for newly added messages. At first, all messages are fetched at once, then it the event only triggers for new messages.
-   public func listenForMessages(in group: String, completion: @escaping (Result<Message.ChatMessageItem, Error>) -> Void) {
+   public func observeMessages(in group: String, completion: @escaping (Result<Message.ChatMessageItem, Error>) -> Void) {
       guard let currentUserID = AuthManager.shared.currentUser?.uid else {
          // user signed out or the object hasn't been initalized yet
          completion(.failure(AuthManager.AuthError.failedToGetCurrentUser))
@@ -768,7 +768,9 @@ extension DatabaseManager {
       }
       database.child("conversations/\(group)")
          .queryOrderedByKey()
-         .queryLimited(toLast: Self.maxNumOfMessagesToFetch).observe(.childAdded, with: { snapshot in
+         .queryLimited(toLast: Self.maxNumOfMessagesToFetch)
+        
+         .observe(.childAdded, with: { snapshot in
          // let enumerator = snapshot.children
          
          // print("sss", enumerator.allObjects.count)
@@ -790,6 +792,7 @@ extension DatabaseManager {
             if type == "location" {
                //TODO: take care of this
             } else if type == "MessageKind.text(\(content))" {
+               print(content)
                kind = .text(content)
             }
             
@@ -801,6 +804,64 @@ extension DatabaseManager {
                }
                let sender = Message.ChatUserItem(id: senderID, userName: senderName, avatarURL: avatarURL)
                completion(.success(Message.ChatMessageItem(user: sender, messageKind: finalKind, isSender: senderID == currentUserID, date: date, id: messageID)))
+            }
+            
+         }
+         
+         
+      }, withCancel: { error in
+         completion(.failure(error))
+      })
+   }
+   
+  /// observers moderated messages (via firebase cloud function)
+   public func observeMessageModeration(in group: String, completion: @escaping (Result<Message.ChatMessageItem, Error>) -> Void) {
+      guard let currentUserID = AuthManager.shared.currentUser?.uid else {
+         // user signed out or the object hasn't been initalized yet
+         completion(.failure(AuthManager.AuthError.failedToGetCurrentUser))
+         return
+      }
+      database.child("conversations/\(group)")
+         .queryOrdered(byChild: "moderated")
+         .queryEqual(toValue: true)
+         .observe(.childAdded, with: { [weak self] snapshot in
+         // let enumerator = snapshot.children
+         
+         // print("sss", enumerator.allObjects.count)
+         //  print(snapshot.value as? [String: Any])
+         
+         if let dictionary = snapshot.value as? [String: Any],
+            let isRead = dictionary["is_read"] as? Bool,
+            let messageID = dictionary["id"] as? String,
+            let content = dictionary["content"] as? String,
+            let senderID = dictionary["sender_id"] as? String,
+            let senderName = dictionary["sender_name"] as? String,
+            let type = dictionary["type"] as? String,
+            let timeInterval = dictionary["timestamp"] as? TimeInterval {
+            
+            let date = Date(timeIntervalSince1970: timeInterval / 1000)
+            var kind: ChatMessageKind?
+            // won't be supporting photo/video/audio
+            // location seems useful
+            if type == "location" {
+               //TODO: take care of this
+            } else if type == "MessageKind.text(\(content))" {
+               print(content)
+               kind = .text(content)
+            }
+            
+            
+            if let finalKind = kind {
+               var avatarURL: URL?
+               if let avatarURLString = dictionary["sender_profile_pic_url"] as? String {
+                  avatarURL = URL(string: avatarURLString)
+               }
+               let sender = Message.ChatUserItem(id: senderID, userName: senderName, avatarURL: avatarURL)
+               
+               completion(.success(Message.ChatMessageItem(user: sender, messageKind: finalKind, isSender: senderID == currentUserID, date: date, id: messageID)))
+               // moderation is completed at this point
+               // remove the moderated flag
+               self?.database.child("conversations/\(group)/\(messageID)/moderated").setValue(nil)
             }
             
          }
@@ -996,6 +1057,7 @@ extension DatabaseManager {
       }
       database.child("userInfo/\(currentUserID)/blocked").observeSingleEvent(of: .value) { snapshot in
          guard let ids = (snapshot.value as? [String: Bool])?.keys else {
+            completion([])
             return
          }
          completion(Array(ids))

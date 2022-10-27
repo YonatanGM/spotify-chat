@@ -48,7 +48,10 @@ public struct ChatView<Message: ChatMessage, User: ChatUser>: View {
             }
 //            .background(Color.red)
             .offset(y: -messageEditorHeight - 10)
-
+            .clipped()
+            .mask(LinearGradient(gradient: Gradient(colors: [.black, .clear]),
+                                 startPoint: .init(x: 0.5, y: 1 - (messageEditorHeight + 10) * 2  / geometry.size.height),
+                                 endPoint:  .init(x: 0.5, y: 1 - (messageEditorHeight + 10)  / geometry.size.height)))
  
             
             .overlay(
@@ -151,7 +154,7 @@ public struct ChatView<Message: ChatMessage, User: ChatUser>: View {
                 )
             }
         }
-        .padding(.bottom, messageEditorHeight + 30)
+        .padding(.bottom, 200)
     
     }
     
