@@ -13,7 +13,7 @@ struct DM: View {
     @State var didCreateGroup = false
     let recipient: Message.ChatUserItem
     
-    @State var navigateToChat = false
+    // @State var navigateToChat = false
     
     var group: Group? {
         guard let currentUserID = AuthManager.shared.currentUser?.uid else {
@@ -27,7 +27,7 @@ struct DM: View {
     var buttonHeight = 25.0
     
     var body: some View {
-        NavigationLink(isActive: $navigateToChat,
+        NavigationLink(isActive: $model.navigateToChat,
                        destination: {
                             if let groupID = group?.id {
                                 SwiftyChatView(groupID: groupID)
@@ -77,7 +77,7 @@ struct DM: View {
                         if didCreateGroup == true {
                             print("created group with user \(recipient.id)")
                             self.didCreateGroup = true
-                            navigateToChat = true
+                            model.navigateToChat = true
                         }
                     }
                 }
@@ -93,10 +93,10 @@ struct DM: View {
                 }
                 if group.pending == true {
                     DatabaseManager.shared.acceptPendingInvitation(group.id) { success in
-                        navigateToChat = true
+                        model.navigateToChat = true
                     }
                 } else {
-                    navigateToChat = true
+                    model.navigateToChat = true
                 }
             }
         }

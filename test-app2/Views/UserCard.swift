@@ -35,6 +35,7 @@ struct UserCard: View {
                         .clipShape(Circle())
                         
                         .shadow(radius: 5)
+                    
                         .overlay(
                             GeometryReader { geometry in
                                 ZStack {
@@ -46,7 +47,6 @@ struct UserCard: View {
                                         .offset(x: cos(Angle(degrees: -45).radians) * geometry.size.width / 2,
                                                 y: sin(Angle(degrees: -45).radians) * geometry.size.height / 2)
                                     
-                            
                                 }
                                 .frame(width: geometry.size.width, height: geometry.size.height, alignment: .center)
                             }

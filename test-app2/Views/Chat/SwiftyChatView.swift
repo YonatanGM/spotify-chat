@@ -99,6 +99,7 @@ struct SwiftyChatView: View {
                 if let currentUserID = AuthManager.shared.currentUser?.uid {
                     if currentUserID == model.groups[groupID]?.admin {
                         Button(role: .destructive, action: {
+                           
                             DatabaseManager.shared.deleteGroup(groupID) { success in
                                 if success {
                                     model.showChat = false
@@ -176,14 +177,13 @@ struct SwiftyChatView: View {
                 .navigationBarItems(trailing:
                                         Menu {
                     Button(role: .destructive, action: {
-                        DatabaseManager.shared.deleteGroup(groupID) { success in
-                            if success {
-                                model.showChat = false
-                            }
-                        }
+                        model.showChat = false
+                        model.navigateToChat = false
+                        DatabaseManager.shared.deleteGroup(groupID) { _ in }
                     }) {
                         Label("Delete chat", systemImage: "trash")
                     }
+
                     Button(action: {
                         guard let otherUser = model.groups[groupID]?.otherUser?.id else { return }
                         DatabaseManager.shared.blockUser(with: otherUser)

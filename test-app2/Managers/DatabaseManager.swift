@@ -32,7 +32,7 @@ class DatabaseManager {
 extension DatabaseManager {
    
    public func userExists(with id: String, completion: @escaping ((Bool) -> Void )) {
-      database.child("users/\(id)").observeSingleEvent(of: .value, with: { [weak self] snapshot in
+      database.child("users/\(id)").observeSingleEvent(of: .value, with: { snapshot in
          
          guard snapshot.exists() else {
             completion(false)
@@ -143,6 +143,98 @@ extension DatabaseManager {
             
          case .failure(_):
             completion(false)
+         }
+      }
+   }
+   
+   public func deleteProfile(completion: @escaping () -> Void) {
+      guard let currentUserID = AuthManager.shared.currentUser?.uid else { return }
+      Promise<Bool>() { [weak self] fulfill, reject in
+         self?.database.child("userInfo/\(currentUserID)/Groups").observeSingleEvent(of: .value) { [weak self] snapshot in
+            guard let children = snapshot.value as? [String: Bool] else {
+               fulfill(true)
+               return
+            }
+            for (index, (groupID, isMember)) in children.enumerated() {
+               if isMember {
+                  self?.database.child("Group/\(groupID)/admin").observeSingleEvent(of: .value) { snapshot in
+                     guard let admin = snapshot.value as? String else { return }
+                     // current user is admin
+                     if admin == currentUserID {
+                        self?.deleteGroup(groupID) { _ in
+                           if index == children.count - 1 {
+                              fulfill(true)
+                           }
+                        }
+                     } else {
+                        self?.database.child("Group/\(groupID)/recipient").observeSingleEvent(of: .value) { snapshot in
+                           if snapshot.exists() {
+                              // is dm
+                              self?.deleteGroup(groupID) { _ in
+                                 if index == children.count - 1 {
+                                    fulfill(true)
+                                 }
+                              }
+                           } else {
+                              self?.leaveGroup(groupID) { _ in
+                                 if index == children.count - 1 {
+                                    fulfill(true)
+                                 }
+                              }
+                           }
+                        }
+                     }
+                  }
+               } else {
+                  self?.leaveGroup(groupID) { _ in
+                     if index == children.count - 1 {
+                        fulfill(true)
+                     }
+                  }
+               }
+            }
+         }
+      }.then { _ in
+         Promise<Bool>() { [weak self] fulfill, reject in
+            self?.database.child("search")
+               .queryOrdered(byChild: currentUserID)
+               .queryEqual(toValue: true)
+               .observeSingleEvent(of: .value) { snapshot in
+                  guard let searchTerms = snapshot.value as? [String: Any] else { return }
+                  let updates = searchTerms.keys.reduce([String: Any?]()) {
+                     var dict = $0
+                     dict.updateValue(nil, forKey: "search/\($1)/\(currentUserID)")
+                     return dict
+                  }
+                  self?.database.updateChildValues(updates) { error, _ in
+                     guard error == nil else { return }
+                     fulfill(true)
+                  }
+            }
+         }
+      }.then { _ in
+         Promise<Bool>() { [weak self] fulfill, reject in
+            self?.database.updateChildValues(["users/\(currentUserID)": nil,
+                                              "userInfo/\(currentUserID)": nil,
+                                              "status/\(currentUserID)": nil]) { error, _ in
+               guard error == nil else { return }
+               fulfill(true)
+            }
+         
+         }
+      }.then { _ in
+         completion()
+      }
+   }
+   
+   public func observeUserDeletion(completion: @escaping (String) -> Void) {
+      database.child("users").observe(.childRemoved) { [weak self] userSnapshot in
+         self?.database.child("status/\(userSnapshot.key)").observeSingleEvent(of: .value) { snapshot in
+            guard !snapshot.exists() else {
+               // must be refresh
+               return
+            }
+            completion(snapshot.key)
          }
       }
    }
@@ -955,10 +1047,7 @@ extension DatabaseManager {
 extension DatabaseManager {
    public func managePresence() {
       // not doing error handling
-      guard let currentUserID = AuthManager.shared.currentUser?.uid else {
-         return
-      }
-      
+      guard let currentUserID = AuthManager.shared.currentUser?.uid else { return }
       database.child(".info/connected").observe(.value) { [weak self] snapshot in
           guard (snapshot.value as? Bool) == true else {
               return
@@ -982,6 +1071,12 @@ extension DatabaseManager {
       }
       return handle
 
+   }
+   
+   // on logging out
+   public func removePresence() {
+      guard let currentUserID = AuthManager.shared.currentUser?.uid else { return }
+      database.child("status/\(currentUserID)").removeValue()
    }
 }
 

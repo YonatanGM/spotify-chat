@@ -89,7 +89,7 @@ struct ConversationsView: View {
                                  }
                             } label: {
                                 if group.pending == false {
-                                    if currentUserID == group.admin {
+                                    if currentUserID == group.admin || group.isDm {
                                         Image(systemName: "trash")
                                     } else {
                                         Text("Leave")

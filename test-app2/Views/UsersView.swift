@@ -15,7 +15,7 @@ struct UsersView: View {
 
         ScrollView(.horizontal, showsIndicators: false) {
             LazyHStack {
-                ForEach(model.suggestedUsers, id: \.id) { user in
+                ForEach(model.suggestedUsers.sorted { $0.id > $1.id }, id: \.id) { user in
                     UserCard(user: user)
                         .padding([.horizontal], 1)
                         .padding(.leading, user.id == model.suggestedUsers.first?.id ? 10 : 0)

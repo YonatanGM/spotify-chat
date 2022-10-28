@@ -21,6 +21,7 @@ struct SignOut: View {
                 withAnimation {
                     isTapping = false
                 }
+                DatabaseManager.shared.removePresence()
                 model.signOut()
             }
         }, label: {

@@ -26,7 +26,7 @@ struct UserCardViewGroupCreation: View {
     var searchResultsDisplay: [Message.ChatUserItem] {
         // guard let currentUserID = AuthManager.shared.currentUser?.uid else { return [] }
         return searchResults.filter { foundUser in
-            !addedUsers.contains(foundUser) // && !model.suggestedUsers.map { $0.id  }.contains(userFromSearch.id)
+            !addedUsers.contains(foundUser) && !model.blockedUsers.contains { $0 == foundUser.id }
         }
     }
     

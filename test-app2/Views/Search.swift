@@ -14,9 +14,8 @@ struct SearchBar: View {
     @Binding var searchText: String
     @EnvironmentObject var model: AppStateModel
     var searchResultsDisplay: [Message.ChatUserItem] {
-        guard let currentUserID = AuthManager.shared.currentUser?.uid else { return [] }
         return model.searchResults.filter { foundUser in
-            foundUser.id != currentUserID
+            !model.blockedUsers.contains { $0 == foundUser.id }
         }
     }
     
@@ -36,7 +35,7 @@ struct SearchBar: View {
     
     var body: some View {
         VStack(spacing: 10) {
-            if !model.searchResults.isEmpty {
+            if !searchResultsDisplay.isEmpty {
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack {
                         ForEach(searchResultsDisplay, id: \.id) { user in

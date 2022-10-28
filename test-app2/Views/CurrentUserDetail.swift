@@ -170,6 +170,22 @@ struct CurrentUserDetail: View {
                   
                 }
                 .navigationTitle(user.userName)
+                .navigationBarItems(trailing: Menu {
+                    Button(role: .destructive, action: {
+                        DatabaseManager.shared.deleteProfile {
+                            model.signOut()
+                        }
+                        
+                    }) {
+                        Label("Delete profile", systemImage: "trash")
+                    }
+
+                } label: {
+                    Image(systemName: "ellipsis")
+                        .rotationEffect(Angle(degrees: 90))
+                        .foregroundColor(.white)
+                        .contentShape(Rectangle())
+                })
                 .onAppear {
                     // check online status
                     onlineStatusHandle = DatabaseManager.shared.checkOnlineStatus(for: user.id) { status in

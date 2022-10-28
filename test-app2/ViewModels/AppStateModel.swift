@@ -54,6 +54,7 @@ class AppStateModel: ObservableObject {
     @Published var blockedUsers = [String]()
     
     @Published var showChat = false
+    @Published var navigateToChat = false
     
     
     @Published var selectedGroup: String?
@@ -353,6 +354,7 @@ extension AppStateModel {
                             switch result {
                             case .success(let likedTracks):
                                 DispatchQueue.main.async {
+                                    
                                     self?.likedTracks = likedTracks
                                 }
                                 
@@ -373,6 +375,10 @@ extension AppStateModel {
             case .failure(let error):
                 print(error.localizedDescription)
             }
+        }
+        
+        DatabaseManager.shared.observeUserDeletion() { [weak self] id in
+            self?.suggestedUsers.removeAll { $0.id == id }
         }
         
         
