@@ -15,10 +15,28 @@ struct Home: View {
     @Namespace var bottomID
     
     var suggestedArtists: [Artist] {
-        model.suggestedUsers.compactMap { $0.topArtists?.items.first }.sorted { $0.id > $1.id }
+        model.suggestedUsers
+            .compactMap { $0.topArtists?.items.first }
+            .sorted { $0.id > $1.id }
     }
     var suggestedTracks: [Track] {
-        model.suggestedUsers.compactMap { $0.topTracks?.items.first }.sorted { $0.id > $1.id }
+        model.suggestedUsers
+            .compactMap { $0.topTracks?.items.first }
+            .sorted { $0.id > $1.id }
+            // market and explicit tracks
+            .filter {
+                guard let currentUser = model.currentUser else { return true }
+                if let availableMarkets = $0.available_markets,
+                   let country = currentUser.country {
+                    if availableMarkets.contains(country) {
+                        return $0.explicit ? currentUser.filterEnabled == false : true
+                    } else {
+                        return false
+                    }
+                } else {
+                    return $0.explicit  ? currentUser.filterEnabled == false : true
+                }
+            }
     }
     
     @State var canRefresh = true
