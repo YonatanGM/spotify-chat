@@ -16,20 +16,10 @@ struct UserBubbles: View {
     var body: some View {
         GeometryReader { geometry in
             ForEach(Array(zip(users, getCircles(num: users.count, in: geometry.frame(in: .local)))), id: \.0.id) { user, path in
-                if let urlString = user.photoURL, let url = URL(string: urlString) {
-                    AnimatedImage(url: url)
-                        .resizable()
-                        .scaledToFill()
-                        .clipShape(Circle())
-                        .padding(2)
-                        .offset(x: path.boundingRect.origin.x, y: path.boundingRect.origin.y)
-                        .frame(width: path.boundingRect.width, height: path.boundingRect.height)
-                } else {
-                    UserPicInitials(name: user.name)
-                        .padding(2)
-                        .offset(x: path.boundingRect.origin.x, y: path.boundingRect.origin.y)
-                        .frame(width: path.boundingRect.width, height: path.boundingRect.height)
-                }
+                UserIcon(user: user, onlineIndicatorHeight: 5)
+                    .padding(2)
+                    .offset(x: path.boundingRect.origin.x, y: path.boundingRect.origin.y)
+                    .frame(width: path.boundingRect.width, height: path.boundingRect.height)
             }
         }
         .frame(width: 60, height: 60)

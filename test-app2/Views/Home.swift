@@ -15,10 +15,10 @@ struct Home: View {
     @Namespace var bottomID
     
     var suggestedArtists: [Artist] {
-        model.suggestedUsers.compactMap { $0.topArtists?.items.first }
+        model.suggestedUsers.compactMap { $0.topArtists?.items.first }.sorted { $0.id > $1.id }
     }
     var suggestedTracks: [Track] {
-        model.suggestedUsers.compactMap { $0.topTracks?.items.first }
+        model.suggestedUsers.compactMap { $0.topTracks?.items.first }.sorted { $0.id > $1.id }
     }
     
     @State var canRefresh = true
@@ -27,7 +27,7 @@ struct Home: View {
     var body: some View {
         ScrollViewReader { proxy in
             List {
-                UsersView()
+                SuggestedUsersView()
                     .header(title: "You matched with")
                     .listRowSeparatorTint(.clear)
                     .listRowBackground(Color.clear)

@@ -8,14 +8,13 @@
 import SwiftUI
 
 
-struct UsersView: View {
+struct SuggestedUsersView: View {
     @EnvironmentObject var model: AppStateModel
-
     var body: some View {
 
         ScrollView(.horizontal, showsIndicators: false) {
             LazyHStack {
-                ForEach(model.suggestedUsers.sorted { $0.id > $1.id }, id: \.id) { user in
+                ForEach(model.suggestedUsers, id: \.id) { user in
                     UserCard(user: user)
                         .padding([.horizontal], 1)
                         .padding(.leading, user.id == model.suggestedUsers.first?.id ? 10 : 0)
@@ -25,8 +24,3 @@ struct UsersView: View {
     }
 }
 
-struct UsersView_Previews: PreviewProvider {
-    static var previews: some View {
-        UsersView()
-    }
-}

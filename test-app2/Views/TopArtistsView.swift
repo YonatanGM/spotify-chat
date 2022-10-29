@@ -22,7 +22,7 @@ struct TopArtistsView: View {
 
         ScrollView(.horizontal, showsIndicators: false) {
             LazyHStack(spacing: 30) {
-                ForEach(artists.sorted { $0.id > $1.id }, id: \.id) { artist in
+                ForEach(artists, id: \.id) { artist in
                     ArtistCard(artist: artist)
                         .padding(.leading, artist.id == artists.first?.id ? 10 : 0)
                         .scaleEffect(selectedTrackID == artist.id && isTapping ? 0.9 : 1)

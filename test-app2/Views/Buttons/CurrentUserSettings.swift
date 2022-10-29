@@ -24,12 +24,12 @@ struct CurrentUserSettings: View {
                         .scaledToFit()
                         .clipShape(Circle())
                         .frame(height: 25)
-                        .shadow(radius: 2.5)
+                        .shadow(radius: 1)
                         
                 } else {
                     UserPicInitials(name: currentUser.userName)
                         .frame(height: 25)
-                        .shadow(radius: 2.5)
+                        .shadow(radius: 1)
                 }
             }
         }

@@ -100,7 +100,6 @@ struct ConversationsView: View {
                                 }
                             }
                             .tint(.backdrop)
-                           
                         }
                     }
             }

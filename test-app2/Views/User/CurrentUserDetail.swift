@@ -42,6 +42,8 @@ struct CurrentUserDetail: View {
         }
         return urls
     }
+    
+    
     var body: some View {
         ZStack {
             if let user = model.currentUser {
@@ -66,53 +68,9 @@ struct CurrentUserDetail: View {
                         )
                     HStack {
                         Spacer()
-                        VStack {
-                            if let url = user.avatarURL {
-                                AnimatedImage(url: url)
-                                    .resizable()
-                                    .scaledToFit()
-                                    .clipShape(Circle())
-                                    .frame(height: profilePicHeight)
-                                    .shadow(radius: 5)
-                                    .overlay(
-                                        GeometryReader { geometry in
-                                            ZStack {
-                                                Image(systemName: "circle.fill")
-                                                    .resizable()
-                                                    .scaledToFit()
-                                                    .frame(width: 10)
-                                                    .foregroundColor(.green)
-                                                    .offset(x: cos(Angle(degrees: -45).radians) * geometry.size.width / 2,
-                                                            y: sin(Angle(degrees: -45).radians) * geometry.size.height / 2)
-                                                
-                                                
-                                            }
-                                            .frame(width: geometry.size.width, height: geometry.size.height, alignment: .center)
-                                        }
-                                        .opacity(isOnline ? 1.0 : 0.0 )
-                                    )
-                            } else {
-                                UserPicInitials(name: user.userName)
-                                    .frame(height: profilePicHeight)
-                                    .shadow(radius: 5)
-                                    .overlay(
-                                        GeometryReader { geometry in
-                                            ZStack {
-                                                Image(systemName: "circle.fill")
-                                                    .resizable()
-                                                    .scaledToFit()
-                                                    .frame(width: 10)
-                                                    .foregroundColor(.green)
-                                                    .offset(x: cos(Angle(degrees: -45).radians) * geometry.size.width / 2,
-                                                            y: sin(Angle(degrees: -45).radians) * geometry.size.height / 2)
+                        UserIcon(user: .init(id: user.id, name: user.userName, photoURL: user.avatarURL?.absoluteString, genreDisplay: nil))
+                            .frame(width: profilePicHeight)
 
-                                            }
-                                            .frame(width: geometry.size.width, height: geometry.size.height, alignment: .center)
-                                        }
-                                        .opacity(isOnline ? 1.0 : 0.0 )
-                                    )
-                            }
-                        }
                         VStack(alignment: .leading) {
                             Spacer()
                             HStack {
@@ -169,7 +127,7 @@ struct CurrentUserDetail: View {
                     
                   
                 }
-                .navigationTitle(user.userName)
+                .navigationTitle("You")
                 .navigationBarItems(trailing: Menu {
                     Button(role: .destructive, action: {
                         DatabaseManager.shared.deleteProfile {

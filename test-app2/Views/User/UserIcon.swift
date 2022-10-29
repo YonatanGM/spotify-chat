@@ -8,20 +8,22 @@
 import SwiftUI
 import SDWebImageSwiftUI
 
-struct UserIconAnimated: View {
+struct UserIcon: View {
     let user: UserInfo
-    @State var scale = 0.0
-    
-    private func scaleAmount(posX: Double) -> Double {
-        return abs(UIScreen.main.bounds.size.width / 2 - posX) / (UIScreen.main.bounds.size.width / 2)
-    }
-    
     @State var onlineStatusHandle: UInt?
     @State var isOnline = false
+    var onlineIndicatorHeight: CGFloat?
+    let showOnlineIndicator: Bool 
+    
+    init(user: UserInfo, showOnlineIndicator: Bool = true, onlineIndicatorHeight: CGFloat? = nil) {
+        self.user = user
+        self.onlineIndicatorHeight = onlineIndicatorHeight
+        self.showOnlineIndicator = showOnlineIndicator
+    }
     
     var body: some View {
         if let urlString = user.photoURL,
-           let url = URL(string: urlString){
+           let url = URL(string: urlString) {
             AnimatedImage(url: url)
                 .resizable()
                 .scaledToFit()
@@ -36,7 +38,8 @@ struct UserIconAnimated: View {
                                         Image(systemName: "circle.fill")
                                             .resizable()
                                             .scaledToFit()
-                                            .frame(width: 10)
+                                        
+                                            .frame(width: onlineIndicatorHeight.map { $0 * 2} ?? geometry.size.width / 12 * 2)
                                             .offset(x: cos(Angle(degrees: -45).radians) * geometry.size.width / 2,
                                                     y: sin(Angle(degrees: -45).radians) * geometry.size.height / 2)
                                             .compositingGroup()
@@ -57,29 +60,14 @@ struct UserIconAnimated: View {
                             Image(systemName: "circle.fill")
                                 .resizable()
                                 .scaledToFit()
-                                .frame(width: 5)
+                                .frame(width: onlineIndicatorHeight ?? geometry.size.width / 12)
                                 .foregroundColor(.green)
                                 .offset(x: cos(Angle(degrees: -45).radians) * geometry.size.width / 2,
                                         y: sin(Angle(degrees: -45).radians) * geometry.size.height / 2)
                         }
                         .frame(width: geometry.size.width, height: geometry.size.height, alignment: .center)
                     }
-                    .opacity(isOnline ? 1.0 : 0.0)
-                )
-                .scaleEffect(max(0.01, 1 - scale))
-                .overlay(
-                    GeometryReader { geometry in
-                        Color.clear
-                            .onChange(of: geometry.frame(in: .global).midX) { _ in
-                                withAnimation(.easeIn) {
-                                    scale = scaleAmount(posX: geometry.frame(in: .global).midX)
-                                }
-                            }
-                            .onAppear {
-                                scale = scaleAmount(posX: geometry.frame(in: .global).midX)
-                            }
-                    }
-                    
+                    .opacity(isOnline ? 1.0 : 0.0 )
                 )
                 .onAppear {
                     // check online status
@@ -104,7 +92,7 @@ struct UserIconAnimated: View {
                                         Image(systemName: "circle.fill")
                                             .resizable()
                                             .scaledToFit()
-                                            .frame(width: 10)
+                                            .frame(width: onlineIndicatorHeight.map { $0 * 2} ?? geometry.size.width / 12 * 2)
                                             .offset(x: cos(Angle(degrees: -45).radians) * geometry.size.width / 2,
                                                     y: sin(Angle(degrees: -45).radians) * geometry.size.height / 2)
                                             .compositingGroup()
@@ -125,29 +113,14 @@ struct UserIconAnimated: View {
                             Image(systemName: "circle.fill")
                                 .resizable()
                                 .scaledToFit()
-                                .frame(width: 5)
+                                .frame(width: onlineIndicatorHeight ?? geometry.size.width / 12)
                                 .foregroundColor(.green)
                                 .offset(x: cos(Angle(degrees: -45).radians) * geometry.size.width / 2,
                                         y: sin(Angle(degrees: -45).radians) * geometry.size.height / 2)
                         }
                         .frame(width: geometry.size.width, height: geometry.size.height, alignment: .center)
                     }
-                    .opacity(isOnline ? 1.0 : 0.0)
-                )
-                .scaleEffect(max(0.01, 1 - scale))
-                .overlay(
-                    GeometryReader { geometry in
-                        Color.clear
-                            .onChange(of: geometry.frame(in: .global).midX) { _ in
-                                withAnimation(.easeIn) {
-                                    scale = scaleAmount(posX: geometry.frame(in: .global).midX)
-                                }
-                            }
-                            .onAppear {
-                                scale = scaleAmount(posX: geometry.frame(in: .global).midX)
-                            }
-                    }
-                    
+                    .opacity(isOnline ? 1.0 : 0.0 )
                 )
                 .onAppear {
                     // check online status

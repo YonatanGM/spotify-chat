@@ -14,4 +14,5 @@ struct UserInfo {
     let name: String
     let photoURL: String?
     let genreDisplay: String?
+    
 }

@@ -325,7 +325,7 @@ extension AppStateModel {
                     case .success(let users):
                         // update the users
                         
-                        self?.suggestedUsers = users.filter { $0.id != AuthManager.shared.currentUser?.uid }
+                        self?.suggestedUsers = users.filter { $0.id != AuthManager.shared.currentUser?.uid }.sorted { $0.id > $1.id }
                         if let blockedUsers = self?.blockedUsers {
                             self?.suggestedUsers.removeAll { blockedUsers.contains($0.id) }
                         }
