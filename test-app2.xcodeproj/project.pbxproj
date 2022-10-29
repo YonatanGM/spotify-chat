@@ -54,6 +54,7 @@
 		9F61C85E28EC4B8600877B91 /* DeleteAccount.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F61C85D28EC4B8600877B91 /* DeleteAccount.swift */; };
 		9F61C86028EC726600877B91 /* DM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F61C85F28EC726600877B91 /* DM.swift */; };
 		9F61C86628EDB52800877B91 /* UserIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F61C86528EDB52800877B91 /* UserIcon.swift */; };
+		9F6CA8E3290CD53C00EAD0A8 /* ActivityViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F6CA8E2290CD53B00EAD0A8 /* ActivityViewController.swift */; };
 		9F99827928F84A88004F2559 /* Logos.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F99827828F84A88004F2559 /* Logos.swift */; };
 		9F99829628FB00ED004F2559 /* Promises in Frameworks */ = {isa = PBXBuildFile; productRef = 9F99829528FB00ED004F2559 /* Promises */; };
 		9F9C419228CF531F009CA948 /* FindButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F9C419128CF531E009CA948 /* FindButton.swift */; };
@@ -122,6 +123,7 @@
 		9F61C85D28EC4B8600877B91 /* DeleteAccount.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeleteAccount.swift; sourceTree = "<group>"; };
 		9F61C85F28EC726600877B91 /* DM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DM.swift; sourceTree = "<group>"; };
 		9F61C86528EDB52800877B91 /* UserIcon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserIcon.swift; sourceTree = "<group>"; };
+		9F6CA8E2290CD53B00EAD0A8 /* ActivityViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityViewController.swift; sourceTree = "<group>"; };
 		9F99827828F84A88004F2559 /* Logos.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logos.swift; sourceTree = "<group>"; };
 		9F9C419128CF531E009CA948 /* FindButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FindButton.swift; sourceTree = "<group>"; };
 		9F9C419528CF6BE4009CA948 /* Search.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Search.swift; sourceTree = "<group>"; };
@@ -176,6 +178,7 @@
 				9F9C419528CF6BE4009CA948 /* Search.swift */,
 				9F22828D28D3CE5A0050929E /* GenresAnimatedIcon.swift */,
 				9FD44B9B28CB7B9A0028A408 /* Bar.swift */,
+				9F6CA8E2290CD53B00EAD0A8 /* ActivityViewController.swift */,
 				9F6CA8DE290CA6E000EAD0A8 /* User */,
 				9F6CA8E0290CB09000EAD0A8 /* Artist */,
 				9F6CA8E1290CB0A100EAD0A8 /* Track */,
@@ -515,6 +518,7 @@
 				9FD44B9628CB3E170028A408 /* SuggestedUsersView.swift in Sources */,
 				9F60629C28F317F500320BF9 /* TrackMetadata.swift in Sources */,
 				9F9C419628CF6BE4009CA948 /* Search.swift in Sources */,
+				9F6CA8E3290CD53C00EAD0A8 /* ActivityViewController.swift in Sources */,
 				9F2282ED28D6E4EC0050929E /* UserPicInitials.swift in Sources */,
 				9FD44B9A28CB7B140028A408 /* InviteButton.swift in Sources */,
 				9F61C85A28EC49B600877B91 /* CurrentUserDetail.swift in Sources */,

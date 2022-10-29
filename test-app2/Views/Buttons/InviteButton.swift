@@ -9,7 +9,7 @@ import SwiftUI
 
 struct InviteButton: View {
     @State var isTapping: Bool = false
-    
+    @State private var isSharePresented: Bool = false
     var body: some View {
         HStack(spacing:0) {
             Image(systemName: "plus")
@@ -26,19 +26,22 @@ struct InviteButton: View {
         .scaleEffect(isTapping ? 0.9 : 1)
         .brightness(isTapping ? 0.1 : 0)
         .onTapGesture {
-            // animation
             withAnimation(.easeIn(duration: 0.1)) {
                 isTapping = true
             }
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                 withAnimation {
                     isTapping = false
-                    
                 }
-
+                isSharePresented = true
             }
             
         }
+        .sheet(isPresented: $isSharePresented, onDismiss: {
+            print("Dismiss")
+        }, content: {
+            ActivityViewController(activityItems: ["mklsdmflksdf sdf sdfsdf"])
+        })
     }
 }
 
