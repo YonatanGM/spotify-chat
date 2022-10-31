@@ -59,13 +59,13 @@ final class APICaller {
                 do {
                     let result = try JSONDecoder().decode(UserProfileResponse.self, from: data)
                     // let result = try JSONSerialization.jsonObject(with: data, options: .allowFragments)
-                     print(result)
+                    // print(result)
                     completion(.success(result))
                     
                 } catch {
-                     print(error.localizedDescription)
-                     print(response)
-                     print( print((response as? HTTPURLResponse)?.statusCode))
+                    // print(error.localizedDescription)
+                    // print(response)
+                    // print( print((response as? HTTPURLResponse)?.statusCode))
                     completion(.failure(error))
                 }
             }

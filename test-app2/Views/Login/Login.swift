@@ -79,7 +79,9 @@ struct Login: View {
                     ProgressView()
                 }
                 Spacer()
-                PrivacyAndTerms()
+                if model.signInStatus == .signedOut {
+                    PrivacyAndTerms()
+                }
             }
             .alert(isPresented: $presentLoginFailedAlert) {
                 Alert(title: Text("Error"),

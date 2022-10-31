@@ -71,8 +71,20 @@ struct Home: View {
                     .listRowSeparatorTint(.clear)
                     .listRowBackground(Color.clear)
                     .listRowInsets(EdgeInsets(.zero))
-                    .padding(.bottom, 5)
                     .id(bottomID)
+                
+                HStack {
+                    Text(.init("[Terms of Service](https://testapp-79467.web.app/terms-and-conditions.html)"))
+                    Text("•").foregroundColor(.white)
+                    Text(.init("[Privacy Policy](https://testapp-79467.web.app/privacy.html)"))
+                    Spacer()
+                }
+                .padding(.horizontal, 10)
+                .tint(.white)
+                .font(.caption2)
+                .listRowSeparatorTint(.clear)
+                .listRowBackground(Color.clear)
+                .listRowInsets(EdgeInsets(.zero))
             }
            
             .listStyle(.plain)
@@ -101,14 +113,11 @@ struct Home: View {
                 }
             }
             .onChange(of: model.searchResults) { _ in
-          
                 proxy.scrollTo(bottomID, anchor: .bottom)
-                
             }
-          
         }
         .iOS { $0.dismissKeyboardOnTappingOutside() }
-       // .animation(.spring(), value: model.searchResults.count)
+        // .animation(.spring(), value: model.searchResults.count)
         .navigationBarItems(trailing: CurrentUserSettings())
         .background(
             LinearGradient(colors: [
