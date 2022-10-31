@@ -89,6 +89,7 @@ class AppStateModel: ObservableObject {
             if user != nil {
                 AuthManager.shared.refreshIfNeeded()
                 self?.signInStatus = .signedIn
+                
             } else {
                 // remove observers here
                 self?.signInStatus = .signedOut
@@ -96,7 +97,7 @@ class AppStateModel: ObservableObject {
         }
     }
     
-    func signIn() -> WebAuthenticationSession {
+    func signIn(completion: @escaping (Bool) -> Void) -> WebAuthenticationSession {
         return WebAuthenticationSession(
             url: AuthManager.shared.signInUrl!,
             callbackURLScheme: "chat-for-spotify-login"
@@ -111,8 +112,8 @@ class AppStateModel: ObservableObject {
             }
             self?.signInStatus = .signingIn
             AuthManager.shared.handleAuthorizationCodeFlow(code: code) { success in
-                print(success)
-                print("user logged in and inserted in database")
+                completion(success)
+                // print("user logged in and inserted in database")
             }
             
         }

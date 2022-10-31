@@ -55,6 +55,8 @@
 		9F61C86028EC726600877B91 /* DM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F61C85F28EC726600877B91 /* DM.swift */; };
 		9F61C86628EDB52800877B91 /* UserIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F61C86528EDB52800877B91 /* UserIcon.swift */; };
 		9F6CA8E3290CD53C00EAD0A8 /* ActivityViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F6CA8E2290CD53B00EAD0A8 /* ActivityViewController.swift */; };
+		9F6CA8FF290E90AC00EAD0A8 /* UserWebAnimationLogin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F6CA8FE290E90AB00EAD0A8 /* UserWebAnimationLogin.swift */; };
+		9F6CA902290FFA4600EAD0A8 /* PrivacyAndTerms.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F6CA901290FFA4600EAD0A8 /* PrivacyAndTerms.swift */; };
 		9F99827928F84A88004F2559 /* Logos.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F99827828F84A88004F2559 /* Logos.swift */; };
 		9F99829628FB00ED004F2559 /* Promises in Frameworks */ = {isa = PBXBuildFile; productRef = 9F99829528FB00ED004F2559 /* Promises */; };
 		9F9C419228CF531F009CA948 /* FindButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F9C419128CF531E009CA948 /* FindButton.swift */; };
@@ -92,7 +94,7 @@
 		46F0CC2C280D716C00BF1B4B /* APICaller.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APICaller.swift; sourceTree = "<group>"; };
 		46F0CC41280DCAE300BF1B4B /* TopArtistsResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopArtistsResponse.swift; sourceTree = "<group>"; };
 		46F0CC47280DCEED00BF1B4B /* TopTracksResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopTracksResponse.swift; sourceTree = "<group>"; };
-		46F5CA662808C23E00D58C41 /* test-app2.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "test-app2.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		46F5CA662808C23E00D58C41 /* Chat for Spotify.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Chat for Spotify.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		46F5CA692808C23E00D58C41 /* test_app2App.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = test_app2App.swift; sourceTree = "<group>"; };
 		46F5CA6B2808C23E00D58C41 /* MainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainView.swift; sourceTree = "<group>"; };
 		46F5CA6D2808C24000D58C41 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -124,6 +126,8 @@
 		9F61C85F28EC726600877B91 /* DM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DM.swift; sourceTree = "<group>"; };
 		9F61C86528EDB52800877B91 /* UserIcon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserIcon.swift; sourceTree = "<group>"; };
 		9F6CA8E2290CD53B00EAD0A8 /* ActivityViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityViewController.swift; sourceTree = "<group>"; };
+		9F6CA8FE290E90AB00EAD0A8 /* UserWebAnimationLogin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserWebAnimationLogin.swift; sourceTree = "<group>"; };
+		9F6CA901290FFA4600EAD0A8 /* PrivacyAndTerms.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrivacyAndTerms.swift; sourceTree = "<group>"; };
 		9F99827828F84A88004F2559 /* Logos.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logos.swift; sourceTree = "<group>"; };
 		9F9C419128CF531E009CA948 /* FindButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FindButton.swift; sourceTree = "<group>"; };
 		9F9C419528CF6BE4009CA948 /* Search.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Search.swift; sourceTree = "<group>"; };
@@ -171,7 +175,6 @@
 			children = (
 				46F5CA6B2808C23E00D58C41 /* MainView.swift */,
 				9FBFACE728CBCD3200C9F179 /* Home.swift */,
-				46ED90EC2825250B0064E5BE /* Login.swift */,
 				9FD44B9528CB3E170028A408 /* SuggestedUsersView.swift */,
 				4604EF9B28571E9D000DF914 /* TopArtistsView.swift */,
 				4604EF9F2857216F000DF914 /* TopTracksView.swift */,
@@ -179,6 +182,7 @@
 				9F22828D28D3CE5A0050929E /* GenresAnimatedIcon.swift */,
 				9FD44B9B28CB7B9A0028A408 /* Bar.swift */,
 				9F6CA8E2290CD53B00EAD0A8 /* ActivityViewController.swift */,
+				9F6CA900290EB93500EAD0A8 /* Login */,
 				9F6CA8DE290CA6E000EAD0A8 /* User */,
 				9F6CA8E0290CB09000EAD0A8 /* Artist */,
 				9F6CA8E1290CB0A100EAD0A8 /* Track */,
@@ -249,7 +253,7 @@
 		46F5CA672808C23E00D58C41 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				46F5CA662808C23E00D58C41 /* test-app2.app */,
+				46F5CA662808C23E00D58C41 /* Chat for Spotify.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -379,6 +383,16 @@
 			path = Track;
 			sourceTree = "<group>";
 		};
+		9F6CA900290EB93500EAD0A8 /* Login */ = {
+			isa = PBXGroup;
+			children = (
+				46ED90EC2825250B0064E5BE /* Login.swift */,
+				9F6CA8FE290E90AB00EAD0A8 /* UserWebAnimationLogin.swift */,
+				9F6CA901290FFA4600EAD0A8 /* PrivacyAndTerms.swift */,
+			);
+			path = Login;
+			sourceTree = "<group>";
+		};
 		9F9C41A128D18A52009CA948 /* CreateGroup */ = {
 			isa = PBXGroup;
 			children = (
@@ -424,7 +438,7 @@
 				9F48D64C28FB4A6C006F4A55 /* BetterSafariView */,
 			);
 			productName = "test-app2";
-			productReference = 46F5CA662808C23E00D58C41 /* test-app2.app */;
+			productReference = 46F5CA662808C23E00D58C41 /* Chat for Spotify.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -520,7 +534,9 @@
 				9F9C419628CF6BE4009CA948 /* Search.swift in Sources */,
 				9F6CA8E3290CD53C00EAD0A8 /* ActivityViewController.swift in Sources */,
 				9F2282ED28D6E4EC0050929E /* UserPicInitials.swift in Sources */,
+				9F6CA8FF290E90AC00EAD0A8 /* UserWebAnimationLogin.swift in Sources */,
 				9FD44B9A28CB7B140028A408 /* InviteButton.swift in Sources */,
+				9F6CA902290FFA4600EAD0A8 /* PrivacyAndTerms.swift in Sources */,
 				9F61C85A28EC49B600877B91 /* CurrentUserDetail.swift in Sources */,
 				9F60629728F1190D00320BF9 /* ArtistCard.swift in Sources */,
 				46F5CA782808DD0D00D58C41 /* AuthManager.swift in Sources */,
@@ -679,6 +695,7 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "test-app2/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "Chat for Spotify";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -692,7 +709,7 @@
 				);
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "io.github.yonatangm.chat-for-spotify";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = "Chat for Spotify";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
@@ -713,6 +730,7 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "test-app2/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "Chat for Spotify";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -726,7 +744,7 @@
 				);
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "io.github.yonatangm.chat-for-spotify";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = "Chat for Spotify";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;

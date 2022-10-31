@@ -23,6 +23,8 @@ struct SignOut: View {
                 }
                 DatabaseManager.shared.removePresence()
                 model.signOut()
+                model.searchResults =  []
+                
             }
         }, label: {
             HStack(spacing: 0) {

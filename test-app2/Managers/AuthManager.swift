@@ -239,11 +239,9 @@ extension AuthManager {
                 
                 let result = try JSONDecoder().decode([String: String].self, from: data)
                 // print("tokkk, ", result["token"])
-                print(data, response)
                 completion(.success(result["token"]!))
                 
             } catch {
-                print(data, response)
                 completion(.failure(AuthError.failedToConvertFirebaseTokenJSONToString))
             }
         }
