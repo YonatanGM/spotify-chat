@@ -46,7 +46,7 @@ struct BasicExampleView: View {
             switch message.messageKind {
             case .text(let text):
                 return Button(action: {
-                    print("Copy Context Menu tapped!!")
+                    // print("Copy Context Menu tapped!!")
                     UIPasteboard.general.string = text
                 }) {
                     Text("Copy")

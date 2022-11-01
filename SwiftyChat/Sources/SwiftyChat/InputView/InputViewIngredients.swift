@@ -386,9 +386,9 @@ internal struct UITextViewWrapper: UIViewRepresentable {
     func updateUIView(_ uiView: UITextView, context: Context) {
         uiView.attributedText = attributedText
         if isEditing {
-            uiView.becomeFirstResponder()
+            // uiView.becomeFirstResponder()
         } else {
-            uiView.resignFirstResponder()
+            // uiView.resignFirstResponder()
         }
         UITextViewWrapper.recalculateHeight(
             view: uiView,

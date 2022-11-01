@@ -27,14 +27,15 @@ struct DeleteAccount: View {
             HStack(spacing: 0) {
                 Text("Delete profile")
                      .font(.headline)
-                     .minimumScaleFactor(0.5)
+                     //.minimumScaleFactor(0.5)
+                     .fixedSize()
                      .lineLimit(1)
                 
             }
         })
         .padding(buttonHeight / 2)
         .foregroundColor(.white)
-        .background(Color.red.opacity(0.05))
+        // .background(Color.red.opacity(0.05))
         .clipShape(Capsule())
         .scaleEffect(isTapping ? 0.9 : 1)
         .brightness(isTapping ? 0.1 : 0)

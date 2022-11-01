@@ -69,20 +69,16 @@ struct CurrentUserDetail: View {
                     HStack {
                         Spacer()
                         UserIcon(user: .init(id: user.id, name: user.userName, photoURL: user.avatarURL?.absoluteString, genreDisplay: nil))
-                            .frame(width: profilePicHeight)
-
                         VStack(alignment: .leading) {
                             Spacer()
                             HStack {
                                 SignOut()
-                                // DeleteAccount()
+                                DeleteAccount()
                                 Spacer()
                             }
-                            
-                            
+                                                      
                             if let topGenres = user.topGenres {
                                 GeometryReader { geometry in
-                                    
                                     ScrollView(.horizontal, showsIndicators: false) {
                                         LazyHStack(spacing: 1) {
                                             ForEach(topGenres, id: \.self ) { genre in
@@ -102,7 +98,7 @@ struct CurrentUserDetail: View {
                     .padding(.horizontal)
                     .offset(y: -1 * profilePicHeight / 2)
                     .padding(.bottom, -1 * profilePicHeight / 3)
-                    // .border(.red)
+       
                     if let artists = user.topArtists?.items {
                         VStack(alignment: .leading, spacing: 10) {
                             Text("Likes")

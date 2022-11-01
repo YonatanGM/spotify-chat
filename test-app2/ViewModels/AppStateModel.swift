@@ -10,7 +10,6 @@ import FirebaseAuth
 import SwiftUI
 import FirebaseAuth
 import Combine
-import SpriteKit
 import SwiftyChat
 import AVKit
 import BetterSafariView
@@ -66,14 +65,23 @@ class AppStateModel: ObservableObject {
     @Published var groups = [String: Group]()
     
     @Published var finishedLoadingOfSuggestedUsers = false
+    
+    // AVPlayer observers
+    var itemDidPlayToEndTimeObserver: NSObjectProtocol? = nil
+    var itemFailedToPlayToEndTimeObserver: NSObjectProtocol? = nil
+    var itemPlaybackStalledObserver: NSObjectProtocol? = nil
+    var timeObserverToken: Any? = nil
+
 
     
     init() {
         // check if spotify is installed
         // ... if I want to open appstore in case spotify is not installed
+        /*
         if let url = URL(string: "spotify://"), UIApplication.shared.canOpenURL(url) {
             isSpotifyInstalled = true
         }
+        */
 
         self.$signInStatus.sink(receiveValue: { [weak self] signInStatus in
             if signInStatus == .signedIn {
@@ -87,11 +95,22 @@ class AppStateModel: ObservableObject {
             AuthManager.shared.currentUser = user
             
             if user != nil {
+                // spotify token refresh
                 AuthManager.shared.refreshIfNeeded()
-                self?.signInStatus = .signedIn
-                
+                // check if user exists in the database
+                if let id = user?.uid {
+                    DatabaseManager.shared.userExists(with: id) { exists in
+                        if exists {
+                            self?.signInStatus = .signedIn
+                        }
+                    }
+                }
             } else {
                 // remove observers here
+                // if user was previously signed in remove all observers
+                if self?.signInStatus == .signedIn {
+                    self?.cleanup()
+                }
                 self?.signInStatus = .signedOut
             }
         }
@@ -111,18 +130,20 @@ class AppStateModel: ObservableObject {
                 return
             }
             self?.signInStatus = .signingIn
-            AuthManager.shared.handleAuthorizationCodeFlow(code: code) { success in
+            AuthManager.shared.handleAuthorizationCodeFlow(code: code) { [weak self] success in
+                if success {
+                    self?.signInStatus = .signedIn
+                }
                 completion(success)
                 // print("user logged in and inserted in database")
             }
-            
         }
         .prefersEphemeralWebBrowserSession(false)
     }
     
     func signOut() {
-        AuthManager.shared.signOut()
-        signInStatus = .signedOut
+        DatabaseManager.shared.removePresence()
+        AuthManager.shared.signOut { _ in }
     }
     
 }
@@ -221,7 +242,7 @@ extension AppStateModel {
                             DatabaseManager.shared.observeMessageModeration(in: groupID) { [weak self] result in
                                 switch result {
                                 case .success(let moderatedMessage):
-                                    print(moderatedMessage)
+                                    // print(moderatedMessage)
                                     if let index = (self?.groups[groupID]?.messages.firstIndex { $0.id == moderatedMessage.id }) {
                                         self?.groups[groupID]?.messages[index] = moderatedMessage
                                     }
@@ -254,11 +275,13 @@ extension AppStateModel {
             self?.groups[groupID] = nil
             // stop observing messages in the room, good!
             DatabaseManager.shared.removeObserver(with: "conversations/\(groupID)")
+            DatabaseManager.shared.removeObserver(with: "conversations_ids/\(groupID)")
             DatabaseManager.shared.removeObserver(with: "Group/\(groupID)")
             if let currentUserID = AuthManager.shared.currentUser?.uid {
-                DatabaseManager.shared.removeObserver(with: "userInfo/\(currentUserID)/blocked")
+                DatabaseManager.shared.removeObserver(with: "userInfo/\(currentUserID)/lastSeen/\(groupID)")
+                // what is this?
+                // DatabaseManager.shared.removeObserver(with: "userInfo/\(currentUserID)/blocked")
             }
-            // DatabaseManager.shared.removeObserver(with: "Group/\(groupID)")
         }
         
 
@@ -331,13 +354,10 @@ extension AppStateModel {
                             self?.suggestedUsers.removeAll { blockedUsers.contains($0.id) }
                         }
                        
-                        
                         if let currentUser = (users.first { $0.id == AuthManager.shared.currentUser?.uid }) {
                             self?.currentUser = currentUser
                         }
                         
-                        
-                       
                         APICaller.shared.checkIfCurrentUserFollowsUsers(with: users.map { $0.id }) { result in
                             switch result {
                             case .success(let followedUsers):
@@ -355,7 +375,6 @@ extension AppStateModel {
                             switch result {
                             case .success(let likedTracks):
                                 DispatchQueue.main.async {
-                                    
                                     self?.likedTracks = likedTracks
                                 }
                                 
@@ -386,7 +405,7 @@ extension AppStateModel {
         // setup the AVPlayer
         
         avPlayer.actionAtItemEnd = .pause
-        avPlayer.addPeriodicTimeObserver(forInterval:
+        timeObserverToken = avPlayer.addPeriodicTimeObserver(forInterval:
                                                 CMTime(seconds: 0.1, preferredTimescale: CMTimeScale(NSEC_PER_SEC)),
                                              queue: .main,
                                              using: { [weak self] time in
@@ -397,8 +416,8 @@ extension AppStateModel {
         
 
 
-        // add oberver to detect when the preview ends
-        let itemDidPlayToEndTimeObserver = NotificationCenter.default.addObserver(forName: .AVPlayerItemDidPlayToEndTime, object: nil, queue: .main) { [weak self] _ in
+        // add obervers to detect when the preview ends, if it stalls, etc
+        itemDidPlayToEndTimeObserver = NotificationCenter.default.addObserver(forName: .AVPlayerItemDidPlayToEndTime, object: nil, queue: .main) { [weak self] _ in
             // seek to beginning
             self?.play = false
             self?.avPlayer.pause()
@@ -406,7 +425,7 @@ extension AppStateModel {
 
         }
         
-        let itemFailedToPlayToEndTimeObserver = NotificationCenter.default.addObserver(forName: .AVPlayerItemFailedToPlayToEndTime, object: nil, queue: .main) { [weak self] _ in
+        itemFailedToPlayToEndTimeObserver = NotificationCenter.default.addObserver(forName: .AVPlayerItemFailedToPlayToEndTime, object: nil, queue: .main) { [weak self] _ in
             // seek to beginning
             self?.play = false
             self?.avPlayer.pause()
@@ -414,7 +433,7 @@ extension AppStateModel {
 
         }
 
-        let itemPlaybackStalledObserved = NotificationCenter.default.addObserver(forName: .AVPlayerItemPlaybackStalled, object: nil, queue: .main) { [weak self] _ in
+        itemPlaybackStalledObserver = NotificationCenter.default.addObserver(forName: .AVPlayerItemPlaybackStalled, object: nil, queue: .main) { [weak self] _ in
             // seek to beginning
             self?.play = false
             self?.avPlayer.pause()
@@ -422,8 +441,48 @@ extension AppStateModel {
 
         }
     }
+    
+    
 }
 
+
+//MARK: - Remove observers
+
+extension AppStateModel {
+    public func cleanup() {
+        guard let currentUserID = AuthManager.shared.currentUser?.uid else { return }
+        // UserInfo
+        DatabaseManager.shared.removeObserver(with: "userInfo/\(currentUserID)/Groups")
+        DatabaseManager.shared.removeObserver(with: "userInfo/\(currentUserID)/lastSeen")
+        DatabaseManager.shared.removeObserver(with: "userInfo/\(currentUserID)/blocked")
+    
+        groups.forEach { key, _ in
+            // Group
+            DatabaseManager.shared.removeObserver(with: "Group/\(key)")
+            // Conversations
+            DatabaseManager.shared.removeObserver(with: "conversations/\(key)")
+            // Conversation ids
+            DatabaseManager.shared.removeObserver(with: "conversations_ids/\(key)")
+            // last seen
+            DatabaseManager.shared.removeObserver(with: "userInfo/\(currentUserID)/lastSeen/\(key)")
+        }
+        
+        // presence
+        DatabaseManager.shared.removeObserver(with: "status/\(currentUserID)")
+        // room change
+        DatabaseManager.shared.removeObserver(with: "users/\(currentUserID)/room")
+    
+        // remove AVPlayer observers
+        NotificationCenter.default.removeObserver(itemDidPlayToEndTimeObserver)
+        NotificationCenter.default.removeObserver(itemPlaybackStalledObserver)
+        NotificationCenter.default.removeObserver(itemFailedToPlayToEndTimeObserver)
+        avPlayer.removeTimeObserver(timeObserverToken)
+        
+        // clear search results
+        searchResults =  []
+        
+    }
+}
 
 //MARK: - AVPlayer
 extension AppStateModel {
@@ -482,5 +541,3 @@ extension AppStateModel {
     
     
 }
-
-//MARK: - Additional functions

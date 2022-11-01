@@ -21,16 +21,14 @@ struct SignOut: View {
                 withAnimation {
                     isTapping = false
                 }
-                DatabaseManager.shared.removePresence()
                 model.signOut()
-                model.searchResults =  []
-                
             }
         }, label: {
             HStack(spacing: 0) {
                 Text("Log out")
                     .font(.headline)
-                    .minimumScaleFactor(0.5)
+                    .fixedSize()
+                    // .minimumScaleFactor(0.5)
                     .lineLimit(1)
             }
         })

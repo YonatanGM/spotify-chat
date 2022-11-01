@@ -49,6 +49,7 @@ struct FollowOnSpotify: View {
                 HStack(spacing: 0) {
                     Text("Following")
                         .font(.headline)
+                        .fixedSize()
                         // .minimumScaleFactor(0.9)
                         .lineLimit(1)
                         // .fontWeight(.bold)
@@ -58,6 +59,7 @@ struct FollowOnSpotify: View {
 //                    Image("Spotify_Icon_RGB_White-1")
 //                        .resizable()
 //                        .scaledToFit()
+             
                         .frame(width: logoHeight, height: logoHeight)
 //                        .border(.red)
                         .padding(.leading, logoHeight / 2)

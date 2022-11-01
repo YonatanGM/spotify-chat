@@ -89,12 +89,10 @@ final class AuthManager {
                 completion(false)
                 return
             }
-            
-            // print("status: ", response)
             do {
                 let result = try JSONDecoder().decode(AuthResponse.self, from: data)
                 self?.cacheToken(result: result)
-                print("SUCCESS: \(result)")
+                // print("SUCCESS: \(result)")
                 completion(true)
             } catch {
                 print("ERROR: ", error.localizedDescription)
@@ -136,13 +134,9 @@ final class AuthManager {
             return
         }
     
-        guard let _ = self.refreshToken else {
-            return 
-        }
+        guard let _ = self.refreshToken else { return }
         
-        guard let url = URL(string: Constants.tokenAPIURL) else {
-            return
-        }
+        guard let url = URL(string: Constants.tokenAPIURL) else { return }
         
         refreshingToken = true
         var components = URLComponents()
@@ -172,8 +166,7 @@ final class AuthManager {
                 completion?(false)
                 return
             }
-            
-            // print("status: ", response)
+
             do {
                 let result = try JSONDecoder().decode(AuthResponse.self, from: data)
                 // print("Successfully refreshed token")
@@ -200,9 +193,15 @@ final class AuthManager {
     }
     
     
-    public func signOut() {
-        try? Auth.auth().signOut()
-        UserDefaults.standard.setValue(nil, forKey: "access_token")
+    public func signOut(completion: @escaping (Bool) -> Void) {
+        do {
+            try Auth.auth().signOut()
+            UserDefaults.standard.setValue(nil, forKey: "access_token")
+            completion(true)
+        } catch {
+            completion(false)
+        }
+        
     }
 }
 
@@ -218,10 +217,9 @@ extension AuthManager {
     }
     
     public func getFirebaseCustomToken(for uid: String, completion: @escaping (Result<String, Error>) -> Void) {
-        guard let projectID = FirebaseApp.app()?.options.projectID,
+        guard let url = URL(string: "https://us-central1-testapp-79467.cloudfunctions.net/token?uid=\(uid)") else {
+            // let projectID = FirebaseApp.app()?.options.projectID,else {
               // let url = URL(string: "http://localhost:5002/\(projectID)/us-central1/token?uid=\(uid)") else {
-              
-              let url = URL(string: "https://us-central1-testapp-79467.cloudfunctions.net/token?uid=\(uid)") else {
             return
         }
 
@@ -334,9 +332,8 @@ extension AuthManager {
                             guard success else {
                                 completion(false)
                                 // delete user
-                                
                                 // then sign out
-                                self?.signOut()
+                                self?.signOut { _ in }
                                 return
                             }
                             completion(true)

@@ -38,7 +38,7 @@ struct InviteButton: View {
             
         }
         .sheet(isPresented: $isSharePresented, onDismiss: {
-            print("Dismiss")
+            // print("Dismiss")
         }, content: {
             ActivityViewController(activityItems: ["mklsdmflksdf sdf sdfsdf"])
         })

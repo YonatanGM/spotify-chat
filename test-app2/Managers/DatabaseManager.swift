@@ -56,17 +56,15 @@ extension DatabaseManager {
                return
             }
             
-            // user has no top artist, likely newly created account, user can't use app in this case
+            // user has no top artists, most likely newly created account, user can't use app in this case
             // might wanna handle this in the ui as well
             guard !topArtistsResponse.items.isEmpty else {
                completion(false)
                return
             }
             
-            
             // top genres (based on genres of top artists)
             // for uniqueness
-            
             APICaller.shared.getTopTracks { [weak self] result in
                switch result {
                case .success(let topTracksResponse):
@@ -77,7 +75,7 @@ extension DatabaseManager {
                   }
                   
                   let topGenres = topArtistsResponse.items
-                     .compactMap { $0.genres }.reduce([]) {return Set($0).union(Set($1))}
+                     .compactMap { $0.genres }.reduce([]) { return Set($0).union(Set($1)) }
                      .map { $0.lowercased().replacingOccurrences(of: "[\\[\\].$#]", with: " ", options: .regularExpression) }
                   
                   
@@ -114,8 +112,6 @@ extension DatabaseManager {
                      "users/\(profile.id)/top_tracks": topTracks,
                      "users/\(profile.id)/top_genres": Array(topGenres),
                      "users/\(profile.id)/top_genre_display": topArtistsResponse.items.first?.genres?.first
-                    
-                     
                   ]
                   
                   // update the genres and search index first
@@ -220,7 +216,6 @@ extension DatabaseManager {
                guard error == nil else { return }
                fulfill(true)
             }
-         
          }
       }.then { _ in
          completion()
@@ -251,6 +246,7 @@ extension DatabaseManager {
                   completion(false)
                   return
                }
+               // reinsert user
                self?.insertUser(with: profile) { result in
                   completion(result)
                }
@@ -348,7 +344,10 @@ extension DatabaseManager {
    
    public func getUsers(in room: String, completion: @escaping (Result<[Message.ChatUserItem], Error>) -> Void) {
       
-      self.database.child("users").queryOrdered(byChild: "room").queryEqual(toValue: "\(room)").observeSingleEvent(of: .value) { [weak self] snapshot in
+      self.database.child("users")
+         .queryOrdered(byChild: "room")
+         .queryEqual(toValue: "\(room)")
+         .observeSingleEvent(of: .value) { [weak self] snapshot in
          
          var users = [Message.ChatUserItem]()
          guard let usersDict = snapshot.value as? [String: [String: Any]] else {
@@ -813,8 +812,7 @@ extension DatabaseManager {
          "timestamp": ServerValue.timestamp(),
          "sender_id": currentUserID,
          "sender_name": currentUserName,
-         "sender_profile_pic_url":  AuthManager.shared.currentUser?.photoURL?.absoluteString,
-         "is_read": false
+         "sender_profile_pic_url":  AuthManager.shared.currentUser?.photoURL?.absoluteString
       ]
       
       updates["conversations_ids/\(group)/\(messageID)"] = true
@@ -837,7 +835,7 @@ extension DatabaseManager {
       
       database.child("users/\(currentUserID)/room").observe(.value, with: { snapshot in
          guard let room = snapshot.value as? String else {
-            completion(.failure(DatabaseError.failedToFetch))
+            // completion(.failure(DatabaseError.failedToFetch))
             return
          }
          completion(.success(room))
@@ -861,7 +859,6 @@ extension DatabaseManager {
       database.child("conversations/\(group)")
          .queryOrderedByKey()
          .queryLimited(toLast: Self.maxNumOfMessagesToFetch)
-        
          .observe(.childAdded, with: { snapshot in
          // let enumerator = snapshot.children
          
@@ -869,7 +866,6 @@ extension DatabaseManager {
          //  print(snapshot.value as? [String: Any])
          
          if let dictionary = snapshot.value as? [String: Any],
-            let isRead = dictionary["is_read"] as? Bool,
             let messageID = dictionary["id"] as? String,
             let content = dictionary["content"] as? String,
             let senderID = dictionary["sender_id"] as? String,
@@ -884,7 +880,7 @@ extension DatabaseManager {
             if type == "location" {
                //TODO: take care of this
             } else if type == "MessageKind.text(\(content))" {
-               print(content)
+               // print(content)
                kind = .text(content)
             }
             
@@ -918,13 +914,8 @@ extension DatabaseManager {
          .queryEqual(toValue: true)
          .queryLimited(toLast: 1)
          .observe(.childAdded, with: { [weak self] snapshot in
-         // let enumerator = snapshot.children
-         
-         // print("sss", enumerator.allObjects.count)
-         //  print(snapshot.value as? [String: Any])
-         
+
          if let dictionary = snapshot.value as? [String: Any],
-            let isRead = dictionary["is_read"] as? Bool,
             let messageID = dictionary["id"] as? String,
             let content = dictionary["content"] as? String,
             let senderID = dictionary["sender_id"] as? String,
@@ -939,7 +930,7 @@ extension DatabaseManager {
             if type == "location" {
                //TODO: take care of this
             } else if type == "MessageKind.text(\(content))" {
-               print(content)
+               // print(content)
                kind = .text(content)
             }
             
@@ -986,7 +977,7 @@ extension DatabaseManager {
       guard !searchTerms.isEmpty else { return }
 
       let idPomises = searchTerms.reduce([Promise<[String]>]()) { result, term in
-         print(term)
+         // print(term)
          return
          result +
             [Promise<[String]> { [weak self] fulfill, reject in
@@ -1006,7 +997,7 @@ extension DatabaseManager {
       
       all(idPomises).then { ids in
          let uniqueIDs = Set(ids.reduce([String]()) { $0 + $1 }).sorted().filter { $0 != currentUserID }
-         print(uniqueIDs)
+         // print(uniqueIDs)
          let userPromises = uniqueIDs.reduce([Promise<Message.ChatUserItem?>]()) { result, id in
             result +
                [Promise<Message.ChatUserItem?> { [weak self] fulfill, reject in
@@ -1073,7 +1064,6 @@ extension DatabaseManager {
 
    }
    
-   // on logging out
    public func removePresence() {
       guard let currentUserID = AuthManager.shared.currentUser?.uid else { return }
       database.child("status/\(currentUserID)").removeValue()
@@ -1158,8 +1148,7 @@ extension DatabaseManager {
             return
          }
          completion(Array(ids))
-         
       }
    }
-
+   
 }

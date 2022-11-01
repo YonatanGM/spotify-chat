@@ -188,7 +188,6 @@ struct SwiftyChatView: View {
                         guard let otherUser = model.groups[groupID]?.otherUser?.id else { return }
                         DatabaseManager.shared.blockUser(with: otherUser)
                         DatabaseManager.shared.deleteGroup(groupID) { _ in }
-                        
                     }) {
                         Text("Block")
                         Image(systemName: "person.fill.xmark")

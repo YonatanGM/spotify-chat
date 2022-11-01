@@ -20,6 +20,8 @@
 	<array>
 		<string>spotify</string>
 	</array>
+	<key>NSAppTransportSecurity</key>
+	<dict/>
 	<key>UIAppFonts</key>
 	<array>
 		<string>logoRegular.otf</string>

@@ -8,7 +8,7 @@
 import SwiftUI
 import Firebase
 import FirebaseFunctions
-import JGProgressHUD_SwiftUI
+import SDWebImageSwiftUI
 
 
 
@@ -43,15 +43,8 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         UIBarButtonItem.appearance().setTitleTextAttributes([NSAttributedString.Key.font: UIFont(name: "Glyphter2", size: UIFont.preferredFont(forTextStyle: .headline).pointSize)!], for: .normal)
         
         UIBarButtonItem.appearance().setTitleTextAttributes([NSAttributedString.Key.font: UIFont(name: "Glyphter2", size: UIFont.preferredFont(forTextStyle: .headline).pointSize)!], for: .highlighted)
-//        
-//        UIBarButtonItem.appearance().setTitleTextAttributes([NSAttributedString.Key.font: UIFont(name: "Glyphter2", size: UIFont.preferredFont(forTextStyle: .headline).pointSize)!], for: .reserved)
-        
-     
 
         // remove scroll indicator from list
-
-       
-        
         UITableView.appearance().showsVerticalScrollIndicator = false
 
         // firebase
@@ -60,7 +53,6 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         // Auth.auth().useEmulator(withHost: "localhost", port: 9092)
         // Functions.functions().useEmulator(withHost: "localhost", port: 5002)
 
-        
         // revisit this
         // clear firebase auth cache
         if UserDefaults.standard.value(forKey: "firstTimeOpeningApp") == nil {
@@ -68,6 +60,19 @@ class AppDelegate: NSObject, UIApplicationDelegate {
             try? Auth.auth().signOut()
         }
         
+        // Add multiple caches
+
+        // let cache = SDImageCache(namespace: "tiny")
+        // cache.config.maxMemoryCost = 100 * 1024 * 1024 // 100MB memory
+        // cache.config.maxDiskSize = 50 * 1024 * 1024 // 50MB disk
+        // cache.config.shouldCacheImagesInMemory = false
+//        SDImageCache.shared().config.shouldDecompressImages = false
+//
+//        SDWebImageDownloader.shared().shouldDecompressImages = false
+                
+//        SDImageCache.shared().config.diskCacheReadingOptions = NSData.ReadingOptions.mappedIfSafe
+        // SDImageCache.shared.config.maxMemoryCost = 10 * 1024 * 1024
+         // SDWebImageManager.defaultImageCache = SDImageCachesManager.shared
         return true
     }
 }
