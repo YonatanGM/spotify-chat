@@ -41,8 +41,4 @@ struct FindButton: View {
     }
 }
 
-struct FindButton_Previews: PreviewProvider {
-    static var previews: some View {
-        FindButton()
-    }
-}
+

@@ -10,6 +10,7 @@ import SDWebImageSwiftUI
 
 
 struct UserCardGroupCreation: View {
+    // @EnvironmentObject var model: AppStateModel
     let user: Message.ChatUserItem
     let namespace: Namespace.ID
     @State var onlineStatusHandle: UInt?
@@ -103,8 +104,8 @@ struct UserCardGroupCreation: View {
             // check online status
             onlineStatusHandle = DatabaseManager.shared.checkOnlineStatus(for: user.id) { status in
                 isOnline = status
-                
             }
+            // model.onlineStatusHandles.insert(onlineStatusHandle)
         }
         .onDisappear {
             if let onlineStatusHandle = onlineStatusHandle {

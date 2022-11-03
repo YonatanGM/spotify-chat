@@ -36,6 +36,8 @@
 		9F2282E928D6E3650050929E /* UserIconsToolbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F2282E828D6E3640050929E /* UserIconsToolbar.swift */; };
 		9F2282EB28D6E3A50050929E /* UserIconAnimated.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F2282EA28D6E3A50050929E /* UserIconAnimated.swift */; };
 		9F2282ED28D6E4EC0050929E /* UserPicInitials.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F2282EC28D6E4EC0050929E /* UserPicInitials.swift */; };
+		9F3EE8182913E39F00998284 /* UserBackground.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F3EE8172913E39E00998284 /* UserBackground.swift */; };
+		9F3EE81E29140B4900998284 /* UIImageColors in Frameworks */ = {isa = PBXBuildFile; productRef = 9F3EE81D29140B4900998284 /* UIImageColors */; };
 		9F48D64D28FB4A6C006F4A55 /* BetterSafariView in Frameworks */ = {isa = PBXBuildFile; productRef = 9F48D64C28FB4A6C006F4A55 /* BetterSafariView */; };
 		9F5E969728EFC4AC00BBEB78 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 9F5E969628EFC4AC00BBEB78 /* FirebaseAuth */; };
 		9F5E969928EFC4AC00BBEB78 /* FirebaseDatabase in Frameworks */ = {isa = PBXBuildFile; productRef = 9F5E969828EFC4AC00BBEB78 /* FirebaseDatabase */; };
@@ -111,6 +113,7 @@
 		9F2282E828D6E3640050929E /* UserIconsToolbar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserIconsToolbar.swift; sourceTree = "<group>"; };
 		9F2282EA28D6E3A50050929E /* UserIconAnimated.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserIconAnimated.swift; sourceTree = "<group>"; };
 		9F2282EC28D6E4EC0050929E /* UserPicInitials.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserPicInitials.swift; sourceTree = "<group>"; };
+		9F3EE8172913E39E00998284 /* UserBackground.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserBackground.swift; sourceTree = "<group>"; };
 		9F60625D28F0963800320BF9 /* UserBubbles.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserBubbles.swift; sourceTree = "<group>"; };
 		9F60629628F1190C00320BF9 /* ArtistCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArtistCard.swift; sourceTree = "<group>"; };
 		9F60629B28F317F500320BF9 /* TrackMetadata.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackMetadata.swift; sourceTree = "<group>"; };
@@ -161,6 +164,7 @@
 				9F99829628FB00ED004F2559 /* Promises in Frameworks */,
 				9F5E969B28EFC4AC00BBEB78 /* FirebaseFunctions in Frameworks */,
 				46F0CC3E280D993000BF1B4B /* SDWebImageSwiftUI in Frameworks */,
+				9F3EE81E29140B4900998284 /* UIImageColors in Frameworks */,
 				46EAE403280961AE0061C9BB /* ExternalAccessory.framework in Frameworks */,
 				9F5E969928EFC4AC00BBEB78 /* FirebaseDatabase in Frameworks */,
 				463FEF2C281D60F2005155EE /* JGProgressHUD-SwiftUI in Frameworks */,
@@ -357,6 +361,7 @@
 			children = (
 				9F9C419928D13F76009CA948 /* UserCard.swift */,
 				9F61C84F28EA4F7C00877B91 /* UserDetail.swift */,
+				9F3EE8172913E39E00998284 /* UserBackground.swift */,
 				9F61C85928EC49B600877B91 /* CurrentUserDetail.swift */,
 				9F2282EC28D6E4EC0050929E /* UserPicInitials.swift */,
 				9F61C86528EDB52800877B91 /* UserIcon.swift */,
@@ -436,6 +441,7 @@
 				9F5E969A28EFC4AC00BBEB78 /* FirebaseFunctions */,
 				9F99829528FB00ED004F2559 /* Promises */,
 				9F48D64C28FB4A6C006F4A55 /* BetterSafariView */,
+				9F3EE81D29140B4900998284 /* UIImageColors */,
 			);
 			productName = "test-app2";
 			productReference = 46F5CA662808C23E00D58C41 /* Chat for Spotify.app */;
@@ -474,6 +480,7 @@
 				9F5E969528EFC4AC00BBEB78 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 				9F99829428FB00ED004F2559 /* XCRemoteSwiftPackageReference "promises" */,
 				9F48D64B28FB4A6C006F4A55 /* XCRemoteSwiftPackageReference "BetterSafariView" */,
+				9F3EE81C29140B4900998284 /* XCRemoteSwiftPackageReference "UIImageColors" */,
 			);
 			productRefGroup = 46F5CA672808C23E00D58C41 /* Products */;
 			projectDirPath = "";
@@ -552,6 +559,7 @@
 				9F61C85228EA5F0F00877B91 /* ArtistBackgroundSlideshow.swift in Sources */,
 				46F5CA6A2808C23E00D58C41 /* test_app2App.swift in Sources */,
 				9F2282AE28D4D45A0050929E /* ConversationGroupRow.swift in Sources */,
+				9F3EE8182913E39F00998284 /* UserBackground.swift in Sources */,
 				4604EFA02857216F000DF914 /* TopTracksView.swift in Sources */,
 				9FD44B9C28CB7B9A0028A408 /* Bar.swift in Sources */,
 				9F9C419E28D1562E009CA948 /* NewGroupButton.swift in Sources */,
@@ -791,6 +799,14 @@
 				kind = branch;
 			};
 		};
+		9F3EE81C29140B4900998284 /* XCRemoteSwiftPackageReference "UIImageColors" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/jathu/UIImageColors";
+			requirement = {
+				branch = master;
+				kind = branch;
+			};
+		};
 		9F48D64B28FB4A6C006F4A55 /* XCRemoteSwiftPackageReference "BetterSafariView" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/stleamist/BetterSafariView.git";
@@ -827,6 +843,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 46F0CC3C280D993000BF1B4B /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */;
 			productName = SDWebImageSwiftUI;
+		};
+		9F3EE81D29140B4900998284 /* UIImageColors */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 9F3EE81C29140B4900998284 /* XCRemoteSwiftPackageReference "UIImageColors" */;
+			productName = UIImageColors;
 		};
 		9F48D64C28FB4A6C006F4A55 /* BetterSafariView */ = {
 			isa = XCSwiftPackageProductDependency;

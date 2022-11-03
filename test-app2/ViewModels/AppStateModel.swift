@@ -28,9 +28,6 @@ class AppStateModel: ObservableObject {
     
     // @Published private(set) var users = [Message.ChatUserItem]()
     @Published var suggestedUsers = [Message.ChatUserItem]()
-    @Published var currentRoom: String?
-    
-    
     
     @Published var selectedTrackID: String?
 
@@ -59,7 +56,7 @@ class AppStateModel: ObservableObject {
     @Published var selectedGroup: String?
     
     private var cancellables = Set<AnyCancellable>()
-    private var userObserverHandle: UInt?
+ 
 
     // Group
     @Published var groups = [String: Group]()
@@ -72,6 +69,7 @@ class AppStateModel: ObservableObject {
     var itemPlaybackStalledObserver: NSObjectProtocol? = nil
     var timeObserverToken: Any? = nil
 
+    // var onlineStatusHandles = Set<UInt?>()
 
     
     init() {
@@ -108,9 +106,9 @@ class AppStateModel: ObservableObject {
             } else {
                 // remove observers here
                 // if user was previously signed in remove all observers
-                if self?.signInStatus == .signedIn {
-                    self?.cleanup()
-                }
+//                if self?.signInStatus == .signedIn {
+//                    self?.cleanup()
+//                }
                 self?.signInStatus = .signedOut
             }
         }
@@ -142,6 +140,8 @@ class AppStateModel: ObservableObject {
     }
     
     func signOut() {
+        
+        cleanup()
         DatabaseManager.shared.removePresence()
         AuthManager.shared.signOut { _ in }
     }
@@ -257,9 +257,7 @@ extension AppStateModel {
                                 self?.groups[groupID]?.unseenCount = unseenCount
                             }
                         }
-                        
 
-                        
                     case .failure(_):
                         print("failed to get group with id \(groupID)")
                     }
@@ -338,12 +336,7 @@ extension AppStateModel {
             switch result {
                 
             case .success(let room):
-                /*
-                if let handle =  self?.userObserverHandle {
-                    DatabaseManager.shared.removeObserver(with: handle)
-                }
-                */
-                self?.currentRoom = room
+  
                 DatabaseManager.shared.getUsers(in: room, completion: { result in
                     switch result {
                     case .success(let users):
@@ -471,15 +464,33 @@ extension AppStateModel {
         DatabaseManager.shared.removeObserver(with: "status/\(currentUserID)")
         // room change
         DatabaseManager.shared.removeObserver(with: "users/\(currentUserID)/room")
-    
+        // user removal
+        DatabaseManager.shared.removeObserver(with: "users")
+        
+        // online status
+        // onlineStatusHandles.compactMap { $0 }.forEach {
+        //     DatabaseManager.shared.removeObserver(with: $0)
+        // }
+        
         // remove AVPlayer observers
         NotificationCenter.default.removeObserver(itemDidPlayToEndTimeObserver)
         NotificationCenter.default.removeObserver(itemPlaybackStalledObserver)
         NotificationCenter.default.removeObserver(itemFailedToPlayToEndTimeObserver)
         avPlayer.removeTimeObserver(timeObserverToken)
         
-        // clear search results
+        // reset vars
+        currentUser = nil
+        likedTracks = [:]
+        followedUsers = [:]
+        suggestedUsers = []
+        blockedUsers = []
         searchResults =  []
+        selectedTrackID = nil
+        selectedGroup = nil
+        finishedLoadingOfSuggestedUsers = false
+        playingTrackID = nil
+        progress = 0.0
+        play = false
         
     }
 }

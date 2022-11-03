@@ -182,6 +182,15 @@
         }
       },
       {
+        "package": "UIImageColors",
+        "repositoryURL": "https://github.com/jathu/UIImageColors",
+        "state": {
+          "branch": "master",
+          "revision": "f064be8ee0b03158e61135e6c384aee18d7a5414",
+          "version": null
+        }
+      },
+      {
         "package": "VideoPlayer",
         "repositoryURL": "https://github.com/wxxsw/VideoPlayer.git",
         "state": {

@@ -26,6 +26,7 @@ struct TrackCard: View {
             VStack(alignment: .leading) {
                 if let urlString = track.album?.images.first?.url,
                    let url = URL(string: urlString) {
+  
                     AnimatedImage(url: url)
                         .resizable()
                         .scaledToFit()

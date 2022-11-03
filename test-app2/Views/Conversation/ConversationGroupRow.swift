@@ -10,8 +10,6 @@ import SDWebImageSwiftUI
 
 struct ConversationGroupRow: View {
     @EnvironmentObject var model: AppStateModel
-    @State var isOnline = false
-    @State var onlineStatusHandle: UInt?
     let group: Group
     
     var admin: UserInfo! {
@@ -108,20 +106,6 @@ struct ConversationGroupRow: View {
                     Spacer()
                 }
                 .frame(height: 60)
-                .onAppear {
-                    // check online status
-                    guard let id = group.otherUser?.id else { return }
-                    onlineStatusHandle = DatabaseManager.shared.checkOnlineStatus(for: id) { status in
-                        isOnline = status
-                        
-                    }
-                }
-                .onDisappear {
-                    if let onlineStatusHandle = onlineStatusHandle {
-                        DatabaseManager.shared.removeObserver(with: onlineStatusHandle)
-                    }
-                   
-                }
             }
         }
        

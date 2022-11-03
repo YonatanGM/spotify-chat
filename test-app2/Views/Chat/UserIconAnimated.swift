@@ -9,6 +9,7 @@ import SwiftUI
 import SDWebImageSwiftUI
 
 struct UserIconAnimated: View {
+    // @EnvironmentObject var model: AppStateModel
     let user: UserInfo
     @State var scale = 0.0
     
@@ -85,8 +86,8 @@ struct UserIconAnimated: View {
                     // check online status
                     onlineStatusHandle = DatabaseManager.shared.checkOnlineStatus(for: user.id) { status in
                         isOnline = status
-                        
                     }
+                    // model.onlineStatusHandles.insert(onlineStatusHandle)
                 }
                 .onDisappear {
                     if let onlineStatusHandle = onlineStatusHandle {
@@ -154,6 +155,7 @@ struct UserIconAnimated: View {
                     onlineStatusHandle = DatabaseManager.shared.checkOnlineStatus(for: user.id) { status in
                         isOnline = status
                     }
+                    // model.onlineStatusHandles.insert(onlineStatusHandle)
                 }
                 .onDisappear {
                     if let onlineStatusHandle = onlineStatusHandle {

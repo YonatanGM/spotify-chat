@@ -10,8 +10,6 @@ import SDWebImageSwiftUI
 
 struct CurrentUserDetail: View {
     @EnvironmentObject var model: AppStateModel
-    @State var onlineStatusHandle: UInt?
-    @State var isOnline = false
     
     var gradient: LinearGradient {
         LinearGradient(colors: [
@@ -124,6 +122,7 @@ struct CurrentUserDetail: View {
                   
                 }
                 .navigationTitle("You")
+                /*
                 .navigationBarItems(trailing: Menu {
                     Button(role: .destructive, action: {
                         DatabaseManager.shared.deleteProfile {
@@ -140,18 +139,7 @@ struct CurrentUserDetail: View {
                         .foregroundColor(.white)
                         .contentShape(Rectangle())
                 })
-                .onAppear {
-                    // check online status
-                    onlineStatusHandle = DatabaseManager.shared.checkOnlineStatus(for: user.id) { status in
-                        isOnline = status
-                    }
-                }
-                .onDisappear {
-                    if let onlineStatusHandle = onlineStatusHandle {
-                        DatabaseManager.shared.removeObserver(with: onlineStatusHandle)
-                    }
-                   
-                }
+                */
             }
         }
     }

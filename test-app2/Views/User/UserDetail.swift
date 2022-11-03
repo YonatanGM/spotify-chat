@@ -11,9 +11,8 @@ import SDWebImageSwiftUI
 
 struct UserDetail: View {
     @EnvironmentObject var model: AppStateModel
+    @State var bgColor: Color?
     let user: Message.ChatUserItem
-    @State var onlineStatusHandle: UInt?
-    @State var isOnline = false
     
     var gradient: LinearGradient {
         LinearGradient(colors: [
@@ -45,24 +44,22 @@ struct UserDetail: View {
     var body: some View {
         ZStack {
             gradient.ignoresSafeArea(.all, edges: .all)
+//            bgColor?.ignoresSafeArea()
+
             ScrollView(.vertical, showsIndicators: false) {
-                ArtistBackgroundSlideshow(urls: artistImageUrls)
-                    .blur(radius: 40, opaque: false)
-                    .overlay(
-                        ZStack {
-                            ArtistBackgroundSlideshow(urls: artistImageUrls)
-                                .mask(LinearGradient(
-                                   gradient: Gradient(stops: [
-                                    .init(color: .clear, location: 0),
-                                    .init(color: .white, location: 0.5)
-                                   // .init(color: .clear, location: 1)
-                                   ]),
-                                   startPoint: .bottom,
-                                   endPoint: .top
-                               ))
-                          
-                        }
-                    )
+                if let topArtists = user.topArtists {
+                    UserBackground(urls: topArtists.items.compactMap { $0.images?.first?.url })
+                        .edgesIgnoringSafeArea(.horizontal)
+                        .mask(LinearGradient(
+                           gradient: Gradient(stops: [
+                            .init(color: .clear, location: 0),
+                            .init(color: .white, location: 0.5)
+                           // .init(color: .clear, location: 1)
+                           ]),
+                           startPoint: .bottom,
+                           endPoint: .top
+                       ))
+                }
                 HStack {
                     Spacer()
                     UserIcon(user: .init(id: user.id, name: user.userName, photoURL: user.avatarURL?.absoluteString, genreDisplay: nil))
@@ -147,7 +144,7 @@ struct UserDetail: View {
             }
             
         }
-     
+
 //        .navigationBarTitle("user.userName\")
          
         .navigationTitle(user.userName)
@@ -167,16 +164,6 @@ struct UserDetail: View {
                     }
                 }
             }
-            // check online status
-            onlineStatusHandle = DatabaseManager.shared.checkOnlineStatus(for: user.id) { status in
-                isOnline = status
-            }
-        }
-        .onDisappear {
-            if let onlineStatusHandle = onlineStatusHandle {
-                DatabaseManager.shared.removeObserver(with: onlineStatusHandle)
-            }
-           
         }
     }
 }

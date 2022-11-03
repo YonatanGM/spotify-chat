@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "46F5CA652808C23E00D58C41"
-               BuildableName = "test-app2.app"
+               BuildableName = "Chat for Spotify.app"
                BlueprintName = "test-app2"
                ReferencedContainer = "container:test-app2.xcodeproj">
             </BuildableReference>
@@ -46,7 +46,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "46F5CA652808C23E00D58C41"
-            BuildableName = "test-app2.app"
+            BuildableName = "Chat for Spotify.app"
             BlueprintName = "test-app2"
             ReferencedContainer = "container:test-app2.xcodeproj">
          </BuildableReference>
@@ -63,7 +63,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "46F5CA652808C23E00D58C41"
-            BuildableName = "test-app2.app"
+            BuildableName = "Chat for Spotify.app"
             BlueprintName = "test-app2"
             ReferencedContainer = "container:test-app2.xcodeproj">
          </BuildableReference>

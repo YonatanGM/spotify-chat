@@ -17,12 +17,14 @@ struct DeleteAccount: View {
             withAnimation(.easeIn(duration: 0.1)) {
                 isTapping = true
             }
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            
+            DatabaseManager.shared.deleteProfile {
                 withAnimation {
                     isTapping = false
                 }
-                // do something
+                model.signOut()
             }
+            
         }, label: {
             HStack(spacing: 0) {
                 Text("Delete profile")

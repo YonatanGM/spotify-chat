@@ -9,6 +9,8 @@ import SwiftUI
 import SDWebImageSwiftUI
 
 struct UserIcon: View {
+    // @EnvironmentObject var model: AppStateModel
+    
     let user: UserInfo
     @State var onlineStatusHandle: UInt?
     @State var isOnline = false
@@ -75,6 +77,7 @@ struct UserIcon: View {
                         isOnline = status
                         
                     }
+                    // model.onlineStatusHandles.insert(onlineStatusHandle)
                 }
                 .onDisappear {
                     if let onlineStatusHandle = onlineStatusHandle {
@@ -127,6 +130,7 @@ struct UserIcon: View {
                     onlineStatusHandle = DatabaseManager.shared.checkOnlineStatus(for: user.id) { status in
                         isOnline = status
                     }
+                    // model.onlineStatusHandles.insert(onlineStatusHandle)
                 }
                 .onDisappear {
                     if let onlineStatusHandle = onlineStatusHandle {
