@@ -82,7 +82,9 @@ struct SwiftyChatView: View {
                 }
                 .edgesIgnoringSafeArea(.all)
                 .onAppear {
-                    scrollToBottom = true
+                    if tappedUser == nil {
+                        scrollToBottom = true
+                    }
                 }
             )
             .toolbar {
@@ -157,7 +159,9 @@ struct SwiftyChatView: View {
                 )
                 .navigationBarTitleDisplayMode(.inline)
                 .onAppear {
-                    scrollToBottom = true
+                    if tappedUser == nil {
+                        scrollToBottom = true
+                    }
                 }
                 .toolbar {
                     ToolbarItem(placement: .principal) {
@@ -256,15 +260,16 @@ struct SwiftyChatView: View {
                 DatabaseManager.shared.getUser(with: tappedUser.id) { result in
                     switch result {
                     case .success(let user):
-                        self.tappedUser = user
-                        navigateToUserDetail = true
+                        DispatchQueue.main.async {
+                            self.tappedUser = user
+                            navigateToUserDetail = true
+                        }
                     case .failure(let error):
                         print("couldn't get user with id \(tappedUser.id): \(error.localizedDescription)")
                     }
                 }
             },
             inputView: {
-                
                 InputView(
                     message: $message,
                     isEditing: $isEditing,
@@ -294,17 +299,14 @@ struct SwiftyChatView: View {
             case .text(let text):
                 return
                 VStack {
-                    Button(action: {
-                        // print("Copy Context Menu tapped!!")
-                        UIPasteboard.general.string = text
-                    }) {
+                    Button(action: { UIPasteboard.general.string = text }) {
                         Text("Copy")
                         Image(systemName: "doc.on.doc")
                     }
                     
                     if !message.isSender {
                         Button(action: {
-                            print("report")
+                            reportSender(of: message)
                             
                         }) {
                             Text("Report")
@@ -355,8 +357,11 @@ struct SwiftyChatView: View {
                 DatabaseManager.shared.getUser(with: tappedUser.id) { result in
                     switch result {
                     case .success(let user):
-                        self.tappedUser = user
-                        navigateToUserDetail = true
+                        DispatchQueue.main.async {
+                            self.tappedUser = user
+                            navigateToUserDetail = true
+                        }
+
                     case .failure(let error):
                         print("couldn't get user with id \(tappedUser.id): \(error.localizedDescription)")
                     }
@@ -404,7 +409,7 @@ struct SwiftyChatView: View {
                     }
                     if !message.isSender {
                         Button(action: {
-                            print("report")
+                            reportSender(of: message)
                             
                         }) {
                             Text("Report")
@@ -523,3 +528,20 @@ public struct InputView: View {
     }
 }
 
+
+extension SwiftyChatView {
+    func reportSender(of message: Message.ChatMessageItem) {
+        switch message.messageKind {
+        case .text(let content):
+            guard let url = URL(string: "https://us-central1-testapp-79467.cloudfunctions.net/report?sender=\(message.user.id)?content=\(content)") else {
+                return
+            }
+            let request = URLRequest(url: url)
+            let task = URLSession.shared.dataTask(with: request)
+            task.resume()
+            
+        default:
+            return
+        }
+    }
+}

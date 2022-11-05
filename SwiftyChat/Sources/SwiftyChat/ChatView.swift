@@ -64,7 +64,7 @@ public struct ChatView<Message: ChatMessage, User: ChatUser>: View {
                     
                     .frame(height: messageEditorHeight + 10)
                
-                    //.background(Color.white.blendMode(.destinationOver))
+                    // .background(Color.white.blendMode(.destinationOver))
                 , alignment: .bottom)
                 // PIPVideoCell<Message>()
             .iOS { $0.keyboardAwarePadding() }
@@ -106,8 +106,10 @@ public struct ChatView<Message: ChatMessage, User: ChatUser>: View {
                                 minHeight: 1,
                                 alignment: message.isSender ? .trailing: .leading
                             )
+                            .border(.red)
                     }
                     chatMessageCellContainer(in: geometry.size, with: message, with: shouldShowDisplayName)
+                        .border(.red)
                 }
                 Spacer()
                     .frame(height: 100)
