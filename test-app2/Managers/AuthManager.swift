@@ -323,10 +323,7 @@ extension AuthManager {
                     
                 case .success(let profile):
                     DatabaseManager.shared.userExists(with: profile.id) { exists in
-                        guard !exists else {
-                            completion(true)
-                            return
-                        }
+                        guard !exists else { return }
                         // insert new user
                         DatabaseManager.shared.insertUser(with: profile) { success in
                             guard success else {

@@ -11,7 +11,7 @@ import SwiftUIEKtensions
 
 public struct ChatView<Message: ChatMessage, User: ChatUser>: View {
     
-    @Binding private var messages: [Message]
+    private var messages: [Message]
     private var inputView: () -> AnyView
     
     private var onMessageCellAppeared: (Message) -> Void = { _ in }
@@ -106,16 +106,17 @@ public struct ChatView<Message: ChatMessage, User: ChatUser>: View {
                                 minHeight: 1,
                                 alignment: message.isSender ? .trailing: .leading
                             )
-                            .border(.red)
                     }
                     chatMessageCellContainer(in: geometry.size, with: message, with: shouldShowDisplayName)
-                        .border(.red)
                 }
                 Spacer()
                     .frame(height: 100)
                     .id("bottom")
                     
                    
+            }
+            .onAppear {
+                print(messages.map { $0.id })
             }
             .padding(.bottom, 100)
             .foregroundColor(.white)
@@ -250,7 +251,7 @@ public extension ChatView {
     ///   - inputView: inputView view to provide message
     ///   
     init(
-        messages: Binding<[Message]>,
+        messages: [Message],
         onMessageCellAppeared: @escaping (Message) -> Void,
         scrollToBottom: Binding<Bool> = .constant(false),
         dateHeaderTimeInterval: TimeInterval = 3600,
@@ -259,7 +260,7 @@ public extension ChatView {
         inputView: @escaping () -> AnyView,
         inset: EdgeInsets = .init()
     ) {
-        _messages = messages
+        self.messages = messages
         self.inputView = inputView
         _scrollToBottom = scrollToBottom
         self.inset = inset

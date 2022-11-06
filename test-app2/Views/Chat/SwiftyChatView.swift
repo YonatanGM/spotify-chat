@@ -38,7 +38,11 @@ struct SwiftyChatView: View {
             
         },
                        label: { EmptyView() })
-        
+        .onChange(of: model.groups.count == 0) { val in
+            print(val)
+            
+        }
+    
         if model.groups[groupID]?.isDm == false {
             VStack(spacing: 0) {
                 HStack {
@@ -57,6 +61,7 @@ struct SwiftyChatView: View {
                 )
                 chatView
                 
+
             }
             .background(
                 ZStack {
@@ -238,8 +243,7 @@ struct SwiftyChatView: View {
     private var chatView: some View {
         
         ChatView<Message.ChatMessageItem, Message.ChatUserItem>(
-            messages: Binding(get: { model.groups[groupID]?.messages ?? [] },
-                              set: { _ in }),
+            messages: model.groups[groupID]?.messages ?? [],
             onMessageCellAppeared: { message in
                 // hope this works fine
                 if let index = (model.groups[groupID]?.messages.firstIndex { $0.id == message.id }),
@@ -291,7 +295,8 @@ struct SwiftyChatView: View {
                 .padding(.leading, 10)
                 .padding(.trailing, 20)
                 .embedInAnyView()
-            })
+        })
+
         
         // ▼ Optional, Present context menu when cell long pressed
         .messageCellContextMenu { message -> AnyView in
@@ -328,15 +333,16 @@ struct SwiftyChatView: View {
             }
         }
         // ▼ Required
+
         .environmentObject(ChatMessageCellStyle.basicStyle)
+
     }
     
     
     private var chatViewDM: some View {
         
         ChatView<Message.ChatMessageItem, Message.ChatUserItem>(
-            messages: Binding(get: { model.groups[groupID]?.messages ?? [] },
-                              set: { _ in }),
+            messages: model.groups[groupID]?.messages ?? [],
             onMessageCellAppeared: { message in
                 // hope this works fine
                 if let index = (model.groups[groupID]?.messages.firstIndex { $0.id == message.id }),

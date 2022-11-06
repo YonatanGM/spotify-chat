@@ -104,11 +104,6 @@ class AppStateModel: ObservableObject {
                     }
                 }
             } else {
-                // remove observers here
-                // if user was previously signed in remove all observers
-//                if self?.signInStatus == .signedIn {
-//                    self?.cleanup()
-//                }
                 self?.signInStatus = .signedOut
             }
         }
@@ -140,7 +135,6 @@ class AppStateModel: ObservableObject {
     }
     
     func signOut() {
-        
         cleanup()
         DatabaseManager.shared.removePresence()
         AuthManager.shared.signOut { _ in }
@@ -154,16 +148,16 @@ class AppStateModel: ObservableObject {
 extension AppStateModel {
     
     public func setup() {
-        if let currentUserID = AuthManager.shared.currentUser?.uid {
-            DatabaseManager.shared.getUser(with: currentUserID) { [weak self] result in
-                switch result {
-                case .success(let user):
-                    self?.currentUser = user
-                case .failure(_):
-                    print("couldn't get current user")
-                }
+        guard let currentUserID = AuthManager.shared.currentUser?.uid else { return }
+        DatabaseManager.shared.getUser(with: currentUserID) { [weak self] result in
+            switch result {
+            case .success(let user):
+                self?.currentUser = user
+            case .failure(_):
+                print("couldn't get current user")
             }
         }
+        
       
         DatabaseManager.shared.managePresence()
         
@@ -176,12 +170,12 @@ extension AppStateModel {
                 }
             }
         }
+
         
         DatabaseManager.shared.observeNewGroup() { [weak self] result in
             
             switch result {
             case .success(let (groupID, userHasJoined)):
-                
                 DatabaseManager.shared.getGroup(with: groupID) { [weak self] result in
                     switch result {
                     case .success(var group):
@@ -231,7 +225,6 @@ extension AppStateModel {
                                                 return
                                             }
                                             self?.groups[groupID]?.messages.append(message)
-                                            
                                         case .failure(_):
                                             print("failed to get messages in group \(group.id)")
                                         }
@@ -445,6 +438,7 @@ extension AppStateModel {
     public func cleanup() {
         guard let currentUserID = AuthManager.shared.currentUser?.uid else { return }
         // UserInfo
+
         DatabaseManager.shared.removeObserver(with: "userInfo/\(currentUserID)/Groups")
         DatabaseManager.shared.removeObserver(with: "userInfo/\(currentUserID)/lastSeen")
         DatabaseManager.shared.removeObserver(with: "userInfo/\(currentUserID)/blocked")
@@ -480,6 +474,7 @@ extension AppStateModel {
         
         // reset vars
         currentUser = nil
+        groups = [:]
         likedTracks = [:]
         followedUsers = [:]
         suggestedUsers = []
