@@ -42,7 +42,7 @@ struct Login: View {
                 HStack {
                     Spacer()
                     Text("⁢⁢\u{17B5} \u{17B4} \u{115F}")
-                        .font(Font.custom("Glyphter", size: UIFont.preferredFont(forTextStyle: .largeTitle).pointSize))
+                        .font(Font.custom("Modulus-Bold", size: UIFont.preferredFont(forTextStyle: .largeTitle).pointSize))
                     Spacer()
                 }
                 if model.signInStatus == .signedOut {
@@ -52,7 +52,7 @@ struct Login: View {
                         HStack(spacing: 0) {
                             Text("Login with")
                                 .font(.title2)
-                                .fontWeight(.bold)
+                                .fontWeight(.semibold)
                                 .minimumScaleFactor(0.9)
                                 .lineLimit(1)
                             spotifyWhiteLogo.applying(CGAffineTransform(scaleX: 3.33 * logoHeight, y: logoHeight))

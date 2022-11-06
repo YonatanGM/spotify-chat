@@ -35,14 +35,14 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         UINavigationBar.appearance().barTintColor = UIColor(.chatSpotifyColor)
         UINavigationBar.appearance().tintColor  = .white
 
-        UINavigationBar.appearance().largeTitleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.white, .font : UIFont(name: "Glyphter", size: UIFont.preferredFont(forTextStyle: .largeTitle).pointSize)!]
+        UINavigationBar.appearance().largeTitleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.white, .font : UIFont(name: "Modulus-Bold", size: 40)!]
 
-        UINavigationBar.appearance().titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.white, .font : UIFont(name: "Glyphter2", size: UIFont.preferredFont(forTextStyle: .headline).pointSize)!]
+        UINavigationBar.appearance().titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.white, .font : UIFont(name: "Modulus-Bold2", size: UIFont.preferredFont(forTextStyle: .title2).pointSize)!]
 
         // back button
-        UIBarButtonItem.appearance().setTitleTextAttributes([NSAttributedString.Key.font: UIFont(name: "Glyphter2", size: UIFont.preferredFont(forTextStyle: .headline).pointSize)!], for: .normal)
+        UIBarButtonItem.appearance().setTitleTextAttributes([NSAttributedString.Key.font: UIFont(name: "Modulus-Bold2", size: UIFont.preferredFont(forTextStyle: .title2).pointSize)!], for: .normal)
         
-        UIBarButtonItem.appearance().setTitleTextAttributes([NSAttributedString.Key.font: UIFont(name: "Glyphter2", size: UIFont.preferredFont(forTextStyle: .headline).pointSize)!], for: .highlighted)
+        UIBarButtonItem.appearance().setTitleTextAttributes([NSAttributedString.Key.font: UIFont(name: "Modulus-Bold2", size: UIFont.preferredFont(forTextStyle: .title2).pointSize)!], for: .highlighted)
 
         // remove scroll indicator from list
         UITableView.appearance().showsVerticalScrollIndicator = false

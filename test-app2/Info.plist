@@ -24,6 +24,7 @@
 	<dict/>
 	<key>UIAppFonts</key>
 	<array>
+		<string>Modulus-Bold2.otf</string>
 		<string>logoRegular.otf</string>
 		<string>logoRegular2.otf</string>
 		<string>Modulus_Medium.ttf</string>

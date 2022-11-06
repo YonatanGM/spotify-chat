@@ -28,7 +28,6 @@ struct UserDetail: View {
                   opacity: 1)
             
         ], startPoint: .topLeading, endPoint: .center)
-
     }
     
     let profilePicHeight = Double(UIScreen.main.bounds.width) / 3.5
@@ -44,8 +43,6 @@ struct UserDetail: View {
     var body: some View {
         ZStack {
             gradient.ignoresSafeArea(.all, edges: .all)
-//            bgColor?.ignoresSafeArea()
-
             ScrollView(.vertical, showsIndicators: false) {
                 if let topArtists = user.topArtists {
                     UserBackground(urls: topArtists.items.compactMap { $0.images?.first?.url })
@@ -54,7 +51,6 @@ struct UserDetail: View {
                            gradient: Gradient(stops: [
                             .init(color: .clear, location: 0),
                             .init(color: .white, location: 0.5)
-                           // .init(color: .clear, location: 1)
                            ]),
                            startPoint: .bottom,
                            endPoint: .top
@@ -63,7 +59,7 @@ struct UserDetail: View {
                 HStack {
                     Spacer()
                     UserIcon(user: .init(id: user.id, name: user.userName, photoURL: user.avatarURL?.absoluteString, genreDisplay: nil))
-                        .frame(width: profilePicHeight)
+                            .frame(width: profilePicHeight)
 
                     VStack(alignment: .leading) {
                         Spacer()
@@ -118,29 +114,13 @@ struct UserDetail: View {
                 .padding(.bottom, -1 * profilePicHeight / 3)
                 
                 if let artists = user.topArtists?.items {
-                    VStack(alignment: .leading, spacing: 10) {
-                        Text("Likes")
-                            .font(.largeTitle)
-                            .fontWeight(.light)
-                            .foregroundColor(.white)
-                            .padding(.leading)
-                        TopArtistsView(artists: artists)
-                    }
+                    TopArtistsView(artists: artists)
+                        .header(title: "Fan of")
                 }
                 if let tracks = user.topTracks?.items {
-                    VStack(alignment: .leading, spacing: 10) {
-                        Text("Favorite tracks")
-                            .font(.largeTitle)
-                            .fontWeight(.light)
-                            .foregroundColor(.white)
-                            .padding(.leading)
-                        TopTracksView(tracks: tracks)
-                    }
-                  
+                    TopTracksView(tracks: tracks)
+                        .header(title: "Favorite tracks")
                 }
-              
-                
-                
             }
             
         }
