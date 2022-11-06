@@ -11,7 +11,6 @@ import SDWebImageSwiftUI
 
 struct UserDetail: View {
     @EnvironmentObject var model: AppStateModel
-    @State var bgColor: Color?
     let user: Message.ChatUserItem
     
     var gradient: LinearGradient {

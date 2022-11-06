@@ -42,7 +42,7 @@ struct Login: View {
                 HStack {
                     Spacer()
                     Text("⁢⁢\u{17B5} \u{17B4} \u{115F}")
-                        .font(Font.custom("Modulus-Bold", size: UIFont.preferredFont(forTextStyle: .largeTitle).pointSize))
+                        .font(Font.custom("Modulus-Bold", size: 40))
                     Spacer()
                 }
                 if model.signInStatus == .signedOut {

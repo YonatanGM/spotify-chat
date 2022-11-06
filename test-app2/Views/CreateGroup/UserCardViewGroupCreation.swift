@@ -164,7 +164,7 @@ struct UserCardViewGroupCreation: View {
                 .clipShape(Capsule())
                 .padding([.horizontal], 10)
             }
-            .header(title: "Find", subtitle: "Find people that share your music taste")
+            .header(title: "Find", subtitle: "search by artist or track names (comma separated)")
 
             Spacer()
         }

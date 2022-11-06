@@ -17,6 +17,7 @@ struct GenresAnimatedIcon: View {
                 .shadow(radius: 5)
             Text(genre)
                 .font(.caption)
+                .fontWeight(.medium)
                 .padding([.horizontal], 7.5)
                 .padding([.vertical], 2.5)
         }

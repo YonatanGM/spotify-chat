@@ -60,14 +60,15 @@ struct Home: View {
                     .listRowInsets(EdgeInsets(.zero))
                     // .border(.red)
                 TopTracksView(tracks: suggestedTracks)
-                    .header(title: "Suggested Tracks", subtitle: "Based on top tracks of users like")
+                    .header(title: "Suggested Tracks", subtitle: "Based on top tracks of users like you")
                     .listRowSeparatorTint(.clear)
                     .listRowBackground(Color.clear)
                     .listRowInsets(EdgeInsets(.zero))
                     // .border(.red)
 
                 SearchBar(searchText: $searchText)
-                    .header(title: "Find", subtitle: "Find people that share your music taste")
+                // "Enter a list of your favourite songs or artists  (comma separated) to find others that share your taste."
+                    .header(title: "Find", subtitle: "Find others that share your taste. You can search by artist or track names (comma separated).")
                     .listRowSeparatorTint(.clear)
                     .listRowBackground(Color.clear)
                     .listRowInsets(EdgeInsets(.zero))

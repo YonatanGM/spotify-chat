@@ -24,13 +24,23 @@ struct UserBackground: View {
                                 .scaledToFill()
                                 .frame(width: 50, height: 50)
                                 .clipped()
+                                .background {
+                                    Color.white
+                                        .shadow(color: Color.black.opacity(0.75), radius: 5, x: 0, y: 0)
+                                        .mask(
+
+                                            Rectangle().padding( cell.direction == .horizontal ? [.vertical, .trailing] : [.horizontal] , -50)
+                                        )
+                                }
                                 // .shadow(radius: 5)
                         } else {
                             Rectangle()
                                 .frame(width: 50, height: 50)
                                 .foregroundColor(.clear)
                                 .background(cell.gradient)
+                            
                                 .animation(.spring(response: Double(cell.numOfConnectedCells)), value: cell.gradient != nil)
+                                .shadow(radius: 0)
                                 
                         }
                     }
@@ -54,8 +64,9 @@ struct GridCell: Identifiable {
     var url: String? = nil
     let position: (Int, Int)
     var willProcessCell: Bool = false
-    let direction: Axis = .horizontal
+    var direction: Axis = .horizontal
     var image: Image?
+    var color: Color = .clear
     var gradient: LinearGradient?
     var gradientToAnimate: LinearGradient = LinearGradient(colors: [.clear], startPoint: .center, endPoint: .center)
     var numOfConnectedCells = 0
@@ -110,22 +121,25 @@ class CoverGenerator: ObservableObject {
                                                 .first { $0.position.0 > cell.position.0 }
             
 
-                    if let chosenCell = [closestRightCell, closestBottomCell].compactMap({ $0 }).randomElement() {
+                    if var chosenCell = [closestRightCell, closestBottomCell].compactMap({ $0 }).randomElement() {
                         if let url = chosenCell.url {
                             let directionToSpan: GridCell.Axis = chosenCell.position.0 == cell.position.0 ? .horizontal : .vertical
-                            let connectedCells = directionToSpan == .horizontal ? Array(grid[chosenCell.position.0][cell.position.1..<chosenCell.position.1]) :        grid[cell.position.0..<chosenCell.position.0].map { $0[chosenCell.position.1] }
+                            chosenCell.direction = directionToSpan
+                            let connectedCells = directionToSpan == .horizontal ? Array(grid[chosenCell.position.0][cell.position.1..<chosenCell.position.1]) : grid[cell.position.0..<chosenCell.position.0].map { $0[chosenCell.position.1] }
                                 
                             for (i, connectedCell) in connectedCells.enumerated() {
                                 grid[connectedCell.position.0][connectedCell.position.1].willProcessCell = true
                                 grid[connectedCell.position.0][connectedCell.position.1].numOfConnectedCells = connectedCells.count
                                 grid[connectedCell.position.0][connectedCell.position.1].positionInConnectedCells = i
+                                // grid[connectedCell.position.0][connectedCell.position.1].direction = directionToSpan
                             }
                             SDWebImageManager().loadImage(with: URL(string: url), progress: nil) { [weak self] uiImage, _, _, cacheType, _, _ in
                                 guard let uiImage = uiImage else { return }
+                                
                                 DispatchQueue.main.async {
                                     self?.grid[chosenCell.position.0][chosenCell.position.1].image = Image(uiImage: uiImage)
                                 }
-        
+                                
                                 uiImage.getColors(quality: .low) { colors in
                                     guard let uiColor = colors?.background else { return }
                                     let color = Color(uiColor: uiColor)
@@ -139,6 +153,7 @@ class CoverGenerator: ObservableObject {
                                             endPoint: directionToSpan == .horizontal ? .trailing : .bottom)
                                         DispatchQueue.main.async {
                                             self?.grid[connectedCell.position.0][connectedCell.position.1].gradient = gradient
+                                            // self?.grid[connectedCell.position.0][connectedCell.position.1].color = color
                                         }
                                     }
                                     

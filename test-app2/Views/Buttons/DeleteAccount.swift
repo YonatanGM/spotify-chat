@@ -37,7 +37,7 @@ struct DeleteAccount: View {
         })
         .padding(buttonHeight / 2)
         .foregroundColor(.white)
-        // .background(Color.red.opacity(0.05))
+        .background(Color.backdrop)
         .clipShape(Capsule())
         .scaleEffect(isTapping ? 0.9 : 1)
         .brightness(isTapping ? 0.1 : 0)

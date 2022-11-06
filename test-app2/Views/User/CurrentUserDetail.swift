@@ -47,23 +47,18 @@ struct CurrentUserDetail: View {
             if let user = model.currentUser {
                 gradient.ignoresSafeArea(.all, edges: .all)
                 ScrollView(.vertical, showsIndicators: false) {
-                    ArtistBackgroundSlideshow(urls: artistImageUrls)
-                        .blur(radius: 40, opaque: false)
-                        .overlay(
-                            ZStack {
-                                ArtistBackgroundSlideshow(urls: artistImageUrls)
-                                    .mask(LinearGradient(
-                                       gradient: Gradient(stops: [
-                                        .init(color: .clear, location: 0),
-                                        .init(color: .white, location: 0.5)
-                                       // .init(color: .clear, location: 1)
-                                       ]),
-                                       startPoint: .bottom,
-                                       endPoint: .top
-                                   ))
-                              
-                            }
-                        )
+                    if let topArtists = user.topArtists {
+                        UserBackground(urls: topArtists.items.compactMap { $0.images?.first?.url })
+                            .edgesIgnoringSafeArea(.horizontal)
+                            .mask(LinearGradient(
+                               gradient: Gradient(stops: [
+                                .init(color: .clear, location: 0),
+                                .init(color: .white, location: 0.5)
+                               ]),
+                               startPoint: .bottom,
+                               endPoint: .top
+                           ))
+                    }
                     HStack {
                         Spacer()
                         UserIcon(user: .init(id: user.id, name: user.userName, photoURL: user.avatarURL?.absoluteString, genreDisplay: nil))
@@ -98,48 +93,17 @@ struct CurrentUserDetail: View {
                     .padding(.bottom, -1 * profilePicHeight / 3)
        
                     if let artists = user.topArtists?.items {
-                        VStack(alignment: .leading, spacing: 10) {
-                            Text("Likes")
-                                .font(.largeTitle)
-                                .fontWeight(.light)
-                                .foregroundColor(.white)
-                                .padding(.leading)
-                            TopArtistsView(artists: artists)
-                        }
+                        TopArtistsView(artists: artists)
+                            .header(title: "Fan of")
                     }
                     if let tracks = user.topTracks?.items {
-                        VStack(alignment: .leading, spacing: 10) {
-                            Text("Favorite tracks")
-                                .font(.largeTitle)
-                                .fontWeight(.light)
-                                .foregroundColor(.white)
-                                .padding(.leading)
-                            TopTracksView(tracks: tracks)
-                        }
-                      
+                        TopTracksView(tracks: tracks)
+                            .header(title: "Favorite tracks")
                     }
                     
                   
                 }
                 .navigationTitle("You")
-                /*
-                .navigationBarItems(trailing: Menu {
-                    Button(role: .destructive, action: {
-                        DatabaseManager.shared.deleteProfile {
-                            model.signOut()
-                        }
-                        
-                    }) {
-                        Label("Delete profile", systemImage: "trash")
-                    }
-
-                } label: {
-                    Image(systemName: "ellipsis")
-                        .rotationEffect(Angle(degrees: 90))
-                        .foregroundColor(.white)
-                        .contentShape(Rectangle())
-                })
-                */
             }
         }
     }
