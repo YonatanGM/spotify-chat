@@ -14,7 +14,7 @@ struct TrackMetadata: View {
             ScrollView(.horizontal, showsIndicators: false) {
                 Text(track.name)
                     .font(.footnote)
-                    // .fontWeight(.bold)
+                    .fontWeight(.medium)
                     .padding(.bottom, 2)
                     .foregroundColor(.white)
             }

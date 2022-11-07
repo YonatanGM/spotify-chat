@@ -109,7 +109,9 @@ struct UserCardViewGroupCreation: View {
                                      .padding(.leading, searchResultsDisplay.first?.id == user.id ? 10 : 0)
                                     .onTapGesture {
                                         withAnimation(.spring(response: 0.5)) {
-                                            addedUsers.append(user)
+                                            if addedUsers.count < 10 {
+                                                addedUsers.append(user)
+                                            }
                                         }
                                     }
                             }
@@ -164,7 +166,7 @@ struct UserCardViewGroupCreation: View {
                 .clipShape(Capsule())
                 .padding([.horizontal], 10)
             }
-            .header(title: "Find", subtitle: "search by artist or track names (comma separated)")
+            .header(title: "Find", subtitle: "Search by artist or track names (comma separated). You can add up to ten people.")
 
             Spacer()
         }

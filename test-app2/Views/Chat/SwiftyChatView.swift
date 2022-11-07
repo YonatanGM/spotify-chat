@@ -49,6 +49,7 @@ struct SwiftyChatView: View {
                     Spacer()
                     Text(model.groups[groupID]?.name ?? "")
                     // .font(.headline)
+                        .font(Font.custom("Modulus-Bold2", size: UIFont.preferredFont(forTextStyle: .title2).pointSize))
                         .padding(.top, -5)
                         .padding(.bottom, 5)
                         .foregroundColor(.white)
@@ -176,7 +177,8 @@ struct SwiftyChatView: View {
                                     .frame(height: 25)
                             }
                             Text(model.groups[groupID]?.otherUser?.name ?? "")
-                                .font(.headline)
+                                // .font(.headline)
+                                .font(Font.custom("Modulus-Bold2", size: UIFont.preferredFont(forTextStyle: .title2).pointSize))
                             Spacer()
                         }
                         .padding(.leading, -10)

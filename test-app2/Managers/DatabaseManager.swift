@@ -74,8 +74,14 @@ extension DatabaseManager {
                      return
                   }
                   
+                  let modeGenre = topArtistsResponse.items
+                     .compactMap { $0.genres }
+                     .reduce([]) { return $0 + $1 }
+                     .mode
+                  
                   let topGenres = topArtistsResponse.items
-                     .compactMap { $0.genres }.reduce([]) { return Set($0).union(Set($1)) }
+                     .compactMap { $0.genres }
+                     .reduce([]) { return Set($0).union(Set($1)) }
                      .map { $0.lowercased().replacingOccurrences(of: "[\\[\\].$#]", with: " ", options: .regularExpression) }
                   
                   
@@ -111,7 +117,7 @@ extension DatabaseManager {
                      "users/\(profile.id)/top_artists": topArtists,
                      "users/\(profile.id)/top_tracks": topTracks,
                      "users/\(profile.id)/top_genres": Array(topGenres),
-                     "users/\(profile.id)/top_genre_display": topArtistsResponse.items.first?.genres?.first
+                     "users/\(profile.id)/top_genre_display": modeGenre ?? topArtistsResponse.items.first?.genres?.first
                   ]
                   
                   // update the genres and search index first

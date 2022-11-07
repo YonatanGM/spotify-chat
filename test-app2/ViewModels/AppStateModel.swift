@@ -124,11 +124,12 @@ class AppStateModel: ObservableObject {
             }
             self?.signInStatus = .signingIn
             AuthManager.shared.handleAuthorizationCodeFlow(code: code) { [weak self] success in
-                if success {
-                    self?.signInStatus = .signedIn
+                DispatchQueue.main.async {
+                    completion(success)
+                    self?.signInStatus = success ? .signedIn : .signedOut
+                    // print("user logged in and inserted in database")
                 }
-                completion(success)
-                // print("user logged in and inserted in database")
+
             }
         }
         .prefersEphemeralWebBrowserSession(false)

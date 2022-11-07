@@ -65,10 +65,9 @@ struct Home: View {
                     .listRowBackground(Color.clear)
                     .listRowInsets(EdgeInsets(.zero))
                     // .border(.red)
-
                 SearchBar(searchText: $searchText)
-                // "Enter a list of your favourite songs or artists  (comma separated) to find others that share your taste."
-                    .header(title: "Find", subtitle: "Find others that share your taste. You can search by artist or track names (comma separated).")
+                    // "Enter a list of your favourite songs or artists  (comma separated) to find others that share your taste."
+                    .header(title: "Find", subtitle: "Find others that share your taste. You can search by track or artist names (comma separated).")
                     .listRowSeparatorTint(.clear)
                     .listRowBackground(Color.clear)
                     .listRowInsets(EdgeInsets(.zero))
@@ -154,7 +153,8 @@ struct CustomSection: ViewModifier {
             if let subtitle = subtitle {
                 Text(subtitle)
                     .font(.footnote)
-                    .foregroundColor(.white.opacity(0.75))
+                    // .fontWeight(.medium)
+                    .foregroundColor(.white.opacity(0.80))
                     .padding(.horizontal, 10)
             }
             content

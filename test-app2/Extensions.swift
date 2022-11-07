@@ -120,3 +120,13 @@ extension UIImage {
         return resize(to: CGSize(width: height * (size.width / size.height), height: height))
     }
 }
+
+extension Array where Element: Hashable {
+    var mode: Element? {
+        return self.reduce([Element: Int]()) {
+            var counts = $0
+            counts[$1] = ($0[$1] ?? 0) + 1
+            return counts
+        }.max { $0.1 < $1.1 }?.0
+    }
+}

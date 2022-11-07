@@ -39,13 +39,16 @@ struct ConversationGroupRow: View {
                         Spacer()
                         VStack(alignment: .leading, spacing: -2.5) {
                             Text(group.name)
-                                .font(.title)
-                                .foregroundColor(.white)
+                                // .font(.title)
+                                .font(Font.custom("Modulus-Bold2", size: UIFont.preferredFont(forTextStyle: .title1).pointSize))
                                 .fontWeight(.semibold)
+                                .lineLimit(1)
+                                .foregroundColor(.white)
                             if let lastMessage = lastMessage, group.pending == false {
                                 Text(lastMessage)
-                                    .italic()
+                                    // .italic
                                     .fontWeight(.light)
+                                    .lineLimit(1)
                                     .foregroundColor(.white)
                             }
                         }
@@ -78,13 +81,15 @@ struct ConversationGroupRow: View {
                         Spacer()
                         VStack(alignment: .leading, spacing: -2.5) {
                             Text(group.otherUser?.name ?? "")
-                                .font(.title)
-                                .foregroundColor(.white)
+                                .font(Font.custom("Modulus-Bold2", size: UIFont.preferredFont(forTextStyle: .title1).pointSize))
                                 .fontWeight(.semibold)
+                                .lineLimit(1)
+                                .foregroundColor(.white)
                             if let lastMessage = lastMessage {
                                 Text(lastMessage)
-                                    .italic()
+                                    // .italic()
                                     .fontWeight(.light)
+                                    .lineLimit(1)
                                     .foregroundColor(.white)
                             }
                         }

@@ -28,11 +28,10 @@ struct UserBackground: View {
                                     Color.white
                                         .shadow(color: Color.black.opacity(0.75), radius: 5, x: 0, y: 0)
                                         .mask(
-
                                             Rectangle().padding( cell.direction == .horizontal ? [.vertical, .trailing] : [.horizontal] , -50)
                                         )
+                                        .animation(.default.delay(2))
                                 }
-                                // .shadow(radius: 5)
                         } else {
                             Rectangle()
                                 .frame(width: 50, height: 50)
@@ -121,10 +120,13 @@ class CoverGenerator: ObservableObject {
                                                 .first { $0.position.0 > cell.position.0 }
             
 
-                    if var chosenCell = [closestRightCell, closestBottomCell].compactMap({ $0 }).randomElement() {
+                    if let chosenCell = [closestRightCell, closestBottomCell].compactMap({ $0 }).randomElement() {
                         if let url = chosenCell.url {
                             let directionToSpan: GridCell.Axis = chosenCell.position.0 == cell.position.0 ? .horizontal : .vertical
-                            chosenCell.direction = directionToSpan
+               
+                            grid[chosenCell.position.0][chosenCell.position.1].direction = directionToSpan
+                            
+                            
                             let connectedCells = directionToSpan == .horizontal ? Array(grid[chosenCell.position.0][cell.position.1..<chosenCell.position.1]) : grid[cell.position.0..<chosenCell.position.0].map { $0[chosenCell.position.1] }
                                 
                             for (i, connectedCell) in connectedCells.enumerated() {

@@ -69,6 +69,7 @@ struct Login: View {
                     .webAuthenticationSession(isPresented: $presentLogin) {
                         model.signIn { success in
                             if !success {
+                                
                                 presentLoginFailedAlert = true
                             }
                         }

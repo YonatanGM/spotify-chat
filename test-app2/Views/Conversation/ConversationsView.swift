@@ -25,6 +25,17 @@ struct ConversationsView: View {
         return model.groups.filter { $0.1.admin == currentUserID }.count <= 10
     }
     
+    private var groupsSorted: [Dictionary<String, Group>.Element] {
+        model.groups.sorted {
+            if let lastId1 = $0.1.messages.last?.id,
+               let lastId2 = $1.1.messages.last?.id {
+                return lastId1 > lastId2
+            } else {
+                return $0.0 > $1.0
+            }
+        }
+    }
+    
     var body: some View {
         NavigationLink(isActive: $model.showChat,
                        destination: {
@@ -35,7 +46,7 @@ struct ConversationsView: View {
                        label: { EmptyView() })
         
         List {
-            ForEach(model.groups.sorted { $0.0 > $1.0 }, id: \.key) { id, group in
+            ForEach(groupsSorted, id: \.key) { id, group in
                 ConversationGroupRow(group: group)
                     .listRowBackground(Color.backdrop.brightness(model.selectedGroup == group.id && isTapping ? 0.3: 0))
                     .listRowInsets(.init(top: 10, leading: 10, bottom: 10, trailing: 10))

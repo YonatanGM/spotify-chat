@@ -115,9 +115,6 @@ public struct ChatView<Message: ChatMessage, User: ChatUser>: View {
                     
                    
             }
-            .onAppear {
-                print(messages.map { $0.id })
-            }
             .padding(.bottom, 100)
             .foregroundColor(.white)
             // .padding(EdgeInsets(top: inset.top, leading: inset.leading, bottom: 0, trailing: inset.trailing))
