@@ -337,8 +337,8 @@
 			isa = PBXGroup;
 			children = (
 				9F2282E828D6E3640050929E /* UserIconsToolbar.swift */,
-				9F2282EA28D6E3A50050929E /* UserIconAnimated.swift */,
 				4685CEBF285106CC00EE5376 /* SwiftyChatView.swift */,
+				9F2282EA28D6E3A50050929E /* UserIconAnimated.swift */,
 			);
 			path = Chat;
 			sourceTree = "<group>";

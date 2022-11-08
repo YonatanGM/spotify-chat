@@ -63,6 +63,7 @@ struct ConversationGroupRow: View {
                                 }
                             }
                             .clipShape(Capsule())
+                            .coordinateSpace(name: "userDetailGenres")
                         }
                         .frame(height: 15)
                         Spacer()

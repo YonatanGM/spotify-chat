@@ -105,6 +105,39 @@ class CoverGenerator: ObservableObject {
             }
         }
         
+        //image cells at left and right edge
+        let leftEdgeImageCellRow = Int.random(in: (0..<dimension.0))
+        grid[leftEdgeImageCellRow][0].willProcessCell = true
+        grid[leftEdgeImageCellRow][0].url = urls.random()
+        if !imageCells.contains(where: { $0.position.0 == leftEdgeImageCellRow && $0.position.1 == 0 }) {
+            imageCells.append(grid[leftEdgeImageCellRow][0])
+        }
+        let rightEdgeImageCellRow = Int.random(in: (0..<dimension.0))
+        grid[rightEdgeImageCellRow][max(0, dimension.1 - 1)].willProcessCell = true
+        grid[rightEdgeImageCellRow][max(0, dimension.1 - 1)].url = urls.random()
+        if !imageCells.contains(where: { $0.position.0 == rightEdgeImageCellRow && $0.position.1 == max(0, dimension.1 - 1) }) {
+            imageCells.append(grid[leftEdgeImageCellRow][0])
+        }
+        if let leftUrl = grid[leftEdgeImageCellRow][0].url, let rightUrl = grid[rightEdgeImageCellRow][max(0, dimension.1 - 1)].url  {
+            SDWebImageManager().loadImage(with: URL(string: leftUrl), progress: nil) { [weak self] uiImage, _, _, cacheType, _, _ in
+                guard let uiImage = uiImage else { return }
+                
+                DispatchQueue.main.async {
+                    self?.grid[leftEdgeImageCellRow][0].image = Image(uiImage: uiImage)
+                }
+            }
+            SDWebImageManager().loadImage(with: URL(string: rightUrl), progress: nil) { [weak self] uiImage, _, _, cacheType, _, _ in
+                guard let uiImage = uiImage else { return }
+                
+                DispatchQueue.main.async {
+                    self?.grid[rightEdgeImageCellRow][max(0, (self?.dimension.1 ?? 0) - 1)].image = Image(uiImage: uiImage)
+                }
+            }
+        }
+
+
+        
+        
         let imageCellsColumnSorted = imageCells.sorted { $0.position.1 < $1.position.1 }
         let imageCellsRowSorted = imageCells.sorted { $0.position.0 < $1.position.0 }
         for i in (0..<dimension.0) {

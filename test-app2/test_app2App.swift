@@ -71,7 +71,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
 //        SDWebImageDownloader.shared().shouldDecompressImages = false
                 
 //        SDImageCache.shared().config.diskCacheReadingOptions = NSData.ReadingOptions.mappedIfSafe
-        // SDImageCache.shared.config.maxMemoryCost = 10 * 1024 * 1024
+         SDImageCache.shared.config.maxMemoryCost = 400 * 1024 * 1024
          // SDWebImageManager.defaultImageCache = SDImageCachesManager.shared
         return true
     }

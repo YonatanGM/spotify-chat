@@ -40,7 +40,7 @@ struct InviteButton: View {
         .sheet(isPresented: $isSharePresented, onDismiss: {
             // print("Dismiss")
         }, content: {
-            ActivityViewController(activityItems: ["mklsdmflksdf sdf sdfsdf"])
+            ActivityViewController(activityItems: ["Let's connect on \'Chat for Spotify\'. It's a free app that lets you chat with folks who enjoy the same music as you."])
         })
     }
 }

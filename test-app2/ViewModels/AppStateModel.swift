@@ -386,6 +386,7 @@ extension AppStateModel {
         
         DatabaseManager.shared.observeUserDeletion() { [weak self] id in
             self?.suggestedUsers.removeAll { $0.id == id }
+            self?.searchResults.removeAll { $0.id == id }
         }
         
         
