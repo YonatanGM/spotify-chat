@@ -26,10 +26,13 @@
 		<string>logoRegular2.otf</string>
 		<string>Modulus_Medium.ttf</string>
 		<string>Modulus-Bold.otf</string>
+		<string>Modulus-Bold2.otf</string>
 	</array>
 	<key>UIStatusBarStyle</key>
 	<string>UIStatusBarStyleLightContent</string>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
+	<false/>
+	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
 </dict>
 </plist>

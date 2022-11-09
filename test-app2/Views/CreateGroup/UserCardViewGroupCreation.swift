@@ -63,11 +63,26 @@ struct UserCardViewGroupCreation: View {
                                 }
                             }
                             .overlay(
-                                Image(systemName: "x.circle.fill")
-                                    .resizable()
-                                    .scaledToFit()
-                                    .frame(width: 15, height: 15)
-                                , alignment: .topTrailing)
+                                GeometryReader { geometry in
+                                    ZStack {
+                                        Image(systemName: "xmark.circle.fill")
+                                            .resizable()
+                                            .scaledToFit()
+                                            .frame(width: 10)
+                                            .foregroundColor(.white)
+                                            .offset(x: cos(Angle(degrees: -45).radians) * geometry.size.width / 2,
+                                                    y: sin(Angle(degrees: -45).radians) * geometry.size.height / 2)
+                                            .shadow(radius: 5)
+                                    }
+                                    .frame(width: geometry.size.width, height: geometry.size.height, alignment: .center)
+                                }
+                            )
+//                            .overlay(
+//                                Image(systemName: "x.circle.fill")
+//                                    .resizable()
+//                                    .scaledToFit()
+//                                    .frame(width: 15, height: 15)
+//                                , alignment: .topTrailing)
                             .matchedGeometryEffect(id: user.id, in: animation)
                         
                     } else {

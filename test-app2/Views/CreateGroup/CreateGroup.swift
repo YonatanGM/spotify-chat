@@ -70,8 +70,8 @@ struct CreateGroup: View {
                       blue: Double(10) / 255,
                       opacity: 1)
                 
-            ], startPoint: .topLeading, endPoint: .bottom)
-            .ignoresSafeArea()
+            ], startPoint: .topLeading, endPoint: .center)
+            .ignoresSafeArea(.all, edges: .all)
         )
     }
 }
