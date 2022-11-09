@@ -165,6 +165,7 @@ extension AppStateModel {
         DatabaseManager.shared.observeBlockedUsers { [weak self] ids in
             self?.blockedUsers = ids
             self?.suggestedUsers.removeAll { ids.contains($0.id) }
+            self?.searchResults.removeAll { ids.contains($0.id) }
             if let groups = self?.groups {
                 for (id, group) in groups {
                     self?.groups[id]?.messages = group.messages.filter { !ids.contains($0.user.id) }
