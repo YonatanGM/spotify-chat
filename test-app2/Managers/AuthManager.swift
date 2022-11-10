@@ -272,6 +272,7 @@ extension AuthManager {
                                 completion?(.failure(error!))
                                 return
                             }
+                            
                             // print("logged in user\n", result.user)
                             
                             // set user display name

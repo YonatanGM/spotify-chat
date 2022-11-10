@@ -32,6 +32,7 @@ struct TrackCard: View {
                         .scaledToFit()
                         .frame(width: Double(UIScreen.main.bounds.width) / 1.75,
                                height: Double(UIScreen.main.bounds.width) / 1.75)
+                        .blur(radius: 10)
                 } else {
                     // probably don't need this
                     Image(systemName: "Rectangle.fill")
@@ -115,18 +116,20 @@ struct TrackCard: View {
                     .foregroundColor(.white.opacity(0.75))
                     .opacity(model.likedTracks[track.id] != nil ? 1 : 0)
                     
-                    Image(systemName: model.play == true && model.playingTrackID == track.id ? "pause.fill" : "play.fill")
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: 13, height: 13)
-                        .foregroundColor(.white.opacity(0.75))
-                        .contentShape(Rectangle())
-                        .highPriorityGesture(
-                            TapGesture()
-                                .onEnded {
-                                    model.handlePlayback(of: track)
-                                }
-                        )
+                    if let _ = track.preview_url {
+                        Image(systemName: model.play == true && model.playingTrackID == track.id ? "pause.fill" : "play.fill")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 13, height: 13)
+                            .foregroundColor(.white.opacity(0.75))
+                            .contentShape(Rectangle())
+                            .highPriorityGesture(
+                                TapGesture()
+                                    .onEnded {
+                                        model.handlePlayback(of: track)
+                                    }
+                            )
+                    }
                 }
 //                .border(.red)
                 // logo exclusion zone from top

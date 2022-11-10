@@ -90,11 +90,20 @@ struct UserCardViewGroupCreation: View {
                         UserPicInitials(name: user.userName)
                             .frame(height: Double(UIScreen.main.bounds.width) / 12)
                             .overlay(
-                                Image(systemName: "x.circle.fill")
-                                    .resizable()
-                                    .scaledToFit()
-                                    .frame(width: 15, height: 15)
-                                , alignment: .topTrailing)
+                                GeometryReader { geometry in
+                                    ZStack {
+                                        Image(systemName: "xmark.circle.fill")
+                                            .resizable()
+                                            .scaledToFit()
+                                            .frame(width: 10)
+                                            .foregroundColor(.white)
+                                            .offset(x: cos(Angle(degrees: -45).radians) * geometry.size.width / 2,
+                                                    y: sin(Angle(degrees: -45).radians) * geometry.size.height / 2)
+                                            .shadow(radius: 5)
+                                    }
+                                    .frame(width: geometry.size.width, height: geometry.size.height, alignment: .center)
+                                }
+                            )
                             .onTapGesture {
                                 withAnimation(.spring(response: 0.5))  {
                                     addedUsers = addedUsers.filter { $0.id != user.id}

@@ -28,6 +28,31 @@ struct UserCardGroupCreation: View {
                         .clipShape(Circle())
                         .frame(height: Double(UIScreen.main.bounds.width) / 3)
                         .shadow(radius: 5)
+                        .mask {
+                            Circle()
+                                .overlay {
+                                    if isOnline {
+                                        GeometryReader { geometry in
+                                            ZStack {
+                                                Image(systemName: "circle.fill")
+                                                    .resizable()
+                                                    .scaledToFit()
+                                                
+                                                    .frame(width: 20)
+                                                    .offset(x: cos(Angle(degrees: -45).radians) * geometry.size.width / 2,
+                                                            y: sin(Angle(degrees: -45).radians) * geometry.size.height / 2)
+                                                    .compositingGroup()
+                                                    .luminanceToAlpha()
+                                                
+                                            }
+                                            .frame(width: geometry.size.width, height: geometry.size.height, alignment: .center)
+                                        }
+                                    }
+                                }
+                                .foregroundColor(.white)
+                                .compositingGroup()
+                                .luminanceToAlpha()
+                        }
                         .overlay(
                             GeometryReader { geometry in
                                 ZStack {
@@ -41,12 +66,37 @@ struct UserCardGroupCreation: View {
                                 }
                                 .frame(width: geometry.size.width, height: geometry.size.height, alignment: .center)
                             }
-                            .opacity(isOnline ? 1.0 : 0.0 )  
+                            .opacity(isOnline ? 1.0 : 0.0 )
                         )
                         .matchedGeometryEffect(id: user.id, in: namespace)
                 } else {
                     UserPicInitials(name: user.userName)
                         .frame(height: Double(UIScreen.main.bounds.width) / 3)
+                        .mask {
+                            Circle()
+                                .overlay {
+                                    if isOnline {
+                                        GeometryReader { geometry in
+                                            ZStack {
+                                                Image(systemName: "circle.fill")
+                                                    .resizable()
+                                                    .scaledToFit()
+                                                
+                                                    .frame(width: 20)
+                                                    .offset(x: cos(Angle(degrees: -45).radians) * geometry.size.width / 2,
+                                                            y: sin(Angle(degrees: -45).radians) * geometry.size.height / 2)
+                                                    .compositingGroup()
+                                                    .luminanceToAlpha()
+                                                
+                                            }
+                                            .frame(width: geometry.size.width, height: geometry.size.height, alignment: .center)
+                                        }
+                                    }
+                                }
+                                .foregroundColor(.white)
+                                .compositingGroup()
+                                .luminanceToAlpha()
+                        }
                         .overlay(
                             GeometryReader { geometry in
                                 ZStack {

@@ -117,7 +117,7 @@ struct UserDetail: View {
                         .header(title: "Fan of")
                 }
                 if let tracks = user.topTracks?.items {
-                    TopTracksView(tracks: tracks)
+                    TopTracksView(tracks: filterAvailableTracks(tracks: tracks))
                         .header(title: "Favorite tracks")
                 }
             }
@@ -144,6 +144,23 @@ struct UserDetail: View {
                 }
             }
         }
+    }
+    
+    private func filterAvailableTracks(tracks: [Track]) -> [Track]{
+        return tracks
+                .filter {
+                    guard let currentUser = model.currentUser else { return true }
+                    if let availableMarkets = $0.available_markets,
+                       let country = currentUser.country {
+                        if availableMarkets.contains(country) {
+                            return $0.explicit ? currentUser.filterEnabled == false : true
+                        } else {
+                            return false
+                        }
+                    } else {
+                        return $0.explicit  ? currentUser.filterEnabled == false : true
+                    }
+                }
     }
 }
 

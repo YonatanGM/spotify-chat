@@ -255,7 +255,25 @@ extension DatabaseManager {
                // reinsert user
                self?.insertUser(with: profile) { result in
                   completion(result)
+                  
+                  let changeRequest = AuthManager.shared.currentUser?.createProfileChangeRequest()
+                  if let displayName = profile.display_name {
+                      changeRequest?.displayName = displayName
+                  } else {
+                      changeRequest?.displayName = profile.email
+                  }
+                  if let url = profile.images.first?.url {
+                      changeRequest?.photoURL = URL(string: url)
+                  }
+                  changeRequest?.commitChanges { error in
+                      if let error = error {
+                          print("couldn't set current user's displayName/photoURL", error.localizedDescription)
+                      }
+                  }
+                  // update email
+                  AuthManager.shared.currentUser?.updateEmail(to: profile.email)
                }
+                           
             }
          case .failure(_):
             completion(false)
