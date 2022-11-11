@@ -32,7 +32,6 @@ struct TrackCard: View {
                         .scaledToFit()
                         .frame(width: Double(UIScreen.main.bounds.width) / 1.75,
                                height: Double(UIScreen.main.bounds.width) / 1.75)
-                        .blur(radius: 10)
                 } else {
                     // probably don't need this
                     Image(systemName: "Rectangle.fill")
