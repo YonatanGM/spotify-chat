@@ -49,6 +49,7 @@ struct TrackCard: View {
             .frame(width: Double(UIScreen.main.bounds.width) / 1.75)
             .padding([.horizontal, .top], spotifyLogoHeight / 2)
             
+            
             // spotify logo, audio control and like button
             VStack(alignment: .leading, spacing: 0) {
                 if model.playingTrackID == track.id && model.progress > 0.0 {
@@ -67,8 +68,11 @@ struct TrackCard: View {
                     Image("rsz_1spotify_logo_rgb_white")
                         .resizable()
                         .scaledToFit()
-                        .frame(height: spotifyLogoHeight)
-                    Spacer()
+                        .frame(height: 20)
+//                        .fixedSize()
+
+                    Spacer(minLength: Double(UIScreen.main.bounds.width) / 1.75 - 67.43 - 15 - 13)
+//                        .fixedSize()
                     getSpotifyHeartIcon(liked: model.likedTracks[track.id] == true, in: CGSize(width: 15, height: 15))
                         .frame(width: 15, height: 15)
                         .contentShape(Rectangle())
@@ -114,22 +118,25 @@ struct TrackCard: View {
                     )
                     .foregroundColor(.white.opacity(0.75))
                     .opacity(model.likedTracks[track.id] != nil ? 1 : 0)
-                    
-                    if let _ = track.preview_url {
-                        Image(systemName: model.play == true && model.playingTrackID == track.id ? "pause.fill" : "play.fill")
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 13, height: 13)
-                            .foregroundColor(.white.opacity(0.75))
-                            .contentShape(Rectangle())
-                            .highPriorityGesture(
-                                TapGesture()
-                                    .onEnded {
+//                    .fixedSize()
+                    Image(systemName: model.play == true && model.playingTrackID == track.id ? "pause.fill" : "play.fill")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 13, height: 13)
+                        .foregroundColor(track.preview_url != nil ? .white.opacity(0.75) : .white.opacity(0.25))
+                        .contentShape(Rectangle())
+                        .highPriorityGesture(
+                            TapGesture()
+                                .onEnded {
+                                    if track.preview_url != nil {
                                         model.handlePlayback(of: track)
                                     }
-                            )
-                    }
+                                }
+                        )
+//                        .fixedSize()
+   
                 }
+                //.fixedSize()
 //                .border(.red)
                 // logo exclusion zone from top
                 .padding(spotifyLogoHeight / 2)
