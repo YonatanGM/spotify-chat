@@ -346,7 +346,7 @@ extension AppStateModel {
                             self?.currentUser = currentUser
                         }
                         
-                        APICaller.shared.checkIfCurrentUserFollowsUsers(with: users.map { $0.id }) { result in
+                        APICaller.shared.checkIfCurrentUserFollowsUsers(with: users.prefix(50).map { $0.id }) { result in
                             switch result {
                             case .success(let followedUsers):
                                 DispatchQueue.main.async {
@@ -358,7 +358,7 @@ extension AppStateModel {
                             }
                         }
                         
-                        let trackIDs =  users.compactMap { $0.topTracks?.items.first?.id }
+                        let trackIDs =  users.prefix(50).compactMap { $0.topTracks?.items.first?.id }
                         APICaller.shared.checkIfUserHasSavedTracks(with: trackIDs) { result in
                             switch result {
                             case .success(let likedTracks):
@@ -372,7 +372,9 @@ extension AppStateModel {
                         }
                         
                         if self?.finishedLoadingOfSuggestedUsers == false {
-                            self?.finishedLoadingOfSuggestedUsers = true
+                            DispatchQueue.main.async {
+                                self?.finishedLoadingOfSuggestedUsers = true
+                            }
                         }
                         
                     case .failure(_):

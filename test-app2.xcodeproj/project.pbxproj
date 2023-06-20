@@ -57,6 +57,8 @@
 		9F6CA8E3290CD53C00EAD0A8 /* ActivityViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F6CA8E2290CD53B00EAD0A8 /* ActivityViewController.swift */; };
 		9F6CA8FF290E90AC00EAD0A8 /* UserWebAnimationLogin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F6CA8FE290E90AB00EAD0A8 /* UserWebAnimationLogin.swift */; };
 		9F6CA902290FFA4600EAD0A8 /* PrivacyAndTerms.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F6CA901290FFA4600EAD0A8 /* PrivacyAndTerms.swift */; };
+		9F73B2C72A40DF1D00EEB627 /* OpenAIManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F73B2C62A40DF1D00EEB627 /* OpenAIManager.swift */; };
+		9F73B2D02A413AB500EEB627 /* PineconeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F73B2CF2A413AB500EEB627 /* PineconeManager.swift */; };
 		9F99827928F84A88004F2559 /* Logos.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F99827828F84A88004F2559 /* Logos.swift */; };
 		9F99829628FB00ED004F2559 /* Promises in Frameworks */ = {isa = PBXBuildFile; productRef = 9F99829528FB00ED004F2559 /* Promises */; };
 		9F9C419228CF531F009CA948 /* FindButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F9C419128CF531E009CA948 /* FindButton.swift */; };
@@ -69,6 +71,7 @@
 		9F9C41A528D18D44009CA948 /* UserCardViewGroupCreation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F9C41A428D18D44009CA948 /* UserCardViewGroupCreation.swift */; };
 		9FA7F86C28E5E2E7004F6A66 /* SwiftyChat in Frameworks */ = {isa = PBXBuildFile; productRef = 9FA7F86B28E5E2E7004F6A66 /* SwiftyChat */; };
 		9FBFACE828CBCD3200C9F179 /* Home.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FBFACE728CBCD3200C9F179 /* Home.swift */; };
+		9FC99CAB2A40D590009AC35B /* OpenAISwift in Frameworks */ = {isa = PBXBuildFile; productRef = 9FC99CAA2A40D590009AC35B /* OpenAISwift */; };
 		9FCB86AC28C8AA1C00A96A50 /* PlaylistsResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FCB86AB28C8AA1B00A96A50 /* PlaylistsResponse.swift */; };
 		9FCB86AE28C8D0F600A96A50 /* TrackCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FCB86AD28C8D0F600A96A50 /* TrackCard.swift */; };
 		9FD44B9628CB3E170028A408 /* SuggestedUsersView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FD44B9528CB3E170028A408 /* SuggestedUsersView.swift */; };
@@ -129,6 +132,8 @@
 		9F6CA8E2290CD53B00EAD0A8 /* ActivityViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityViewController.swift; sourceTree = "<group>"; };
 		9F6CA8FE290E90AB00EAD0A8 /* UserWebAnimationLogin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserWebAnimationLogin.swift; sourceTree = "<group>"; };
 		9F6CA901290FFA4600EAD0A8 /* PrivacyAndTerms.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrivacyAndTerms.swift; sourceTree = "<group>"; };
+		9F73B2C62A40DF1D00EEB627 /* OpenAIManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenAIManager.swift; sourceTree = "<group>"; };
+		9F73B2CF2A413AB500EEB627 /* PineconeManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PineconeManager.swift; sourceTree = "<group>"; };
 		9F99827828F84A88004F2559 /* Logos.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logos.swift; sourceTree = "<group>"; };
 		9F9C419128CF531E009CA948 /* FindButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FindButton.swift; sourceTree = "<group>"; };
 		9F9C419528CF6BE4009CA948 /* Search.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Search.swift; sourceTree = "<group>"; };
@@ -156,6 +161,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9FC99CAB2A40D590009AC35B /* OpenAISwift in Frameworks */,
 				9FA7F86C28E5E2E7004F6A66 /* SwiftyChat in Frameworks */,
 				9F48D64D28FB4A6C006F4A55 /* BetterSafariView in Frameworks */,
 				9F5E969728EFC4AC00BBEB78 /* FirebaseAuth in Frameworks */,
@@ -222,6 +228,8 @@
 			children = (
 				463FEF25281D4242005155EE /* DatabaseManager.swift */,
 				46F5CA772808DD0D00D58C41 /* AuthManager.swift */,
+				9F73B2C62A40DF1D00EEB627 /* OpenAIManager.swift */,
+				9F73B2CF2A413AB500EEB627 /* PineconeManager.swift */,
 			);
 			path = Managers;
 			sourceTree = "<group>";
@@ -440,6 +448,7 @@
 				9F99829528FB00ED004F2559 /* Promises */,
 				9F48D64C28FB4A6C006F4A55 /* BetterSafariView */,
 				9F3EE81D29140B4900998284 /* UIImageColors */,
+				9FC99CAA2A40D590009AC35B /* OpenAISwift */,
 			);
 			productName = "test-app2";
 			productReference = 46F5CA662808C23E00D58C41 /* Chat for Spotify.app */;
@@ -479,6 +488,7 @@
 				9F99829428FB00ED004F2559 /* XCRemoteSwiftPackageReference "promises" */,
 				9F48D64B28FB4A6C006F4A55 /* XCRemoteSwiftPackageReference "BetterSafariView" */,
 				9F3EE81C29140B4900998284 /* XCRemoteSwiftPackageReference "UIImageColors" */,
+				9FC99CA92A40D58F009AC35B /* XCRemoteSwiftPackageReference "OpenAISwift" */,
 			);
 			productRefGroup = 46F5CA672808C23E00D58C41 /* Products */;
 			projectDirPath = "";
@@ -527,6 +537,7 @@
 				46F0CC2D280D716C00BF1B4B /* APICaller.swift in Sources */,
 				9F61C85E28EC4B8600877B91 /* DeleteAccount.swift in Sources */,
 				9F9C41A028D17E3B009CA948 /* CreateGroup.swift in Sources */,
+				9F73B2C72A40DF1D00EEB627 /* OpenAIManager.swift in Sources */,
 				9F17479C28CDBAEF0054AE20 /* Group.swift in Sources */,
 				46ED90ED2825250B0064E5BE /* Login.swift in Sources */,
 				9F61C85428EB182A00877B91 /* FollowOnSpotify.swift in Sources */,
@@ -534,6 +545,7 @@
 				46F8B3DB284C3BA800EBCD9C /* Message.swift in Sources */,
 				9FD44B9628CB3E170028A408 /* SuggestedUsersView.swift in Sources */,
 				9F60629C28F317F500320BF9 /* TrackMetadata.swift in Sources */,
+				9F73B2D02A413AB500EEB627 /* PineconeManager.swift in Sources */,
 				9F9C419628CF6BE4009CA948 /* Search.swift in Sources */,
 				9F6CA8E3290CD53C00EAD0A8 /* ActivityViewController.swift in Sources */,
 				9F2282ED28D6E4EC0050929E /* UserPicInitials.swift in Sources */,
@@ -827,6 +839,14 @@
 				version = 2.1.1;
 			};
 		};
+		9FC99CA92A40D58F009AC35B /* XCRemoteSwiftPackageReference "OpenAISwift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/adamrushy/OpenAISwift";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -873,6 +893,11 @@
 		9FA7F86B28E5E2E7004F6A66 /* SwiftyChat */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = SwiftyChat;
+		};
+		9FC99CAA2A40D590009AC35B /* OpenAISwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 9FC99CA92A40D58F009AC35B /* XCRemoteSwiftPackageReference "OpenAISwift" */;
+			productName = OpenAISwift;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

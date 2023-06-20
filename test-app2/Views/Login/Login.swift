@@ -76,7 +76,7 @@ struct Login: View {
                     }
                 }
                 
-                if model.signInStatus == .signingIn {
+                if model.signInStatus == .signingIn || model.finishedLoadingOfSuggestedUsers == false {
                     ProgressView()
                 }
                 Spacer()
