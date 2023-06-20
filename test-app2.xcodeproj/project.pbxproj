@@ -59,6 +59,7 @@
 		9F6CA902290FFA4600EAD0A8 /* PrivacyAndTerms.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F6CA901290FFA4600EAD0A8 /* PrivacyAndTerms.swift */; };
 		9F73B2C72A40DF1D00EEB627 /* OpenAIManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F73B2C62A40DF1D00EEB627 /* OpenAIManager.swift */; };
 		9F73B2D02A413AB500EEB627 /* PineconeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F73B2CF2A413AB500EEB627 /* PineconeManager.swift */; };
+		9F8D7B022A41D0810009A9E4 /* OpenAISwift in Frameworks */ = {isa = PBXBuildFile; productRef = 9F8D7B012A41D0810009A9E4 /* OpenAISwift */; };
 		9F99827928F84A88004F2559 /* Logos.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F99827828F84A88004F2559 /* Logos.swift */; };
 		9F99829628FB00ED004F2559 /* Promises in Frameworks */ = {isa = PBXBuildFile; productRef = 9F99829528FB00ED004F2559 /* Promises */; };
 		9F9C419228CF531F009CA948 /* FindButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F9C419128CF531E009CA948 /* FindButton.swift */; };
@@ -71,7 +72,6 @@
 		9F9C41A528D18D44009CA948 /* UserCardViewGroupCreation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F9C41A428D18D44009CA948 /* UserCardViewGroupCreation.swift */; };
 		9FA7F86C28E5E2E7004F6A66 /* SwiftyChat in Frameworks */ = {isa = PBXBuildFile; productRef = 9FA7F86B28E5E2E7004F6A66 /* SwiftyChat */; };
 		9FBFACE828CBCD3200C9F179 /* Home.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FBFACE728CBCD3200C9F179 /* Home.swift */; };
-		9FC99CAB2A40D590009AC35B /* OpenAISwift in Frameworks */ = {isa = PBXBuildFile; productRef = 9FC99CAA2A40D590009AC35B /* OpenAISwift */; };
 		9FCB86AC28C8AA1C00A96A50 /* PlaylistsResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FCB86AB28C8AA1B00A96A50 /* PlaylistsResponse.swift */; };
 		9FCB86AE28C8D0F600A96A50 /* TrackCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FCB86AD28C8D0F600A96A50 /* TrackCard.swift */; };
 		9FD44B9628CB3E170028A408 /* SuggestedUsersView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FD44B9528CB3E170028A408 /* SuggestedUsersView.swift */; };
@@ -134,6 +134,7 @@
 		9F6CA901290FFA4600EAD0A8 /* PrivacyAndTerms.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrivacyAndTerms.swift; sourceTree = "<group>"; };
 		9F73B2C62A40DF1D00EEB627 /* OpenAIManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenAIManager.swift; sourceTree = "<group>"; };
 		9F73B2CF2A413AB500EEB627 /* PineconeManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PineconeManager.swift; sourceTree = "<group>"; };
+		9F8D7B002A41CE7D0009A9E4 /* OpenAISwift */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = OpenAISwift; path = ../../../../Downloads/OpenAISwift; sourceTree = "<group>"; };
 		9F99827828F84A88004F2559 /* Logos.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logos.swift; sourceTree = "<group>"; };
 		9F9C419128CF531E009CA948 /* FindButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FindButton.swift; sourceTree = "<group>"; };
 		9F9C419528CF6BE4009CA948 /* Search.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Search.swift; sourceTree = "<group>"; };
@@ -161,7 +162,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9FC99CAB2A40D590009AC35B /* OpenAISwift in Frameworks */,
+				9F8D7B022A41D0810009A9E4 /* OpenAISwift in Frameworks */,
 				9FA7F86C28E5E2E7004F6A66 /* SwiftyChat in Frameworks */,
 				9F48D64D28FB4A6C006F4A55 /* BetterSafariView in Frameworks */,
 				9F5E969728EFC4AC00BBEB78 /* FirebaseAuth in Frameworks */,
@@ -417,6 +418,7 @@
 		9FA7F86528E5DCEC004F6A66 /* Packages */ = {
 			isa = PBXGroup;
 			children = (
+				9F8D7B002A41CE7D0009A9E4 /* OpenAISwift */,
 				9FA7F86A28E5E2CB004F6A66 /* SwiftyChat */,
 			);
 			name = Packages;
@@ -448,7 +450,7 @@
 				9F99829528FB00ED004F2559 /* Promises */,
 				9F48D64C28FB4A6C006F4A55 /* BetterSafariView */,
 				9F3EE81D29140B4900998284 /* UIImageColors */,
-				9FC99CAA2A40D590009AC35B /* OpenAISwift */,
+				9F8D7B012A41D0810009A9E4 /* OpenAISwift */,
 			);
 			productName = "test-app2";
 			productReference = 46F5CA662808C23E00D58C41 /* Chat for Spotify.app */;
@@ -488,7 +490,6 @@
 				9F99829428FB00ED004F2559 /* XCRemoteSwiftPackageReference "promises" */,
 				9F48D64B28FB4A6C006F4A55 /* XCRemoteSwiftPackageReference "BetterSafariView" */,
 				9F3EE81C29140B4900998284 /* XCRemoteSwiftPackageReference "UIImageColors" */,
-				9FC99CA92A40D58F009AC35B /* XCRemoteSwiftPackageReference "OpenAISwift" */,
 			);
 			productRefGroup = 46F5CA672808C23E00D58C41 /* Products */;
 			projectDirPath = "";
@@ -839,14 +840,6 @@
 				version = 2.1.1;
 			};
 		};
-		9FC99CA92A40D58F009AC35B /* XCRemoteSwiftPackageReference "OpenAISwift" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/adamrushy/OpenAISwift";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 1.0.0;
-			};
-		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -885,6 +878,10 @@
 			package = 9F5E969528EFC4AC00BBEB78 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebaseFunctions;
 		};
+		9F8D7B012A41D0810009A9E4 /* OpenAISwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = OpenAISwift;
+		};
 		9F99829528FB00ED004F2559 /* Promises */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 9F99829428FB00ED004F2559 /* XCRemoteSwiftPackageReference "promises" */;
@@ -893,11 +890,6 @@
 		9FA7F86B28E5E2E7004F6A66 /* SwiftyChat */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = SwiftyChat;
-		};
-		9FC99CAA2A40D590009AC35B /* OpenAISwift */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 9FC99CA92A40D58F009AC35B /* XCRemoteSwiftPackageReference "OpenAISwift" */;
-			productName = OpenAISwift;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

@@ -8,6 +8,7 @@
 import SwiftUI
 import Firebase
 import FirebaseFunctions
+import FirebaseDatabase
 import SDWebImageSwiftUI
 
 
@@ -49,9 +50,12 @@ class AppDelegate: NSObject, UIApplicationDelegate {
 
         // firebase
         FirebaseApp.configure()
+
         // FirebaseConfiguration.shared.setLoggerLevel(.min)
-        // Auth.auth().useEmulator(withHost: "localhost", port: 9092)
-        // Functions.functions().useEmulator(withHost: "localhost", port: 5002)
+        Auth.auth().useEmulator(withHost: "192.168.178.87", port: 9092)
+        Functions.functions().useEmulator(withHost: "192.168.178.87", port: 5002)
+   
+    
 
         // revisit this
         // clear firebase auth cache

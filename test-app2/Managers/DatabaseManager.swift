@@ -16,15 +16,18 @@ import Promises
 
 class DatabaseManager {
    
-   
+  
    static let shared = DatabaseManager()
+   private let database = Database.database(url: "http://192.168.178.87/?ns=database-export")
    
-   // private let database = Database.database().reference()
-   
-   private let database = Database.database(url: "https://testapp-79467-default-rtdb.europe-west1.firebasedatabase.app").reference()
+   private let databaseref: DatabaseReference!
+   //   private let database = Database.database(url: "https://testapp-79467-default-rtdb.europe-west1.firebasedatabase.app").reference()
    
    // var messageHandles = [String: UInt]() // to unregister them
-   
+   private init() {
+      database.useEmulator(withHost: "192.168.178.87", port: 9001)
+      databaseref = database.reference()
+   }
 }
 
 
@@ -32,7 +35,7 @@ class DatabaseManager {
 extension DatabaseManager {
    
    public func userExists(with id: String, completion: @escaping ((Bool) -> Void )) {
-      database.child("users/\(id)").observeSingleEvent(of: .value, with: { snapshot in
+      databaseref.child("users/\(id)").observeSingleEvent(of: .value, with: { snapshot in
          
          guard snapshot.exists() else {
             completion(false)
@@ -91,7 +94,10 @@ extension DatabaseManager {
                      return dict
                   }
                   
-                  let topArtistIndexUpdates = topArtistsResponse.items.map { $0.name.lowercased().replacingOccurrences(of: "[\\[\\].$#]", with: " ", options: .regularExpression) }.reduce([String: Any]()) {
+                  let topArtistsList = topArtistsResponse.items.map { $0.name.lowercased().replacingOccurrences(of: "[\\[\\].$#]", with: " ", options: .regularExpression) }
+                  let topTracksList = topTracksResponse.items.map { $0.name.lowercased().replacingOccurrences(of: "[\\[\\].$#]", with: " ", options: .regularExpression) }
+                  
+                  let topArtistIndexUpdates = topArtistsList.reduce([String: Any]()) {
                      var dict = $0
                      // dict["artists/\(profile.id)/\($1)"] = true
                      // dict["users/\(profile.id)/search/\($1)"] = true
@@ -99,45 +105,84 @@ extension DatabaseManager {
                      return dict
                   }
                   
-                  let topTrackIndexUpdates = topTracksResponse.items.map { $0.name.lowercased().replacingOccurrences(of: "[\\[\\].$#]", with: " ", options: .regularExpression) }.reduce([String: Any]()) {
+                  let topTrackIndexUpdates = topTracksList.reduce([String: Any]()) {
                      var dict = $0
                      // dict["tracks/\(profile.id)/\($1)"] = true
                      // dict["users/\(profile.id)/search/\($1)"] = true
                      dict["search/\($1)/\(profile.id)"] = true
                      return dict
                   }
+//
+//                  let userPreferenceData = "Top genres: \(topGenres.joined(separator: ", "));\nTop artists: \(topArtistsList.joined(separator: ", "));\nTop tracks: \(topTracksList.joined(separator: ", "));"
+                  let userPreferenceData = "user data";
+                   print("user pref\n", userPreferenceData)
                   
-                  let userUpdates: [String: Any] = [
-                     "users/\(profile.id)/id": profile.id, //redundant but whatever
-                     "users/\(profile.id)/name": profile.display_name ?? profile.email,
-                     "users/\(profile.id)/email": profile.email,
-                     "users/\(profile.id)/country": profile.country,
-                     "users/\(profile.id)/filter_enabled": profile.explicit_content["filter_enabled"],
-                     "users/\(profile.id)/profile_picture": profile.images.first?.url,
-                     "users/\(profile.id)/top_artists": topArtists,
-                     "users/\(profile.id)/top_tracks": topTracks,
-                     "users/\(profile.id)/top_genres": Array(topGenres),
-                     "users/\(profile.id)/top_genre_display": modeGenre ?? topArtistsResponse.items.first?.genres?.first
-                  ]
-                  
-                  // update the genres and search index first
-                  let updates = topGenreUpdates.merging(topArtistIndexUpdates) { (_, new) in new }
-                     .merging(topTrackIndexUpdates) { (_, new) in new }
-                  self?.database.updateChildValues(updates) {  error, _ in
-                     guard error == nil else {
-                        completion(false)
-                        return
-                     }
-                     
-                     // create the user
-                     self?.database.updateChildValues(userUpdates) { error, _ in
-                        guard error == nil else {
+                  OpenAIManager.shared.getEmbedding(inputString: userPreferenceData) { [weak self] result in
+                     switch result {
+                        
+                     case .success(let embedding):
+                        guard let embedding = embedding else {
+                           print("No embedding returned")
                            completion(false)
                            return
                         }
-                        completion(true)
+                        // Insert the embedding into the pinecone database
+                        PineconeManager.shared.insertEmbedding(embedding: embedding, vector_id: userPreferenceData) { [weak self] success, error in
+                           if let error = error {
+                              print("Failed to insert embedding: \(error.localizedDescription)")
+                              completion(false)
+                              return
+                           }
+                           
+                           guard let success = success, success == true else {
+                              print("Insertion was not successful")
+                              completion(false)
+                              return
+                           }
+                           
+                           // Success
+                           print("Successfully inserted embedding for \(userPreferenceData)")
+                           // insert user into fireabase database
+                           let userUpdates: [String: Any] = [
+                              "users/\(profile.id)/id": profile.id, //redundant but whatever
+                              "users/\(profile.id)/name": profile.display_name ?? profile.email,
+                              "users/\(profile.id)/email": profile.email,
+                              "users/\(profile.id)/country": profile.country,
+                              "users/\(profile.id)/filter_enabled": profile.explicit_content["filter_enabled"],
+                              "users/\(profile.id)/profile_picture": profile.images.first?.url,
+                              "users/\(profile.id)/top_artists": topArtists,
+                              "users/\(profile.id)/top_tracks": topTracks,
+                              "users/\(profile.id)/top_genres": Array(topGenres),
+                              "users/\(profile.id)/top_genre_display": modeGenre ?? topArtistsResponse.items.first?.genres?.first
+                           ]
+                           
+                           // update the genres and search index first
+                           let updates = topGenreUpdates.merging(topArtistIndexUpdates) { (_, new) in new }
+                              .merging(topTrackIndexUpdates) { (_, new) in new }
+                           self?.databaseref.updateChildValues(updates) {  error, _ in
+                              guard error == nil else {
+                                 completion(false)
+                                 return
+                              }
+                              
+                              // create the user
+                              self?.databaseref.updateChildValues(userUpdates) { error, _ in
+                                 guard error == nil else {
+                                    completion(false)
+                                    return
+                                 }
+                                 completion(true)
+                              }
+                           }
+                        }
+                     case .failure(let error):
+                        print("Failed to get embedding: \(error.localizedDescription)")
+                        completion(false)
+                        return
+                        
                      }
                   }
+
                case .failure( _):
                   completion(false)
                }
@@ -152,14 +197,14 @@ extension DatabaseManager {
    public func deleteProfile(completion: @escaping () -> Void) {
       guard let currentUserID = AuthManager.shared.currentUser?.uid else { return }
       Promise<Bool>() { [weak self] fulfill, reject in
-         self?.database.child("userInfo/\(currentUserID)/Groups").observeSingleEvent(of: .value) { [weak self] snapshot in
+         self?.databaseref.child("userInfo/\(currentUserID)/Groups").observeSingleEvent(of: .value) { [weak self] snapshot in
             guard let children = snapshot.value as? [String: Bool] else {
                fulfill(true)
                return
             }
             for (index, (groupID, isMember)) in children.enumerated() {
                if isMember {
-                  self?.database.child("Group/\(groupID)/admin").observeSingleEvent(of: .value) { snapshot in
+                  self?.databaseref.child("Group/\(groupID)/admin").observeSingleEvent(of: .value) { snapshot in
                      guard let admin = snapshot.value as? String else { return }
                      // current user is admin
                      if admin == currentUserID {
@@ -169,7 +214,7 @@ extension DatabaseManager {
                            }
                         }
                      } else {
-                        self?.database.child("Group/\(groupID)/recipient").observeSingleEvent(of: .value) { snapshot in
+                        self?.databaseref.child("Group/\(groupID)/recipient").observeSingleEvent(of: .value) { snapshot in
                            if snapshot.exists() {
                               // is dm
                               self?.deleteGroup(groupID) { _ in
@@ -198,7 +243,7 @@ extension DatabaseManager {
          }
       }.then { _ in
          Promise<Bool>() { [weak self] fulfill, reject in
-            self?.database.child("search")
+            self?.databaseref.child("search")
                .queryOrdered(byChild: currentUserID)
                .queryEqual(toValue: true)
                .observeSingleEvent(of: .value) { snapshot in
@@ -208,7 +253,7 @@ extension DatabaseManager {
                      dict.updateValue(nil, forKey: "search/\($1)/\(currentUserID)")
                      return dict
                   }
-                  self?.database.updateChildValues(updates) { error, _ in
+                  self?.databaseref.updateChildValues(updates) { error, _ in
                      guard error == nil else { return }
                      fulfill(true)
                   }
@@ -216,7 +261,7 @@ extension DatabaseManager {
          }
       }.then { _ in
          Promise<Bool>() { [weak self] fulfill, reject in
-            self?.database.updateChildValues(["users/\(currentUserID)": nil,
+            self?.databaseref.updateChildValues(["users/\(currentUserID)": nil,
                                               "userInfo/\(currentUserID)": nil,
                                               "status/\(currentUserID)": nil]) { error, _ in
                guard error == nil else { return }
@@ -229,8 +274,8 @@ extension DatabaseManager {
    }
    
    public func observeUserDeletion(completion: @escaping (String) -> Void) {
-      database.child("users").observe(.childRemoved) { [weak self] userSnapshot in
-         self?.database.child("status/\(userSnapshot.key)").observeSingleEvent(of: .value) { snapshot in
+      databaseref.child("users").observe(.childRemoved) { [weak self] userSnapshot in
+         self?.databaseref.child("status/\(userSnapshot.key)").observeSingleEvent(of: .value) { snapshot in
             guard !snapshot.exists() else {
                // must be refresh
                return
@@ -247,7 +292,7 @@ extension DatabaseManager {
          switch result {
          case .success(let profile):
             // delete and reinsert the user
-            self?.database.child("users/\(profile.id)").setValue(nil) { error, _ in
+            self?.databaseref.child("users/\(profile.id)").setValue(nil) { error, _ in
                guard error == nil else {
                   completion(false)
                   return
@@ -314,7 +359,7 @@ extension DatabaseManager {
    
    public func getUser(with id: String, completion: @escaping (Result<Message.ChatUserItem, Error>) -> Void) {
       
-      database.child("users/\(id)").observeSingleEvent(of: .value) { snapshot in
+      databaseref.child("users/\(id)").observeSingleEvent(of: .value) { snapshot in
          
          guard let user = snapshot.value as? [String: Any],
                let name = user["name"] as? String,
@@ -368,7 +413,7 @@ extension DatabaseManager {
    
    public func getUsers(in room: String, completion: @escaping (Result<[Message.ChatUserItem], Error>) -> Void) {
       
-      self.database.child("users")
+      self.databaseref.child("users")
          .queryOrdered(byChild: "room")
          .queryEqual(toValue: "\(room)")
          .observeSingleEvent(of: .value) { [weak self] snapshot in
@@ -423,7 +468,7 @@ extension DatabaseManager {
    
    // test these
    public func getTopTracks(for id: String,  completion: @escaping ((Result<TopTracksResponse, Error>) ->Void)) {
-      self.database.child("users/\(id)/top_tracks").observeSingleEvent(of: .value, with: { snapshot in
+      self.databaseref.child("users/\(id)/top_tracks").observeSingleEvent(of: .value, with: { snapshot in
          
          guard let value = snapshot.value, let data = try? JSONSerialization.data(withJSONObject: value), let result = try? JSONDecoder().decode(TopTracksResponse.self, from: data)  else {
             completion(.failure(DatabaseError.failedToFetch))
@@ -436,7 +481,7 @@ extension DatabaseManager {
    }
    
    public func getTopArtists(for id: String,  completion: @escaping ((Result<TopArtistsResponse, Error>) ->Void)) {
-      self.database.child("users/\(id)/top_artists").observeSingleEvent(of: .value, with: { snapshot in
+      self.databaseref.child("users/\(id)/top_artists").observeSingleEvent(of: .value, with: { snapshot in
          
          guard let value = snapshot.value, let data = try? JSONSerialization.data(withJSONObject: value), let result = try? JSONDecoder().decode(TopArtistsResponse.self, from: data)  else {
             completion(.failure(DatabaseError.failedToFetch))
@@ -460,8 +505,8 @@ extension DatabaseManager {
          completion(false)
          return
       }
-      database.child("users/\(currentUserID)/top_genre_display").observeSingleEvent(of: .value) { [weak self] topGenreSnapshot in
-         self?.database.child("userInfo/\(currentUserID)/Groups/\(groupID)").observeSingleEvent(of: .value) { [weak self] snapshot in
+      databaseref.child("users/\(currentUserID)/top_genre_display").observeSingleEvent(of: .value) { [weak self] topGenreSnapshot in
+         self?.databaseref.child("userInfo/\(currentUserID)/Groups/\(groupID)").observeSingleEvent(of: .value) { [weak self] snapshot in
             guard (snapshot.value as? Bool) == false else {
                completion(false)
                return
@@ -477,7 +522,7 @@ extension DatabaseManager {
                                                            "top_genre_display": topGenreSnapshot.value as? String]
             ]
 
-            self?.database.updateChildValues(updates) { error, _ in
+            self?.databaseref.updateChildValues(updates) { error, _ in
                guard error == nil else {
                   completion(false)
                   return
@@ -496,7 +541,7 @@ extension DatabaseManager {
          return
       }
       
-      database.child("userInfo/\(currentUserID)/Groups/\(groupID)").removeValue() { error, _ in
+      databaseref.child("userInfo/\(currentUserID)/Groups/\(groupID)").removeValue() { error, _ in
          guard error == nil else {
             completion(false)
             return
@@ -514,8 +559,8 @@ extension DatabaseManager {
          return
       }
       
-      database.child("users/\(currentUserID)/top_genre_display").observeSingleEvent(of: .value) { [weak self] topGenreSnapshot in
-         guard let groupID = self?.database.child("Group").childByAutoId().key else {
+      databaseref.child("users/\(currentUserID)/top_genre_display").observeSingleEvent(of: .value) { [weak self] topGenreSnapshot in
+         guard let groupID = self?.databaseref.child("Group").childByAutoId().key else {
             completion(false)
             return
          }
@@ -538,7 +583,7 @@ extension DatabaseManager {
                                                                      "top_genre_display": topGenreSnapshot.value as? String]
          childUpdates["userInfo/\(currentUserID)/Groups/\(groupID)"] = true
          childUpdates["userInfo/\(currentUserID)/lastSeen/\(groupID)"] = "-"
-         self?.database.updateChildValues(childUpdates) { error, _ in
+         self?.databaseref.updateChildValues(childUpdates) { error, _ in
             guard error == nil else {
                completion(false)
                return
@@ -557,7 +602,7 @@ extension DatabaseManager {
       }
       
       // check if conversation already exists with the recipient
-      database.child("Group")
+      databaseref.child("Group")
          .queryOrdered(byChild: "name")
          .queryEqual(toValue: "\(currentUserID),\(user.id)")
          .observeSingleEvent(of: .value) { [weak self] snapshot in
@@ -565,7 +610,7 @@ extension DatabaseManager {
                completion(false)
                return
             }
-            self?.database.child("Group")
+            self?.databaseref.child("Group")
                .queryOrdered(byChild: "name")
                .queryEqual(toValue: "\(user.id),\(currentUserID)")
                .observeSingleEvent(of: .value) { [weak self] snapshot in
@@ -574,8 +619,8 @@ extension DatabaseManager {
                      return
                   }
                   // create the group
-                  self?.database.child("users/\(currentUserID)/top_genre_display").observeSingleEvent(of: .value) { [weak self] topGenreSnapshot in
-                     guard let groupID = self?.database.child("Group").childByAutoId().key else {
+                  self?.databaseref.child("users/\(currentUserID)/top_genre_display").observeSingleEvent(of: .value) { [weak self] topGenreSnapshot in
+                     guard let groupID = self?.databaseref.child("Group").childByAutoId().key else {
                         completion(false)
                         return
                      }
@@ -597,7 +642,7 @@ extension DatabaseManager {
                      childUpdates["Group/\(groupID)/invitees/\(currentUserID)"] = true
                      childUpdates["userInfo/\(currentUserID)/Groups/\(groupID)"] = true
                      childUpdates["userInfo/\(currentUserID)/lastSeen/\(groupID)"] = "-"
-                     self?.database.updateChildValues(childUpdates) { error, _ in
+                     self?.databaseref.updateChildValues(childUpdates) { error, _ in
                         guard error == nil else {
                            completion(false)
                            return
@@ -622,7 +667,7 @@ extension DatabaseManager {
          "Group/\(groupID)/users/\(currentUserID)": nil,
          "Group/\(groupID)/invitees/\(currentUserID)": nil
       ]
-      database.updateChildValues(updates) { error, _ in
+      databaseref.updateChildValues(updates) { error, _ in
          guard error == nil else {
             completion(false)
             return
@@ -651,7 +696,7 @@ extension DatabaseManager {
       // updates["conversations/\(group.id)"] = nil
       updates.updateValue(nil, forKey: "conversations/\(groupID)")
       updates.updateValue(nil, forKey: "conversations_ids/\(groupID)")
-      database.child("Group/\(groupID)/invitees").observeSingleEvent(of: .value) { [weak self] snapshot in
+      databaseref.child("Group/\(groupID)/invitees").observeSingleEvent(of: .value) { [weak self] snapshot in
          if let invitees = snapshot.value as? [String: Any] {
            
             for id in invitees.keys {
@@ -661,7 +706,7 @@ extension DatabaseManager {
             }
          }
          // print(updates)
-         self?.database.updateChildValues(updates) { error, _ in
+         self?.databaseref.updateChildValues(updates) { error, _ in
             guard error == nil else {
                completion(false)
                return
@@ -680,20 +725,20 @@ extension DatabaseManager {
          // no need to add error handling
          return
       }
-      database.child("userInfo/\(currentUserID)/Groups").observe(.childRemoved) { snapshot in
+      databaseref.child("userInfo/\(currentUserID)/Groups").observe(.childRemoved) { snapshot in
          completion(snapshot.key)
        }
    }
    
    public func observeChangesInGroup(with id: String, completition: @escaping (Result<(String, Any?), Error>) -> Void) {
-      database.child("Group/\(id)").observe(.childChanged) { snapshot in
+      databaseref.child("Group/\(id)").observe(.childChanged) { snapshot in
          
          completition(.success((snapshot.key, snapshot.value)))
       }
    }
    
    public func getGroup(with id: String, completition: @escaping (Result<Group, Error>) -> Void) {
-      database.child("Group/\(id)").observeSingleEvent(of: .value) { snapshot in
+      databaseref.child("Group/\(id)").observeSingleEvent(of: .value) { snapshot in
          guard let dict = snapshot.value as? [String: Any],
                let name = dict["name"] as? String,
                let admin = dict["admin"] as? String else {
@@ -731,7 +776,7 @@ extension DatabaseManager {
          completion(.failure(AuthManager.AuthError.failedToGetCurrentUser))
          return
       }
-      database.child("userInfo/\(currentUserID)/Groups").observe(.childAdded) { snapshot in
+      databaseref.child("userInfo/\(currentUserID)/Groups").observe(.childAdded) { snapshot in
          guard let userHasJoined = snapshot.value as? Bool else {
             completion(.failure(DatabaseError.failedToFetch))
             return
@@ -747,7 +792,7 @@ extension DatabaseManager {
          completion(.failure(AuthManager.AuthError.failedToGetCurrentUser)) // user signed out already or the object hasn't been initalized yet
          return
       }
-      database.child("userInfo/\(currentUserID)/Groups").observe(.childChanged) { snapshot in
+      databaseref.child("userInfo/\(currentUserID)/Groups").observe(.childChanged) { snapshot in
          guard let inviteAccepted = (snapshot.value as? Bool), inviteAccepted == true else {
             return
          }
@@ -757,7 +802,7 @@ extension DatabaseManager {
    
    
    public func removeMessagesObserver(_ group: String) {
-      database.child("conversations/\(group)").removeAllObservers()
+      databaseref.child("conversations/\(group)").removeAllObservers()
    }
    
    // probably don't need error handling for this, if i can't remove the observer it's whatever
@@ -822,7 +867,7 @@ extension DatabaseManager {
       
       var updates = [String: Any]()
       
-      let newMessageRef = self.database.child("conversations/\(group)").childByAutoId()
+      let newMessageRef = self.databaseref.child("conversations/\(group)").childByAutoId()
       guard let messageID = newMessageRef.key else {
          completion?(false)
          return
@@ -841,7 +886,7 @@ extension DatabaseManager {
       
       updates["conversations_ids/\(group)/\(messageID)"] = true
       updates["conversations/\(group)/\(messageID)"] = newMessage
-      database.updateChildValues(updates) { error, _ in
+      databaseref.updateChildValues(updates) { error, _ in
          guard error == nil else {
             completion?(false)
             return
@@ -857,7 +902,7 @@ extension DatabaseManager {
          return
       }
       
-      database.child("users/\(currentUserID)/room").observe(.value, with: { snapshot in
+      databaseref.child("users/\(currentUserID)/room").observe(.value, with: { snapshot in
          guard let room = snapshot.value as? String else {
             // completion(.failure(DatabaseError.failedToFetch))
             return
@@ -880,7 +925,7 @@ extension DatabaseManager {
          completion(.failure(AuthManager.AuthError.failedToGetCurrentUser))
          return
       }
-      database.child("conversations/\(group)")
+      databaseref.child("conversations/\(group)")
          .queryOrderedByKey()
          .queryLimited(toLast: Self.maxNumOfMessagesToFetch)
          .observe(.childAdded, with: { snapshot in
@@ -933,7 +978,7 @@ extension DatabaseManager {
          completion(.failure(AuthManager.AuthError.failedToGetCurrentUser))
          return
       }
-      database.child("conversations/\(group)")
+      databaseref.child("conversations/\(group)")
          .queryOrdered(byChild: "moderated")
          .queryEqual(toValue: true)
          .queryLimited(toLast: 1)
@@ -986,7 +1031,7 @@ extension DatabaseManager {
       guard let currentUserID = AuthManager.shared.currentUser?.uid else {
          return
       }
-      database.child("users/\(currentUserID)/room").removeAllObservers()
+      databaseref.child("users/\(currentUserID)/room").removeAllObservers()
    }
    
 }
@@ -1005,7 +1050,7 @@ extension DatabaseManager {
          return
          result +
             [Promise<[String]> { [weak self] fulfill, reject in
-               self?.database.child("search/\(term)")
+               self?.databaseref.child("search/\(term)")
                   .queryOrderedByKey()
                   .queryLimited(toFirst: 20)
                   .observeSingleEvent(of: .value) { snapshot in
@@ -1049,11 +1094,11 @@ extension DatabaseManager {
 extension DatabaseManager {
    
    public func removeObserver(with path: String) {
-      database.child(path).removeAllObservers()
+      databaseref.child(path).removeAllObservers()
    }
    
    public func removeObserver(with handle: UInt) {
-      database.removeObserver(withHandle: handle)
+      databaseref.removeObserver(withHandle: handle)
    }
 }
 
@@ -1063,21 +1108,21 @@ extension DatabaseManager {
    public func managePresence() {
       // not doing error handling
       guard let currentUserID = AuthManager.shared.currentUser?.uid else { return }
-      database.child(".info/connected").observe(.value) { [weak self] snapshot in
+      databaseref.child(".info/connected").observe(.value) { [weak self] snapshot in
           guard (snapshot.value as? Bool) == true else {
               return
           }
-         self?.database.child("status/\(currentUserID)").onDisconnectSetValue(false) { error, _ in
+         self?.databaseref.child("status/\(currentUserID)").onDisconnectSetValue(false) { error, _ in
             guard error == nil else {
                return
             }
-            self?.database.child("status/\(currentUserID)").setValue(true)
+            self?.databaseref.child("status/\(currentUserID)").setValue(true)
          }
       }
    }
    
    public func checkOnlineStatus(for userID: String, completion: @escaping (Bool) -> Void) -> UInt {
-      let handle = database.child("status/\(userID)").observe(.value) { snapshot in
+      let handle = databaseref.child("status/\(userID)").observe(.value) { snapshot in
          guard let isOnline = snapshot.value as? Bool else {
             completion(false)
             return
@@ -1090,7 +1135,7 @@ extension DatabaseManager {
    
    public func removePresence() {
       guard let currentUserID = AuthManager.shared.currentUser?.uid else { return }
-      database.child("status/\(currentUserID)").removeValue()
+      databaseref.child("status/\(currentUserID)").removeValue()
    }
 }
 
@@ -1104,13 +1149,13 @@ extension DatabaseManager {
       guard let currentUserID = AuthManager.shared.currentUser?.uid else {
          return
       }
-      database.child("userInfo/\(currentUserID)/lastSeen/\(groupID)").observe(.value) { [weak self] snapshot in
-         self?.database.child("conversations_ids/\(groupID)").removeAllObservers()
+      databaseref.child("userInfo/\(currentUserID)/lastSeen/\(groupID)").observe(.value) { [weak self] snapshot in
+         self?.databaseref.child("conversations_ids/\(groupID)").removeAllObservers()
          guard let lastSeenID = snapshot.value as? String else {
             return
          }
          onChangeOfLastSeenMessage(lastSeenID)
-         self?.database.child("conversations_ids/\(groupID)").queryOrderedByKey().queryStarting(afterValue: lastSeenID).observe(.value) { snapshot in
+         self?.databaseref.child("conversations_ids/\(groupID)").queryOrderedByKey().queryStarting(afterValue: lastSeenID).observe(.value) { snapshot in
             onChangeOfUnseenCount(snapshot.childrenCount)
          }
       }
@@ -1119,7 +1164,7 @@ extension DatabaseManager {
    public func getLastSeen(in groupID: String, completion: @escaping (String) -> Void) {
       
       guard let currentUserID = AuthManager.shared.currentUser?.uid else { return }
-      database.child("userInfo/\(currentUserID)/lastSeen/\(groupID)").observeSingleEvent(of: .value) { snapshot in
+      databaseref.child("userInfo/\(currentUserID)/lastSeen/\(groupID)").observeSingleEvent(of: .value) { snapshot in
          guard let lastSeenID = snapshot.value as? String else {
             return
          }
@@ -1132,7 +1177,7 @@ extension DatabaseManager {
       guard let currentUserID = AuthManager.shared.currentUser?.uid else {
          return
       }
-      database.child("userInfo/\(currentUserID)/lastSeen/\(groupID)").setValue(messageID)
+      databaseref.child("userInfo/\(currentUserID)/lastSeen/\(groupID)").setValue(messageID)
    }
 }
 
@@ -1145,15 +1190,15 @@ extension DatabaseManager {
       guard let currentUserID = AuthManager.shared.currentUser?.uid else {
          return
       }
-      database.child("userInfo/\(currentUserID)/blocked/\(id)").setValue(true)
-      database.child("userInfo/\(id)/blocked/\(currentUserID)").setValue(true)
+      databaseref.child("userInfo/\(currentUserID)/blocked/\(id)").setValue(true)
+      databaseref.child("userInfo/\(id)/blocked/\(currentUserID)").setValue(true)
    }
    
    public func observeBlockedUsers(completion: @escaping ([String]) -> Void) {
       guard let currentUserID = AuthManager.shared.currentUser?.uid else {
          return
       }
-      database.child("userInfo/\(currentUserID)/blocked").observe(.value) { snapshot in
+      databaseref.child("userInfo/\(currentUserID)/blocked").observe(.value) { snapshot in
          guard let ids = (snapshot.value as? [String: Bool])?.keys else {
             return
          }
@@ -1166,7 +1211,7 @@ extension DatabaseManager {
       guard let currentUserID = AuthManager.shared.currentUser?.uid else {
          return
       }
-      database.child("userInfo/\(currentUserID)/blocked").observeSingleEvent(of: .value) { snapshot in
+      databaseref.child("userInfo/\(currentUserID)/blocked").observeSingleEvent(of: .value) { snapshot in
          guard let ids = (snapshot.value as? [String: Bool])?.keys else {
             completion([])
             return

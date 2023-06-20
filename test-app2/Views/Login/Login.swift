@@ -78,6 +78,9 @@ struct Login: View {
                 
                 if model.signInStatus == .signingIn || model.finishedLoadingOfSuggestedUsers == false {
                     ProgressView()
+                        .onChange(of: model.signInStatus){ _ in
+                            print(model.signInStatus)
+                        }
                 }
                 Spacer()
                 if model.signInStatus == .signedOut {
