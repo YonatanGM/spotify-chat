@@ -154,6 +154,9 @@ extension AppStateModel {
             switch result {
             case .success(let user):
                 self?.currentUser = user
+                // fetch similar users from pinecone DB
+                
+                DatabaseManager.shared.queryUsers(with: <#T##[String]#>, completion: <#T##([Message.ChatUserItem]) -> Void#>)
             case .failure(_):
                 print("couldn't get current user")
             }
@@ -327,6 +330,8 @@ extension AppStateModel {
         }
         
         
+
+        
         DatabaseManager.shared.observeRoomChange() { [weak self] result in
             switch result {
                 
@@ -339,11 +344,15 @@ extension AppStateModel {
                         
                         self?.suggestedUsers = users.filter { $0.id != AuthManager.shared.currentUser?.uid }.sorted { $0.id > $1.id }
                         if let blockedUsers = self?.blockedUsers {
-                            self?.suggestedUsers.removeAll { blockedUsers.contains($0.id) }
+                            DispatchQueue.main.async {
+                                self?.suggestedUsers.removeAll { blockedUsers.contains($0.id) }
+                            }
                         }
                        
                         if let currentUser = (users.first { $0.id == AuthManager.shared.currentUser?.uid }) {
-                            self?.currentUser = currentUser
+                            DispatchQueue.main.async {
+                                self?.currentUser = currentUser
+                            }
                         }
                         
                         APICaller.shared.checkIfCurrentUserFollowsUsers(with: users.prefix(50).map { $0.id }) { result in
@@ -388,8 +397,10 @@ extension AppStateModel {
         }
         
         DatabaseManager.shared.observeUserDeletion() { [weak self] id in
-            self?.suggestedUsers.removeAll { $0.id == id }
-            self?.searchResults.removeAll { $0.id == id }
+            DispatchQueue.main.async {
+                self?.suggestedUsers.removeAll { $0.id == id }
+                self?.searchResults.removeAll { $0.id == id }
+            }
         }
         
         

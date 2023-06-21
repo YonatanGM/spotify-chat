@@ -20,6 +20,9 @@ struct MainView: View {
             } else if model.signInStatus == .signedIn {
                 Home()
                     .navigationTitle("⁢⁢\u{17B5} \u{17B4} \u{115F}")
+                    .onAppear {
+                        // DatabaseManager.shared.migrateDB()
+                    }
             } else {
                 LinearGradient(colors: [
                     Color(.sRGB,

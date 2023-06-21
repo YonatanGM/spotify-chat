@@ -1,177 +1,136 @@
-//
-//  PineconeManager.swift
-//  test-app2
-//
-//  Created by Yonatan Mamo on 20.06.23.
-//
-
 import Foundation
 
-// Define a class for the pinecone operations
 class PineconeManager {
     
-    // Define a static property that holds the shared instance
     static let shared = PineconeManager()
     
-    // Define a private initializer to prevent creating other instances
-    private init() {}
+    let headers = [
+        "accept": "application/json",
+        "content-type": "application/json",
+        "Api-Key": "f6bbdc2b-0e92-4493-ae94-04a329343bdf"
+    ]
     
-    // Define the constant for the pinecone key and index name
-    let pineconeKey = "f6bbdc2b-0e92-4493-ae94-04a329343bdf"
-    let pineconeIndex = "user-preferences-embeddings-index"
+    let baseUrl = "https://user-preferences-embeddings-index-d2e3d6c.svc.asia-southeast1-gcp-free.pinecone.io"
     
-    // Define a helper function to create a url request object
-    func createRequest(urlString: String, parameters: [String: Any]) -> URLRequest? {
-        // Create a url object from the string
-        guard let url = URL(string: urlString) else {
-            return nil
+    private init () {}
+    
+    public func insertEmbeddings(vectors: [String: [Double]], namespace: String, completion: @escaping (Bool?, Error?) -> Void) {
+        // Initialize an empty array to store the vectors for the request
+        var vectorArray = [[String: Any]]()
+        for (id, values) in vectors {
+            vectorArray.append(["id": id, "values": values])
+        }
+        // Construct the parameters for the request using the array
+        var parameters = ["vectors": vectorArray] as [String : Any]
+        parameters["namespace"] = namespace
+        
+        
+        // use a do-catch block to create the postData
+        var postData: Data?
+        
+        do {
+            postData = try JSONSerialization.data(withJSONObject: parameters, options: [])
+        } catch {
+            // handle any errors that might occur when creating the postData
+            print(error.localizedDescription)
+            // call the completion closure with nil and error
+            completion(nil, error)
+            return
         }
         
-        // Create a url request object
-        var request = URLRequest(url: url)
+        let request = NSMutableURLRequest(url: NSURL(string: "\(baseUrl)/vectors/upsert")! as URL,
+                                          cachePolicy: .useProtocolCachePolicy,
+                                          timeoutInterval: 10.0)
         request.httpMethod = "POST"
+        request.allHTTPHeaderFields = headers
+        request.httpBody = postData
         
-        // Encode the parameters as JSON data
-        request.httpBody = try? JSONSerialization.data(withJSONObject: parameters)
+        let session = URLSession.shared
+        let dataTask = session.dataTask(with: request as URLRequest, completionHandler: { (data, response, error) -> Void in
+            if let error = error {
+                completion(false, error)
+            } else {
+                guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
+                    completion(false, nil)
+                    return
+                }
+                completion(true, nil)
+            }
+        })
         
-        // Set the content type and authorization headers
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.setValue("ApiKey \(pineconeKey)", forHTTPHeaderField: "Authorization")
-        
-        // Return the request object
-        return request
+        dataTask.resume()
     }
     
-    // Define the function for inserting embeddings as a class method
-    func insertEmbedding(embedding: [Double], vector_id: String, completion: @escaping (Bool?, Error?) -> Void) {
-        // Set the parameters for the request
-        let parameters: [String: Any] = [
-            "vectors": [
-                [
-                    "id": vector_id,
-                    "values": embedding
-                ]
-            ]
-        ]
+    // other functions ...
+    public func queryEmbedding(id: String, /* query: [Double] */ topK: Int, namespace: String, completion: @escaping ([String]?, Error?) -> Void) {
+        let parameters = [
+            "includeValues": "false",
+            "includeMetadata": "false",
+            //            "vector": query,
+            "namespace": namespace,
+            "topK": topK,
+            "id": id
+        ] as [String : Any]
         
-        // Create a url request object using the helper function
-        guard let request = createRequest(urlString: "https://api.pinecone.io/v1/\(pineconeIndex)/upsert", parameters: parameters) else {
-            // Call the completion handler with nil and a custom error
-            completion(nil, URLError(.badURL))
+        // use a do-catch block to create the postData
+        var postData: Data?
+        do {
+            postData = try JSONSerialization.data(withJSONObject: parameters, options: [])
+        } catch {
+            // handle any errors that might occur when creating the postData
+            print(error.localizedDescription)
+            completion(nil, error)
             return
         }
         
-        // Create a data task with the request and a completion handler
-        let task = URLSession.shared.dataTask(with: request) { data, response, error in
-            // Check if there is an error
-            if let error = error {
-                // Call the completion handler with nil and error
-                completion(nil, error)
-                return
-            }
-            
-            // Check if the response is successful (status code 200)
-            guard let httpResponse = response as? HTTPURLResponse,
-                  httpResponse.statusCode == 200 else {
-                // Call the completion handler with nil and a custom error
-                completion(nil, URLError(.badServerResponse))
-                return
-            }
-            
-            // Check if there is data
-            guard let data = data else {
-                // Call the completion handler with nil and a custom error
-                completion(nil, URLError(.cannotDecodeContentData))
-                return
-            }
-            
-            // Decode the data as JSON
-            do {
-                let json = try JSONSerialization.jsonObject(with: data) as? [String: Any]
-                
-                // Extract the success flag from the JSON data
-                guard let success = json?["success"] as? Bool else {
-                    // Call the completion handler with nil and a custom error
-                    completion(nil, URLError(.cannotDecodeContentData))
-                    return
-                }
-                
-                // Call the completion handler with the success flag and nil error
-                completion(success, nil)
-                
-            } catch {
-                // Call the completion handler with nil and the decoding error
-                completion(nil, error)
-            }
-        }
-        
-        // Resume the task
-        task.resume()
-    }
-    
-    // Define a function for querying embeddings as a class method
-    func queryEmbedding(embedding: [Double], top_k: Int, completion: @escaping ([String]?, Error?) -> Void) {
-        // Set the parameters for the request
-        let parameters: [String: Any] = [
-            "vector": embedding,
-            "top_k": top_k
-        ]
-        
-        // Create a url request object using the helper function
-        guard let request = createRequest(urlString: "https://api.pinecone.io/v1/\(pineconeIndex)/query", parameters: parameters) else {
-            // Call the completion handler with nil and a custom error
-            completion(nil, URLError(.badURL))
+        guard let url = URL(string: "\(baseUrl)/query") else {
+            print("Invalid URL")
+            // call the completion closure with nil and an error
+            completion(nil, NSError(domain: "URL", code: -1))
             return
         }
         
-        // Create a data task with the request and a completion handler
-        let task = URLSession.shared.dataTask(with: request) { data, response, error in
-            // Check if there is an error
-            if let error = error {
-                // Call the completion handler with nil and error
+        let request = NSMutableURLRequest(url: url,
+                                          cachePolicy: .useProtocolCachePolicy,
+                                          timeoutInterval: 10.0)
+        request.httpMethod = "POST"
+        request.allHTTPHeaderFields = headers
+        request.httpBody = postData
+        
+        let dataTask = URLSession.shared.dataTask(with: request as URLRequest, completionHandler: { (data, response, error) -> Void in
+            guard error == nil else {
                 completion(nil, error)
                 return
             }
             
-            // Check if the response is successful (status code 200)
-            guard let httpResponse = response as? HTTPURLResponse,
-                  httpResponse.statusCode == 200 else {
-                // Call the completion handler with nil and a custom error
-                completion(nil, URLError(.badServerResponse))
+            guard let data = data  else {
+                completion(nil, nil)
+                return
+            }
+            guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200  else {
+                completion(nil, nil)
                 return
             }
             
-            // Check if there is data
-            guard let data = data else {
-                // Call the completion handler with nil and a custom error
-                completion(nil, URLError(.cannotDecodeContentData))
-                return
-            }
-            
-            // Decode the data as JSON
             do {
-                let json = try JSONSerialization.jsonObject(with: data) as? [String: Any]
-                
-                // Extract the matches array from the JSON data
-                guard let matches = json?["matches"] as? [[String: Any]] else {
-                    // Call the completion handler with nil and a custom error
-                    completion(nil, URLError(.cannotDecodeContentData))
+                // decode the data as a JSON object
+                let jsonObject = try JSONSerialization.jsonObject(with: data, options: [])
+                // cast the JSON object as a dictionary
+                guard let dictionary = jsonObject as? [String: Any],
+                      let matches = dictionary["matches"] as? [[String: Any]] else {
+                    completion(nil, nil)
                     return
                 }
-                
-                // Extract the ids from the matches array
-                let ids = matches.map { $0["id"] as? String }.compactMap { $0 }
-                
-                // Call the completion handler with the ids array and nil error
+                let ids = matches.compactMap { $0["id"] as? String }
                 completion(ids, nil)
-                
             } catch {
-                // Call the completion handler with nil and the decoding error
+                print(error.localizedDescription)
                 completion(nil, error)
             }
-        }
+            
+        })
         
-        // Resume the task
-        task.resume()
+        dataTask.resume()
     }
+    
 }

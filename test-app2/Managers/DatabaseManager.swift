@@ -13,6 +13,8 @@ import CoreLocation
 import CoreGraphics
 import SwiftyChat
 import Promises
+import SwiftUI
+
 
 class DatabaseManager {
    
@@ -112,10 +114,13 @@ extension DatabaseManager {
                      dict["search/\($1)/\(profile.id)"] = true
                      return dict
                   }
+                  
+                  let userPreferenceData = generateDescription(topTrackResponse: topTracksResponse, topArtistsReponse: topArtistsResponse)
 //
 //                  let userPreferenceData = "Top genres: \(topGenres.joined(separator: ", "));\nTop artists: \(topArtistsList.joined(separator: ", "));\nTop tracks: \(topTracksList.joined(separator: ", "));"
-                  let userPreferenceData = "user data";
+//                  let userPreferenceData = "user data";
                    print("user pref\n", userPreferenceData)
+//
                   
                   OpenAIManager.shared.getEmbedding(inputString: userPreferenceData) { [weak self] result in
                      switch result {
@@ -126,10 +131,10 @@ extension DatabaseManager {
                            completion(false)
                            return
                         }
-                        // Insert the embedding into the pinecone database
-                        PineconeManager.shared.insertEmbedding(embedding: embedding, vector_id: userPreferenceData) { [weak self] success, error in
-                           if let error = error {
-                              print("Failed to insert embedding: \(error.localizedDescription)")
+
+                        PineconeManager.shared.insertEmbeddings(vectors: [profile.id: embedding], namespace: "user-top-preferences") { [weak self] success, error in
+                           guard error == nil else {
+                              print("Failed to insert embedding: \(error?.localizedDescription)")
                               completion(false)
                               return
                            }
@@ -463,6 +468,37 @@ extension DatabaseManager {
          }
          completion(.success(users))
       }
+   }
+   
+   
+   func queryUsers(with ids: [String], completion: @escaping ([Message.ChatUserItem]) -> Void) {
+      
+      // create an array of promises for each user id
+      let promises = ids.reduce([Promise<Message.ChatUserItem?>]()) { result, id in
+         result +
+            [Promise<Message.ChatUserItem?> { [weak self] fulfill, reject in
+               self?.getUser(with: id) { result in
+                  switch result {
+                  case .success(let user):
+                     fulfill(user)
+                  case .failure(let error):
+                     reject(error)
+                  }
+               }
+            }
+         ]
+      }
+      // return a promise that waits for all promises to settle and returns only the fulfilled values
+
+      all(promises)
+         .timeout(10)
+         .then { users in
+            completion(users.compactMap { $0 })
+         }
+         .catch { error in
+            print("couldn't get users: ", error.localizedDescription)
+            
+         }  
    }
 
    
@@ -1218,6 +1254,72 @@ extension DatabaseManager {
          }
          completion(Array(ids))
       }
+   }
+   
+}
+
+
+
+// migrate user preference data to vector database
+// to be removed
+extension DatabaseManager {
+   public func migrateDB() {
+      self.databaseref.child("users").observeSingleEvent(of: .value, with: { snapshot in
+         guard let usersDict = snapshot.value as? [String: Any] else {
+            print("No users found")
+            return
+         }
+         print("count", snapshot.childrenCount)
+   
+         for (id, userData) in usersDict {
+            // Check if the user data is a dictionary and has top_artists field
+            guard let userDict = userData as? [String: Any],
+                  let topArtists = userDict["top_artists"],
+                  let topTracks = userDict["top_tracks"] else {
+               
+               print("Invalid user data for id \(id)")
+               continue
+            }
+            
+            guard let topArtistsData = try? JSONSerialization.data(withJSONObject: topArtists),
+                     let artistsResponse = try? JSONDecoder().decode(TopArtistsResponse.self, from: topArtistsData),
+                     let topTracksData = try? JSONSerialization.data(withJSONObject: topTracks),
+                     let tracksResponse = try? JSONDecoder().decode(TopTracksResponse.self, from: topTracksData) else {
+               continue
+            }
+            
+            let userDescription = generateDescription(topTrackResponse: tracksResponse, topArtistsReponse: artistsResponse)
+            
+            sleep(2)
+            OpenAIManager.shared.getEmbedding(inputString: userDescription) { [weak self] result in
+               switch result {
+                  
+               case .success(let embedding):
+                  guard let embedding = embedding else {
+                     print("No embedding returned")
+                     return
+                  }
+
+                  PineconeManager.shared.insertEmbeddings(vectors: [id: embedding], namespace: "user-top-preferences") { [weak self] success, error in
+                     guard error == nil else {
+                        print("Failed to insert embedding: \(error?.localizedDescription)")
+                        return
+                     }
+                     
+                     guard let success = success, success == true else {
+                        print("Insertion was not successful")
+                        return
+                     }
+                  }
+               case .failure(let error):
+                  print("Failed to get embedding: \(error.localizedDescription)")
+                  return
+                  
+               }
+            }
+         }
+      })
+      
    }
    
 }
