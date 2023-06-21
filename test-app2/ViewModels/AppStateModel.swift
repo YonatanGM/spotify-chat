@@ -155,8 +155,22 @@ extension AppStateModel {
             case .success(let user):
                 self?.currentUser = user
                 // fetch similar users from pinecone DB
-                
-                DatabaseManager.shared.queryUsers(with: <#T##[String]#>, completion: <#T##([Message.ChatUserItem]) -> Void#>)
+                PineconeManager.shared.queryEmbedding(id: user.id, topK: 10, namespace: "user-top-preferences") { result, error in
+                    guard error == nil else {
+                        print(error?.localizedDescription)
+                        return
+                    }
+                    if let ids = result {
+                        DatabaseManager.shared.queryUsers(with: ids) { matchingUsers in
+                            DispatchQueue.main.async {
+                                self?.suggestedUsers = matchingUsers.filter { $0.id != AuthManager.shared.currentUser?.uid }
+                                if self?.finishedLoadingOfSuggestedUsers == false {
+                                    self?.finishedLoadingOfSuggestedUsers = true  
+                                }
+                            }
+                        }
+                    }
+                }
             case .failure(_):
                 print("couldn't get current user")
             }
@@ -332,69 +346,69 @@ extension AppStateModel {
         
 
         
-        DatabaseManager.shared.observeRoomChange() { [weak self] result in
-            switch result {
-                
-            case .success(let room):
-  
-                DatabaseManager.shared.getUsers(in: room, completion: { result in
-                    switch result {
-                    case .success(let users):
-                        // update the users
-                        
-                        self?.suggestedUsers = users.filter { $0.id != AuthManager.shared.currentUser?.uid }.sorted { $0.id > $1.id }
-                        if let blockedUsers = self?.blockedUsers {
-                            DispatchQueue.main.async {
-                                self?.suggestedUsers.removeAll { blockedUsers.contains($0.id) }
-                            }
-                        }
-                       
-                        if let currentUser = (users.first { $0.id == AuthManager.shared.currentUser?.uid }) {
-                            DispatchQueue.main.async {
-                                self?.currentUser = currentUser
-                            }
-                        }
-                        
-                        APICaller.shared.checkIfCurrentUserFollowsUsers(with: users.prefix(50).map { $0.id }) { result in
-                            switch result {
-                            case .success(let followedUsers):
-                                DispatchQueue.main.async {
-                                    self?.followedUsers = followedUsers
-                                }
-                                
-                            case .failure(let error):
-                                print("failed to check if current user follows users with ids \(users.map { $0.id }.joined(separator: ",")): \(error.localizedDescription)")
-                            }
-                        }
-                        
-                        let trackIDs =  users.prefix(50).compactMap { $0.topTracks?.items.first?.id }
-                        APICaller.shared.checkIfUserHasSavedTracks(with: trackIDs) { result in
-                            switch result {
-                            case .success(let likedTracks):
-                                DispatchQueue.main.async {
-                                    self?.likedTracks = likedTracks
-                                }
-                                
-                            case .failure(let error):
-                                print("failed to check if current user liked tracks with ids \(trackIDs.joined(separator: ",")): \(error.localizedDescription)")
-                            }
-                        }
-                        
-                        if self?.finishedLoadingOfSuggestedUsers == false {
-                            DispatchQueue.main.async {
-                                self?.finishedLoadingOfSuggestedUsers = true
-                            }
-                        }
-                        
-                    case .failure(_):
-                        print("failed to get users in new room \(room)")
-                    }
-                })
-                
-            case .failure(let error):
-                print(error.localizedDescription)
-            }
-        }
+//        DatabaseManager.shared.observeRoomChange() { [weak self] result in
+//            switch result {
+//
+//            case .success(let room):
+//
+//                DatabaseManager.shared.getUsers(in: room, completion: { result in
+//                    switch result {
+//                    case .success(let users):
+//                        // update the users
+//
+//                        self?.suggestedUsers = users.filter { $0.id != AuthManager.shared.currentUser?.uid }.sorted { $0.id > $1.id }
+//                        if let blockedUsers = self?.blockedUsers {
+//                            DispatchQueue.main.async {
+//                                self?.suggestedUsers.removeAll { blockedUsers.contains($0.id) }
+//                            }
+//                        }
+//
+//                        if let currentUser = (users.first { $0.id == AuthManager.shared.currentUser?.uid }) {
+//                            DispatchQueue.main.async {
+//                                self?.currentUser = currentUser
+//                            }
+//                        }
+//
+//                        APICaller.shared.checkIfCurrentUserFollowsUsers(with: users.prefix(50).map { $0.id }) { result in
+//                            switch result {
+//                            case .success(let followedUsers):
+//                                DispatchQueue.main.async {
+//                                    self?.followedUsers = followedUsers
+//                                }
+//
+//                            case .failure(let error):
+//                                print("failed to check if current user follows users with ids \(users.map { $0.id }.joined(separator: ",")): \(error.localizedDescription)")
+//                            }
+//                        }
+//
+//                        let trackIDs =  users.prefix(50).compactMap { $0.topTracks?.items.first?.id }
+//                        APICaller.shared.checkIfUserHasSavedTracks(with: trackIDs) { result in
+//                            switch result {
+//                            case .success(let likedTracks):
+//                                DispatchQueue.main.async {
+//                                    self?.likedTracks = likedTracks
+//                                }
+//
+//                            case .failure(let error):
+//                                print("failed to check if current user liked tracks with ids \(trackIDs.joined(separator: ",")): \(error.localizedDescription)")
+//                            }
+//                        }
+//
+//                        if self?.finishedLoadingOfSuggestedUsers == false {
+//                            DispatchQueue.main.async {
+//                                self?.finishedLoadingOfSuggestedUsers = true
+//                            }
+//                        }
+//
+//                    case .failure(_):
+//                        print("failed to get users in new room \(room)")
+//                    }
+//                })
+//
+//            case .failure(let error):
+//                print(error.localizedDescription)
+//            }
+//        }
         
         DatabaseManager.shared.observeUserDeletion() { [weak self] id in
             DispatchQueue.main.async {

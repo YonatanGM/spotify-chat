@@ -36,61 +36,60 @@ struct Login: View {
             if model.signInStatus == .signedOut {
                  UserWebAnimationLoginView()
             }
-
-            VStack {
-                Spacer()
-                HStack {
+            if model.signInStatus != .notDetermined {
+                VStack {
                     Spacer()
-                    Text("⁢⁢\u{17B5} \u{17B4} \u{115F}")
-                        .font(Font.custom("Modulus-Bold", size: 40))
-                    Spacer()
-                }
-                if model.signInStatus == .signedOut {
-                    Button(action: {
-                        presentLogin = true
-                    }) {
-                        HStack(spacing: 0) {
-                            Text("Login with")
-                                .font(.title2)
-                                .fontWeight(.semibold)
-                                .minimumScaleFactor(0.9)
-                                .lineLimit(1)
-                            spotifyWhiteLogo.applying(CGAffineTransform(scaleX: 3.33 * logoHeight, y: logoHeight))
-                                .frame(width: 3.33 * logoHeight, height: logoHeight)
-                                .padding(.leading, logoHeight / 2)
-                        }
-                        .padding(logoHeight / 2)
-                        .background(Color.backdrop)
-                        .clipShape(Capsule())
-                        .scaleEffect(isTapping ? 0.9 : 1)
-                        .brightness(isTapping ? 0.1 : 0)
-                        .shadow(radius: 5)
+                    HStack {
+                        Spacer()
+                        Text("⁢⁢\u{17B5} \u{17B4} \u{115F}")
+                            .font(Font.custom("Modulus-Bold", size: 40))
+                        Spacer()
                     }
-                    .webAuthenticationSession(isPresented: $presentLogin) {
-                        model.signIn { success in
-                            if !success {
-                                
-                                presentLoginFailedAlert = true
+                    if model.signInStatus == .signedOut {
+                        Button(action: {
+                            presentLogin = true
+                        }) {
+                            HStack(spacing: 0) {
+                                Text("Login with")
+                                    .font(.title2)
+                                    .fontWeight(.semibold)
+                                    .minimumScaleFactor(0.9)
+                                    .lineLimit(1)
+                                spotifyWhiteLogo.applying(CGAffineTransform(scaleX: 3.33 * logoHeight, y: logoHeight))
+                                    .frame(width: 3.33 * logoHeight, height: logoHeight)
+                                    .padding(.leading, logoHeight / 2)
+                            }
+                            .padding(logoHeight / 2)
+                            .background(Color.backdrop)
+                            .clipShape(Capsule())
+                            .scaleEffect(isTapping ? 0.9 : 1)
+                            .brightness(isTapping ? 0.1 : 0)
+                            .shadow(radius: 5)
+                        }
+                        .webAuthenticationSession(isPresented: $presentLogin) {
+                            model.signIn { success in
+                                if !success {
+                                    
+                                    presentLoginFailedAlert = true
+                                }
                             }
                         }
+                    } else if (model.signInStatus == .signingIn || model.finishedLoadingOfSuggestedUsers == false) {
+                        ProgressView()
+                            .onChange(of: model.signInStatus){ _ in
+                                print(model.signInStatus)
+                            }
+                    }
+                    Spacer()
+                    if model.signInStatus == .signedOut {
+                        PrivacyAndTerms()
                     }
                 }
-                
-                if model.signInStatus == .signingIn || model.finishedLoadingOfSuggestedUsers == false {
-                    ProgressView()
-                        .onChange(of: model.signInStatus){ _ in
-                            print(model.signInStatus)
-                        }
+                .alert(isPresented: $presentLoginFailedAlert) {
+                    Alert(title: Text("Error"),
+                          message: Text("Something went wrong when signing you in."),
+                          dismissButton: .default(Text("Dismiss")))
                 }
-                Spacer()
-                if model.signInStatus == .signedOut {
-                    PrivacyAndTerms()
-                }
-            }
-            .alert(isPresented: $presentLoginFailedAlert) {
-                Alert(title: Text("Error"),
-                      message: Text("Something went wrong when signing you in."),
-                      dismissButton: .default(Text("Dismiss")))
             }
         }
         .foregroundColor(.white)
