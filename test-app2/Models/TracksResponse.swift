@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct TopTracksResponse: Codable {
+public struct TracksResponse: Codable {
     let items: [Track]
 }
 

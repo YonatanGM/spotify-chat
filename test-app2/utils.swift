@@ -7,9 +7,33 @@
 
 import Foundation
 
-func generateDescription(topTrackResponse: TopTracksResponse, topArtistsReponse: TopArtistsResponse) -> String {
+func generateDescription(topTrackResponse: TracksResponse, topArtistsReponse: ArtistsResponse, topRecentTracksResponse: TracksResponse? = nil) -> String {
     var description = "Likes:"
-    for track in topTrackResponse.items {
+    for track in topTrackResponse.items.prefix(10) {
+        // Get the track name, album name and artist name
+        let trackName = track.name
+        let albumName = track.album?.name ?? ""
+        let artistName = track.artists.first?.name ?? ""
+        
+        // Get the genres of the artist from the artist struct
+        let genres = track.artists.first?.genres ?? []
+        // Use .prefix(3) to get only the first three genres or less
+        let genreNames = genres.prefix(3)
+        
+        // Format the genres as a comma-separated list enclosed in parentheses
+        let genreList = genreNames.joined(separator: ", ")
+        
+        let genreString = "(\(genreList))"
+        
+        // Append the track information to the description
+        if genreNames.isEmpty {
+            description += " '\(trackName)' from '\(albumName)' by \(artistName),"
+        } else {
+            description += " '\(trackName)' from '\(albumName)' by \(artistName) \(genreString),"
+        }
+    }
+    
+    for track in topRecentTracksResponse?.items.prefix(15) ?? [] {
         // Get the track name, album name and artist name
         let trackName = track.name
         let albumName = track.album?.name ?? ""
@@ -34,6 +58,7 @@ func generateDescription(topTrackResponse: TopTracksResponse, topArtistsReponse:
     }
     
     // Add a new line to separate the sections
+    
     description += "\n"
     
     // Get the top 10 genres from the top artists response

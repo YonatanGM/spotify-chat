@@ -80,9 +80,9 @@ final class APICaller {
         case long_term
     }
     
-    public func getTopArtists(timeRange: TimeRange = .long_term, completion: @escaping (Result<TopArtistsResponse, Error>) -> Void) {
+    public func getTopArtists(timeRange: TimeRange = .medium_term, limit: Int = 20, completion: @escaping (Result<ArtistsResponse, Error>) -> Void) {
         
-        createRequest(with: URL(string: Constants.baseAPIURL + "/me/top/artists?limit=20&time_range=\(timeRange.rawValue)"),
+        createRequest(with: URL(string: Constants.baseAPIURL + "/me/top/artists?limit=\(limit)&time_range=\(timeRange.rawValue)"),
                       type: .GET) { request in
    
             // execute the request
@@ -93,7 +93,7 @@ final class APICaller {
                 }
                 
                 do {
-                    let result = try JSONDecoder().decode(TopArtistsResponse.self, from: data)
+                    let result = try JSONDecoder().decode(ArtistsResponse.self, from: data)
                     // print("top artist", result.items.map { $0.name })
                     completion(.success(result))
                 } catch {
@@ -109,7 +109,7 @@ final class APICaller {
 
     
     
-    public func getTopTracks(timeRange: TimeRange = .long_term, completion: @escaping (Result<TopTracksResponse, Error>) -> Void) {
+    public func getTopTracks(timeRange: TimeRange = .medium_term, completion: @escaping (Result<TracksResponse, Error>) -> Void) {
 
         createRequest(with: URL(string: Constants.baseAPIURL + "/me/top/tracks?limit=20&time_range=\(timeRange.rawValue)"),
                       type: .GET) { request in
@@ -122,9 +122,7 @@ final class APICaller {
                 }
                 
                 do {
-                    let result = try JSONDecoder().decode(TopTracksResponse.self, from: data)
-                    // let result = try JSONSerialization.jsonObject(with: data)
-                    // print("top track", result.items.map { $0.album })
+                    let result = try JSONDecoder().decode(TracksResponse.self, from: data)
                     completion(.success(result))
                 } catch {
                     print(error.localizedDescription)
@@ -342,7 +340,7 @@ final class APICaller {
     
     public func checkIfUserHasSavedTracks(with ids: [String], completion: @escaping (Result<[String: Bool], Error>) -> Void) {
         createRequest(
-            with: URL(string: Constants.baseAPIURL + "/me/tracks/contains/?ids=\(ids.joined(separator: ","))"),
+            with: URL(string: Constants.baseAPIURL + "/me/tracks/contains?ids=\(ids.joined(separator: ","))"),
             type: .GET
         ) { request in
             let task = URLSession.shared.dataTask(with: request) { data, response, error in
@@ -364,5 +362,44 @@ final class APICaller {
             task.resume()
         }
     }
+    
+    public func getRecommendations(seedArtists:[String],
+                                   seedGenres: [String],
+                                   seedTracks: [String],
+                                   limit: Int,
+                                   completion: @escaping (Result<[Track], Error>) -> Void) {
+        
+        let urlString = Constants.baseAPIURL + "/recommendations?limit=\(limit)&seed_artists=\(seedArtists.joined(separator: ","))&seed_genres=\(seedGenres.joined(separator: ","))&seed_tracks=\(seedTracks.joined(separator: ","))"
+        let encodedString = urlString.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
+        let url = URL(string: encodedString)
+        
+        createRequest(
+            with: url,
+            type: .GET
+        ) { request in
+            // execute the request
+            print("here")
+            let task = URLSession.shared.dataTask(with: request) { data, response, error in
+                guard let data = data, error == nil else {
+                    completion(.failure(APIError.failedToGetData))
+                    return
+                }
+                print((response as? HTTPURLResponse)?.statusCode)
+                print(response)
+                do {
+                    let result = try JSONDecoder().decode(RecommendationsResponse.self, from: data)
+//                    print("recommendations", result.tracks.map { $0.album })
+                    completion(.success(result.tracks))
+                } catch {
+                    print(error.localizedDescription)
+                    completion(.failure(error))
+                    
+                }
+            }
+            task.resume()
+        }
+    }
+    
+    
     
 }

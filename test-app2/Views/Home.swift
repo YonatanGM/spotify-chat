@@ -19,9 +19,29 @@ struct Home: View {
             .compactMap { $0.topArtists?.items.first }
             .sorted { $0.id > $1.id }
     }
+    
     var suggestedTracks: [Track] {
         model.suggestedUsers
             .compactMap { $0.topTracks?.items.first }
+            .sorted { $0.id > $1.id }
+            // market and explicit tracks
+            .filter {
+                guard let currentUser = model.currentUser else { return true }
+                if let availableMarkets = $0.available_markets,
+                   let country = currentUser.country {
+                    if availableMarkets.contains(country) {
+                        return $0.explicit ? currentUser.filterEnabled == false : true
+                    } else {
+                        return false
+                    }
+                } else {
+                    return $0.explicit  ? currentUser.filterEnabled == false : true
+                }
+            }
+    }
+    
+    var recommendedTracks: [Track] {
+        model.recommendedTracks
             .sorted { $0.id > $1.id }
             // market and explicit tracks
             .filter {
@@ -52,19 +72,27 @@ struct Home: View {
                     .listRowInsets(EdgeInsets(.zero))
                     // .border(.red)
                     .padding(.top, 100)
+                    .padding(.bottom, 25)
                   
                 TopArtistsView(artists: suggestedArtists)
                     .header(title: "Suggested Aritsts", subtitle: "People like you are fans of")
                     .listRowSeparatorTint(.clear)
                     .listRowBackground(Color.clear)
                     .listRowInsets(EdgeInsets(.zero))
-                    // .border(.red)
+                    .padding(.bottom, 25)
+
                 TopTracksView(tracks: suggestedTracks)
-                    .header(title: "Suggested Tracks", subtitle: "Based on top tracks of users like you")
+                    .header(title: "Discover Tracks", subtitle: "Based on top tracks of users like you")
                     .listRowSeparatorTint(.clear)
                     .listRowBackground(Color.clear)
                     .listRowInsets(EdgeInsets(.zero))
-                    // .border(.red)
+
+                TopTracksView(tracks: recommendedTracks)
+                    .header(title: "Recommedations", subtitle: "Based on tracks you like")
+                    .listRowSeparatorTint(.clear)
+                    .listRowBackground(Color.clear)
+                    .listRowInsets(EdgeInsets(.zero))
+
                 SearchBar(searchText: $searchText)
                     // "Enter a list of your favourite songs or artists  (comma separated) to find others that share your taste."
                     .header(title: "Find", subtitle: "Find others that share your taste. You can search by track or artist names (comma separated).")

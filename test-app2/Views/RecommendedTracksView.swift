@@ -1,18 +1,13 @@
 //
-//  TopView.swift
+//  RecommendedTracksView.swift
 //  test-app2
 //
-//  Created by Yonatan Mamo on 13.06.22.
+//  Created by Yonatan Mamo on 22.06.23.
 //
 
 import SwiftUI
-import SDWebImageSwiftUI
-import UIKit
 
-
-
-// horizontal scrollable view of the tracks following spotify design guideline
-struct TopTracksView: View {
+struct RecommendedTracksView: View {
     @EnvironmentObject var model: AppStateModel
     @Environment(\.scenePhase) private var scenePhase
     var tracks: [Track]
@@ -27,7 +22,7 @@ struct TopTracksView: View {
                 }
             }
         }
-        .frame(height: 350) // hardcoding this till i find a better way
+        .frame(height: 380) // hardcoding this till i find a better way
         .onDisappear {
             model.removePlayer()
         }
@@ -36,4 +31,6 @@ struct TopTracksView: View {
 
         }
     }
+
 }
+

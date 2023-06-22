@@ -137,9 +137,11 @@ public struct Message {
         // public var additionalInfo: [String: String]
         
         // Top tracks
-        public var topTracks: TopTracksResponse?
+        public var topTracks: TracksResponse?
         
-        public var topArtists: TopArtistsResponse?
+        public var topArtists: ArtistsResponse?
+        
+        public var topRecentTracks: TracksResponse?
         
         public var topGenres: [String]?
         
@@ -147,7 +149,7 @@ public struct Message {
         
         public var filterEnabled: Bool?
         
-        public init(id: String = UUID().uuidString, userName: String, avatarURL: URL? = nil, avatar: UIImage? = nil, topTracks: TopTracksResponse? = nil, topArtists: TopArtistsResponse? = nil, topGenres: [String]? = nil, country: String? = nil, filterEnabled: Bool? = nil) {
+        public init(id: String = UUID().uuidString, userName: String, avatarURL: URL? = nil, avatar: UIImage? = nil, topTracks: TracksResponse? = nil, topArtists: ArtistsResponse? = nil, topGenres: [String]? = nil, country: String? = nil, filterEnabled: Bool? = nil, topRecentTracks: TracksResponse? = nil) {
             self.id = id
             self.userName = userName
             self.avatar = avatar
@@ -157,7 +159,7 @@ public struct Message {
             self.topGenres = topGenres
             self.country = country
             self.filterEnabled = filterEnabled
-            
+            self.topRecentTracks = topRecentTracks
         }
         
     }

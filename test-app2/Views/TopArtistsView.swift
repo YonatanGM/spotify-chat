@@ -48,6 +48,7 @@ struct TopArtistsView: View {
                 }
             }
         }
+        
     }
 }
 

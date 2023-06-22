@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct TopArtistsResponse: Codable {
+public struct ArtistsResponse: Codable {
     let items: [Artist]
 }
 
