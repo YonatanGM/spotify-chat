@@ -52,8 +52,8 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         FirebaseApp.configure()
 
         // FirebaseConfiguration.shared.setLoggerLevel(.min)
-        Auth.auth().useEmulator(withHost: "192.168.178.87", port: 9092)
-        Functions.functions().useEmulator(withHost: "192.168.178.87", port: 5002)
+//        Auth.auth().useEmulator(withHost: "192.168.178.87", port: 9092)
+//        Functions.functions().useEmulator(withHost: "192.168.178.87", port: 5002)
    
     
 

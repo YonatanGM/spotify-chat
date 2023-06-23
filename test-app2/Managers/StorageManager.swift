@@ -14,7 +14,7 @@ class StorageManager {
     
     private init() {
         // You can use an emulator if you want
-        storage.useEmulator(withHost: "192.168.178.87", port: 9199)
+//        storage.useEmulator(withHost: "192.168.178.87", port: 9199)
     }
     
     

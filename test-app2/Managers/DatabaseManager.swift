@@ -21,16 +21,20 @@ class DatabaseManager {
     
     
     static let shared = DatabaseManager()
-    private let database = Database.database(url: "http://192.168.178.87/?ns=database-export")
+
+    private let databaseref = Database.database(url: "https://testapp-79467-default-rtdb.europe-west1.firebasedatabase.app").reference()
+    private init() {}
     
-    private let databaseref: DatabaseReference!
-    //   private let database = Database.database(url: "https://testapp-79467-default-rtdb.europe-west1.firebasedatabase.app").reference()
-    
+    // emulator 
+    // private let database = Database.database(url: "http://192.168.178.87/?ns=database-export")
+    // private let databaseref: DatabaseReference!
+       
     // var messageHandles = [String: UInt]() // to unregister them
-    private init() {
-        database.useEmulator(withHost: "192.168.178.87", port: 9001)
-        databaseref = database.reference()
-    }
+    
+//    private init() {
+//        database.useEmulator(withHost: "192.168.178.87", port: 9001)
+//        databaseref = database.reference()
+//    }
 }
 
 

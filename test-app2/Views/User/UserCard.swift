@@ -27,9 +27,6 @@ struct UserCard: View {
                            label: { EmptyView() })
             VStack {
                 UserIcon(user: .init(id: user.id, name: user.userName, photoURL: user.avatarURL?.absoluteString, genreDisplay: nil))
-                    .onAppear {
-                        print(user.userName, user.avatarURL)
-                    }
                 HStack {
                     Spacer()
                     Text(user.userName)

@@ -378,17 +378,14 @@ final class APICaller {
             type: .GET
         ) { request in
             // execute the request
-            print("here")
+
             let task = URLSession.shared.dataTask(with: request) { data, response, error in
                 guard let data = data, error == nil else {
                     completion(.failure(APIError.failedToGetData))
                     return
                 }
-                print((response as? HTTPURLResponse)?.statusCode)
-                print(response)
                 do {
                     let result = try JSONDecoder().decode(RecommendationsResponse.self, from: data)
-//                    print("recommendations", result.tracks.map { $0.album })
                     completion(.success(result.tracks))
                 } catch {
                     print(error.localizedDescription)

@@ -22,7 +22,7 @@ struct UserIconAnimated: View {
     
     var body: some View {
         if let urlString = user.photoURL,
-           let url = URL(string: urlString){
+           let url = URL(string: urlString) {
             AnimatedImage(url: url)
                 .resizable()
                 .scaledToFit()

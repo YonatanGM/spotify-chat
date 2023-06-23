@@ -87,11 +87,13 @@ struct Home: View {
                     .listRowBackground(Color.clear)
                     .listRowInsets(EdgeInsets(.zero))
 
-                TopTracksView(tracks: recommendedTracks)
-                    .header(title: "Recommedations", subtitle: "Based on tracks you like")
-                    .listRowSeparatorTint(.clear)
-                    .listRowBackground(Color.clear)
-                    .listRowInsets(EdgeInsets(.zero))
+                if (recommendedTracks.count > 0) {
+                    TopTracksView(tracks: recommendedTracks)
+                        .header(title: "Recommedations", subtitle: "Based on tracks you like")
+                        .listRowSeparatorTint(.clear)
+                        .listRowBackground(Color.clear)
+                        .listRowInsets(EdgeInsets(.zero))
+                }
 
                 SearchBar(searchText: $searchText)
                     // "Enter a list of your favourite songs or artists  (comma separated) to find others that share your taste."

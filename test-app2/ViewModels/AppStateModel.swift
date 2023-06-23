@@ -569,7 +569,7 @@ extension AppStateModel {
         // let topGenresSeed = currentUser.topGenres?.shuffled().prefix(5).map({ $0 })
         let topGenresSeed = topArtists.prefix(1).compactMap { $0.genres }.reduce([]) { return Set($0).union(Set($1)) }.prefix(1).map { $0 }
         
-        print(topArtistsSeed, topRecentTracksSeed, topGenresSeed)
+       
         APICaller.shared.getRecommendations(seedArtists: topArtistsSeed,
                                             seedGenres: topGenresSeed,
                                             seedTracks: topRecentTracksSeed,
