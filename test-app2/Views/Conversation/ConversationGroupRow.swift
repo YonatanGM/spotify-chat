@@ -75,7 +75,7 @@ struct ConversationGroupRow: View {
                 HStack {
                     if let otherUser = group.otherUser {
                        // let url = URL(string: urlString)  {
-                        UserIcon(user: otherUser)
+                        UserIcon(user: otherUser, contentMode: .fit)
                     }
                     
                     VStack(alignment: .leading, spacing: 2.5) {

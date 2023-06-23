@@ -16,7 +16,7 @@ struct UserBubbles: View {
     var body: some View {
         GeometryReader { geometry in
             ForEach(Array(zip(users, getCircles(num: users.count, in: geometry.frame(in: .local)))), id: \.0.id) { user, path in
-                UserIcon(user: user, onlineIndicatorHeight: 5)
+                UserIcon(user: user, onlineIndicatorHeight: 5, contentMode: .fit)
                     .padding(2)
                     .offset(x: path.boundingRect.origin.x, y: path.boundingRect.origin.y)
                     .frame(width: path.boundingRect.width, height: path.boundingRect.height)

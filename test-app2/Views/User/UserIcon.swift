@@ -15,12 +15,14 @@ struct UserIcon: View {
     @State var onlineStatusHandle: UInt?
     @State var isOnline = false
     var onlineIndicatorHeight: CGFloat?
-    let showOnlineIndicator: Bool 
+    let showOnlineIndicator: Bool
+    let contentMode: ContentMode
     
-    init(user: UserInfo, showOnlineIndicator: Bool = true, onlineIndicatorHeight: CGFloat? = nil) {
+    init(user: UserInfo, showOnlineIndicator: Bool = true, onlineIndicatorHeight: CGFloat? = nil, contentMode: ContentMode = .fill) {
         self.user = user
         self.onlineIndicatorHeight = onlineIndicatorHeight
         self.showOnlineIndicator = showOnlineIndicator
+        self.contentMode = contentMode
     }
     
     var body: some View {
@@ -28,7 +30,7 @@ struct UserIcon: View {
            let url = URL(string: urlString) {
             AnimatedImage(url: url)
                 .resizable()
-                .scaledToFit()
+                .aspectRatio(contentMode: contentMode)
                 .clipShape(Circle())
                 .shadow(radius: 5)
                 .mask {

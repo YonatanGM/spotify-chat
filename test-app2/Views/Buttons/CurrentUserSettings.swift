@@ -21,7 +21,7 @@ struct CurrentUserSettings: View {
                 if let url = currentUser.avatarURL {
                     AnimatedImage(url: url)
                         .resizable()
-                        .scaledToFit()
+                        .scaledToFill()
                         .clipShape(Circle())
                         .frame(height: 25)
                        // .shadow(radius: 1)

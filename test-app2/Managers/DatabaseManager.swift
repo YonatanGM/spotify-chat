@@ -6,7 +6,7 @@
 //
 
 import Foundation
-
+import Firebase
 import FirebaseDatabase
 import FirebaseAuth
 import CoreLocation
@@ -14,6 +14,7 @@ import CoreGraphics
 import SwiftyChat
 import Promises
 import SwiftUI
+
 
 
 class DatabaseManager {
@@ -52,7 +53,7 @@ extension DatabaseManager {
         
         // set user's top tracks, artists & genres
         // top artist
-       APICaller.shared.getTopArtists(limit: 30) { [weak self] result in
+        APICaller.shared.getTopArtists(limit: 25) { [weak self] result in
             switch result {
             case .success(let topArtistsResponse):
                 // convert to json
@@ -154,39 +155,46 @@ extension DatabaseManager {
                                             
                                             // Success
                                             print("Successfully inserted embedding for \(userPreferenceData)")
-                                            // insert user into fireabase database
-                                            let userUpdates: [String: Any] = [
-                                                "users/\(profile.id)/id": profile.id, //redundant but whatever
-                                                "users/\(profile.id)/name": profile.display_name ?? profile.email,
-                                                "users/\(profile.id)/email": profile.email,
-                                                "users/\(profile.id)/country": profile.country,
-                                                "users/\(profile.id)/filter_enabled": profile.explicit_content["filter_enabled"],
-                                                "users/\(profile.id)/profile_picture": profile.images.first?.url,
-                                                "users/\(profile.id)/top_artists": topArtists,
-                                                "users/\(profile.id)/top_tracks": topTracks,
-                                                "users/\(profile.id)/top_recent_tracks": topRecentTracks,
-                                                "users/\(profile.id)/top_genres": topGenres,
-                                                "users/\(profile.id)/top_genre_display": modeGenre ?? topArtistsResponse.items.first?.genres?.first
-                                            ]
                                             
-                                            // update the genres and search index first
-                                            let updates = topGenreUpdates.merging(topArtistIndexUpdates) { (_, new) in new }
-                                                .merging(topTrackIndexUpdates) { (_, new) in new }
-                                            self?.databaseref.updateChildValues(updates) {  error, _ in
-                                                guard error == nil else {
-                                                    completion(false)
-                                                    return
-                                                }
+                                            // store profile pic in firebase storage and get the download url of the uploaded image and write it to the realtime database
+                                            // insert user into fireabase database
+                                            StorageManager.shared.uploadProfileImage(for: profile.id, url: profile.images.first?.url) { downloadUrl in
                                                 
-                                                // create the user
-                                                self?.databaseref.updateChildValues(userUpdates) { error, _ in
+                                                let userUpdates: [String: Any] = [
+                                                    "users/\(profile.id)/id": profile.id, //redundant but whatever
+                                                    "users/\(profile.id)/name": profile.display_name ?? profile.email,
+                                                    "users/\(profile.id)/email": profile.email,
+                                                    "users/\(profile.id)/country": profile.country,
+                                                    "users/\(profile.id)/filter_enabled": profile.explicit_content["filter_enabled"],
+                                                    "users/\(profile.id)/profile_picture_stable": downloadUrl?.absoluteString,
+                                                    "users/\(profile.id)/top_artists": topArtists,
+                                                    "users/\(profile.id)/top_tracks": topTracks,
+                                                    "users/\(profile.id)/top_recent_tracks": topRecentTracks,
+                                                    "users/\(profile.id)/top_genres": topGenres,
+                                                    "users/\(profile.id)/top_genre_display": modeGenre ?? topArtistsResponse.items.first?.genres?.first
+                                                ]
+                                                
+                                                // update the genres and search index first
+                                                let updates = topGenreUpdates.merging(topArtistIndexUpdates) { (_, new) in new }
+                                                    .merging(topTrackIndexUpdates) { (_, new) in new }
+                                                self?.databaseref.updateChildValues(updates) {  error, _ in
                                                     guard error == nil else {
                                                         completion(false)
                                                         return
                                                     }
-                                                    completion(true)
+                                                    
+                                                    // create the user
+                                                    self?.databaseref.updateChildValues(userUpdates) { error, _ in
+                                                        guard error == nil else {
+                                                            completion(false)
+                                                            return
+                                                        }
+                                                        completion(true)
+                                                    }
                                                 }
+                                                
                                             }
+                                            
                                         }
                                     case .failure(let error):
                                         print("Failed to get embedding: \(error.localizedDescription)")
@@ -424,10 +432,9 @@ extension DatabaseManager {
             
             topGenres = user["top_genres"] as? [String]
             var photoURL: URL?
-            if let photoURLString = user["profile_picture"] as? String {
+            if let photoURLString = user["profile_picture_stable"] as? String {
                 photoURL = URL(string: photoURLString)
             }
-            
             completion(.success(.init(id: id,
                                       userName: name,
                                       avatarURL: photoURL,
@@ -491,7 +498,7 @@ extension DatabaseManager {
             
             topGenres = user["top_genres"] as? [String]
             var photoURL: URL?
-            if let photoURLString = user["profile_picture"] as? String {
+            if let photoURLString = user["profile_picture_stable"] as? String {
                 photoURL = URL(string: photoURLString)
             }
             
@@ -593,6 +600,7 @@ extension DatabaseManager {
                         trackItems[0..<3].shuffle()
                         user.topArtists = ArtistsResponse(items: artistItems)
                         user.topTracks = TracksResponse(items: trackItems)
+                        
                         fulfill(user)
                     case .failure(let error):
                         reject(error)
@@ -1377,6 +1385,7 @@ extension DatabaseManager {
 // to be removed
 extension DatabaseManager {
     public func migrateDB() {
+        
         self.databaseref.child("users").observeSingleEvent(of: .value, with: { snapshot in
             guard let usersDict = snapshot.value as? [String: Any] else {
                 print("No users found")
@@ -1435,4 +1444,34 @@ extension DatabaseManager {
         
     }
     
+    public func migrateProfilePicsToStorage() {
+        self.databaseref.child("users").observeSingleEvent(of: .value, with: {[weak self] snapshot in
+            guard let usersDict = snapshot.value as? [String: Any] else {
+                print("No users found")
+                return
+            }
+            for (id, userData) in usersDict {
+                // Check if the user data is a dictionary and has profile_pic field
+                guard let userDict = userData as? [String: Any],
+                      let profilePicUrlString = userDict["profile_picture"] as? String else {
+                    continue
+                }
+                
+                StorageManager.shared.uploadProfileImage(for: id, url: profilePicUrlString) { downloadURL in
+                    guard let urlString = downloadURL?.absoluteString else {
+                        return
+                    }
+                    // update the data in the realtime database with the urls from firbase storage
+                    self?.databaseref.child("users/\(id)/profile_picture_stable").setValue(urlString) { error, snapshot in
+                        guard error == nil else {
+                            print("Error writing firebase storage profile picture url for user \(id): \(error?.localizedDescription)")
+                            return
+                        }
+                        
+                    }
+                }
+            }
+        })
+    }
 }
+

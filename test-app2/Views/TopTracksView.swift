@@ -27,7 +27,7 @@ struct TopTracksView: View {
                 }
             }
         }
-        .frame(height: 350) // hardcoding this till i find a better way
+        .frame(height: 370) // hardcoding this till i find a better way
         .onDisappear {
             model.removePlayer()
         }

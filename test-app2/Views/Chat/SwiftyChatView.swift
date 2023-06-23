@@ -173,7 +173,7 @@ struct SwiftyChatView: View {
                     ToolbarItem(placement: .principal) {
                         HStack {
                             if let otherUser = model.groups[groupID]?.otherUser {
-                                UserIcon(user: otherUser, onlineIndicatorHeight: 5)
+                                UserIcon(user: otherUser, onlineIndicatorHeight: 5, contentMode: .fit)
                                     .frame(height: 25)
                             }
                             Text(model.groups[groupID]?.otherUser?.name ?? "")

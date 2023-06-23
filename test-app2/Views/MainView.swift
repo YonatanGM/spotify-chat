@@ -22,6 +22,7 @@ struct MainView: View {
                     .navigationTitle("⁢⁢\u{17B5} \u{17B4} \u{115F}")
                     .onAppear {
                         // DatabaseManager.shared.migrateDB()
+//                        DatabaseManager.shared.migrateProfilePicsToStorage()
                     }
             } else {
                 LinearGradient(colors: [
