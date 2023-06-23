@@ -314,13 +314,16 @@ final class APICaller {
     }
     
     public func checkIfCurrentUserFollowsUsers(with ids: [String], completion: @escaping (Result<[String: Bool], Error>) -> Void) {
+      
+        
         createRequest(
             with: URL(string: Constants.baseAPIURL + "/me/following/contains?type=user&ids=\(ids.joined(separator: ","))"),
             type: .GET
         ) { request in
             let task = URLSession.shared.dataTask(with: request) { data, response, error in
+  
                 guard let data = data, error == nil else {
-                    // print((response as? HTTPURLResponse)?.statusCode)
+                    
                     if let error = error {
                         // print(error)
                         completion(.failure(error))
@@ -328,7 +331,9 @@ final class APICaller {
                     return
                 }
                 do {
+                    
                     let result = try JSONDecoder().decode([Bool].self, from: data)
+                    
                     completion(.success(Dictionary(uniqueKeysWithValues: zip(ids, result))))
                 } catch let error {
                     completion(.failure(error))

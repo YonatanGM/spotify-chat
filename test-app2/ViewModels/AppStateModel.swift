@@ -166,16 +166,19 @@ extension AppStateModel {
                         print(error?.localizedDescription)
                         return
                     }
-                    if let ids = result {
+                    if let result = result {
+                        // remove current user's id
+                        let ids = result.filter { $0 != currentUserID }
                         DatabaseManager.shared.queryUsers(with: ids) { matchingUsers in
                             DispatchQueue.main.async {
-                                strongSelf.suggestedUsers = matchingUsers.filter { $0.id != AuthManager.shared.currentUser?.uid }
+                      
+                                strongSelf.suggestedUsers = matchingUsers
                                 if strongSelf.finishedLoadingOfSuggestedUsers == false {
                                     strongSelf.finishedLoadingOfSuggestedUsers = true
                                 }
                             }
                             
-                            APICaller.shared.checkIfCurrentUserFollowsUsers(with: strongSelf.suggestedUsers.map { $0.id } ) { result in
+                            APICaller.shared.checkIfCurrentUserFollowsUsers(with: matchingUsers.map { $0.id }) { result in
                                 switch result {
                                 case .success(let followedUsers):
                                     DispatchQueue.main.async {
@@ -183,11 +186,11 @@ extension AppStateModel {
                                     }
     
                                 case .failure(let error):
-                                    print("failed to check if current user follows users with ids \(strongSelf.suggestedUsers.map { $0.id }.joined(separator: ",")): \(error.localizedDescription)")
+                                    print("failed to check if current user follows users with ids \( matchingUsers.map { $0.id }.joined(separator: ",")): \(error.localizedDescription)")
                                 }
                             }
     
-                            let trackIDs = strongSelf.suggestedUsers.compactMap { $0.topTracks?.items.first?.id }
+                            let trackIDs = matchingUsers.compactMap { $0.topTracks?.items.first?.id }
                             APICaller.shared.checkIfUserHasSavedTracks(with: trackIDs) { result in
                                 switch result {
                                 case .success(let likedTracks):

@@ -132,7 +132,7 @@ extension DatabaseManager {
                                                                              topArtistsReponse: topArtistsResponse,
                                                                              topRecentTracksResponse: topRecentTracksResponse)
                                 
-                                print("user pref\n", userPreferenceData)
+                                // print("user pref\n", userPreferenceData)
                                 
                                 OpenAIManager.shared.getEmbedding(inputString: userPreferenceData) { [weak self] result in
                                     switch result {
@@ -600,8 +600,10 @@ extension DatabaseManager {
                         // shuffle top track and artists
                         var artistItems = user.topArtists?.items ?? []
                         var trackItems = user.topTracks?.items ?? []
-                        artistItems[0..<3].shuffle()
-                        trackItems[0..<3].shuffle()
+                        if (artistItems.count > 3 && trackItems.count > 3) {
+                            artistItems[0..<3].shuffle()
+                            trackItems[0..<3].shuffle()
+                        }
                         user.topArtists = ArtistsResponse(items: artistItems)
                         user.topTracks = TracksResponse(items: trackItems)
                         
