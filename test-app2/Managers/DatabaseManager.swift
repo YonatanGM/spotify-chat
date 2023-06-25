@@ -52,173 +52,314 @@ extension DatabaseManager {
         })
     }
     
+    
     /// inserts new user to database
+//    public func insertUser(with profile: UserProfileResponse, completion: @escaping ((Bool) ->Void)) {
+//
+//        // set user's top tracks, artists & genres
+//        // top artist
+//        APICaller.shared.getTopArtists(limit: 25) { [weak self] result in
+//            switch result {
+//            case .success(let topArtistsResponse):
+//                // convert to json
+//                guard let data = try? JSONEncoder().encode(topArtistsResponse), let topArtists = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] else {
+//                    completion(false)
+//                    return
+//                }
+//
+//                // user has no top artists, most likely newly created account, user can't use app in this case
+//                // might wanna handle this in the ui as well
+//                guard !topArtistsResponse.items.isEmpty else {
+//                    completion(false)
+//                    return
+//                }
+//
+//                // recent top tracks
+//                APICaller.shared.getTopTracks(timeRange: .short_term) { [weak self] result in
+//                    switch result {
+//                    case .success(let topRecentTracksResponse):
+//                        // convert to json
+//                        guard let data = try? JSONEncoder().encode(topRecentTracksResponse), let topRecentTracks = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] else {
+//                            completion(false)
+//                            return
+//                        }
+//
+//                        APICaller.shared.getTopTracks(timeRange: .long_term) { [weak self] result in
+//                            switch result {
+//                            case .success(let topTracksResponse):
+//                                // convert to json
+//                                guard let data = try? JSONEncoder().encode(topTracksResponse), let topTracks = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] else {
+//                                    completion(false)
+//                                    return
+//                                }
+//
+//                                let modeGenre = topArtistsResponse.items
+//                                    .compactMap { $0.genres }
+//                                    .reduce([]) { return $0 + $1 }
+//                                    .mode
+//
+//                                let topGenres = topArtistsResponse.items
+//                                    .compactMap { $0.genres }
+//                                    .reduce([]) { return Set($0).union(Set($1)) }
+//                                    .map { $0.lowercased().replacingOccurrences(of: "[\\[\\].$#]", with: " ", options: .regularExpression) }
+//
+//
+//                                let topGenreUpdates = topGenres.reduce([String: Any]()) {
+//                                    var dict = $0
+//                                    dict["genres/\($1)"] = true
+//                                    return dict
+//                                }
+//
+//                                let topArtistsList = topArtistsResponse.items.map { $0.name.lowercased().replacingOccurrences(of: "[\\[\\].$#]", with: " ", options: .regularExpression) }
+//                                let topTracksList = topTracksResponse.items.map { $0.name.lowercased().replacingOccurrences(of: "[\\[\\].$#]", with: " ", options: .regularExpression) }
+//
+//                                let topArtistIndexUpdates = topArtistsList.reduce([String: Any]()) {
+//                                    var dict = $0
+//                                    // dict["artists/\(profile.id)/\($1)"] = true
+//                                    // dict["users/\(profile.id)/search/\($1)"] = true
+//                                    dict["search/\($1)/\(profile.id)"] = true
+//                                    return dict
+//                                }
+//
+//                                let topTrackIndexUpdates = topTracksList.reduce([String: Any]()) {
+//                                    var dict = $0
+//                                    // dict["tracks/\(profile.id)/\($1)"] = true
+//                                    // dict["users/\(profile.id)/search/\($1)"] = true
+//                                    dict["search/\($1)/\(profile.id)"] = true
+//                                    return dict
+//                                }
+//
+//                                let userPreferenceData = generateDescription(topTrackResponse: topTracksResponse,
+//                                                                             topArtistsReponse: topArtistsResponse,
+//                                                                             topRecentTracksResponse: topRecentTracksResponse)
+//
+//                                // print("user pref\n", userPreferenceData)
+//
+//                                OpenAIManager.shared.getEmbedding(inputString: userPreferenceData) { [weak self] result in
+//                                    switch result {
+//
+//                                    case .success(let embedding):
+//                                        guard let embedding = embedding else {
+//                                            print("No embedding returned")
+//                                            completion(false)
+//                                            return
+//                                        }
+//
+//                                        PineconeManager.shared.insertEmbeddings(vectors: [profile.id: embedding], namespace: "user-top-preferences") { [weak self] success, error in
+//                                            guard error == nil else {
+//                                                print("Failed to insert embedding: \(error?.localizedDescription)")
+//                                                completion(false)
+//                                                return
+//                                            }
+//
+//                                            guard let success = success, success == true else {
+//                                                print("Insertion was not successful")
+//                                                completion(false)
+//                                                return
+//                                            }
+//
+//                                            // Success
+//                                            // print("Successfully inserted embedding for \(userPreferenceData)")
+//
+//                                            // store profile pic in firebase storage and get the download url of the uploaded image and write it to the realtime database
+//                                            // insert user into fireabase database
+//                                            StorageManager.shared.uploadProfileImage(for: profile.id, url: profile.images.first?.url) { downloadUrl in
+//
+//                                                let userUpdates: [String: Any] = [
+//                                                    "users/\(profile.id)/id": profile.id, //redundant but whatever
+//                                                    "users/\(profile.id)/name": profile.display_name ?? profile.email,
+//                                                    "users/\(profile.id)/email": profile.email,
+//                                                    "users/\(profile.id)/country": profile.country,
+//                                                    "users/\(profile.id)/filter_enabled": profile.explicit_content["filter_enabled"],
+//                                                    "users/\(profile.id)/profile_picture_stable": downloadUrl?.absoluteString,
+//                                                    "users/\(profile.id)/top_artists": topArtists,
+//                                                    "users/\(profile.id)/top_tracks": topTracks,
+//                                                    "users/\(profile.id)/top_recent_tracks": topRecentTracks,
+//                                                    "users/\(profile.id)/top_genres": topGenres,
+//                                                    "users/\(profile.id)/top_genre_display": modeGenre ?? topArtistsResponse.items.first?.genres?.first
+//                                                ]
+//
+//                                                // update the genres and search index first
+//                                                let updates = topGenreUpdates.merging(topArtistIndexUpdates) { (_, new) in new }
+//                                                    .merging(topTrackIndexUpdates) { (_, new) in new }
+//                                                self?.databaseref.updateChildValues(updates) {  error, _ in
+//                                                    guard error == nil else {
+//                                                        completion(false)
+//                                                        return
+//                                                    }
+//
+//                                                    // create the user
+//                                                    self?.databaseref.updateChildValues(userUpdates) { error, _ in
+//                                                        guard error == nil else {
+//                                                            completion(false)
+//                                                            return
+//                                                        }
+//                                                        completion(true)
+//                                                    }
+//                                                }
+//
+//                                            }
+//
+//                                        }
+//                                    case .failure(let error):
+//                                        print("Failed to get embedding: \(error.localizedDescription)")
+//                                        completion(false)
+//                                        return
+//
+//                                    }
+//                                }
+//
+//                            case .failure(_):
+//                                completion(false)
+//                            }
+//                        }
+//                    case .failure( _):
+//                        completion(false)
+//                    }
+//                }
+//
+//            case .failure(_):
+//                completion(false)
+//            }
+//        }
+//    }
+// inserts new user to database
     public func insertUser(with profile: UserProfileResponse, completion: @escaping ((Bool) ->Void)) {
-        
+
         // set user's top tracks, artists & genres
         // top artist
-        APICaller.shared.getTopArtists(limit: 25) { [weak self] result in
+
+        APICaller.shared.getTopItems() { result in
             switch result {
-            case .success(let topArtistsResponse):
-                // convert to json
-                guard let data = try? JSONEncoder().encode(topArtistsResponse), let topArtists = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] else {
+            case .success(let (topArtistsResponse, topTracksResponse, topRecentTracksResponse)):
+                guard let artistsData = try? JSONEncoder().encode(topArtistsResponse),
+                      let topArtists = try? JSONSerialization.jsonObject(with: artistsData, options: []) as? [String: Any],
+                      let tracksData = try? JSONEncoder().encode(topTracksResponse),
+                      let topTracks = try? JSONSerialization.jsonObject(with: tracksData, options: []) as? [String: Any],
+                      let recentTracksData = try? JSONEncoder().encode(topRecentTracksResponse),
+                      let topRecentTracks = try? JSONSerialization.jsonObject(with: recentTracksData, options: []) as? [String: Any] else {
                     completion(false)
                     return
                 }
-                
                 // user has no top artists, most likely newly created account, user can't use app in this case
                 // might wanna handle this in the ui as well
-                guard !topArtistsResponse.items.isEmpty else {
+                guard !topArtistsResponse.items.isEmpty, !topTracksResponse.items.isEmpty  else {
                     completion(false)
                     return
                 }
-                
-                // recent top tracks
-                APICaller.shared.getTopTracks(timeRange: .short_term) { [weak self] result in
+
+                let modeGenre = topArtistsResponse.items
+                    .compactMap { $0.genres }
+                    .reduce([]) { return $0 + $1 }
+                    .mode
+
+                let topGenres = topArtistsResponse.items
+                    .compactMap { $0.genres }
+                    .reduce([]) { return Set($0).union(Set($1)) }
+                    .map { $0.lowercased().replacingOccurrences(of: "[\\[\\].$#]", with: " ", options: .regularExpression) }
+
+
+                let topArtistIndexUpdates = topArtistsResponse.items
+                    .map { $0.name.lowercased().replacingOccurrences(of: "[\\[\\].$#]", with: " ", options: .regularExpression) }
+                    .reduce([String: Any]()) {
+                    var dict = $0
+                    // dict["artists/\(profile.id)/\($1)"] = true
+                    // dict["users/\(profile.id)/search/\($1)"] = true
+                    dict["search/\($1)/\(profile.id)"] = true
+                    return dict
+                }
+
+                let topTrackIndexUpdates = topTracksResponse.items
+                    .map { $0.name.lowercased().replacingOccurrences(of: "[\\[\\].$#]", with: " ", options: .regularExpression) }
+                    .reduce([String: Any]()) {
+                    var dict = $0
+                    // dict["tracks/\(profile.id)/\($1)"] = true
+                    // dict["users/\(profile.id)/search/\($1)"] = true
+                    dict["search/\($1)/\(profile.id)"] = true
+                    return dict
+                }
+
+                let userPreferenceData = generateDescription(topTrackResponse: topTracksResponse,
+                                                             topArtistsReponse: topArtistsResponse,
+                                                             topRecentTracksResponse: topRecentTracksResponse)
+
+
+                OpenAIManager.shared.getEmbedding(inputString: userPreferenceData) { [weak self] result in
                     switch result {
-                    case .success(let topRecentTracksResponse):
-                        // convert to json
-                        guard let data = try? JSONEncoder().encode(topRecentTracksResponse), let topRecentTracks = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] else {
+
+                    case .success(let embedding):
+                        guard let embedding = embedding else {
+                            print("No embedding returned")
                             completion(false)
                             return
                         }
-                        
-                        APICaller.shared.getTopTracks(timeRange: .long_term) { [weak self] result in
-                            switch result {
-                            case .success(let topTracksResponse):
-                                // convert to json
-                                guard let data = try? JSONEncoder().encode(topTracksResponse), let topTracks = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] else {
-                                    completion(false)
-                                    return
-                                }
-                                
-                                let modeGenre = topArtistsResponse.items
-                                    .compactMap { $0.genres }
-                                    .reduce([]) { return $0 + $1 }
-                                    .mode
-                                
-                                let topGenres = topArtistsResponse.items
-                                    .compactMap { $0.genres }
-                                    .reduce([]) { return Set($0).union(Set($1)) }
-                                    .map { $0.lowercased().replacingOccurrences(of: "[\\[\\].$#]", with: " ", options: .regularExpression) }
-                                
-                                
-                                let topGenreUpdates = topGenres.reduce([String: Any]()) {
-                                    var dict = $0
-                                    dict["genres/\($1)"] = true
-                                    return dict
-                                }
-                                
-                                let topArtistsList = topArtistsResponse.items.map { $0.name.lowercased().replacingOccurrences(of: "[\\[\\].$#]", with: " ", options: .regularExpression) }
-                                let topTracksList = topTracksResponse.items.map { $0.name.lowercased().replacingOccurrences(of: "[\\[\\].$#]", with: " ", options: .regularExpression) }
-                                
-                                let topArtistIndexUpdates = topArtistsList.reduce([String: Any]()) {
-                                    var dict = $0
-                                    // dict["artists/\(profile.id)/\($1)"] = true
-                                    // dict["users/\(profile.id)/search/\($1)"] = true
-                                    dict["search/\($1)/\(profile.id)"] = true
-                                    return dict
-                                }
-                                
-                                let topTrackIndexUpdates = topTracksList.reduce([String: Any]()) {
-                                    var dict = $0
-                                    // dict["tracks/\(profile.id)/\($1)"] = true
-                                    // dict["users/\(profile.id)/search/\($1)"] = true
-                                    dict["search/\($1)/\(profile.id)"] = true
-                                    return dict
-                                }
-                                
-                                let userPreferenceData = generateDescription(topTrackResponse: topTracksResponse,
-                                                                             topArtistsReponse: topArtistsResponse,
-                                                                             topRecentTracksResponse: topRecentTracksResponse)
-                                
-                                // print("user pref\n", userPreferenceData)
-                                
-                                OpenAIManager.shared.getEmbedding(inputString: userPreferenceData) { [weak self] result in
-                                    switch result {
-                                        
-                                    case .success(let embedding):
-                                        guard let embedding = embedding else {
-                                            print("No embedding returned")
+
+                        PineconeManager.shared.insertEmbeddings(vectors: [profile.id: embedding], namespace: "user-top-preferences") { [weak self] success, error in
+                            guard error == nil else {
+                                print("Failed to insert embedding: \(error?.localizedDescription)")
+                                completion(false)
+                                return
+                            }
+
+                            guard let success = success, success == true else {
+                                print("Insertion was not successful")
+                                completion(false)
+                                return
+                            }
+
+                            // Success
+                            print("Successfully inserted embedding for \(profile.id)")
+
+                            // store profile pic in firebase storage and get the download url of the uploaded image and write it to the realtime database
+                            // insert user into fireabase database
+                            StorageManager.shared.uploadProfileImage(for: profile.id, url: profile.images.first?.url) { downloadUrl in
+
+                                let userUpdates: [String: Any] = [
+                                    "users/\(profile.id)/id": profile.id, //redundant but whatever
+                                    "users/\(profile.id)/name": profile.display_name ?? profile.email,
+                                    "users/\(profile.id)/email": profile.email,
+                                    "users/\(profile.id)/country": profile.country,
+                                    "users/\(profile.id)/filter_enabled": profile.explicit_content["filter_enabled"],
+                                    "users/\(profile.id)/profile_picture_stable": downloadUrl?.absoluteString,
+                                    "users/\(profile.id)/top_artists": topArtists,
+                                    "users/\(profile.id)/top_tracks": topTracks,
+                                    "users/\(profile.id)/top_recent_tracks": topRecentTracks,
+                                    "users/\(profile.id)/top_genres": topGenres,
+                                    "users/\(profile.id)/top_genre_display": modeGenre ?? topArtistsResponse.items.first?.genres?.first
+                                ]
+
+                                // update the genres and search index first
+                                let updates = topArtistIndexUpdates.merging(topTrackIndexUpdates) { (_, new) in new }
+                                self?.databaseref.updateChildValues(updates) {  error, _ in
+                                    guard error == nil else {
+                                        completion(false)
+                                        return
+                                    }
+
+                                    // create the user
+                                    self?.databaseref.updateChildValues(userUpdates) { error, _ in
+                                        guard error == nil else {
                                             completion(false)
                                             return
                                         }
-                                        
-                                        PineconeManager.shared.insertEmbeddings(vectors: [profile.id: embedding], namespace: "user-top-preferences") { [weak self] success, error in
-                                            guard error == nil else {
-                                                print("Failed to insert embedding: \(error?.localizedDescription)")
-                                                completion(false)
-                                                return
-                                            }
-                                            
-                                            guard let success = success, success == true else {
-                                                print("Insertion was not successful")
-                                                completion(false)
-                                                return
-                                            }
-                                            
-                                            // Success
-                                            print("Successfully inserted embedding for \(userPreferenceData)")
-                                            
-                                            // store profile pic in firebase storage and get the download url of the uploaded image and write it to the realtime database
-                                            // insert user into fireabase database
-                                            StorageManager.shared.uploadProfileImage(for: profile.id, url: profile.images.first?.url) { downloadUrl in
-                                                
-                                                let userUpdates: [String: Any] = [
-                                                    "users/\(profile.id)/id": profile.id, //redundant but whatever
-                                                    "users/\(profile.id)/name": profile.display_name ?? profile.email,
-                                                    "users/\(profile.id)/email": profile.email,
-                                                    "users/\(profile.id)/country": profile.country,
-                                                    "users/\(profile.id)/filter_enabled": profile.explicit_content["filter_enabled"],
-                                                    "users/\(profile.id)/profile_picture_stable": downloadUrl?.absoluteString,
-                                                    "users/\(profile.id)/top_artists": topArtists,
-                                                    "users/\(profile.id)/top_tracks": topTracks,
-                                                    "users/\(profile.id)/top_recent_tracks": topRecentTracks,
-                                                    "users/\(profile.id)/top_genres": topGenres,
-                                                    "users/\(profile.id)/top_genre_display": modeGenre ?? topArtistsResponse.items.first?.genres?.first
-                                                ]
-                                                
-                                                // update the genres and search index first
-                                                let updates = topGenreUpdates.merging(topArtistIndexUpdates) { (_, new) in new }
-                                                    .merging(topTrackIndexUpdates) { (_, new) in new }
-                                                self?.databaseref.updateChildValues(updates) {  error, _ in
-                                                    guard error == nil else {
-                                                        completion(false)
-                                                        return
-                                                    }
-                                                    
-                                                    // create the user
-                                                    self?.databaseref.updateChildValues(userUpdates) { error, _ in
-                                                        guard error == nil else {
-                                                            completion(false)
-                                                            return
-                                                        }
-                                                        completion(true)
-                                                    }
-                                                }
-                                                
-                                            }
-                                            
-                                        }
-                                    case .failure(let error):
-                                        print("Failed to get embedding: \(error.localizedDescription)")
-                                        completion(false)
-                                        return
-                                        
+                                        completion(true)
                                     }
                                 }
-                                
-                            case .failure(_):
-                                completion(false)
+
                             }
+
                         }
-                    case .failure( _):
+                    case .failure(let error):
+                        print("Failed to get embedding: \(error.localizedDescription)")
                         completion(false)
+                        return
+
                     }
                 }
-                
-            case .failure(_):
+            case .failure(let error):
                 completion(false)
+                return
+
             }
         }
     }
@@ -315,55 +456,174 @@ extension DatabaseManager {
     }
     
     /// refetch current user from spotify and updates its data in the database
-    @available(*, renamed: "refreshUser()")
-    public func refreshUser(completion: @escaping ((Bool) ->Void)) -> Void {
+
+    @available(*, renamed: "refreshUser(_:)")
+    public func refreshUser(_ oldUser: Message.ChatUserItem, completion: @escaping ((Bool) ->Void)) {
+        
+        
+        
         APICaller.shared.getCurrentUserProfile { [weak self] result in
             switch result {
             case .success(let profile):
-                // delete and reinsert the user
-                self?.databaseref.child("users/\(profile.id)").setValue(nil) { error, _ in
-                    guard error == nil else {
+                
+                if profile.country != oldUser.country {
+                    self?.databaseref.child("users/\(profile.id)/country").setValue(profile.country)
+                }
+                if (profile.display_name ?? profile.email) != oldUser.userName {
+                    self?.databaseref.child("users/\(profile.id)/name").setValue(profile.display_name ?? profile.email){ error, _ in
+                        if error == nil  {
+                            let changeRequest = AuthManager.shared.currentUser?.createProfileChangeRequest()
+                            changeRequest?.displayName = profile.display_name ?? profile.email
+                            changeRequest?.commitChanges() { error in
+                                if let error = error {
+                                    print(error.localizedDescription)
+                                }
+                            }
+                        }
+                    }
+                }
+                if profile.images.first?.url != AuthManager.shared.currentUser?.photoURL?.absoluteString {
+                    // store new photo in firebase storage and get the download url
+                    StorageManager.shared.uploadProfileImage(for: profile.id, url: profile.images.first?.url) { downloadUrl in
+                        self?.databaseref.child("users/\(profile.id)/profile_picture_stable").setValue(downloadUrl?.absoluteString) { error, _ in
+                            if error == nil  {
+                                if let url = profile.images.first?.url {
+                                    let changeRequest = AuthManager.shared.currentUser?.createProfileChangeRequest()
+                                    changeRequest?.photoURL = URL(string: url)
+                                    changeRequest?.commitChanges() { error in
+                                        if let error = error {
+                                            print(error.localizedDescription)
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                if profile.explicit_content["filter_enabled"] != oldUser.filterEnabled {
+                    self?.databaseref.child("users/\(profile.id)/filter_enabled").setValue(profile.explicit_content["filter_enabled"])
+                }
+                
+                
+                APICaller.shared.getTopItems() { result in
+                    switch result {
+                    case .success(let (topArtistsResponse, topTracksResponse, topRecentTracksResponse)):
+                        guard let artistsData = try? JSONEncoder().encode(topArtistsResponse),
+                              let topArtists = try? JSONSerialization.jsonObject(with: artistsData, options: []) as? [String: Any],
+                              let tracksData = try? JSONEncoder().encode(topTracksResponse),
+                              let topTracks = try? JSONSerialization.jsonObject(with: tracksData, options: []) as? [String: Any],
+                              let recentTracksData = try? JSONEncoder().encode(topRecentTracksResponse),
+                              let topRecentTracks = try? JSONSerialization.jsonObject(with: recentTracksData, options: []) as? [String: Any] else {
+                            completion(false)
+                            return
+                        }
+                        // user has no top artists, most likely newly created account, user can't use app in this case
+                        // might wanna handle this in the ui as well
+                        guard !topArtistsResponse.items.isEmpty, !topTracksResponse.items.isEmpty else {
+                            completion(false)
+                            return
+                        }
+                        
+                        let modeGenre = topArtistsResponse.items
+                            .compactMap { $0.genres }
+                            .reduce([]) { return $0 + $1 }
+                            .mode
+                        
+                        let topGenres = topArtistsResponse.items
+                            .compactMap { $0.genres }
+                            .reduce([]) { return Set($0).union(Set($1)) }
+                            .map { $0.lowercased().replacingOccurrences(of: "[\\[\\].$#]", with: " ", options: .regularExpression) }
+                        
+                        if let oldTopArtistsResponse = oldUser.topArtists, topArtistsResponse != oldTopArtistsResponse {
+                            self?.databaseref.child("users/\(profile.id)/top_artists").setValue(topArtists)
+                        }
+                        
+                        if let oldTopTracksResponse = oldUser.topTracks, topTracksResponse != oldTopTracksResponse {
+                            self?.databaseref.child("users/\(profile.id)/top_tracks").setValue(topTracks)
+                        }
+                        if let oldTopRecentTracksResponse = oldUser.topRecentTracks, topRecentTracksResponse != oldTopRecentTracksResponse {
+                            self?.databaseref.child("users/\(profile.id)/top_recent_tracks").setValue(topRecentTracks)
+                        }
+                        
+                        if let oldTopGenres = oldUser.topGenres, Set(topGenres) != Set(oldTopGenres) {
+                            self?.databaseref.child("users/\(profile.id)/top_genres").setValue(topGenres)
+                        }
+                        
+                        self?.databaseref.child("users/\(profile.id)/top_genre_display").setValue(modeGenre ?? topArtistsResponse.items.first?.genres?.first)
+
+                        
+                        let userPreferenceData = generateDescription(topTrackResponse: topTracksResponse,
+                                                                     topArtistsReponse: topArtistsResponse,
+                                                                     topRecentTracksResponse: topRecentTracksResponse)
+                        
+                        
+                        let oldUserPreferenceData = generateDescription(topTrackResponse: oldUser.topTracks,
+                                                                        topArtistsReponse: oldUser.topArtists,
+                                                                        topRecentTracksResponse: oldUser.topRecentTracks)
+                        
+                        
+                        print("\n", "new\n", userPreferenceData, "\n", "old\n",oldUserPreferenceData)
+                        if userPreferenceData != oldUserPreferenceData {
+                            // should query the matching users again
+                            OpenAIManager.shared.getEmbedding(inputString: userPreferenceData) { [weak self] result in
+                                switch result {
+                                    
+                                case .success(let embedding):
+                                    guard let embedding = embedding else {
+                                        
+                                        print("No embedding returned")
+                                        completion(false)
+                                        return
+                                    }
+                                    PineconeManager.shared.insertEmbeddings(vectors: [profile.id: embedding], namespace: "user-top-preferences") { [weak self] success, error in
+                                        guard error == nil else {
+                                            print("Failed to insert embedding: \(error?.localizedDescription)")
+                                            completion(false)
+                                            return
+                                        }
+                                        guard let success = success, success == true else {
+                                            print("Insertion was not successful")
+                                            completion(false)
+                                            return
+                                        }
+                                        // Success
+                                        print("Successfully inserted embedding for \(profile.id)")
+                                        // should query matching users again because the embedding has changed
+                                        completion(true)
+                                    }
+                                case .failure(let error):
+                                    print("Failed to get embedding: \(error.localizedDescription)")
+                                    completion(false)
+                                    return
+                                    
+                                }
+                            }
+                        } else {
+                            completion(false)
+                        }
+                    case .failure(_):
                         completion(false)
                         return
                     }
-                    // reinsert user
-                    self?.insertUser(with: profile) { result in
-                        completion(result)
-                        
-                        let changeRequest = AuthManager.shared.currentUser?.createProfileChangeRequest()
-                        if let displayName = profile.display_name {
-                            changeRequest?.displayName = displayName
-                        } else {
-                            changeRequest?.displayName = profile.email
-                        }
-                        if let url = profile.images.first?.url {
-                            changeRequest?.photoURL = URL(string: url)
-                        }
-                        changeRequest?.commitChanges { error in
-                            if let error = error {
-                                print("couldn't set current user's displayName/photoURL", error.localizedDescription)
-                            }
-                        }
-                        // update email
-                        AuthManager.shared.currentUser?.updateEmail(to: profile.email)
-                    }
-                    
                 }
             case .failure(_):
                 completion(false)
                 return
+                
             }
         }
     }
     
-    public func refreshUser() async -> Bool {
+    public func refreshUser(_ oldUser: Message.ChatUserItem) async -> Bool {
         return await withCheckedContinuation { continuation in
-            refreshUser() { result in
+            refreshUser(oldUser) { result in
                 continuation.resume(returning: result)
             }
         }
     }
     
+    
+
     
     public func insertUser(with profile: UserProfileResponse) async -> Bool {
         return await withCheckedContinuation { continuation in
@@ -389,7 +649,7 @@ extension DatabaseManager {
     public func getUser(with id: String, completion: @escaping (Result<Message.ChatUserItem, Error>) -> Void) {
         
         databaseref.child("users/\(id)").observeSingleEvent(of: .value) { snapshot in
-            
+  
             guard let user = snapshot.value as? [String: Any],
                   let name = user["name"] as? String,
                   let id = user["id"] as? String,
@@ -453,71 +713,79 @@ extension DatabaseManager {
         }
     }
     
-    public func observeUser(with id: String, completion: @escaping (Result<Message.ChatUserItem, Error>) -> Void) {
-        databaseref.child("users/\(id)").observe(.value) { snapshot in
-            
-            guard let user = snapshot.value as? [String: Any],
-                  let name = user["name"] as? String,
-                  let id = user["id"] as? String,
-                  let country = user["country"] as? String,
-                  let filterEnabled = user["filter_enabled"] as? Bool else {
-                completion(.failure(Self.DatabaseError.failedToFetch))
-                return
-            }
-            
-            var topTracksResponse: TracksResponse?
-            var topArtistsResponse: ArtistsResponse?
-            var topRecentTracksResponse: TracksResponse?
-            var topGenres: [String]?
-            // revist this
-            if let top_artists = user["top_artists"],
-               let artistsJSON = try? JSONSerialization.data(withJSONObject: top_artists) {
-                topArtistsResponse = try? JSONDecoder().decode(ArtistsResponse.self, from: artistsJSON)
-                
-            }
-            
-            if let top_tracks = user["top_tracks"] {
-                if JSONSerialization.isValidJSONObject(top_tracks) {
-                    if let tracksJSON = try? JSONSerialization.data(withJSONObject: top_tracks) {
-                        do {
-                            topTracksResponse = try JSONDecoder().decode(TracksResponse.self, from: tracksJSON)
-                        } catch {
-                            print("ERROR:", error)
-                        }
-                    }
-                }
-            }
-            
-            if let top_recent_tracks = user["top_recent_tracks"] {
-                if JSONSerialization.isValidJSONObject(top_recent_tracks) {
-                    if let tracksJSON = try? JSONSerialization.data(withJSONObject: top_recent_tracks) {
-                        do {
-                            topRecentTracksResponse = try JSONDecoder().decode(TracksResponse.self, from: tracksJSON)
-                        } catch {
-                            print("ERROR:", error)
-                        }
-                    }
-                }
-            }
-            
-            topGenres = user["top_genres"] as? [String]
-            var photoURL: URL?
-            if let photoURLString = user["profile_picture_stable"] as? String {
-                photoURL = URL(string: photoURLString)
-            }
-            
-            completion(.success(.init(id: id,
-                                      userName: name,
-                                      avatarURL: photoURL,
-                                      avatar: nil,
-                                      topTracks: topTracksResponse,
-                                      topArtists: topArtistsResponse,
-                                      topGenres: topGenres,
-                                      country: country,
-                                      filterEnabled: filterEnabled,
-                                      topRecentTracks: topRecentTracksResponse)))
-            
+//    public func observeUser(with id: String, completion: @escaping (Result<Message.ChatUserItem, Error>) -> Void) {
+//        databaseref.child("users/\(id)").observe(.value) { snapshot in
+//
+//            guard let user = snapshot.value as? [String: Any],
+//                  let name = user["name"] as? String,
+//                  let id = user["id"] as? String,
+//                  let country = user["country"] as? String,
+//                  let filterEnabled = user["filter_enabled"] as? Bool else {
+//                completion(.failure(Self.DatabaseError.failedToFetch))
+//                return
+//            }
+//
+//            var topTracksResponse: TracksResponse?
+//            var topArtistsResponse: ArtistsResponse?
+//            var topRecentTracksResponse: TracksResponse?
+//            var topGenres: [String]?
+//            // revist this
+//            if let top_artists = user["top_artists"],
+//               let artistsJSON = try? JSONSerialization.data(withJSONObject: top_artists) {
+//                topArtistsResponse = try? JSONDecoder().decode(ArtistsResponse.self, from: artistsJSON)
+//
+//            }
+//
+//            if let top_tracks = user["top_tracks"] {
+//                if JSONSerialization.isValidJSONObject(top_tracks) {
+//                    if let tracksJSON = try? JSONSerialization.data(withJSONObject: top_tracks) {
+//                        do {
+//                            topTracksResponse = try JSONDecoder().decode(TracksResponse.self, from: tracksJSON)
+//                        } catch {
+//                            print("ERROR:", error)
+//                        }
+//                    }
+//                }
+//            }
+//
+//            if let top_recent_tracks = user["top_recent_tracks"] {
+//                if JSONSerialization.isValidJSONObject(top_recent_tracks) {
+//                    if let tracksJSON = try? JSONSerialization.data(withJSONObject: top_recent_tracks) {
+//                        do {
+//                            topRecentTracksResponse = try JSONDecoder().decode(TracksResponse.self, from: tracksJSON)
+//                        } catch {
+//                            print("ERROR:", error)
+//                        }
+//                    }
+//                }
+//            }
+//
+//            topGenres = user["top_genres"] as? [String]
+//            var photoURL: URL?
+//            if let photoURLString = user["profile_picture_stable"] as? String {
+//                photoURL = URL(string: photoURLString)
+//            }
+//
+//            completion(.success(.init(id: id,
+//                                      userName: name,
+//                                      avatarURL: photoURL,
+//                                      avatar: nil,
+//                                      topTracks: topTracksResponse,
+//                                      topArtists: topArtistsResponse,
+//                                      topGenres: topGenres,
+//                                      country: country,
+//                                      filterEnabled: filterEnabled,
+//                                      topRecentTracks: topRecentTracksResponse)))
+//
+//        }
+//    }
+    
+    
+    public func observeUser(with id: String, completion: @escaping (String, Any?) -> Void) {
+        databaseref.child("users/\(id)").observe(.childChanged) { snapshot in
+            completion(snapshot.key, snapshot.value)
         }
+
     }
     
     
@@ -618,7 +886,7 @@ extension DatabaseManager {
         // return a promise that waits for all promises to settle and returns only the fulfilled values
         
         all(promises)
-            .timeout(10)
+            .timeout(20)
             .then { users in
                 completion(users.compactMap { $0 })
             }
@@ -627,8 +895,7 @@ extension DatabaseManager {
                 
             }
     }
-    
-    
+
     // test these
     public func getTopTracks(for id: String,  completion: @escaping ((Result<TracksResponse, Error>) ->Void)) {
         self.databaseref.child("users/\(id)/top_tracks").observeSingleEvent(of: .value, with: { snapshot in

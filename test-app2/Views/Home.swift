@@ -118,16 +118,23 @@ struct Home: View {
             }
            
             .listStyle(.plain)
+  
             .refreshable {
                 // can only refresh every 5 minutes, might decrease this later
                 guard canRefresh else { return }
-                let didRefresh = await DatabaseManager.shared.refreshUser()
-                if didRefresh {
-                    canRefresh = false
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 300) {
-                       canRefresh = true
-                    }
+                guard let currentUser = model.currentUser else { return }
+                let shouldQuerySimilarUsers = await DatabaseManager.shared.refreshUser(currentUser)
+                print(shouldQuerySimilarUsers)
+                if shouldQuerySimilarUsers {
+                    model.fetchSimilarUsers()
                 }
+                
+//                if didRefresh {
+//                    canRefresh = false
+//                    DispatchQueue.main.asyncAfter(deadline: .now() + 300) {
+//                       canRefresh = true
+//                    }
+//                }
             }
             .overlay(Bar().padding(5), alignment: .top)
             .onChange(of: model.scrollToBottom) { value in

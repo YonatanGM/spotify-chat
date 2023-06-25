@@ -83,10 +83,17 @@ class AppStateModel: ObservableObject {
             isSpotifyInstalled = true
         }
         */
-
+        
         self.$signInStatus.sink(receiveValue: { [weak self] signInStatus in
             if signInStatus == .signedIn {
                 self?.setup()
+            }
+        })
+        .store(in: &cancellables)
+
+        self.$suggestedUsers.sink(receiveValue: { [weak self] users in
+            if users.count > 0 && self?.finishedLoadingOfSuggestedUsers == false {
+                self?.finishedLoadingOfSuggestedUsers = true
             }
         })
         .store(in: &cancellables)
@@ -152,66 +159,24 @@ class AppStateModel: ObservableObject {
 extension AppStateModel {
     
     public func setup() {
+        
         guard let currentUserID = AuthManager.shared.currentUser?.uid else { return }
-        DatabaseManager.shared.observeUser(with: currentUserID) { [weak self] result in
-            guard let strongSelf = self else {
-                return
-            }
+        
+        DatabaseManager.shared.getUser(with: currentUserID) { [weak self] result in
             switch result {
             case .success(let user):
                 self?.currentUser = user
                 // fetch similar users from pinecone DB
-                PineconeManager.shared.queryEmbedding(id: user.id, topK: 15, namespace: "user-top-preferences") { result, error in
-                    guard error == nil else {
-                        print(error?.localizedDescription)
-                        return
-                    }
-                    if let result = result {
-                        // remove current user's id
-                        let ids = result.filter { $0 != currentUserID }
-                        DatabaseManager.shared.queryUsers(with: ids) { matchingUsers in
-                            DispatchQueue.main.async {
-                      
-                                strongSelf.suggestedUsers = matchingUsers
-                                if strongSelf.finishedLoadingOfSuggestedUsers == false {
-                                    strongSelf.finishedLoadingOfSuggestedUsers = true
-                                }
-                            }
-                            
-                            APICaller.shared.checkIfCurrentUserFollowsUsers(with: matchingUsers.map { $0.id }) { result in
-                                switch result {
-                                case .success(let followedUsers):
-                                    DispatchQueue.main.async {
-                                        strongSelf.followedUsers = followedUsers
-                                    }
-    
-                                case .failure(let error):
-                                    print("failed to check if current user follows users with ids \( matchingUsers.map { $0.id }.joined(separator: ",")): \(error.localizedDescription)")
-                                }
-                            }
-    
-                            let trackIDs = matchingUsers.compactMap { $0.topTracks?.items.first?.id }
-                            APICaller.shared.checkIfUserHasSavedTracks(with: trackIDs) { result in
-                                switch result {
-                                case .success(let likedTracks):
-                                    DispatchQueue.main.async {
-                                        strongSelf.likedTracks = likedTracks
-                                    }
-    
-                                case .failure(let error):
-                                    print("failed to check if current user liked tracks with ids \(trackIDs.joined(separator: ",")): \(error.localizedDescription)")
-                                }
-                            }
-                        }
-                        
-                        // refresh track recommendations
-                        strongSelf.getTrackRecommendations() { recommendations in
-                            DispatchQueue.main.async {
-                                strongSelf.recommendedTracks = recommendations
-                            }
-                        }
+                self?.fetchSimilarUsers()
+                
+                // refresh track recommendations
+                self?.getTrackRecommendations() { recommendations in
+                    DispatchQueue.main.async {
+                        self?.recommendedTracks = recommendations
                     }
                 }
+                
+                self?.fetchUserUpdates()
             case .failure(_):
                 print("couldn't get current user")
             }
@@ -557,6 +522,7 @@ extension AppStateModel {
 
 //MARK: - Track recommendation
 extension AppStateModel {
+    // need a seed for the suffling
     public func getTrackRecommendations(completion: @escaping ([Track]) -> Void) {
         guard let currentUser = self.currentUser,
               let topArtists = currentUser.topArtists?.items.shuffled(),
@@ -590,3 +556,122 @@ extension AppStateModel {
     }
     
 }
+
+
+// update user on refresh
+extension AppStateModel {
+    
+    public func fetchUserUpdates() {
+        guard let id = self.currentUser?.id else {
+            return
+        }
+        
+        DatabaseManager.shared.observeUser(with: id) { [weak self] key, value in
+            switch key {
+            case "name":
+                if let name = value as? String {
+                    self?.currentUser?.userName = name
+                }
+            case "email":
+                break
+            case "country":
+                if let country = value as? String {
+                    self?.currentUser?.country = country
+                }
+            case "filter_enabled":
+                if let filter_enabled = value as? Bool {
+                    self?.currentUser?.filterEnabled = filter_enabled
+                }
+            case "profile_picture_stable":
+                if let urlString = value as? String {
+                    self?.currentUser?.avatarURL = URL(string: urlString)
+                }
+            case "top_artists":
+                if let data = value,
+                   let artistsJSON = try? JSONSerialization.data(withJSONObject: data),
+                   let response = try? JSONDecoder().decode(ArtistsResponse.self, from: artistsJSON) {
+                    self?.currentUser?.topArtists = response
+                    
+                }
+            case "top_tracks":
+                if let data = value,
+                   let tracksJSON = try? JSONSerialization.data(withJSONObject: data),
+                   let response = try? JSONDecoder().decode(TracksResponse.self, from: tracksJSON) {
+                    self?.currentUser?.topTracks = response
+                    
+                }
+            case "top_recent_tracks":
+                if let data = value,
+                   let tracksJSON = try? JSONSerialization.data(withJSONObject: data),
+                   let response = try? JSONDecoder().decode(TracksResponse.self, from: tracksJSON) {
+                    self?.currentUser?.topRecentTracks = response
+                }
+            case "top_genres":
+                if let topGenres = value as? [String] {
+                    self?.currentUser?.topGenres = topGenres
+                }
+                
+            default:
+                return
+                
+            }
+            
+        }
+    }
+    
+    public func fetchSimilarUsers() {
+        guard let id = self.currentUser?.id else {
+            return
+        }
+        PineconeManager.shared.queryEmbedding(id: id, topK: 15, namespace: "user-top-preferences") { [weak self] matches, error in
+            guard let matches = matches, error == nil else {
+                print(error?.localizedDescription)
+                return
+            }
+            // remove current user's id
+            DatabaseManager.shared.queryUsers(with: matches.filter({ $0 != id })) { users in
+                DispatchQueue.main.async {
+                    self?.suggestedUsers = users
+                }
+            }
+        }
+        
+    }
+    
+}
+
+    //                        DatabaseManager.shared.queryUsers(with: ids) { matchingUsers in
+    //                            DispatchQueue.main.async {
+    //
+    //                                strongSelf.suggestedUsers = matchingUsers
+    //                                if strongSelf.finishedLoadingOfSuggestedUsers == false {
+    //                                    strongSelf.finishedLoadingOfSuggestedUsers = true
+    //                                }
+    //                            }
+    //
+    //                        }
+    //                            APICaller.shared.checkIfCurrentUserFollowsUsers(with: matchingUsers.map { $0.id }) { result in
+    //                                switch result {
+    //                                case .success(let followedUsers):
+    //                                    DispatchQueue.main.async {
+    //                                        strongSelf.followedUsers = followedUsers
+    //                                    }
+    //
+    //                                case .failure(let error):
+    //                                    print("failed to check if current user follows users with ids \( matchingUsers.map { $0.id }.joined(separator: ",")): \(error.localizedDescription)")
+    //                                }
+    //                            }
+    //
+    //                            let trackIDs = matchingUsers.compactMap { $0.topTracks?.items.first?.id }
+    //                            APICaller.shared.checkIfUserHasSavedTracks(with: trackIDs) { result in
+    //                                switch result {
+    //                                case .success(let likedTracks):
+    //                                    DispatchQueue.main.async {
+    //                                        strongSelf.likedTracks = likedTracks
+    //                                    }
+    //
+    //                                case .failure(let error):
+    //                                    print("failed to check if current user liked tracks with ids \(trackIDs.joined(separator: ",")): \(error.localizedDescription)")
+    //                                }
+    //                            }
+                            

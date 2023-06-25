@@ -7,9 +7,9 @@
 
 import Foundation
 
-func generateDescription(topTrackResponse: TracksResponse, topArtistsReponse: ArtistsResponse, topRecentTracksResponse: TracksResponse? = nil) -> String {
+func generateDescription(topTrackResponse: TracksResponse?, topArtistsReponse: ArtistsResponse?, topRecentTracksResponse: TracksResponse? = nil) -> String {
     var description = "Likes:"
-    for track in topTrackResponse.items.prefix(10) {
+    for track in topTrackResponse?.items.prefix(10) ?? [] {
         // Get the track name, album name and artist name
         let trackName = track.name
         let albumName = track.album?.name ?? ""
@@ -64,7 +64,7 @@ func generateDescription(topTrackResponse: TracksResponse, topArtistsReponse: Ar
     // Get the top 10 genres from the top artists response
     var topGenres = [String]()
     
-    for artist in topArtistsReponse.items.prefix(10) {
+    for artist in topArtistsReponse?.items.prefix(10) ?? [] {
         for genre in artist.genres ?? [] {
             // Avoid adding duplicate genres to the list
             if !topGenres.contains(genre) {
@@ -78,7 +78,7 @@ func generateDescription(topTrackResponse: TracksResponse, topArtistsReponse: Ar
     
     // Get the top 10 artist names from the top artists response
     var topArtists = [String]()
-    for artist in topArtistsReponse.items.prefix(10) {
+    for artist in topArtistsReponse?.items.prefix(10) ?? [] {
         topArtists.append(artist.name)
     }
     

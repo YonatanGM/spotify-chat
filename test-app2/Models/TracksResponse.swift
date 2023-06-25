@@ -7,7 +7,11 @@
 
 import Foundation
 
-public struct TracksResponse: Codable {
+public struct TracksResponse: Codable, Equatable {
+    public static func == (lhs: TracksResponse, rhs: TracksResponse) -> Bool {
+        return Set(lhs.items.map { $0.id }) == Set(rhs.items.map { $0.id })
+    }
+    
     let items: [Track]
 }
 

@@ -7,8 +7,13 @@
 
 import Foundation
 
-public struct ArtistsResponse: Codable {
+public struct ArtistsResponse: Codable, Equatable {
+    public static func == (lhs: ArtistsResponse, rhs: ArtistsResponse) -> Bool {
+        return Set(lhs.items.map { $0.id }) == Set(rhs.items.map { $0.id })
+    }
+    
     let items: [Artist]
+    
 }
 
 public struct Artist: Codable {

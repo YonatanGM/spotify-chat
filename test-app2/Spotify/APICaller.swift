@@ -6,7 +6,7 @@
 //
 
 import Foundation
-
+import Promises
 
 final class APICaller {
     static let shared = APICaller()
@@ -109,9 +109,9 @@ final class APICaller {
 
     
     
-    public func getTopTracks(timeRange: TimeRange = .medium_term, completion: @escaping (Result<TracksResponse, Error>) -> Void) {
+    public func getTopTracks(timeRange: TimeRange = .medium_term, limit: Int = 20, completion: @escaping (Result<TracksResponse, Error>) -> Void) {
 
-        createRequest(with: URL(string: Constants.baseAPIURL + "/me/top/tracks?limit=20&time_range=\(timeRange.rawValue)"),
+        createRequest(with: URL(string: Constants.baseAPIURL + "/me/top/tracks?limit=\(limit)&time_range=\(timeRange.rawValue)"),
                       type: .GET) { request in
    
             // execute the request
@@ -403,5 +403,50 @@ final class APICaller {
     }
     
     
+    public func getTopItems(completion: @escaping (Result<(ArtistsResponse, TracksResponse, TracksResponse), Error>) -> Void) {
+        
+        let topArtistsPromise = Promise<ArtistsResponse> { fulfill, reject in
+            APICaller.shared.getTopArtists(limit: 20) { result in
+                switch result {
+                case .success(let topArtistsResponse):
+                    fulfill(topArtistsResponse)
+                case .failure(let error):
+                    reject(error)
+                }
+            }
+        }
+        
+        let topTracksPromise = Promise<TracksResponse> { fulfill, reject in
+            APICaller.shared.getTopTracks(timeRange: .long_term, limit: 20) { result in
+                switch result {
+                case .success(let topTracksResponse):
+                    fulfill(topTracksResponse)
+                case .failure(let error):
+                    reject(error)
+                }
+            }
+        }
+        
+        let topRecentTracksPromise = Promise<TracksResponse> { fulfill, reject in
+            APICaller.shared.getTopTracks(timeRange: .short_term, limit: 20) { result in
+                switch result {
+                case .success(let topRecentTracksResponse):
+                    fulfill(topRecentTracksResponse)
+                case .failure(let error):
+                    reject(error)
+                }
+            }
+        }
+        
+        Promises.all(topArtistsPromise, topTracksPromise, topRecentTracksPromise)
+            .then { topArtistsResponse, topTracksResponse, topRecentTracksResponse in
+                completion(.success((topArtistsResponse, topTracksResponse, topRecentTracksResponse)))
+                
+            }
+            .catch { error in
+                print("failed to fetch top items from Spotify", error.localizedDescription)
+                completion(.failure(error))
+            }
+    }
     
 }
