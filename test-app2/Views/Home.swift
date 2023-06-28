@@ -90,14 +90,16 @@ struct Home: View {
                 if (recommendedTracks.count > 0) {
                     TopTracksView(tracks: recommendedTracks)
                         .header(title: "Recommedations", subtitle: "Based on tracks you like")
+                        .border(.red)
                         .listRowSeparatorTint(.clear)
                         .listRowBackground(Color.clear)
                         .listRowInsets(EdgeInsets(.zero))
+                        .overlay(SparklesIcon(), alignment: .topTrailing)
                 }
 
                 SearchBar(searchText: $searchText)
                     // "Enter a list of your favourite songs or artists  (comma separated) to find others that share your taste."
-                    .header(title: "Find", subtitle: "Find others that share your taste. You can search by track or artist names (comma separated).")
+                    .header(title: "Find", subtitle: "Find others that share your mustic taste. You can search by track or artist names (comma separated).")
                     .listRowSeparatorTint(.clear)
                     .listRowBackground(Color.clear)
                     .listRowInsets(EdgeInsets(.zero))
@@ -156,6 +158,7 @@ struct Home: View {
         .iOS { $0.dismissKeyboardOnTappingOutside() }
         // .animation(.spring(), value: model.searchResults.count)
         .navigationBarItems(trailing: CurrentUserSettings())
+        .navigationBarItems(trailing: UpgradeButton())
         .background(
             LinearGradient(colors: [
                 Color(.sRGB,

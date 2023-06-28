@@ -95,10 +95,14 @@ struct CurrentUserDetail: View {
                     if let artists = user.topArtists?.items {
                         TopArtistsView(artists: artists)
                             .header(title: "Fan of")
+                            .offset(x: 12)
+                            // .padding(.horizontal)
                     }
                     if let tracks = user.topTracks?.items {
                         TopTracksView(tracks: tracks)
                             .header(title: "Favorite tracks")
+                            .offset(x: 12)
+                            // .padding(.horizontal)
                     }
                     
                   

@@ -712,80 +712,12 @@ extension DatabaseManager {
             
         }
     }
-    
-//    public func observeUser(with id: String, completion: @escaping (Result<Message.ChatUserItem, Error>) -> Void) {
-//        databaseref.child("users/\(id)").observe(.value) { snapshot in
-//
-//            guard let user = snapshot.value as? [String: Any],
-//                  let name = user["name"] as? String,
-//                  let id = user["id"] as? String,
-//                  let country = user["country"] as? String,
-//                  let filterEnabled = user["filter_enabled"] as? Bool else {
-//                completion(.failure(Self.DatabaseError.failedToFetch))
-//                return
-//            }
-//
-//            var topTracksResponse: TracksResponse?
-//            var topArtistsResponse: ArtistsResponse?
-//            var topRecentTracksResponse: TracksResponse?
-//            var topGenres: [String]?
-//            // revist this
-//            if let top_artists = user["top_artists"],
-//               let artistsJSON = try? JSONSerialization.data(withJSONObject: top_artists) {
-//                topArtistsResponse = try? JSONDecoder().decode(ArtistsResponse.self, from: artistsJSON)
-//
-//            }
-//
-//            if let top_tracks = user["top_tracks"] {
-//                if JSONSerialization.isValidJSONObject(top_tracks) {
-//                    if let tracksJSON = try? JSONSerialization.data(withJSONObject: top_tracks) {
-//                        do {
-//                            topTracksResponse = try JSONDecoder().decode(TracksResponse.self, from: tracksJSON)
-//                        } catch {
-//                            print("ERROR:", error)
-//                        }
-//                    }
-//                }
-//            }
-//
-//            if let top_recent_tracks = user["top_recent_tracks"] {
-//                if JSONSerialization.isValidJSONObject(top_recent_tracks) {
-//                    if let tracksJSON = try? JSONSerialization.data(withJSONObject: top_recent_tracks) {
-//                        do {
-//                            topRecentTracksResponse = try JSONDecoder().decode(TracksResponse.self, from: tracksJSON)
-//                        } catch {
-//                            print("ERROR:", error)
-//                        }
-//                    }
-//                }
-//            }
-//
-//            topGenres = user["top_genres"] as? [String]
-//            var photoURL: URL?
-//            if let photoURLString = user["profile_picture_stable"] as? String {
-//                photoURL = URL(string: photoURLString)
-//            }
-//
-//            completion(.success(.init(id: id,
-//                                      userName: name,
-//                                      avatarURL: photoURL,
-//                                      avatar: nil,
-//                                      topTracks: topTracksResponse,
-//                                      topArtists: topArtistsResponse,
-//                                      topGenres: topGenres,
-//                                      country: country,
-//                                      filterEnabled: filterEnabled,
-//                                      topRecentTracks: topRecentTracksResponse)))
-//
-//        }
-//    }
-    
+
     
     public func observeUser(with id: String, completion: @escaping (String, Any?) -> Void) {
         databaseref.child("users/\(id)").observe(.childChanged) { snapshot in
             completion(snapshot.key, snapshot.value)
         }
-
     }
     
     
@@ -1748,3 +1680,22 @@ extension DatabaseManager {
     }
 }
 
+extension DatabaseManager {
+    
+    public func upgradeUser(with id: String, appAccountToken: String, completion: (() -> Void)? = nil) {
+        self.databaseref.child("users/\(id)/appAccountToken").setValue(appAccountToken) { error, ref in
+            guard error == nil else {
+                return
+            }
+            completion?()
+        }
+    }
+    
+    public func getAppAccountToken(for id: String, completion: @escaping (String?) -> Void) {
+        self.databaseref.child("users/\(id)/appAccountToken").observeSingleEvent(of: .value) { snapshot in
+            completion(snapshot.value as? String)
+        }
+        
+    }
+    
+}

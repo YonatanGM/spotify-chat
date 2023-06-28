@@ -115,10 +115,12 @@ struct UserDetail: View {
                 if let artists = user.topArtists?.items {
                     TopArtistsView(artists: artists)
                         .header(title: "Fan of")
+                        .offset(x: 12)
                 }
                 if let tracks = user.topTracks?.items {
                     TopTracksView(tracks: filterAvailableTracks(tracks: tracks))
                         .header(title: "Favorite tracks")
+                        .offset(x: 12)
                 }
             }
             

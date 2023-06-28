@@ -13,6 +13,7 @@ import Combine
 import SwiftyChat
 import AVKit
 import BetterSafariView
+import StoreKit
 
 
 class AppStateModel: ObservableObject {
@@ -74,6 +75,10 @@ class AppStateModel: ObservableObject {
 
     // var onlineStatusHandles = Set<UInt?>()
 
+    // store related
+    var updateListenerTask: Task<Void, Error>? = nil
+    let productID = "premium.feature"
+    @Published var didUnlockPremium = false
     
     init() {
         // check if spotify is installed
@@ -86,6 +91,7 @@ class AppStateModel: ObservableObject {
         
         self.$signInStatus.sink(receiveValue: { [weak self] signInStatus in
             if signInStatus == .signedIn {
+                self?.updateListenerTask = self?.listenForTransactions()
                 self?.setup()
             }
         })
@@ -151,6 +157,10 @@ class AppStateModel: ObservableObject {
         AuthManager.shared.signOut { _ in }
     }
     
+    deinit {
+        cleanup()
+        updateListenerTask?.cancel()
+    }
 }
 
 
@@ -172,7 +182,9 @@ extension AppStateModel {
                 // refresh track recommendations
                 self?.getTrackRecommendations() { recommendations in
                     DispatchQueue.main.async {
-                        self?.recommendedTracks = recommendations
+                        if let recommendations = recommendations {
+                            self?.recommendedTracks = recommendations
+                        }
                     }
                 }
                 
@@ -523,15 +535,21 @@ extension AppStateModel {
 //MARK: - Track recommendation
 extension AppStateModel {
     // need a seed for the suffling
-    public func getTrackRecommendations(completion: @escaping ([Track]) -> Void) {
+    public func getTrackRecommendations(seed: UInt64 = 0, completion: @escaping ([Track]?) -> Void) {
         guard let currentUser = self.currentUser,
-              let topArtists = currentUser.topArtists?.items.shuffled(),
+              var topArtists = currentUser.topArtists?.items,
               // let topTracks = currentUser.topTracks?.items.shuffled(),
-              let topRecentTracks = currentUser.topRecentTracks?.items.shuffled() else {
+              var topRecentTracks = currentUser.topRecentTracks?.items else {
             completion([])
             return
         }
+
+//        var generator = SeededGenerator(seed: seed)
+//        topArtists.shuffle(using: &generator)
+//        topRecentTracks.shuffle(using: &generator)
+//
         
+     
         let topArtistsSeed = topArtists.prefix(2).map({ $0.id })
         let topRecentTracksSeed = topRecentTracks.prefix(2).map({ $0.id })
         // let topTracksSeed = currentUser.topTracks?.items.shuffled().prefix(1).map({ $0.name })
@@ -545,9 +563,11 @@ extension AppStateModel {
                                             limit: 10) { result in
             switch result {
             case .success(let recommendations):
+                print(recommendations.map { $0.name })
                 completion(recommendations)
                 return
             case .failure(let error):
+                completion(nil)
                 print("Error getting track recommendations: ", error.localizedDescription)
             }
             
@@ -611,6 +631,11 @@ extension AppStateModel {
                     self?.currentUser?.topGenres = topGenres
                 }
                 
+            case "appAccountToken":
+                // if it exists, it means the users has purchased the premium features
+                if let product = value as? String {
+                    self?.didUnlockPremium = true
+                }
             default:
                 return
                 
@@ -640,38 +665,109 @@ extension AppStateModel {
     
 }
 
-    //                        DatabaseManager.shared.queryUsers(with: ids) { matchingUsers in
-    //                            DispatchQueue.main.async {
-    //
-    //                                strongSelf.suggestedUsers = matchingUsers
-    //                                if strongSelf.finishedLoadingOfSuggestedUsers == false {
-    //                                    strongSelf.finishedLoadingOfSuggestedUsers = true
-    //                                }
-    //                            }
-    //
-    //                        }
-    //                            APICaller.shared.checkIfCurrentUserFollowsUsers(with: matchingUsers.map { $0.id }) { result in
-    //                                switch result {
-    //                                case .success(let followedUsers):
-    //                                    DispatchQueue.main.async {
-    //                                        strongSelf.followedUsers = followedUsers
-    //                                    }
-    //
-    //                                case .failure(let error):
-    //                                    print("failed to check if current user follows users with ids \( matchingUsers.map { $0.id }.joined(separator: ",")): \(error.localizedDescription)")
-    //                                }
-    //                            }
-    //
-    //                            let trackIDs = matchingUsers.compactMap { $0.topTracks?.items.first?.id }
-    //                            APICaller.shared.checkIfUserHasSavedTracks(with: trackIDs) { result in
-    //                                switch result {
-    //                                case .success(let likedTracks):
-    //                                    DispatchQueue.main.async {
-    //                                        strongSelf.likedTracks = likedTracks
-    //                                    }
-    //
-    //                                case .failure(let error):
-    //                                    print("failed to check if current user liked tracks with ids \(trackIDs.joined(separator: ",")): \(error.localizedDescription)")
-    //                                }
-    //                            }
+
+
+// MARK: - Store, for premium features and stuff like that
+extension AppStateModel {
+    typealias Transaction = StoreKit.Transaction
+    typealias RenewalInfo = StoreKit.Product.SubscriptionInfo.RenewalInfo
+    typealias RenewalState = StoreKit.Product.SubscriptionInfo.RenewalState
+    
+    public enum StoreError: Error {
+        case failedVerification
+    }
+
+        
+    // handle unfinished transcations close to app launch
+    func listenForTransactions() -> Task<Void, Error> {
+        return Task.detached {
+            // by this point user has already signed in and the Auth object is probably created
+            guard let id = AuthManager.shared.currentUser?.uid else {
+                return
+            }
+            for await result in Transaction.updates {
+                do {
+                    let transaction = try self.checkVerified(result)
+
+                    //Deliver products to the user.
+                    // if the transcation was made by the current user
+                    // update the database to reflect that
+                    // check this by comparing the app account token in the transcation result with the current user's
+                    // read the app token id of the current if it exist from the database
+                    await withCheckedContinuation { continuation in
+                        DatabaseManager.shared.getAppAccountToken(for: id) { appAccountToken in
+                            guard let currentUserAppAccountToken = appAccountToken,
+                                  let transcationAppAccountToken = transaction.appAccountToken?.uuidString else {
+                                continuation.resume()
+                                return
+                            }
                             
+                            if currentUserAppAccountToken == transcationAppAccountToken {
+                                // there was indeed an unfinished transcation that was successful
+                                // And the transcation is related to the currently signed-in user
+                                // the user's data most likely hasnt changed in the database
+                                // so update that
+                                DatabaseManager.shared.upgradeUser(with: id, appAccountToken: currentUserAppAccountToken)
+                            }
+                            continuation.resume()
+                        }
+                    }
+                    await transaction.finish()
+                } catch {
+                    //StoreKit has a transaction that fails verification. Don't deliver content to the user.
+                    print("Transaction verification failed")
+                }
+            }
+        }
+    }
+    
+    func purchase() async throws {
+        
+        guard let id = self.currentUser?.id else {
+            throw DatabaseManager.DatabaseError.failedToFetch
+        }
+        // request the product
+        let storeProducts = try await Product.products(for: ["premium.feature"])
+        
+        guard let product = storeProducts.first,
+              product.type == .nonConsumable else {
+            return
+        }
+        
+        // Begin purchasing
+        // need to create the app token, need it validate later if unfinised transcations belong to the current signed in user
+        // by comparing the app token in the transcation with the current user's
+        let result = try await product.purchase(options: [.appAccountToken(UUID())])
+ 
+        switch result {
+        case .success(let verification):
+            //Check whether the transaction is verified
+            let transaction = try checkVerified(verification)
+            // The transaction is verified. Deliver content to the user.
+            // update the databse
+            if let uuid = transaction.appAccountToken?.uuidString {
+                DatabaseManager.shared.upgradeUser(with: id, appAccountToken: uuid)
+            }
+            // finish the transaction.
+            await transaction.finish()
+      
+        case .userCancelled, .pending:
+            break
+        default:
+            break
+        }
+    }
+    
+    func checkVerified<T>(_ result: VerificationResult<T>) throws -> T {
+        //Check whether the JWS passes StoreKit verification.
+        switch result {
+        case .unverified:
+            //StoreKit parses the JWS, but it fails verification.
+            throw StoreError.failedVerification
+        case .verified(let safe):
+            //The result is verified. Return the unwrapped value.
+            return safe
+        }
+    }
+    
+}

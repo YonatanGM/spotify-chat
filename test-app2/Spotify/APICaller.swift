@@ -382,9 +382,13 @@ final class APICaller {
             with: url,
             type: .GET
         ) { request in
+            // add timeout 
+            let urlconfig = URLSessionConfiguration.default
+            urlconfig.timeoutIntervalForRequest = 10
+            urlconfig.timeoutIntervalForResource = 10
+            let session = URLSession(configuration: urlconfig)
             // execute the request
-
-            let task = URLSession.shared.dataTask(with: request) { data, response, error in
+            let task = session.dataTask(with: request) { data, response, error in
                 guard let data = data, error == nil else {
                     completion(.failure(APIError.failedToGetData))
                     return

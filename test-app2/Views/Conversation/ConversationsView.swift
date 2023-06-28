@@ -46,6 +46,11 @@ struct ConversationsView: View {
                        label: { EmptyView() })
         
         List {
+            
+            if (groupsSorted.isEmpty) {
+                    Text("")
+                        .listRowBackground(Color.clear)
+            }
             ForEach(groupsSorted, id: \.key) { id, group in
                 ConversationGroupRow(group: group)
                     .listRowBackground(Color.backdrop.brightness(model.selectedGroup == group.id && isTapping ? 0.3: 0))
@@ -64,8 +69,8 @@ struct ConversationsView: View {
                         }
                     }
                     .overlay(alignment: .trailing) {
-                        if let unseenCount = group.unseenCount, unseenCount > 0 {
-                            Button("\(unseenCount)") {
+                        if group.unseenCount > 0 {
+                            Button("\(group.unseenCount)") {
                                 model.selectedGroup = group.id
                                 DatabaseManager.shared.acceptPendingInvitation(group.id) { _ in }
                             }
@@ -117,6 +122,7 @@ struct ConversationsView: View {
         }
         .listStyle(.plain)
         .background(
+            
             LinearGradient(colors: [
                 Color(.sRGB,
                       red: Double(20) / 255,
@@ -128,7 +134,7 @@ struct ConversationsView: View {
                       green: Double(10) / 255,
                       blue: Double(10) / 255,
                       opacity: 1)
-                
+
             ], startPoint: .topLeading, endPoint: .center)
             .ignoresSafeArea(.all, edges: .all)
         )

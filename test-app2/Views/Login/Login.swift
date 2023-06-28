@@ -34,7 +34,7 @@ struct Login: View {
             .edgesIgnoringSafeArea(.all)
             
             if model.signInStatus == .signedOut {
-                 UserWebAnimationLoginView()
+                //  UserWebAnimationLoginView()
             }
             if model.signInStatus != .notDetermined {
                 VStack {

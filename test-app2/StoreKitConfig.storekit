@@ -1,0 +1,35 @@
+{
+  "identifier" : "F04B3720",
+  "nonRenewingSubscriptions" : [
+
+  ],
+  "products" : [
+    {
+      "displayPrice" : "0.0",
+      "familyShareable" : false,
+      "internalID" : "6450706671",
+      "localizations" : [
+        {
+          "description" : "Get more songs, an AI bio, and user search.",
+          "displayName" : "Premium Features Pack",
+          "locale" : "en_US"
+        }
+      ],
+      "productID" : "premium.feature",
+      "referenceName" : "PremiumFeatures",
+      "type" : "NonConsumable"
+    }
+  ],
+  "settings" : {
+    "_applicationInternalID" : "6444295508",
+    "_developerTeamID" : "RB594D2V3K",
+    "_lastSynchronizedDate" : 709560962.01284099
+  },
+  "subscriptionGroups" : [
+
+  ],
+  "version" : {
+    "major" : 2,
+    "minor" : 0
+  }
+}

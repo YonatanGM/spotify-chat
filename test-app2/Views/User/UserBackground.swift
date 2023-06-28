@@ -11,7 +11,7 @@ import UIImageColors
 
 struct UserBackground: View {
     
-    @StateObject var cover = CoverGenerator((3, Int(UIScreen.main.bounds.width / 50)))
+    @StateObject var cover = CoverGenerator((3, Int(UIScreen.main.bounds.width / 46.7)))
     let urls: [String]
     var body: some View {
     

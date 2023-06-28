@@ -10,7 +10,6 @@
 		4604EF9C28571E9D000DF914 /* TopArtistsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4604EF9B28571E9D000DF914 /* TopArtistsView.swift */; };
 		4604EFA02857216F000DF914 /* TopTracksView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4604EF9F2857216F000DF914 /* TopTracksView.swift */; };
 		461DCBCF2823439E009E2F7F /* UserProfileResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 461DCBCE2823439E009E2F7F /* UserProfileResponse.swift */; };
-		463FEF2C281D60F2005155EE /* JGProgressHUD-SwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = 463FEF2B281D60F2005155EE /* JGProgressHUD-SwiftUI */; };
 		46476EAB28099A8600C5B880 /* AuthResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46476EAA28099A8600C5B880 /* AuthResponse.swift */; };
 		4685CEC0285106CC00EE5376 /* SwiftyChatView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4685CEBF285106CC00EE5376 /* SwiftyChatView.swift */; };
 		46EAE403280961AE0061C9BB /* ExternalAccessory.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 46EAE402280961AE0061C9BB /* ExternalAccessory.framework */; };
@@ -42,6 +41,7 @@
 		9F4C292F2A454A75002120AA /* FirebaseDatabase in Frameworks */ = {isa = PBXBuildFile; productRef = 9F4C292E2A454A75002120AA /* FirebaseDatabase */; };
 		9F4C29312A454A75002120AA /* FirebaseFunctions in Frameworks */ = {isa = PBXBuildFile; productRef = 9F4C29302A454A75002120AA /* FirebaseFunctions */; };
 		9F4C29332A454A75002120AA /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 9F4C29322A454A75002120AA /* FirebaseStorage */; };
+		9F4C29352A4907F8002120AA /* UpgradeButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F4C29342A4907F7002120AA /* UpgradeButton.swift */; };
 		9F60625E28F0963800320BF9 /* UserBubbles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F60625D28F0963800320BF9 /* UserBubbles.swift */; };
 		9F60629728F1190D00320BF9 /* ArtistCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F60629628F1190C00320BF9 /* ArtistCard.swift */; };
 		9F60629C28F317F500320BF9 /* TrackMetadata.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F60629B28F317F500320BF9 /* TrackMetadata.swift */; };
@@ -57,6 +57,7 @@
 		9F6CA8E3290CD53C00EAD0A8 /* ActivityViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F6CA8E2290CD53B00EAD0A8 /* ActivityViewController.swift */; };
 		9F6CA8FF290E90AC00EAD0A8 /* UserWebAnimationLogin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F6CA8FE290E90AB00EAD0A8 /* UserWebAnimationLogin.swift */; };
 		9F6CA902290FFA4600EAD0A8 /* PrivacyAndTerms.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F6CA901290FFA4600EAD0A8 /* PrivacyAndTerms.swift */; };
+		9F894E252A4C200D0081F34B /* SparklesIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F894E242A4C200C0081F34B /* SparklesIcon.swift */; };
 		9F8D7B022A41D0810009A9E4 /* OpenAISwift in Frameworks */ = {isa = PBXBuildFile; productRef = 9F8D7B012A41D0810009A9E4 /* OpenAISwift */; };
 		9F8D7B0B2A42B3D40009A9E4 /* DatabaseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F8D7B072A42B3D40009A9E4 /* DatabaseManager.swift */; };
 		9F8D7B0D2A42B42A0009A9E4 /* utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F8D7B0C2A42B42A0009A9E4 /* utils.swift */; };
@@ -119,6 +120,7 @@
 		9F2282EC28D6E4EC0050929E /* UserPicInitials.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserPicInitials.swift; sourceTree = "<group>"; };
 		9F3EE8172913E39E00998284 /* UserBackground.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserBackground.swift; sourceTree = "<group>"; };
 		9F4C29262A453C02002120AA /* StorageManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorageManager.swift; sourceTree = "<group>"; };
+		9F4C29342A4907F7002120AA /* UpgradeButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpgradeButton.swift; sourceTree = "<group>"; };
 		9F60625D28F0963800320BF9 /* UserBubbles.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserBubbles.swift; sourceTree = "<group>"; };
 		9F60629628F1190C00320BF9 /* ArtistCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArtistCard.swift; sourceTree = "<group>"; };
 		9F60629B28F317F500320BF9 /* TrackMetadata.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackMetadata.swift; sourceTree = "<group>"; };
@@ -136,6 +138,8 @@
 		9F6CA8E2290CD53B00EAD0A8 /* ActivityViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityViewController.swift; sourceTree = "<group>"; };
 		9F6CA8FE290E90AB00EAD0A8 /* UserWebAnimationLogin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserWebAnimationLogin.swift; sourceTree = "<group>"; };
 		9F6CA901290FFA4600EAD0A8 /* PrivacyAndTerms.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrivacyAndTerms.swift; sourceTree = "<group>"; };
+		9F894E212A4B0A7E0081F34B /* StoreKitConfig.storekit */ = {isa = PBXFileReference; lastKnownFileType = text; path = StoreKitConfig.storekit; sourceTree = "<group>"; };
+		9F894E242A4C200C0081F34B /* SparklesIcon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SparklesIcon.swift; sourceTree = "<group>"; };
 		9F8D7B002A41CE7D0009A9E4 /* OpenAISwift */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = OpenAISwift; path = ../../../../Downloads/OpenAISwift; sourceTree = "<group>"; };
 		9F8D7B072A42B3D40009A9E4 /* DatabaseManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DatabaseManager.swift; sourceTree = "<group>"; };
 		9F8D7B0C2A42B42A0009A9E4 /* utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = utils.swift; sourceTree = "<group>"; };
@@ -182,7 +186,6 @@
 				9F3EE81E29140B4900998284 /* UIImageColors in Frameworks */,
 				46EAE403280961AE0061C9BB /* ExternalAccessory.framework in Frameworks */,
 				9F4C29312A454A75002120AA /* FirebaseFunctions in Frameworks */,
-				463FEF2C281D60F2005155EE /* JGProgressHUD-SwiftUI in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -276,6 +279,7 @@
 				46EAE400280961AE0061C9BB /* test-app2.entitlements */,
 				46EAE3FF2809619D0061C9BB /* Info.plist */,
 				9FF4385129050A5D005FBFD0 /* GoogleService-Info.plist */,
+				9F894E212A4B0A7E0081F34B /* StoreKitConfig.storekit */,
 				46F8B3DC284DF93B00EBCD9C /* Resources */,
 				9F6062BA28F4BCA700320BF9 /* Fonts */,
 				46F5CA692808C23E00D58C41 /* test_app2App.swift */,
@@ -330,6 +334,8 @@
 				9F61C85B28EC4B7400877B91 /* SignOut.swift */,
 				9F61C85D28EC4B8600877B91 /* DeleteAccount.swift */,
 				9F61C85F28EC726600877B91 /* DM.swift */,
+				9F4C29342A4907F7002120AA /* UpgradeButton.swift */,
+				9F894E242A4C200C0081F34B /* SparklesIcon.swift */,
 			);
 			path = Buttons;
 			sourceTree = "<group>";
@@ -456,7 +462,6 @@
 			name = "test-app2";
 			packageProductDependencies = (
 				46F0CC3D280D993000BF1B4B /* SDWebImageSwiftUI */,
-				463FEF2B281D60F2005155EE /* JGProgressHUD-SwiftUI */,
 				9FA7F86B28E5E2E7004F6A66 /* SwiftyChat */,
 				9F99829528FB00ED004F2559 /* Promises */,
 				9F48D64C28FB4A6C006F4A55 /* BetterSafariView */,
@@ -578,6 +583,7 @@
 				4604EF9C28571E9D000DF914 /* TopArtistsView.swift in Sources */,
 				9F61C85C28EC4B7500877B91 /* SignOut.swift in Sources */,
 				9FCB86AE28C8D0F600A96A50 /* TrackCard.swift in Sources */,
+				9F4C29352A4907F8002120AA /* UpgradeButton.swift in Sources */,
 				9FD44B9828CB683D0028A408 /* ChatButton.swift in Sources */,
 				9F22828E28D3CE5A0050929E /* GenresAnimatedIcon.swift in Sources */,
 				9F61C85628EBF5B200877B91 /* CurrentUserSettings.swift in Sources */,
@@ -594,6 +600,7 @@
 				9F8D7B1D2A4524130009A9E4 /* AuthManager.swift in Sources */,
 				9F60625E28F0963800320BF9 /* UserBubbles.swift in Sources */,
 				46F0CC42280DCAE300BF1B4B /* ArtistsResponse.swift in Sources */,
+				9F894E252A4C200D0081F34B /* SparklesIcon.swift in Sources */,
 				9F8D7B0B2A42B3D40009A9E4 /* DatabaseManager.swift in Sources */,
 				46FDC2D728268418002EB494 /* AppStateModel.swift in Sources */,
 				9F1747BE28CF3C970054AE20 /* ArtistAnimatedIcon.swift in Sources */,
@@ -739,7 +746,7 @@
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = UIInterfaceOrientationPortrait;
-				IPHONEOS_DEPLOYMENT_TARGET = 15.5;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.4;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -774,7 +781,7 @@
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = UIInterfaceOrientationPortrait;
-				IPHONEOS_DEPLOYMENT_TARGET = 15.5;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.4;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -871,11 +878,6 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		463FEF2B281D60F2005155EE /* JGProgressHUD-SwiftUI */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 463FEF2A281D60F2005155EE /* XCRemoteSwiftPackageReference "JGProgressHUD-SwiftUI" */;
-			productName = "JGProgressHUD-SwiftUI";
-		};
 		46F0CC3D280D993000BF1B4B /* SDWebImageSwiftUI */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 46F0CC3C280D993000BF1B4B /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */;

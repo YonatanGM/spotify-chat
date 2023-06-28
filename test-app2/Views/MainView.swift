@@ -11,37 +11,71 @@ import FirebaseAuth
 struct MainView: View {
     
     @EnvironmentObject var model: AppStateModel
-   
+    
     var body: some View {
-                
-        NavigationView {
-            if model.signInStatus == .signedOut || model.signInStatus == .signingIn || model.finishedLoadingOfSuggestedUsers == false {
-                Login()
-            } else if model.signInStatus == .signedIn {
-                Home()
-                    .navigationTitle("⁢⁢\u{17B5} \u{17B4} \u{115F}")
-                    .onAppear {
-                        // DatabaseManager.shared.migrateDB()
-                        // DatabaseManager.shared.migrateProfilePicsToStorage()
-                    }
-            } else {
-                LinearGradient(colors: [
-                    Color(.sRGB,
-                          red: Double(20) / 255,
-                          green: Double(20) / 255,
-                          blue: Double(20) / 255,
-                          opacity: 0.6),
-                    Color(.sRGB,
-                          red: Double(10) / 255,
-                          green: Double(10) / 255,
-                          blue: Double(10) / 255,
-                          opacity: 1)
-                    
-                ], startPoint: .topLeading, endPoint: .center)
-                .edgesIgnoringSafeArea(.all)
+        if #available(iOS 16.0, *) {
+            NavigationStack {
+                if model.signInStatus == .signedOut || model.signInStatus == .signingIn || model.finishedLoadingOfSuggestedUsers == false {
+                    Login()
+                } else if model.signInStatus == .signedIn {
+                    Home()
+                        .navigationTitle("⁢⁢\u{17B5} \u{17B4} \u{115F}")
+                        .onAppear {
+                            // DatabaseManager.shared.migrateDB()
+                            // DatabaseManager.shared.migrateProfilePicsToStorage()
+                        }
+                } else {
+                    LinearGradient(colors: [
+                        Color(.sRGB,
+                              red: Double(20) / 255,
+                              green: Double(20) / 255,
+                              blue: Double(20) / 255,
+                              opacity: 0.6),
+                        Color(.sRGB,
+                              red: Double(10) / 255,
+                              green: Double(10) / 255,
+                              blue: Double(10) / 255,
+                              opacity: 1)
+                        
+                    ], startPoint: .topLeading, endPoint: .center)
+                    .edgesIgnoringSafeArea(.all)
+                }
             }
+            .navigationViewStyle(.stack)
+            .tint(.white)
+        } else {
+            NavigationView {
+                if model.signInStatus == .signedOut || model.signInStatus == .signingIn || model.finishedLoadingOfSuggestedUsers == false {
+                    Login()
+                } else if model.signInStatus == .signedIn {
+                    Home()
+                        .navigationTitle("⁢⁢\u{17B5} \u{17B4} \u{115F}")
+                        .onAppear {
+                            // DatabaseManager.shared.migrateDB()
+                            // DatabaseManager.shared.migrateProfilePicsToStorage()
+                        }
+                } else {
+                    LinearGradient(colors: [
+                        Color(.sRGB,
+                              red: Double(20) / 255,
+                              green: Double(20) / 255,
+                              blue: Double(20) / 255,
+                              opacity: 0.6),
+                        Color(.sRGB,
+                              red: Double(10) / 255,
+                              green: Double(10) / 255,
+                              blue: Double(10) / 255,
+                              opacity: 1)
+                        
+                    ], startPoint: .topLeading, endPoint: .center)
+                    .edgesIgnoringSafeArea(.all)
+                }
+                
+            }
+            .navigationViewStyle(.stack)
+            
+            
         }
-        .navigationViewStyle(.stack)
     }
 }
 

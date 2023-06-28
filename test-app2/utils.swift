@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import GameKit
 
 func generateDescription(topTrackResponse: TracksResponse?, topArtistsReponse: ArtistsResponse?, topRecentTracksResponse: TracksResponse? = nil) -> String {
     var description = "Likes:"
@@ -90,3 +91,24 @@ func generateDescription(topTrackResponse: TracksResponse?, topArtistsReponse: A
     
     return description
 }
+
+
+struct SeededGenerator: RandomNumberGenerator {
+    static var shared: SeededGenerator?
+
+    let seed: UInt64
+    let generator: GKMersenneTwisterRandomSource
+
+    init(seed: UInt64) {
+        self.seed = seed
+        generator = GKMersenneTwisterRandomSource(seed: seed)
+    }
+
+    // New alternative found to be working
+    mutating func next() -> UInt64 {
+        let next1 = UInt64(bitPattern: Int64(generator.nextInt()))
+        let next2 = UInt64(bitPattern: Int64(generator.nextInt()))
+        return next1 | (next2 << 32)
+    }
+}
+
