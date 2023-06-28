@@ -149,7 +149,7 @@ extension DatabaseManager {
                                     "users/\(profile.id)/email": profile.email,
                                     "users/\(profile.id)/country": profile.country,
                                     "users/\(profile.id)/filter_enabled": profile.explicit_content["filter_enabled"],
-                                    "users/\(profile.id)/profile_picture_stable": downloadUrl?.absoluteString,
+                                    "users/\(profile.id)/profile_picture_stable": downloadUrl?.absoluteString ?? "",
                                     "users/\(profile.id)/top_artists": topArtists,
                                     "users/\(profile.id)/top_tracks": topTracks,
                                     "users/\(profile.id)/top_recent_tracks": topRecentTracks,
@@ -314,7 +314,7 @@ extension DatabaseManager {
                 if profile.images.first?.url != AuthManager.shared.currentUser?.photoURL?.absoluteString {
                     // store new photo in firebase storage and get the download url
                     StorageManager.shared.uploadProfileImage(for: profile.id, url: profile.images.first?.url) { downloadUrl in
-                        self?.databaseref.child("users/\(profile.id)/profile_picture_stable").setValue(downloadUrl?.absoluteString) { error, _ in
+                        self?.databaseref.child("users/\(profile.id)/profile_picture_stable").setValue(downloadUrl?.absoluteString ?? "") { error, _ in
                             if error == nil  {
                                 if let url = profile.images.first?.url {
                                     let changeRequest = AuthManager.shared.currentUser?.createProfileChangeRequest()
@@ -545,6 +545,7 @@ extension DatabaseManager {
     
     public func observeUser(with id: String, completion: @escaping (String, Any?) -> Void) {
         databaseref.child("users/\(id)").observe(.childChanged) { snapshot in
+            print(snapshot.key)
             completion(snapshot.key, snapshot.value)
         }
     }
@@ -1532,9 +1533,9 @@ extension DatabaseManager {
 // MARK: - track recommendations
 extension DatabaseManager {
     // for a user that's already been signed in, could be new or existing user
-    public func updateTrackRecommendationsIfNeeded(for user: Message.ChatUserItem) {
+    public func updateRecommendationsWeekly(for user: Message.ChatUserItem) {
         // check if the user is new and has no recommendations yet
-        self.databaseref.child("userInfo/\(user.id)/lastRecommendationsUpdate").observeSingleEvent(of: .value) { [weak self] snapshot in
+        self.databaseref.child("track_recommendations/\(user.id)/next_refresh_date").observeSingleEvent(of: .value) { [weak self] snapshot in
         
             guard let timeInterval = snapshot.value as? TimeInterval else {
                 // snapshot doesn't exist
@@ -1562,33 +1563,30 @@ extension DatabaseManager {
                             return
                         }
                         
-                        self?.databaseref.updateChildValues(["track_recommendations/\(user.id)/tracks" : recommendations,
-                                                             "userInfo/\(user.id)/lastRecommendationsUpdate" :  ServerValue.timestamp()])
+                        let currentDate = Date()
+                        let calendar = Calendar.current
+                        // Get the next Monday date
+                        if let nextMondayDate = calendar.nextDate(
+                            after: currentDate,
+                            matching: DateComponents(weekday: 2), // 2 is Monday
+                            matchingPolicy: .nextTime
+                        ) {
+                            
+                            self?.databaseref.updateChildValues(["track_recommendations/\(user.id)/tracks" : recommendations,
+                                                                 "track_recommendations/\(user.id)/next_refresh_date" :  nextMondayDate.timeIntervalSince1970])
+                        }
                         
                     case .failure(let error):
                         print("Error getting track recommendations: ", error.localizedDescription)
                     }
-                    
-                    
                 }
                 return
             }
             
-            // user is not new, update the recommendations if a week has elapsed since last refresh date
-            // Create a Date object with the timestamp value divided by 1000.0
-            let lastUpdateDate = Date(timeIntervalSince1970: timeInterval / 1000.0)
-            // Create a Date object with the current date and time
+            let lastMondayDate = Date(timeIntervalSince1970: timeInterval)
             let currentDate = Date()
-            // Get the number of seconds since the Unix epoch for both dates
-            let lastUpdateDateInSeconds = lastUpdateDate.timeIntervalSince1970
-            let currentDateInSeconds = currentDate.timeIntervalSince1970
-            // Get the time interval between the two dates in seconds
-            let timeIntervalInSeconds = currentDateInSeconds - lastUpdateDateInSeconds
-            // Get the time interval in weeks
-            let timeIntervalInWeeks = timeIntervalInSeconds / 60 / 60 / 24 / 7
-            // Check if a week has elapsed since the timestamp
-            if timeIntervalInWeeks >= 1 {
-                // a week has elapsed, update the recommended tracks in the database
+            if currentDate.timeIntervalSince1970 > lastMondayDate.timeIntervalSince1970 {
+                // update the recommended tracks in the database
                 guard let topArtists = user.topArtists?.items.shuffled(),
                       // let topTracks = currentUser.topTracks?.items.shuffled(),
                       let topRecentTracks = user.topRecentTracks?.items.shuffled() else {
@@ -1611,9 +1609,17 @@ extension DatabaseManager {
                               let recommendations = try? JSONSerialization.jsonObject(with: recommendationsData, options: []) as? [String: Any] else {
                             return
                         }
+
+                        let calendar = Calendar.current
+                        // Get the next Monday date
+                        let nextMondayDate = calendar.nextDate(
+                            after: currentDate,
+                            matching: DateComponents(weekday: 2), // 2 is Monday
+                            matchingPolicy: .nextTime
+                        )!
                         
                         self?.databaseref.updateChildValues(["track_recommendations/\(user.id)/tracks" : recommendations,
-                                                             "userInfo/\(user.id)/lastRecommendationsUpdate" :  ServerValue.timestamp()])
+                                                             "track_recommendations/\(user.id)/next_refresh_date" : nextMondayDate.timeIntervalSince1970])
                         
                     case .failure(let error):
                         print("Error getting track recommendations: ", error.localizedDescription)
@@ -1629,18 +1635,18 @@ extension DatabaseManager {
     
     
     // for premium users, need to keep track of the number of refreshes the user makes
-    public func refreshTrackRecommendations(for user: Message.ChatUserItem, completion: @escaping (Bool) -> Void) {
+    public func refreshRecommendations(for user: Message.ChatUserItem, completion: @escaping (Bool, Int) -> Void) {
         
         // fetch from Spotify
         // then store in the database
         // get the refresh count from the database
-        self.databaseref.child("userInfo/\(user.id)/recommendations_refresh_counter").observeSingleEvent(of: .value) { [weak self] snapshot in
+        self.databaseref.child("counters/\(user.id)/recommendations_refresh_counter").observeSingleEvent(of: .value) { [weak self] snapshot in
             let counter = snapshot.value as? Int ?? 0
             
             guard let topArtists = user.topArtists?.items.shuffled(),
                   // let topTracks = currentUser.topTracks?.items.shuffled(),
                   let topRecentTracks = user.topRecentTracks?.items.shuffled() else {
-                completion(false)
+                completion(false, counter)
                 return
             }
             let topArtistsSeed = topArtists.prefix(2).map({ $0.id })
@@ -1658,29 +1664,25 @@ extension DatabaseManager {
                 case .success(let recommendationsResponse):
                     guard let recommendationsData = try? JSONEncoder().encode(recommendationsResponse),
                           let recommendations = try? JSONSerialization.jsonObject(with: recommendationsData, options: []) as? [String: Any] else {
-                        completion(false)
+                        completion(false, counter)
                         return
                     }
 
                     self?.databaseref.updateChildValues(["track_recommendations/\(user.id)/tracks" : recommendations,
                                                          "counters/\(user.id)/recommendations_refresh_counter" :  counter + 1]) { error, _ in
                         guard error == nil else {
-                            completion(false)
+                            completion(false, counter)
                             return
                         }
-                        completion(true)
+                        completion(true, counter + 1)
                     }
                     
                 case .failure(let error):
                     print("Error getting track recommendations: ", error.localizedDescription)
-                    completion(false)
+                    completion(false, counter)
                 }
                 
-                
             }
-            
-        } withCancel: { error in
-            completion(false)
         }
     }
 }

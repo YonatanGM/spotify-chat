@@ -42,25 +42,25 @@ struct SparklesIcon: View {
                     hueAngle = Angle(degrees: Double.random(in: 0...360))
                 }
                 
-                model.getTrackRecommendations { result in
-                    if let recommendations = result {
-                        DispatchQueue.main.async {
-                            model.recommendedTracks = recommendations
-                            
-                            // UI animation
-                            withAnimation {
-                                isTapping = false
-                                foregroundColor = Color.white
-                                hueAngle = .zero
-                            }
-                            
-                            // pause the player
-                            model.removePlayer()
-                        }
-                    }
-
-                    
-                }
+//                model.getTrackRecommendations { result in
+//                    if let recommendations = result {
+//                        DispatchQueue.main.async {
+//                            model.recommendedTracks = recommendations
+//                            
+//                            // UI animation
+//                            withAnimation {
+//                                isTapping = false
+//                                foregroundColor = Color.white
+//                                hueAngle = .zero
+//                            }
+//                            
+//                            // pause the player
+//                            model.removePlayer()
+//                        }
+//                    }
+//
+//                    
+//                }
 
             }
         

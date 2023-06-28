@@ -180,13 +180,13 @@ extension AppStateModel {
                 self?.fetchSimilarUsers()
                 
                 // refresh track recommendations
-                self?.getTrackRecommendations() { recommendations in
-                    DispatchQueue.main.async {
-                        if let recommendations = recommendations {
-                            self?.recommendedTracks = recommendations
-                        }
-                    }
-                }
+//                self?.getTrackRecommendations() { recommendations in
+//                    DispatchQueue.main.async {
+//                        if let recommendations = recommendations {
+//                            self?.recommendedTracks = recommendations
+//                        }
+//                    }
+//                }
                 
                 self?.fetchUserUpdates()
             case .failure(_):
@@ -535,46 +535,46 @@ extension AppStateModel {
 //MARK: - Track recommendation
 extension AppStateModel {
     // need a seed for the suffling
-    public func getTrackRecommendations(seed: UInt64 = 0, completion: @escaping ([Track]?) -> Void) {
-        guard let currentUser = self.currentUser,
-              var topArtists = currentUser.topArtists?.items,
-              // let topTracks = currentUser.topTracks?.items.shuffled(),
-              var topRecentTracks = currentUser.topRecentTracks?.items else {
-            completion([])
-            return
-        }
+//    public func getTrackRecommendations(seed: UInt64 = 0, completion: @escaping ([Track]?) -> Void) {
+//        guard let currentUser = self.currentUser,
+//              var topArtists = currentUser.topArtists?.items,
+//              // let topTracks = currentUser.topTracks?.items.shuffled(),
+//              var topRecentTracks = currentUser.topRecentTracks?.items else {
+//            completion([])
+//            return
+//        }
+////
+////        var generator = SeededGenerator(seed: seed)
+////        topArtists.shuffle(using: &generator)
+////        topRecentTracks.shuffle(using: &generator)
+////
 //
-//        var generator = SeededGenerator(seed: seed)
-//        topArtists.shuffle(using: &generator)
-//        topRecentTracks.shuffle(using: &generator)
 //
-        
-     
-        let topArtistsSeed = topArtists.prefix(2).map({ $0.id })
-        let topRecentTracksSeed = topRecentTracks.prefix(2).map({ $0.id })
-        // let topTracksSeed = currentUser.topTracks?.items.shuffled().prefix(1).map({ $0.name })
-        // let topGenresSeed = currentUser.topGenres?.shuffled().prefix(5).map({ $0 })
-        let topGenresSeed = topArtists.prefix(1).compactMap { $0.genres?.first }
-        
-        print(topArtistsSeed, topGenresSeed, topRecentTracksSeed)
-       
-        APICaller.shared.getRecommendations(seedArtists: topArtistsSeed,
-                                            seedGenres: topGenresSeed,
-                                            seedTracks: topRecentTracksSeed,
-                                            limit: 10) { result in
-            switch result {
-            case .success(let recommendations):
-                print(recommendations.map { $0.name })
-                completion(recommendations)
-                return
-            case .failure(let error):
-                completion(nil)
-                print("Error getting track recommendations: ", error.localizedDescription)
-            }
-            
-        }
-        
-    }
+//        let topArtistsSeed = topArtists.prefix(2).map({ $0.id })
+//        let topRecentTracksSeed = topRecentTracks.prefix(2).map({ $0.id })
+//        // let topTracksSeed = currentUser.topTracks?.items.shuffled().prefix(1).map({ $0.name })
+//        // let topGenresSeed = currentUser.topGenres?.shuffled().prefix(5).map({ $0 })
+//        let topGenresSeed = topArtists.prefix(1).compactMap { $0.genres?.first }
+//
+//        print(topArtistsSeed, topGenresSeed, topRecentTracksSeed)
+//
+//        APICaller.shared.getRecommendations(seedArtists: topArtistsSeed,
+//                                            seedGenres: topGenresSeed,
+//                                            seedTracks: topRecentTracksSeed,
+//                                            limit: 10) { result in
+//            switch result {
+//            case .success(let recommendations):
+//                print(recommendations.map { $0.name })
+//                completion(recommendations)
+//                return
+//            case .failure(let error):
+//                completion(nil)
+//                print("Error getting track recommendations: ", error.localizedDescription)
+//            }
+//
+//        }
+//
+//    }
     
 }
 
