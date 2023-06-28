@@ -372,7 +372,7 @@ final class APICaller {
                                    seedGenres: [String],
                                    seedTracks: [String],
                                    limit: Int,
-                                   completion: @escaping (Result<[Track], Error>) -> Void) {
+                                   completion: @escaping (Result<RecommendationsResponse, Error>) -> Void) {
         
         let urlString = Constants.baseAPIURL + "/recommendations?limit=\(limit)&seed_artists=\(seedArtists.joined(separator: ","))&seed_genres=\(seedGenres.joined(separator: ","))&seed_tracks=\(seedTracks.joined(separator: ","))"
         let encodedString = urlString.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
@@ -395,7 +395,7 @@ final class APICaller {
                 }
                 do {
                     let result = try JSONDecoder().decode(RecommendationsResponse.self, from: data)
-                    completion(.success(result.tracks))
+                    completion(.success(result))
                 } catch {
                     print(error.localizedDescription)
                     completion(.failure(error))

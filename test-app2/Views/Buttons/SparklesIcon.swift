@@ -33,9 +33,10 @@ struct SparklesIcon: View {
             .brightness(isTapping ? 0.1 : 0)
          
             .onTapGesture {
-                // Change the foreground color to green
+                // do not allow tapping if isTapping is true 
+                guard isTapping == false else { return }
                 foregroundColor = Color.green
-                withAnimation(.spring(response: 0.2)) {
+                withAnimation(.spring(response: 0.5)) {
                     isTapping = true
                     // Change the hue angle to a random value
                     hueAngle = Angle(degrees: Double.random(in: 0...360))
@@ -52,6 +53,9 @@ struct SparklesIcon: View {
                                 foregroundColor = Color.white
                                 hueAngle = .zero
                             }
+                            
+                            // pause the player
+                            model.removePlayer()
                         }
                     }
 

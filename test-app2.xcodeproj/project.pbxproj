@@ -61,7 +61,6 @@
 		9F8D7B022A41D0810009A9E4 /* OpenAISwift in Frameworks */ = {isa = PBXBuildFile; productRef = 9F8D7B012A41D0810009A9E4 /* OpenAISwift */; };
 		9F8D7B0B2A42B3D40009A9E4 /* DatabaseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F8D7B072A42B3D40009A9E4 /* DatabaseManager.swift */; };
 		9F8D7B0D2A42B42A0009A9E4 /* utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F8D7B0C2A42B42A0009A9E4 /* utils.swift */; };
-		9F8D7B0F2A4478CE0009A9E4 /* RecommendedTracksView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F8D7B0E2A4478CE0009A9E4 /* RecommendedTracksView.swift */; };
 		9F8D7B112A448F220009A9E4 /* RecommendationsResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F8D7B102A448F220009A9E4 /* RecommendationsResponse.swift */; };
 		9F8D7B192A4523ED0009A9E4 /* OpenAIManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F8D7B182A4523EC0009A9E4 /* OpenAIManager.swift */; };
 		9F8D7B1B2A4524060009A9E4 /* PineconeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F8D7B1A2A4524060009A9E4 /* PineconeManager.swift */; };
@@ -143,7 +142,6 @@
 		9F8D7B002A41CE7D0009A9E4 /* OpenAISwift */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = OpenAISwift; path = ../../../../Downloads/OpenAISwift; sourceTree = "<group>"; };
 		9F8D7B072A42B3D40009A9E4 /* DatabaseManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DatabaseManager.swift; sourceTree = "<group>"; };
 		9F8D7B0C2A42B42A0009A9E4 /* utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = utils.swift; sourceTree = "<group>"; };
-		9F8D7B0E2A4478CE0009A9E4 /* RecommendedTracksView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecommendedTracksView.swift; sourceTree = "<group>"; };
 		9F8D7B102A448F220009A9E4 /* RecommendationsResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecommendationsResponse.swift; sourceTree = "<group>"; };
 		9F8D7B182A4523EC0009A9E4 /* OpenAIManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenAIManager.swift; sourceTree = "<group>"; };
 		9F8D7B1A2A4524060009A9E4 /* PineconeManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PineconeManager.swift; sourceTree = "<group>"; };
@@ -200,7 +198,6 @@
 				9FD44B9528CB3E170028A408 /* SuggestedUsersView.swift */,
 				4604EF9B28571E9D000DF914 /* TopArtistsView.swift */,
 				4604EF9F2857216F000DF914 /* TopTracksView.swift */,
-				9F8D7B0E2A4478CE0009A9E4 /* RecommendedTracksView.swift */,
 				9F9C419528CF6BE4009CA948 /* Search.swift */,
 				9F22828D28D3CE5A0050929E /* GenresAnimatedIcon.swift */,
 				9FD44B9B28CB7B9A0028A408 /* Bar.swift */,
@@ -566,7 +563,6 @@
 				46F8B3DB284C3BA800EBCD9C /* Message.swift in Sources */,
 				9FD44B9628CB3E170028A408 /* SuggestedUsersView.swift in Sources */,
 				9F60629C28F317F500320BF9 /* TrackMetadata.swift in Sources */,
-				9F8D7B0F2A4478CE0009A9E4 /* RecommendedTracksView.swift in Sources */,
 				9F9C419628CF6BE4009CA948 /* Search.swift in Sources */,
 				9F6CA8E3290CD53C00EAD0A8 /* ActivityViewController.swift in Sources */,
 				9F2282ED28D6E4EC0050929E /* UserPicInitials.swift in Sources */,

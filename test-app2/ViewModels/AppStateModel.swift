@@ -543,7 +543,7 @@ extension AppStateModel {
             completion([])
             return
         }
-
+//
 //        var generator = SeededGenerator(seed: seed)
 //        topArtists.shuffle(using: &generator)
 //        topRecentTracks.shuffle(using: &generator)
@@ -554,8 +554,9 @@ extension AppStateModel {
         let topRecentTracksSeed = topRecentTracks.prefix(2).map({ $0.id })
         // let topTracksSeed = currentUser.topTracks?.items.shuffled().prefix(1).map({ $0.name })
         // let topGenresSeed = currentUser.topGenres?.shuffled().prefix(5).map({ $0 })
-        let topGenresSeed = topArtists.prefix(1).compactMap { $0.genres }.reduce([]) { return Set($0).union(Set($1)) }.prefix(1).map { $0 }
+        let topGenresSeed = topArtists.prefix(1).compactMap { $0.genres?.first }
         
+        print(topArtistsSeed, topGenresSeed, topRecentTracksSeed)
        
         APICaller.shared.getRecommendations(seedArtists: topArtistsSeed,
                                             seedGenres: topGenresSeed,
