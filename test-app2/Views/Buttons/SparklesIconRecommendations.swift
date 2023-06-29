@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct SparklesIcon: View {
+struct SparklesIconRecommendations: View {
     @EnvironmentObject var model: AppStateModel
     // A state variable that stores the foreground color
     @State var foregroundColor = Color.white
@@ -22,7 +22,7 @@ struct SparklesIcon: View {
         Image(systemName: "sparkles")
             .resizable()
             .aspectRatio(contentMode: .fit)
-            .frame(width: 35, height: 35)
+            .frame(width: 35)
             .foregroundColor(foregroundColor)
             // Apply a hue rotation effect based on the state variable
             .hueRotation(hueAngle)
@@ -33,7 +33,7 @@ struct SparklesIcon: View {
             .brightness(isTapping ? 0.1 : 0)
          
             .onTapGesture {
-                // do not allow tapping if isTapping is true 
+                // do not allow tapping if isTapping is true
                 guard isTapping == false else { return }
                 foregroundColor = Color.green
                 withAnimation(.spring(response: 0.5)) {
@@ -41,26 +41,25 @@ struct SparklesIcon: View {
                     // Change the hue angle to a random value
                     hueAngle = Angle(degrees: Double.random(in: 0...360))
                 }
-                
-//                model.getTrackRecommendations { result in
-//                    if let recommendations = result {
-//                        DispatchQueue.main.async {
-//                            model.recommendedTracks = recommendations
-//                            
-//                            // UI animation
-//                            withAnimation {
-//                                isTapping = false
-//                                foregroundColor = Color.white
-//                                hueAngle = .zero
-//                            }
-//                            
-//                            // pause the player
-//                            model.removePlayer()
-//                        }
-//                    }
-//
-//                    
-//                }
+                if let user = model.currentUser {
+                    DatabaseManager.shared.refreshRecommendations(for: user) { didRefresh, count in
+                        print("refresh \(didRefresh) count \(count)")
+                        DispatchQueue.main.async {
+                            // UI animation
+                            withAnimation {
+                                isTapping = false
+                                foregroundColor = Color.white
+                                hueAngle = .zero
+                            }
+
+                            // pause the player if new tracks got loaded
+                            if didRefresh {
+                                model.removePlayer()
+                            }
+                        }
+                        
+                    }
+                }
 
             }
         

@@ -1510,6 +1510,7 @@ extension DatabaseManager {
     }
 }
 
+// MARK: - premium features
 extension DatabaseManager {
     
     public func upgradeUser(with id: String, appAccountToken: String, completion: (() -> Void)? = nil) {
@@ -1525,7 +1526,12 @@ extension DatabaseManager {
         self.databaseref.child("users/\(id)/appAccountToken").observeSingleEvent(of: .value) { snapshot in
             completion(snapshot.value as? String)
         }
-        
+    }
+    
+    public func observeAppAccountToken(for id: String, completion: @escaping (String?) -> Void) {
+        self.databaseref.child("users/\(id)/appAccountToken").observe(.value) { snapshot in
+            completion(snapshot.value as? String)
+        }
     }
     
 }
@@ -1551,7 +1557,6 @@ extension DatabaseManager {
                 // let topGenresSeed = currentUser.topGenres?.shuffled().prefix(5).map({ $0 })
                 let topGenresSeed = topArtists.prefix(1).compactMap { $0.genres?.first }
                 
-                print(topArtistsSeed, topGenresSeed, topRecentTracksSeed)
                 APICaller.shared.getRecommendations(seedArtists: topArtistsSeed,
                                                     seedGenres: topGenresSeed,
                                                     seedTracks: topRecentTracksSeed,
@@ -1574,6 +1579,7 @@ extension DatabaseManager {
                             
                             self?.databaseref.updateChildValues(["track_recommendations/\(user.id)/tracks" : recommendations,
                                                                  "track_recommendations/\(user.id)/next_refresh_date" :  nextMondayDate.timeIntervalSince1970])
+                            print("saved track recommendations, user is new")
                         }
                         
                     case .failure(let error):
@@ -1620,6 +1626,7 @@ extension DatabaseManager {
                         
                         self?.databaseref.updateChildValues(["track_recommendations/\(user.id)/tracks" : recommendations,
                                                              "track_recommendations/\(user.id)/next_refresh_date" : nextMondayDate.timeIntervalSince1970])
+                        print("updated track recommendations")
                         
                     case .failure(let error):
                         print("Error getting track recommendations: ", error.localizedDescription)
@@ -1635,7 +1642,7 @@ extension DatabaseManager {
     
     
     // for premium users, need to keep track of the number of refreshes the user makes
-    public func refreshRecommendations(for user: Message.ChatUserItem, completion: @escaping (Bool, Int) -> Void) {
+    public func refreshRecommendations(for user: Message.ChatUserItem, limit: Int = 10, completion: @escaping (Bool, Int) -> Void) {
         
         // fetch from Spotify
         // then store in the database
@@ -1646,6 +1653,10 @@ extension DatabaseManager {
             guard let topArtists = user.topArtists?.items.shuffled(),
                   // let topTracks = currentUser.topTracks?.items.shuffled(),
                   let topRecentTracks = user.topRecentTracks?.items.shuffled() else {
+                completion(false, counter)
+                return
+            }
+            guard counter < limit else {
                 completion(false, counter)
                 return
             }
@@ -1685,26 +1696,48 @@ extension DatabaseManager {
             }
         }
     }
+    
+    public func observeRecommendations(for userID: String, completion: @escaping ([Track]?) -> Void) {
+        self.databaseref.child("track_recommendations/\(userID)/tracks").observe(.value) { snapshot in
+            guard let data = snapshot.value,
+                  JSONSerialization.isValidJSONObject(data),
+                  let recommendationsJSON = try? JSONSerialization.data(withJSONObject: data),
+                  let recommendationsResponse = try? JSONDecoder().decode(RecommendationsResponse.self, from: recommendationsJSON) else {
+                completion(nil)
+                return
+            }
+            completion(recommendationsResponse.tracks)
+        }
+    }
+    
+    
 }
 
 
 // MARK: - bio stuff
 extension DatabaseManager {
-    public func setBio(for userID: String, text: String, completion: @escaping (Bool) -> Void) {
-        
-        self.databaseref.child("userInfo/\(userID)/recommendations_refresh_counter").observeSingleEvent(of: .value) { [weak self] snapshot in
-            let counter = snapshot.value as? Int ?? 0
-            
-            // OpenAI stuff to generate the bio
-            
-            
+    public func getBioCounter(for userID: String) async throws -> Int {
+        return try await withCheckedThrowingContinuation { continuation in
+            self.databaseref.child("counters/\(userID)/bio_refresh_counter").observeSingleEvent(of: .value) { snapshot in
+                continuation.resume(returning: snapshot.value as? Int ?? 0)
+            } withCancel: { error in
+                // print(error.localizedDescription)
+                continuation.resume(throwing: error)
+            }
+          
         }
+    }
     
-       
-        
+    public func setBio(for userID: String, text: String, counter: Int) {
+        self.databaseref.updateChildValues(["users/\(userID)/bio": text,
+                                            "counters/\(userID)/bio_refresh_counter": counter])
         
     }
     
-    
-    
+    public func getBio(for userID: String, completion: @escaping (String?) -> Void) {
+        self.databaseref.child("users/\(userID)/bio").observeSingleEvent(of: .value) { snapshot in
+            completion(snapshot.value as? String)
+        }
+        
+    }
 }

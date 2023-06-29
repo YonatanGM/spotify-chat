@@ -47,19 +47,19 @@ struct UserDetail: View {
                     UserBackground(urls: topArtists.items.compactMap { $0.images?.first?.url })
                         .edgesIgnoringSafeArea(.horizontal)
                         .mask(LinearGradient(
-                           gradient: Gradient(stops: [
-                            .init(color: .clear, location: 0),
-                            .init(color: .white, location: 0.5)
-                           ]),
-                           startPoint: .bottom,
-                           endPoint: .top
-                       ))
+                            gradient: Gradient(stops: [
+                                .init(color: .clear, location: 0),
+                                .init(color: .white, location: 0.5)
+                            ]),
+                            startPoint: .bottom,
+                            endPoint: .top
+                        ))
                 }
                 HStack {
                     Spacer()
                     UserIcon(user: .init(id: user.id, name: user.userName, photoURL: user.avatarURL?.absoluteString, genreDisplay: nil))
-                            .frame(width: profilePicHeight)
-
+                        .frame(width: profilePicHeight)
+                    
                     VStack(alignment: .leading) {
                         Spacer()
                         HStack {
@@ -125,10 +125,11 @@ struct UserDetail: View {
             }
             
         }
-
-//        .navigationBarTitle("user.userName\")
-         
+        
+        //        .navigationBarTitle("user.userName\")
+        
         .navigationTitle(user.userName)
+
         
         .onAppear {
             // check if current user follows this user

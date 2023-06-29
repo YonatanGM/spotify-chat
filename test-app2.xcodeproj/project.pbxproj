@@ -57,7 +57,10 @@
 		9F6CA8E3290CD53C00EAD0A8 /* ActivityViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F6CA8E2290CD53B00EAD0A8 /* ActivityViewController.swift */; };
 		9F6CA8FF290E90AC00EAD0A8 /* UserWebAnimationLogin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F6CA8FE290E90AB00EAD0A8 /* UserWebAnimationLogin.swift */; };
 		9F6CA902290FFA4600EAD0A8 /* PrivacyAndTerms.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F6CA901290FFA4600EAD0A8 /* PrivacyAndTerms.swift */; };
-		9F894E252A4C200D0081F34B /* SparklesIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F894E242A4C200C0081F34B /* SparklesIcon.swift */; };
+		9F894E252A4C200D0081F34B /* SparklesIconRecommendations.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F894E242A4C200C0081F34B /* SparklesIconRecommendations.swift */; };
+		9F894E282A4D9F5C0081F34B /* OpenAI in Frameworks */ = {isa = PBXBuildFile; productRef = 9F894E272A4D9F5C0081F34B /* OpenAI */; };
+		9F894E2A2A4DF0270081F34B /* UserBio.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F894E292A4DF0270081F34B /* UserBio.swift */; };
+		9F894E2C2A4DF45D0081F34B /* SparklesIconBio.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F894E2B2A4DF45D0081F34B /* SparklesIconBio.swift */; };
 		9F8D7B022A41D0810009A9E4 /* OpenAISwift in Frameworks */ = {isa = PBXBuildFile; productRef = 9F8D7B012A41D0810009A9E4 /* OpenAISwift */; };
 		9F8D7B0B2A42B3D40009A9E4 /* DatabaseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F8D7B072A42B3D40009A9E4 /* DatabaseManager.swift */; };
 		9F8D7B0D2A42B42A0009A9E4 /* utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F8D7B0C2A42B42A0009A9E4 /* utils.swift */; };
@@ -138,7 +141,9 @@
 		9F6CA8FE290E90AB00EAD0A8 /* UserWebAnimationLogin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserWebAnimationLogin.swift; sourceTree = "<group>"; };
 		9F6CA901290FFA4600EAD0A8 /* PrivacyAndTerms.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrivacyAndTerms.swift; sourceTree = "<group>"; };
 		9F894E212A4B0A7E0081F34B /* StoreKitConfig.storekit */ = {isa = PBXFileReference; lastKnownFileType = text; path = StoreKitConfig.storekit; sourceTree = "<group>"; };
-		9F894E242A4C200C0081F34B /* SparklesIcon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SparklesIcon.swift; sourceTree = "<group>"; };
+		9F894E242A4C200C0081F34B /* SparklesIconRecommendations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SparklesIconRecommendations.swift; sourceTree = "<group>"; };
+		9F894E292A4DF0270081F34B /* UserBio.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserBio.swift; sourceTree = "<group>"; };
+		9F894E2B2A4DF45D0081F34B /* SparklesIconBio.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SparklesIconBio.swift; sourceTree = "<group>"; };
 		9F8D7B002A41CE7D0009A9E4 /* OpenAISwift */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = OpenAISwift; path = ../../../../Downloads/OpenAISwift; sourceTree = "<group>"; };
 		9F8D7B072A42B3D40009A9E4 /* DatabaseManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DatabaseManager.swift; sourceTree = "<group>"; };
 		9F8D7B0C2A42B42A0009A9E4 /* utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = utils.swift; sourceTree = "<group>"; };
@@ -183,6 +188,7 @@
 				46F0CC3E280D993000BF1B4B /* SDWebImageSwiftUI in Frameworks */,
 				9F3EE81E29140B4900998284 /* UIImageColors in Frameworks */,
 				46EAE403280961AE0061C9BB /* ExternalAccessory.framework in Frameworks */,
+				9F894E282A4D9F5C0081F34B /* OpenAI in Frameworks */,
 				9F4C29312A454A75002120AA /* FirebaseFunctions in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -332,7 +338,8 @@
 				9F61C85D28EC4B8600877B91 /* DeleteAccount.swift */,
 				9F61C85F28EC726600877B91 /* DM.swift */,
 				9F4C29342A4907F7002120AA /* UpgradeButton.swift */,
-				9F894E242A4C200C0081F34B /* SparklesIcon.swift */,
+				9F894E242A4C200C0081F34B /* SparklesIconRecommendations.swift */,
+				9F894E2B2A4DF45D0081F34B /* SparklesIconBio.swift */,
 			);
 			path = Buttons;
 			sourceTree = "<group>";
@@ -377,6 +384,7 @@
 				9F3EE8172913E39E00998284 /* UserBackground.swift */,
 				9F2282EC28D6E4EC0050929E /* UserPicInitials.swift */,
 				9F61C86528EDB52800877B91 /* UserIcon.swift */,
+				9F894E292A4DF0270081F34B /* UserBio.swift */,
 			);
 			path = User;
 			sourceTree = "<group>";
@@ -468,6 +476,7 @@
 				9F4C292E2A454A75002120AA /* FirebaseDatabase */,
 				9F4C29302A454A75002120AA /* FirebaseFunctions */,
 				9F4C29322A454A75002120AA /* FirebaseStorage */,
+				9F894E272A4D9F5C0081F34B /* OpenAI */,
 			);
 			productName = "test-app2";
 			productReference = 46F5CA662808C23E00D58C41 /* Chat for Spotify.app */;
@@ -508,6 +517,7 @@
 				9F48D64B28FB4A6C006F4A55 /* XCRemoteSwiftPackageReference "BetterSafariView" */,
 				9F3EE81C29140B4900998284 /* XCRemoteSwiftPackageReference "UIImageColors" */,
 				9F4C292B2A454A75002120AA /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+				9F894E262A4D9F5C0081F34B /* XCRemoteSwiftPackageReference "OpenAI" */,
 			);
 			productRefGroup = 46F5CA672808C23E00D58C41 /* Products */;
 			projectDirPath = "";
@@ -559,6 +569,7 @@
 				9F17479C28CDBAEF0054AE20 /* Group.swift in Sources */,
 				46ED90ED2825250B0064E5BE /* Login.swift in Sources */,
 				9F61C85428EB182A00877B91 /* FollowOnSpotify.swift in Sources */,
+				9F894E2C2A4DF45D0081F34B /* SparklesIconBio.swift in Sources */,
 				9F9C419C28D1529D009CA948 /* ConversationsView.swift in Sources */,
 				46F8B3DB284C3BA800EBCD9C /* Message.swift in Sources */,
 				9FD44B9628CB3E170028A408 /* SuggestedUsersView.swift in Sources */,
@@ -571,6 +582,7 @@
 				9F6CA902290FFA4600EAD0A8 /* PrivacyAndTerms.swift in Sources */,
 				9F8D7B0D2A42B42A0009A9E4 /* utils.swift in Sources */,
 				9F61C85A28EC49B600877B91 /* CurrentUserDetail.swift in Sources */,
+				9F894E2A2A4DF0270081F34B /* UserBio.swift in Sources */,
 				9F8D7B112A448F220009A9E4 /* RecommendationsResponse.swift in Sources */,
 				9F60629728F1190D00320BF9 /* ArtistCard.swift in Sources */,
 				46476EAB28099A8600C5B880 /* AuthResponse.swift in Sources */,
@@ -596,7 +608,7 @@
 				9F8D7B1D2A4524130009A9E4 /* AuthManager.swift in Sources */,
 				9F60625E28F0963800320BF9 /* UserBubbles.swift in Sources */,
 				46F0CC42280DCAE300BF1B4B /* ArtistsResponse.swift in Sources */,
-				9F894E252A4C200D0081F34B /* SparklesIcon.swift in Sources */,
+				9F894E252A4C200D0081F34B /* SparklesIconRecommendations.swift in Sources */,
 				9F8D7B0B2A42B3D40009A9E4 /* DatabaseManager.swift in Sources */,
 				46FDC2D728268418002EB494 /* AppStateModel.swift in Sources */,
 				9F1747BE28CF3C970054AE20 /* ArtistAnimatedIcon.swift in Sources */,
@@ -863,6 +875,14 @@
 				minimumVersion = 9.0.0;
 			};
 		};
+		9F894E262A4D9F5C0081F34B /* XCRemoteSwiftPackageReference "OpenAI" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/MacPaw/OpenAI.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.2.2;
+			};
+		};
 		9F99829428FB00ED004F2559 /* XCRemoteSwiftPackageReference "promises" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/google/promises";
@@ -908,6 +928,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 9F4C292B2A454A75002120AA /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebaseStorage;
+		};
+		9F894E272A4D9F5C0081F34B /* OpenAI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 9F894E262A4D9F5C0081F34B /* XCRemoteSwiftPackageReference "OpenAI" */;
+			productName = OpenAI;
 		};
 		9F8D7B012A41D0810009A9E4 /* OpenAISwift */ = {
 			isa = XCSwiftPackageProductDependency;

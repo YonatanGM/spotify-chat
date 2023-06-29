@@ -143,13 +143,17 @@ public struct Message {
         
         public var topRecentTracks: TracksResponse?
         
+        public var recommendedTracks: RecommendationsResponse?
+        
         public var topGenres: [String]?
         
         public var country: String?
         
         public var filterEnabled: Bool?
         
-        public init(id: String = UUID().uuidString, userName: String, avatarURL: URL? = nil, avatar: UIImage? = nil, topTracks: TracksResponse? = nil, topArtists: ArtistsResponse? = nil, topGenres: [String]? = nil, country: String? = nil, filterEnabled: Bool? = nil, topRecentTracks: TracksResponse? = nil) {
+        public var bio: String?
+        
+        public init(id: String = UUID().uuidString, userName: String, avatarURL: URL? = nil, avatar: UIImage? = nil, topTracks: TracksResponse? = nil, topArtists: ArtistsResponse? = nil, topGenres: [String]? = nil, country: String? = nil, filterEnabled: Bool? = nil, topRecentTracks: TracksResponse? = nil, recommendedTracks: RecommendationsResponse? = nil, bio: String? = nil) {
             self.id = id
             self.userName = userName
             self.avatar = avatar
@@ -160,6 +164,8 @@ public struct Message {
             self.country = country
             self.filterEnabled = filterEnabled
             self.topRecentTracks = topRecentTracks
+            self.bio = bio
+            self.recommendedTracks = recommendedTracks
         }
         
     }

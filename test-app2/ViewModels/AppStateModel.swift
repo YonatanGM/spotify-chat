@@ -14,7 +14,7 @@ import SwiftyChat
 import AVKit
 import BetterSafariView
 import StoreKit
-
+import OpenAI
 
 class AppStateModel: ObservableObject {
     
@@ -79,6 +79,9 @@ class AppStateModel: ObservableObject {
     var updateListenerTask: Task<Void, Error>? = nil
     let productID = "premium.feature"
     @Published var didUnlockPremium = false
+    
+    // openAI stream completions when getting by bio
+    @Published var bioCompletions: [String] = [] // an array of completions
     
     init() {
         // check if spotify is installed
@@ -178,17 +181,34 @@ extension AppStateModel {
                 self?.currentUser = user
                 // fetch similar users from pinecone DB
                 self?.fetchSimilarUsers()
-                
-                // refresh track recommendations
-//                self?.getTrackRecommendations() { recommendations in
-//                    DispatchQueue.main.async {
-//                        if let recommendations = recommendations {
-//                            self?.recommendedTracks = recommendations
-//                        }
-//                    }
-//                }
-                
+                // check if the user has unlocked premium or not
+                DatabaseManager.shared.observeAppAccountToken(for: user.id) { token in
+                    if let _ = token {
+                        DispatchQueue.main.async {
+                            self?.didUnlockPremium = true
+                        }
+                    }
+                }
+                // get the bio if the user has a bio
+                DatabaseManager.shared.getBio(for: user.id) { bio in
+                    DispatchQueue.main.async {
+                        self?.currentUser?.bio = bio
+                    }
+                }
+                // get and save track recommendations if the user is new and has no recommendations yet
+                // for existing users update the recommendations if needed, i.e once a week every Monday.
+                DatabaseManager.shared.updateRecommendationsWeekly(for: user)
+                // observe any changes to the user, such as the profile picture, name, top tracks, etc
                 self?.fetchUserUpdates()
+                
+                // observe changes to the the track recommendations
+                DatabaseManager.shared.observeRecommendations(for: user.id) { tracks in
+                    if let tracks = tracks {
+                        DispatchQueue.main.async {
+                            self?.recommendedTracks = tracks
+                        }
+                    }
+                }
             case .failure(_):
                 print("couldn't get current user")
             }
@@ -203,7 +223,9 @@ extension AppStateModel {
             self?.searchResults.removeAll { ids.contains($0.id) }
             if let groups = self?.groups {
                 for (id, group) in groups {
-                    self?.groups[id]?.messages = group.messages.filter { !ids.contains($0.user.id) }
+                    DispatchQueue.main.async {
+                        self?.groups[id]?.messages = group.messages.filter { !ids.contains($0.user.id) }
+                    }
                 }
             }
         }
@@ -218,7 +240,10 @@ extension AppStateModel {
                     case .success(var group):
                         group.pending = !userHasJoined
                         // self?.groups.append(group)
-                        self?.groups[groupID] = group
+                        DispatchQueue.main.async {
+                            self?.groups[groupID] = group
+                        }
+                       
                         // self?.groups.insert(group, at: 0)
                         // observe change in group child nodes
                         
@@ -230,7 +255,9 @@ extension AppStateModel {
                                 // print(key, snapshotValue)
                                 if key == "name" {
                                     if let name = snapshotValue as? String {
-                                        self?.groups[groupID]?.name = name
+                                        DispatchQueue.main.async {
+                                            self?.groups[groupID]?.name = name
+                                        }
                                     }
                                 } else if key == "users" {
                                     // update group users (in case a user joins or leaves the group)
@@ -241,7 +268,9 @@ extension AppStateModel {
                                                 users.append(UserInfo(id: id, name: name, photoURL: userInfo["photoURL"], genreDisplay: userInfo["top_genre_display"]))
                                             }
                                         }
-                                        self?.groups[groupID]?.users = users
+                                        DispatchQueue.main.async {
+                                            self?.groups[groupID]?.users = users
+                                        }
                                     }
                                 }
                                 
@@ -261,7 +290,9 @@ extension AppStateModel {
                                                 }
                                                 return
                                             }
-                                            self?.groups[groupID]?.messages.append(message)
+                                            DispatchQueue.main.async {
+                                                self?.groups[groupID]?.messages.append(message)
+                                            }
                                         case .failure(_):
                                             print("failed to get messages in group \(group.id)")
                                         }
@@ -274,7 +305,9 @@ extension AppStateModel {
                                 case .success(let moderatedMessage):
                                     // print(moderatedMessage)
                                     if let index = (self?.groups[groupID]?.messages.firstIndex { $0.id == moderatedMessage.id }) {
-                                        self?.groups[groupID]?.messages[index] = moderatedMessage
+                                        DispatchQueue.main.async {
+                                            self?.groups[groupID]?.messages[index] = moderatedMessage
+                                        }
                                     }
                                 case .failure(_):
                                     print("failed to get moderated meesage in group \(group.id)")
@@ -282,9 +315,13 @@ extension AppStateModel {
                             }
                             
                             DatabaseManager.shared.observeUnseenMessages(in: group.id) { lastSeenMessageID in
-                                self?.groups[groupID]?.lastSeenMessageID = lastSeenMessageID
+                                DispatchQueue.main.async {
+                                    self?.groups[groupID]?.lastSeenMessageID = lastSeenMessageID
+                                }
                             } onChangeOfUnseenCount: { unseenCount in
-                                self?.groups[groupID]?.unseenCount = unseenCount
+                                DispatchQueue.main.async {
+                                    self?.groups[groupID]?.unseenCount = unseenCount
+                                }
                             }
                         }
 
@@ -300,7 +337,9 @@ extension AppStateModel {
         
         DatabaseManager.shared.observeGroupRemoval() { [weak self] groupID in
             // self?.groups.removeAll { $0.id == groupID }
-            self?.groups[groupID] = nil
+            DispatchQueue.main.async {
+                self?.groups[groupID] = nil
+            }
             // stop observing messages in the room, good!
             DatabaseManager.shared.removeObserver(with: "conversations/\(groupID)")
             DatabaseManager.shared.removeObserver(with: "conversations_ids/\(groupID)")
@@ -318,7 +357,11 @@ extension AppStateModel {
             switch result {
             case .success(let groupID):
                 guard let group = self?.groups[groupID] else { return }
-                self?.groups[groupID]?.pending = false
+                
+                DispatchQueue.main.async {
+                    self?.groups[groupID]?.pending = false
+                }
+               
                 DatabaseManager.shared.getLastSeen(in: group.id) { lastSeenID in
                     DatabaseManager.shared.getBlockedUsers { blockedUserIDs in
                         DatabaseManager.shared.observeMessages(in: groupID) { result in
@@ -330,7 +373,9 @@ extension AppStateModel {
                                     }
                                     return
                                 }
-                                self?.groups[groupID]?.messages.append(message)
+                                DispatchQueue.main.async {
+                                    self?.groups[groupID]?.messages.append(message)
+                                }
                                 
                             case .failure(_):
                                 print("failed to get messages in group \(group.id)")
@@ -343,7 +388,9 @@ extension AppStateModel {
                     switch result {
                     case .success(let moderatedMessage):
                         if let index = (self?.groups[groupID]?.messages.firstIndex { $0.id == moderatedMessage.id }) {
-                            self?.groups[groupID]?.messages[index] = moderatedMessage
+                            DispatchQueue.main.async {
+                                self?.groups[groupID]?.messages[index] = moderatedMessage
+                            }
                         }
                     case .failure(_):
                         print("failed to get moderated meesage in group \(group.id)")
@@ -351,9 +398,14 @@ extension AppStateModel {
                 }
                 
                 DatabaseManager.shared.observeUnseenMessages(in: groupID) { lastSeenMessageID in
-                    self?.groups[groupID]?.lastSeenMessageID = lastSeenMessageID
+                    DispatchQueue.main.async {
+                        self?.groups[groupID]?.lastSeenMessageID = lastSeenMessageID
+                    }
+                    
                 } onChangeOfUnseenCount: { unseenCount in
-                    self?.groups[groupID]?.unseenCount = unseenCount
+                    DispatchQueue.main.async {
+                        self?.groups[groupID]?.unseenCount = unseenCount
+                    }
                 }
                 
             case .failure(_):
@@ -444,6 +496,11 @@ extension AppStateModel {
         DatabaseManager.shared.removeObserver(with: "users")
         // current user
         DatabaseManager.shared.removeObserver(with: "users/\(currentUserID)")
+        // user upgrade observer
+        DatabaseManager.shared.removeObserver(with: "users/\(currentUserID)/appAccountToken")
+        
+        // remove recommendation observer
+        DatabaseManager.shared.removeObserver(with: "track_recommendations/\(currentUserID)/tracks")
         
         // online status
         // onlineStatusHandles.compactMap { $0 }.forEach {
@@ -532,52 +589,6 @@ extension AppStateModel {
     
 }
 
-//MARK: - Track recommendation
-extension AppStateModel {
-    // need a seed for the suffling
-//    public func getTrackRecommendations(seed: UInt64 = 0, completion: @escaping ([Track]?) -> Void) {
-//        guard let currentUser = self.currentUser,
-//              var topArtists = currentUser.topArtists?.items,
-//              // let topTracks = currentUser.topTracks?.items.shuffled(),
-//              var topRecentTracks = currentUser.topRecentTracks?.items else {
-//            completion([])
-//            return
-//        }
-////
-////        var generator = SeededGenerator(seed: seed)
-////        topArtists.shuffle(using: &generator)
-////        topRecentTracks.shuffle(using: &generator)
-////
-//
-//
-//        let topArtistsSeed = topArtists.prefix(2).map({ $0.id })
-//        let topRecentTracksSeed = topRecentTracks.prefix(2).map({ $0.id })
-//        // let topTracksSeed = currentUser.topTracks?.items.shuffled().prefix(1).map({ $0.name })
-//        // let topGenresSeed = currentUser.topGenres?.shuffled().prefix(5).map({ $0 })
-//        let topGenresSeed = topArtists.prefix(1).compactMap { $0.genres?.first }
-//
-//        print(topArtistsSeed, topGenresSeed, topRecentTracksSeed)
-//
-//        APICaller.shared.getRecommendations(seedArtists: topArtistsSeed,
-//                                            seedGenres: topGenresSeed,
-//                                            seedTracks: topRecentTracksSeed,
-//                                            limit: 10) { result in
-//            switch result {
-//            case .success(let recommendations):
-//                print(recommendations.map { $0.name })
-//                completion(recommendations)
-//                return
-//            case .failure(let error):
-//                completion(nil)
-//                print("Error getting track recommendations: ", error.localizedDescription)
-//            }
-//
-//        }
-//
-//    }
-    
-}
-
 
 // update user on refresh
 extension AppStateModel {
@@ -588,60 +599,56 @@ extension AppStateModel {
         }
         
         DatabaseManager.shared.observeUser(with: id) { [weak self] key, value in
-            switch key {
-            case "name":
-                if let name = value as? String {
-                    self?.currentUser?.userName = name
-                }
-            case "email":
-                break
-            case "country":
-                if let country = value as? String {
-                    self?.currentUser?.country = country
-                }
-            case "filter_enabled":
-                if let filter_enabled = value as? Bool {
-                    self?.currentUser?.filterEnabled = filter_enabled
-                }
-            case "profile_picture_stable":
-                if let urlString = value as? String {
-                    self?.currentUser?.avatarURL = URL(string: urlString)
-                }
-            case "top_artists":
-                if let data = value,
-                   let artistsJSON = try? JSONSerialization.data(withJSONObject: data),
-                   let response = try? JSONDecoder().decode(ArtistsResponse.self, from: artistsJSON) {
-                    self?.currentUser?.topArtists = response
+            DispatchQueue.main.async {
+                switch key {
+                case "name":
+                    if let name = value as? String {
+                        self?.currentUser?.userName = name
+                    }
+                case "email":
+                    break
+                case "country":
+                    if let country = value as? String {
+                        self?.currentUser?.country = country
+                    }
+                case "filter_enabled":
+                    if let filter_enabled = value as? Bool {
+                        self?.currentUser?.filterEnabled = filter_enabled
+                    }
+                case "profile_picture_stable":
+                    if let urlString = value as? String {
+                        self?.currentUser?.avatarURL = URL(string: urlString)
+                    }
+                case "top_artists":
+                    if let data = value,
+                       let artistsJSON = try? JSONSerialization.data(withJSONObject: data),
+                       let response = try? JSONDecoder().decode(ArtistsResponse.self, from: artistsJSON) {
+                        self?.currentUser?.topArtists = response
+                        
+                    }
+                case "top_tracks":
+                    if let data = value,
+                       let tracksJSON = try? JSONSerialization.data(withJSONObject: data),
+                       let response = try? JSONDecoder().decode(TracksResponse.self, from: tracksJSON) {
+                        self?.currentUser?.topTracks = response
+                        
+                    }
+                case "top_recent_tracks":
+                    if let data = value,
+                       let tracksJSON = try? JSONSerialization.data(withJSONObject: data),
+                       let response = try? JSONDecoder().decode(TracksResponse.self, from: tracksJSON) {
+                        self?.currentUser?.topRecentTracks = response
+                    }
+                case "top_genres":
+                    if let topGenres = value as? [String] {
+                        self?.currentUser?.topGenres = topGenres
+                    }
+                    
+                default:
+                    return
                     
                 }
-            case "top_tracks":
-                if let data = value,
-                   let tracksJSON = try? JSONSerialization.data(withJSONObject: data),
-                   let response = try? JSONDecoder().decode(TracksResponse.self, from: tracksJSON) {
-                    self?.currentUser?.topTracks = response
-                    
-                }
-            case "top_recent_tracks":
-                if let data = value,
-                   let tracksJSON = try? JSONSerialization.data(withJSONObject: data),
-                   let response = try? JSONDecoder().decode(TracksResponse.self, from: tracksJSON) {
-                    self?.currentUser?.topRecentTracks = response
-                }
-            case "top_genres":
-                if let topGenres = value as? [String] {
-                    self?.currentUser?.topGenres = topGenres
-                }
-                
-            case "appAccountToken":
-                // if it exists, it means the users has purchased the premium features
-                if let product = value as? String {
-                    self?.didUnlockPremium = true
-                }
-            default:
-                return
-                
             }
-            
         }
     }
     
@@ -651,7 +658,7 @@ extension AppStateModel {
         }
         PineconeManager.shared.queryEmbedding(id: id, topK: 15, namespace: "user-top-preferences") { [weak self] matches, error in
             guard let matches = matches, error == nil else {
-                print(error?.localizedDescription)
+                // print(error?.localizedDescription)
                 return
             }
             // remove current user's id
@@ -770,5 +777,61 @@ extension AppStateModel {
             return safe
         }
     }
+    
+}
+
+
+// MARK: - OpenAI bio
+extension AppStateModel {
+    public func updateBio() async {
+        guard let currentUser = self.currentUser else {
+            return
+        }
+        do {
+            let topArtists = currentUser.topArtists?.items.map { $0.name }.prefix(20).joined(separator: ", ")
+            let topGeners = currentUser.topGenres?.prefix(10).joined(separator: ", ") ?? ""
+            let topTracks = currentUser.topTracks?.items.map { $0.name }.prefix(10).joined(separator: ", ")
+            let prompt = """
+            This is a bio generator that summarizes a user's music taste based on the tracks and artists they like.
+            The input is a list of tracks and a list of artists, separated by a colon and a newline. The output is a short and catchy bio, under 10 words, that describes the user's music taste.
+
+            For example:
+            Input:
+            Tracks: Bohemian Rhapsody by Queen, Imagine by John Lennon, Stairway to Heaven by Led Zeppelin, Hotel California by Eagles
+            Artists: Queen, John Lennon, Led Zeppelin, Eagles
+            Output: Classic rock lover with timeless taste.
+            """
+            +
+            "Input:\n"
+            + "Tracks: \(topTracks ?? "")\n"
+            + "Artists: \(topArtists ?? "")\n"
+            + "Output:"
+            print(prompt)
+            let bioCounter = try await DatabaseManager.shared.getBioCounter(for: currentUser.id)
+            // 3 bios a week
+//            if (bioCounter < 3) {
+                let query = CompletionsQuery(model: .textDavinci_003, prompt: prompt, temperature: 0.8, maxTokens: 10, frequencyPenalty: 0.2)
+                DispatchQueue.main.async {
+                    self.bioCompletions = []
+                }
+               
+                for try await result in  OpenAIManager.shared.openAI.completionsStream(query: query) {
+                    DispatchQueue.main.async {
+                        self.bioCompletions.append(result.choices.first?.text ?? "")
+                    }
+                    
+                }
+                let bioText = "\"\(bioCompletions.joined())\""
+                print(bioCompletions)
+                DatabaseManager.shared.setBio(for: currentUser.id, text: bioText, counter: bioCounter + 1)
+//            }
+        } catch {
+            print(error.localizedDescription)
+        }
+        
+    }
+    
+    
+    
     
 }

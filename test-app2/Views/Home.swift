@@ -94,7 +94,7 @@ struct Home: View {
                         .listRowSeparatorTint(.clear)
                         .listRowBackground(Color.clear)
                         .listRowInsets(EdgeInsets(.zero))
-                        .overlay(SparklesIcon(), alignment: .topTrailing)
+                        .overlay(SparklesIconRecommendations(), alignment: .topTrailing)
                 }
 
                 SearchBar(searchText: $searchText)

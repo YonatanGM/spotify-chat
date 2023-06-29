@@ -92,6 +92,16 @@ struct CurrentUserDetail: View {
                     .offset(y: -1 * profilePicHeight / 2)
                     .padding(.bottom, -1 * profilePicHeight / 3)
        
+                    // bio
+                    
+                    HStack {
+                        Spacer()
+                        SparklesIconBio()
+                        UserBio()
+                        Spacer()
+                    }
+                    
+                    
                     if let artists = user.topArtists?.items {
                         TopArtistsView(artists: artists)
                             .header(title: "Fan of")
@@ -108,6 +118,11 @@ struct CurrentUserDetail: View {
                   
                 }
                 .navigationTitle("You")
+                .toolbar {
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        SparklesIconBio()
+                    }
+                }
             }
         }
     }
