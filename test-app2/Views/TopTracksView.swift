@@ -19,7 +19,7 @@ struct TopTracksView: View {
     var body: some View {
         
         ScrollView(.horizontal, showsIndicators: false) {
-            LazyHStack(alignment: .top) {
+            HStack(alignment: .top) {
                 ForEach(tracks, id: \.id) { track in
                     TrackCard(track: track)
                         .padding(.horizontal, 1)
@@ -33,7 +33,6 @@ struct TopTracksView: View {
         }
         .onChange(of: scenePhase) { phase in
             model.handlePlackbackOnChangeOfScenePhase(to: phase)
-
         }
     }
 }

@@ -82,6 +82,12 @@ class AppStateModel: ObservableObject {
     
     // openAI stream completions when getting by bio
     @Published var bioCompletions: [String] = [] // an array of completions
+    @Published var fullBio: String = ""
+    
+    // refresh counters
+    @Published var recommendationRefreshCount = 0
+    @Published var bioRefreshCount = 0
+    @Published var weeklyLimitMessage: String? = nil
     
     init() {
         // check if spotify is installed
@@ -189,15 +195,24 @@ extension AppStateModel {
                         }
                     }
                 }
-                // get the bio if the user has a bio
-                DatabaseManager.shared.getBio(for: user.id) { bio in
-                    DispatchQueue.main.async {
-                        self?.currentUser?.bio = bio
-                    }
-                }
                 // get and save track recommendations if the user is new and has no recommendations yet
                 // for existing users update the recommendations if needed, i.e once a week every Monday.
                 DatabaseManager.shared.updateRecommendationsWeekly(for: user)
+                
+                // observe the bio and recommendation refresh counters
+                DatabaseManager.shared.observeCounters(for: user.id) {
+                    if let recommendationRefreshCount = $0 {
+                        DispatchQueue.main.async {
+                            self?.recommendationRefreshCount = recommendationRefreshCount
+                        }
+                    }
+                    if let bioRefreshCount = $1 {
+                        DispatchQueue.main.async {
+                            self?.bioRefreshCount = bioRefreshCount
+                        }
+                    }
+                }
+                
                 // observe any changes to the user, such as the profile picture, name, top tracks, etc
                 self?.fetchUserUpdates()
                 
@@ -502,6 +517,10 @@ extension AppStateModel {
         // remove recommendation observer
         DatabaseManager.shared.removeObserver(with: "track_recommendations/\(currentUserID)/tracks")
         
+        // remove counter observer
+        DatabaseManager.shared.removeObserver(with: "counters/\(currentUserID)")
+        
+        
         // online status
         // onlineStatusHandles.compactMap { $0 }.forEach {
         //     DatabaseManager.shared.removeObserver(with: $0)
@@ -794,7 +813,7 @@ extension AppStateModel {
             let prompt = """
             This is a bio generator that summarizes a user's music taste based on the tracks and artists they like.
             The input is a list of tracks and a list of artists, separated by a colon and a newline. The output is a short and catchy bio, under 10 words, that describes the user's music taste.
-
+            
             For example:
             Input:
             Tracks: Bohemian Rhapsody by Queen, Imagine by John Lennon, Stairway to Heaven by Led Zeppelin, Hotel California by Eagles
@@ -809,22 +828,32 @@ extension AppStateModel {
             print(prompt)
             let bioCounter = try await DatabaseManager.shared.getBioCounter(for: currentUser.id)
             // 3 bios a week
-//            if (bioCounter < 3) {
-                let query = CompletionsQuery(model: .textDavinci_003, prompt: prompt, temperature: 0.8, maxTokens: 10, frequencyPenalty: 0.2)
-                DispatchQueue.main.async {
-                    self.bioCompletions = []
-                }
-               
-                for try await result in  OpenAIManager.shared.openAI.completionsStream(query: query) {
+            //            if (bioCounter < 3) {
+            let query = CompletionsQuery(model: .textDavinci_003, prompt: prompt, temperature: 0.8, maxTokens: 10, frequencyPenalty: 0.2)
+            //                DispatchQueue.main.async {
+            //                    self.bioCompletions = []
+            //                }
+            
+            var index = 0
+            for try await result in  OpenAIManager.shared.openAI.completionsStream(query: query) {
+                if index == 0 {
+                    // list needs to be reset
+                    DispatchQueue.main.async {
+                        self.bioCompletions = [result.choices.first?.text ?? ""]
+                        self.fullBio = result.choices.first?.text ?? ""
+                    }
+                } else {
                     DispatchQueue.main.async {
                         self.bioCompletions.append(result.choices.first?.text ?? "")
+                        self.fullBio = self.bioCompletions.joined()
                     }
-                    
                 }
-                let bioText = "\"\(bioCompletions.joined())\""
-                print(bioCompletions)
-                DatabaseManager.shared.setBio(for: currentUser.id, text: bioText, counter: bioCounter + 1)
-//            }
+                index += 1
+            }
+            
+            let bioText = "\" \(bioCompletions.joined().trimmingCharacters(in: .whitespacesAndNewlines)) \""
+            DatabaseManager.shared.setBio(for: currentUser.id, text: bioText, counter: bioCounter + 1)
+            //            }
         } catch {
             print(error.localizedDescription)
         }

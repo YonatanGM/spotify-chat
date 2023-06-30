@@ -23,13 +23,12 @@ struct SparklesIconBio: View {
         Image(systemName: "sparkles")
             .resizable()
             .aspectRatio(contentMode: .fit)
-            .frame(width: 25)
+            .frame(width: 15)
             .foregroundColor(foregroundColor)
         // Apply a hue rotation effect based on the state variable
             .hueRotation(hueAngle)
         // Apply an animation when either state variable changes
         // Change both state variables when the user taps on the image
-            .padding(.trailing, 5)
             .scaleEffect(isTapping ? 0.9 : 1)
             .brightness(isTapping ? 0.1 : 0)
         

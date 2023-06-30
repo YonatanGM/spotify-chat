@@ -93,14 +93,24 @@ struct CurrentUserDetail: View {
                     .padding(.bottom, -1 * profilePicHeight / 3)
        
                     // bio
-                    
-                    HStack {
-                        Spacer()
-                        SparklesIconBio()
-                        UserBio()
-                        Spacer()
-                    }
-                    
+                    UserBio(bioText: !model.bioCompletions.isEmpty ? "\" \(model.fullBio.trimmingCharacters(in: .whitespacesAndNewlines)) \"" : model.currentUser?.bio)
+                        .overlay(alignment: .leading) {
+                            if model.didUnlockPremium {
+                                SparklesIconBio()
+                                    .offset(x: -20, y: 0)
+                            } else {
+                                SparklesIconPulsing(size: CGSize(width: 15, height: 15)) {
+                                    Task {
+                                        do {
+                                            try await model.purchase()
+                                        } catch {
+                                            print(error.localizedDescription)
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        .padding(.bottom)
                     
                     if let artists = user.topArtists?.items {
                         TopArtistsView(artists: artists)
@@ -113,16 +123,12 @@ struct CurrentUserDetail: View {
                             .header(title: "Favorite tracks")
                             .offset(x: 12)
                             // .padding(.horizontal)
+                            .padding(.bottom)
                     }
                     
                   
                 }
                 .navigationTitle("You")
-                .toolbar {
-                    ToolbarItem(placement: .navigationBarTrailing) {
-                        SparklesIconBio()
-                    }
-                }
             }
         }
     }

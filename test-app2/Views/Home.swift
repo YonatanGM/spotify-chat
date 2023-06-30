@@ -72,30 +72,51 @@ struct Home: View {
                     .listRowInsets(EdgeInsets(.zero))
                     // .border(.red)
                     .padding(.top, 100)
-                    .padding(.bottom, 25)
+                    .padding(.bottom, 12)
                   
                 TopArtistsView(artists: suggestedArtists)
                     .header(title: "Suggested Aritsts", subtitle: "People like you are fans of")
                     .listRowSeparatorTint(.clear)
                     .listRowBackground(Color.clear)
                     .listRowInsets(EdgeInsets(.zero))
-                    .padding(.bottom, 25)
+                    .padding(.bottom, 12)
+           
 
                 TopTracksView(tracks: suggestedTracks)
                     .header(title: "Discover Tracks", subtitle: "Based on top tracks of users like you")
                     .listRowSeparatorTint(.clear)
                     .listRowBackground(Color.clear)
                     .listRowInsets(EdgeInsets(.zero))
+                    .padding(.bottom, recommendedTracks.count > 0 ? 12 : 40)
 
                 if (recommendedTracks.count > 0) {
                     TopTracksView(tracks: recommendedTracks)
-                        .header(title: "Recommedations", subtitle: "Based on tracks you like")
-                        .border(.red)
+                        .header(title: "Recommedations", subtitle: "Based on tracks you like", messaage: model.weeklyLimitMessage)
                         .listRowSeparatorTint(.clear)
                         .listRowBackground(Color.clear)
                         .listRowInsets(EdgeInsets(.zero))
-                        .overlay(SparklesIconRecommendations(), alignment: .topTrailing)
+                        .overlay(alignment: .topTrailing) {
+                            if model.didUnlockPremium {
+                                SparklesIconRecommendations()
+                                    .padding(.trailing, 3)
+                            } else {
+                                SparklesIconPulsing(size: CGSize(width: 35, height: 35)) {
+                                    Task {
+                                        do {
+                                            try await model.purchase()
+                                        } catch {
+                                            print(error.localizedDescription)
+                                        }
+                                    }
+                                }
+                                
+                                .padding(.trailing, 5)
+                            }
+                        }
+                        .padding(.bottom, 40)
+
                 }
+                                
 
                 SearchBar(searchText: $searchText)
                     // "Enter a list of your favourite songs or artists  (comma separated) to find others that share your taste."
@@ -157,8 +178,25 @@ struct Home: View {
         }
         .iOS { $0.dismissKeyboardOnTappingOutside() }
         // .animation(.spring(), value: model.searchResults.count)
-        .navigationBarItems(trailing: CurrentUserSettings())
-        .navigationBarItems(trailing: UpgradeButton())
+        .toolbar {
+            
+            ToolbarItem(placement: .navigationBarTrailing) {
+                if model.didUnlockPremium {
+                    Image(systemName: "sparkles")
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: 20)
+                        .foregroundColor(.white)
+                } else {
+                    UpgradeButton()
+                }
+            }
+            
+            ToolbarItem(placement: .navigationBarTrailing) {
+                CurrentUserSettings()
+            }
+
+        }
         .background(
             LinearGradient(colors: [
                 Color(.sRGB,
@@ -182,6 +220,7 @@ struct Home: View {
 struct CustomSection: ViewModifier {
     let title: String
     let subtitle: String?
+    let message: String?
     func body(content: Content) -> some View {
         VStack(alignment: .leading, spacing: 2) {
             Text(title)
@@ -190,23 +229,35 @@ struct CustomSection: ViewModifier {
                 // .fontWeight(.medium)
                 .foregroundColor(.white)
                 .padding(.horizontal, 10)
-            if let subtitle = subtitle {
-                Text(subtitle)
-                    .font(.footnote)
+            VStack(alignment: .leading, spacing: 5) {
+                if let subtitle = subtitle {
+                    Text(subtitle)
+                        .font(.footnote)
                     // .fontWeight(.medium)
-                    .foregroundColor(.white.opacity(0.80))
-                    .padding(.horizontal, 10)
+                        .foregroundColor(.white.opacity(0.80))
+                        .padding(.horizontal, 10)
+                }
+                if let message = message {
+                    Text(message)
+                        .font(.caption)
+                    // .fontWeight(.medium)
+                        .foregroundColor(.white.opacity(0.80))
+                        .padding(.horizontal, 10)
+                       
+                }
             }
             content
+                .animation(.spring(), value: message)
                 .padding(.vertical)
+               
         }
         
     }
 }
 
 extension View {
-    func header(title: String, subtitle: String? = nil) -> some View {
-        modifier(CustomSection(title: title, subtitle: subtitle))
+    func header(title: String, subtitle: String? = nil, messaage: String? = nil) -> some View {
+        modifier(CustomSection(title: title, subtitle: subtitle, message: messaage))
     }
     
     dynamic func dismissKeyboardOnTappingOutside() -> some View {

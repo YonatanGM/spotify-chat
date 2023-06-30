@@ -61,6 +61,7 @@
 		9F894E282A4D9F5C0081F34B /* OpenAI in Frameworks */ = {isa = PBXBuildFile; productRef = 9F894E272A4D9F5C0081F34B /* OpenAI */; };
 		9F894E2A2A4DF0270081F34B /* UserBio.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F894E292A4DF0270081F34B /* UserBio.swift */; };
 		9F894E2C2A4DF45D0081F34B /* SparklesIconBio.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F894E2B2A4DF45D0081F34B /* SparklesIconBio.swift */; };
+		9F894E2E2A4F58C50081F34B /* SparklesIconPulsing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F894E2D2A4F58C50081F34B /* SparklesIconPulsing.swift */; };
 		9F8D7B022A41D0810009A9E4 /* OpenAISwift in Frameworks */ = {isa = PBXBuildFile; productRef = 9F8D7B012A41D0810009A9E4 /* OpenAISwift */; };
 		9F8D7B0B2A42B3D40009A9E4 /* DatabaseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F8D7B072A42B3D40009A9E4 /* DatabaseManager.swift */; };
 		9F8D7B0D2A42B42A0009A9E4 /* utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F8D7B0C2A42B42A0009A9E4 /* utils.swift */; };
@@ -144,6 +145,7 @@
 		9F894E242A4C200C0081F34B /* SparklesIconRecommendations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SparklesIconRecommendations.swift; sourceTree = "<group>"; };
 		9F894E292A4DF0270081F34B /* UserBio.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserBio.swift; sourceTree = "<group>"; };
 		9F894E2B2A4DF45D0081F34B /* SparklesIconBio.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SparklesIconBio.swift; sourceTree = "<group>"; };
+		9F894E2D2A4F58C50081F34B /* SparklesIconPulsing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SparklesIconPulsing.swift; sourceTree = "<group>"; };
 		9F8D7B002A41CE7D0009A9E4 /* OpenAISwift */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = OpenAISwift; path = ../../../../Downloads/OpenAISwift; sourceTree = "<group>"; };
 		9F8D7B072A42B3D40009A9E4 /* DatabaseManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DatabaseManager.swift; sourceTree = "<group>"; };
 		9F8D7B0C2A42B42A0009A9E4 /* utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = utils.swift; sourceTree = "<group>"; };
@@ -340,6 +342,7 @@
 				9F4C29342A4907F7002120AA /* UpgradeButton.swift */,
 				9F894E242A4C200C0081F34B /* SparklesIconRecommendations.swift */,
 				9F894E2B2A4DF45D0081F34B /* SparklesIconBio.swift */,
+				9F894E2D2A4F58C50081F34B /* SparklesIconPulsing.swift */,
 			);
 			path = Buttons;
 			sourceTree = "<group>";
@@ -555,6 +558,7 @@
 				9F2282EB28D6E3A50050929E /* UserIconAnimated.swift in Sources */,
 				46F0CC48280DCEED00BF1B4B /* TracksResponse.swift in Sources */,
 				9F2282E928D6E3650050929E /* UserIconsToolbar.swift in Sources */,
+				9F894E2E2A4F58C50081F34B /* SparklesIconPulsing.swift in Sources */,
 				9F9C41A328D18AE0009CA948 /* UserCardGroupCreation.swift in Sources */,
 				9F61C86028EC726600877B91 /* DM.swift in Sources */,
 				461DCBCF2823439E009E2F7F /* UserProfileResponse.swift in Sources */,

@@ -318,7 +318,7 @@ extension DatabaseManager {
                             if error == nil  {
                                 if let url = profile.images.first?.url {
                                     let changeRequest = AuthManager.shared.currentUser?.createProfileChangeRequest()
-                                    changeRequest?.photoURL = URL(string: url)
+                                    changeRequest?.photoURL = downloadUrl ?? URL(string: url)
                                     changeRequest?.commitChanges() { error in
                                         if let error = error {
                                             print(error.localizedDescription)
@@ -528,6 +528,8 @@ extension DatabaseManager {
             if let photoURLString = user["profile_picture_stable"] as? String {
                 photoURL = URL(string: photoURLString)
             }
+            
+            
             completion(.success(.init(id: id,
                                       userName: name,
                                       avatarURL: photoURL,
@@ -537,16 +539,39 @@ extension DatabaseManager {
                                       topGenres: topGenres,
                                       country: country,
                                       filterEnabled: filterEnabled,
-                                      topRecentTracks: topRecentTracksResponse)))
+                                      topRecentTracks: topRecentTracksResponse,
+                                      bio: user["bio"] as? String)))
             
         }
     }
 
     
     public func observeUser(with id: String, completion: @escaping (String, Any?) -> Void) {
-        databaseref.child("users/\(id)").observe(.childChanged) { snapshot in
-            print(snapshot.key)
+        databaseref.child("users/\(id)").observe(.childChanged) { [weak self] snapshot in
+
             completion(snapshot.key, snapshot.value)
+            
+            // need to update the user's profile pic in the groups
+            // read the groups first
+            
+            if snapshot.key == "profile_picture_stable" {
+                self?.databaseref.child("userInfo/\(id)/Groups").observeSingleEvent(of: .value) { groupSnapshot in
+                    guard let groupIDs = groupSnapshot.value as? [String: Bool],
+                          let newPhotoURL = snapshot.value as? String else {
+                        return
+                    }
+                    // need to update the user's profile pic in the groups
+                    let updates = groupIDs.keys.reduce([String: String]()) {
+                        var dict = $0
+                        dict[ "Group/\($1)/users/\(id)/photoURL"] = newPhotoURL
+                        return dict
+                    }
+                    if !updates.isEmpty {
+                        self?.databaseref.updateChildValues(updates)
+                    }
+
+                }
+            }
         }
     }
     
@@ -1649,6 +1674,7 @@ extension DatabaseManager {
         // get the refresh count from the database
         self.databaseref.child("counters/\(user.id)/recommendations_refresh_counter").observeSingleEvent(of: .value) { [weak self] snapshot in
             let counter = snapshot.value as? Int ?? 0
+            print()
             
             guard let topArtists = user.topArtists?.items.shuffled(),
                   // let topTracks = currentUser.topTracks?.items.shuffled(),
@@ -1740,4 +1766,27 @@ extension DatabaseManager {
         }
         
     }
+}
+
+
+// MARK: - counters
+extension DatabaseManager {
+    public func observeCounters(for userID: String, completion: @escaping (Int?, Int?) -> Void) {
+      
+            self.databaseref.child("counters/\(userID)").observe(.value) { snapshot in
+                guard let dict = snapshot.value as? [String: Int] else {
+                    completion(nil, nil)
+                    return
+                }
+                completion(dict["recommendations_refresh_counter"] ?? 0, dict["bio_refresh_counter"] ?? 0)
+            } withCancel: { error in
+                // print(error.localizedDescription)
+                completion(nil, nil)
+
+            }
+          
+        
+    }
+    
+
 }

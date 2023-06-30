@@ -17,12 +17,14 @@ struct SparklesIconRecommendations: View {
     
     @State var isTapping: Bool = false
     
+    let refreshLimit = 10
+    
     var body: some View {
         // A system image with a foreground color based on the state variable
         Image(systemName: "sparkles")
             .resizable()
             .aspectRatio(contentMode: .fit)
-            .frame(width: 35)
+            .frame(width: 35, height: 35)
             .foregroundColor(foregroundColor)
             // Apply a hue rotation effect based on the state variable
             .hueRotation(hueAngle)
@@ -30,12 +32,12 @@ struct SparklesIconRecommendations: View {
             // Change both state variables when the user taps on the image
             .padding(.trailing, 5)
             .scaleEffect(isTapping ? 0.9 : 1)
-            .brightness(isTapping ? 0.1 : 0)
+            .brightness(isTapping ? 0.5 : 0)
          
             .onTapGesture {
                 // do not allow tapping if isTapping is true
                 guard isTapping == false else { return }
-                foregroundColor = Color.green
+                foregroundColor = [Color.green, Color.red, Color.blue].random() ?? Color.green
                 withAnimation(.spring(response: 0.5)) {
                     isTapping = true
                     // Change the hue angle to a random value
@@ -56,12 +58,29 @@ struct SparklesIconRecommendations: View {
                             if didRefresh {
                                 model.removePlayer()
                             }
+                            
+                            if count == refreshLimit - 1 {
+                                model.weeklyLimitMessage = "Heads up! You have only one refresh left for this week."
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                                    model.weeklyLimitMessage = nil
+                                }
+                            } else if !didRefresh && count >= refreshLimit {
+                          
+                                    model.weeklyLimitMessage = "You have used up all your refreshes for this week. "
+                                
+                                
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                                        model.weeklyLimitMessage = nil
+                                }
+                            }
+                            
                         }
                         
                     }
                 }
 
             }
+
         
     }
 }
