@@ -262,7 +262,9 @@ extension DatabaseManager {
             Promise<Bool>() { [weak self] fulfill, reject in
                 self?.databaseref.updateChildValues(["users/\(currentUserID)": nil,
                                                      "userInfo/\(currentUserID)": nil,
-                                                     "status/\(currentUserID)": nil]) { error, _ in
+                                                     "status/\(currentUserID)": nil,
+                                                     "counters/\(currentUserID)": nil,
+                                                     "track_recommendations/\(currentUserID)": nil]) { error, _ in
                     guard error == nil else { return }
                     fulfill(true)
                 }

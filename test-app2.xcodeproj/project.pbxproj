@@ -34,6 +34,9 @@
 		9F2282EB28D6E3A50050929E /* UserIconAnimated.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F2282EA28D6E3A50050929E /* UserIconAnimated.swift */; };
 		9F2282ED28D6E4EC0050929E /* UserPicInitials.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F2282EC28D6E4EC0050929E /* UserPicInitials.swift */; };
 		9F27B1812A506FD600FAC709 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F27B1802A506FD600FAC709 /* StoreKit.framework */; };
+		9F27B18B2A51CAD100FAC709 /* sparkles2.gif in Resources */ = {isa = PBXBuildFile; fileRef = 9F27B18A2A51CAD100FAC709 /* sparkles2.gif */; };
+		9F27B18D2A51DC9100FAC709 /* sparkles.gif in Resources */ = {isa = PBXBuildFile; fileRef = 9F27B18C2A51DC9100FAC709 /* sparkles.gif */; };
+		9F27B18F2A51DE7A00FAC709 /* sparkles3.gif in Resources */ = {isa = PBXBuildFile; fileRef = 9F27B18E2A51DE7A00FAC709 /* sparkles3.gif */; };
 		9F3EE8182913E39F00998284 /* UserBackground.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F3EE8172913E39E00998284 /* UserBackground.swift */; };
 		9F3EE81E29140B4900998284 /* UIImageColors in Frameworks */ = {isa = PBXBuildFile; productRef = 9F3EE81D29140B4900998284 /* UIImageColors */; };
 		9F48D64D28FB4A6C006F4A55 /* BetterSafariView in Frameworks */ = {isa = PBXBuildFile; productRef = 9F48D64C28FB4A6C006F4A55 /* BetterSafariView */; };
@@ -126,6 +129,9 @@
 		9F2282EA28D6E3A50050929E /* UserIconAnimated.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserIconAnimated.swift; sourceTree = "<group>"; };
 		9F2282EC28D6E4EC0050929E /* UserPicInitials.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserPicInitials.swift; sourceTree = "<group>"; };
 		9F27B1802A506FD600FAC709 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
+		9F27B18A2A51CAD100FAC709 /* sparkles2.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; name = sparkles2.gif; path = ../../../../../../Downloads/sparkles2.gif; sourceTree = "<group>"; };
+		9F27B18C2A51DC9100FAC709 /* sparkles.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; name = sparkles.gif; path = ../../../../../../Downloads/sparkles.gif; sourceTree = "<group>"; };
+		9F27B18E2A51DE7A00FAC709 /* sparkles3.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; name = sparkles3.gif; path = ../../../../../../Downloads/sparkles3.gif; sourceTree = "<group>"; };
 		9F3EE8172913E39E00998284 /* UserBackground.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserBackground.swift; sourceTree = "<group>"; };
 		9F4C29262A453C02002120AA /* StorageManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorageManager.swift; sourceTree = "<group>"; };
 		9F4C29342A4907F7002120AA /* UpgradeButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpgradeButton.swift; sourceTree = "<group>"; };
@@ -323,6 +329,9 @@
 		46F8B3DC284DF93B00EBCD9C /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				9F27B18E2A51DE7A00FAC709 /* sparkles3.gif */,
+				9F27B18A2A51CAD100FAC709 /* sparkles2.gif */,
+				9F27B18C2A51DC9100FAC709 /* sparkles.gif */,
 				46F5CA6D2808C24000D58C41 /* Assets.xcassets */,
 			);
 			path = Resources;
@@ -549,9 +558,12 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9F27B18D2A51DC9100FAC709 /* sparkles.gif in Resources */,
 				9FD64C1D2918097A006A8664 /* Modulus-Bold2.otf in Resources */,
 				46F5CA712808C24000D58C41 /* Preview Assets.xcassets in Resources */,
 				9F894E302A504E7C0081F34B /* ChristmasWishCalligraphyCalligraphy-yKzZ.ttf in Resources */,
+				9F27B18B2A51CAD100FAC709 /* sparkles2.gif in Resources */,
+				9F27B18F2A51DE7A00FAC709 /* sparkles3.gif in Resources */,
 				9F894E322A5059BB0081F34B /* GreatVibes-A7yL.otf in Resources */,
 				9FF4384F29038A7C005FBFD0 /* Modulus-Bold.otf in Resources */,
 				46F5CA6E2808C24000D58C41 /* Assets.xcassets in Resources */,

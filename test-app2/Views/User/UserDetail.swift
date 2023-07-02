@@ -112,13 +112,16 @@ struct UserDetail: View {
                 .offset(y: -1 * profilePicHeight / 2)
                 .padding(.bottom, -1 * profilePicHeight / 3)
                 
-                UserBio(bioText: user.bio)
-                    .padding(.bottom)
+                if let bio = user.bio {
+                    UserBio(bioText: bio)
+                         .padding(.vertical)
+                }
                 
                 if let artists = user.topArtists?.items {
                     TopArtistsView(artists: artists)
                         .header(title: "Fan of")
                         .offset(x: 12)
+                        .padding(.top, user.bio == nil ? 45 : 0)
                 }
                 if let tracks = user.topTracks?.items {
                     TopTracksView(tracks: filterAvailableTracks(tracks: tracks))

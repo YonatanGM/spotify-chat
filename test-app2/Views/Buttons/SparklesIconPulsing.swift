@@ -6,10 +6,13 @@
 //
 
 import SwiftUI
+import SDWebImageSwiftUI
 
 struct SparklesIconPulsing: View {
-    @State var isBold = false
+    @State var fontWeight: Font.Weight = .regular
     @State var isTapping = false
+    @State var isAnimating = false
+    
     var size: CGSize
     var disabled: Bool
     var completion: (() -> Void)?
@@ -27,24 +30,37 @@ struct SparklesIconPulsing: View {
             .aspectRatio(contentMode: .fit)
  
             .foregroundColor(.white)
-            //.fontWeight(isBold ? .black : .regular)
-            .animation(.spring(response: 0.5, dampingFraction: 0.5), value: isBold)
+            .fontWeight(fontWeight)
+            .animation(.easeInOut, value: fontWeight)
             .scaleEffect(isTapping ? 0.9 : 1)
         
-
             .frame(width: size.width, height: size.height)
+            .overlay {
+
+                AnimatedImage(name: "sparkles3.gif", isAnimating: $isAnimating)
+                    .resizable()
+                    
+                    .scaledToFill()
+                
+                    .frame(width: size.width * 1.4, height: size.height * 2)
+                    .opacity(isAnimating ? 1 : 0)
+                    .animation(.easeInOut, value: isAnimating)
+                    .offset(x: -5, y: -20)
+
+            }
             .onAppear {
-                withAnimation(Animation.linear(duration: 2).repeatCount(2)) {
-                    isBold = true
-                }
-                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                    withAnimation(Animation.linear(duration: 2).delay(1).repeatCount(2)) {
-                        isBold = false
+              
+                fontWeight = .ultraLight
+                isAnimating = true
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                    fontWeight = .bold
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                        fontWeight = .regular
+    
                     }
                 }
-            }
-            .onDisappear {
-                isBold = false
+                
+
             }
             .onTapGesture {
                 // animation

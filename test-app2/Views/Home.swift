@@ -122,7 +122,7 @@ struct Home: View {
 
                 SearchBar(searchText: $searchText)
                     // "Enter a list of your favourite songs or artists  (comma separated) to find others that share your taste."
-                    .header(title: "Find", subtitle: "Find others that share your mustic taste. You can search by track or artist names (comma separated).")
+                    .header(title: "Find", subtitle: "Meet new friends through music. Type in track or artist names (comma separated) to see who else likes them.")
                     .listRowSeparatorTint(.clear)
                     .listRowBackground(Color.clear)
                     .listRowInsets(EdgeInsets(.zero))

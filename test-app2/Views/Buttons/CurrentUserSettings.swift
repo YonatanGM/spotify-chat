@@ -25,12 +25,12 @@ struct CurrentUserSettings: View {
                         .resizable()
                         .scaledToFill()
                         .clipShape(Circle())
-                        .frame(height: 25)
+                        .frame(height: 22)
                        // .shadow(radius: 1)
                         
                 } else {
                     UserPicInitials(name: currentUser.userName, applyShadow: false)
-                        .frame(height: 25)
+                        .frame(height: 22)
                        //.shadow(radius: 1)
                 }
             }

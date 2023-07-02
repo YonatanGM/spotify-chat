@@ -39,6 +39,9 @@ struct UpgradeButton: View {
         }, label: {
             HStack(spacing: 0) {
                 Image(systemName: "sparkles")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 15)
                 if !model.didUnlockPremium {
                     Text("Upgrade")
                         .font(.caption2)

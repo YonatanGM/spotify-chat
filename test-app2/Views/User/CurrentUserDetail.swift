@@ -96,25 +96,9 @@ struct CurrentUserDetail: View {
                     .offset(y: -1 * profilePicHeight / 2)
                     .padding(.bottom, -1 * profilePicHeight / 3)
        
-                    // bio
-                    UserBio(bioText: !model.bioCompletions.isEmpty ? "\" \(model.fullBio.trimmingCharacters(in: .whitespacesAndNewlines)) \"" : model.currentUser?.bio)
-                        .overlay(alignment: .leading) {
-                            if model.didUnlockPremium {
-                                SparklesIconBio()
-                                    .offset(x: -20, y: 0)
-                            } else {
-                                SparklesIconPulsing(size: CGSize(width: 15, height: 15)) {
-                                    Task {
-                                        do {
-                                            try await model.purchase()
-                                        } catch {
-                                            print(error.localizedDescription)
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                        .padding(.bottom)
+                    UserBio(bioText: !model.bioCompletions.isEmpty ? "\" \(model.fullBio.trimmingCharacters(in: .whitespacesAndNewlines)) \"" : model.currentUser?.bio ?? "",
+                            isCurrentUser: true)
+                        .padding(.vertical)
                     
                     // bio limit message
                     if let biolimitMessage = model.bioLimitMessage {
