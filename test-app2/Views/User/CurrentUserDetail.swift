@@ -10,7 +10,7 @@ import SDWebImageSwiftUI
 
 struct CurrentUserDetail: View {
     @EnvironmentObject var model: AppStateModel
-    
+    @Environment(\.dismiss) private var dismiss
     var gradient: LinearGradient {
         LinearGradient(colors: [
             Color(.sRGB,
@@ -65,8 +65,12 @@ struct CurrentUserDetail: View {
                         VStack(alignment: .leading) {
                             Spacer()
                             HStack {
-                                SignOut()
-                                DeleteAccount()
+                                SignOut() {
+                                    dismiss()
+                                }
+                                DeleteAccount() {
+                                    dismiss()
+                                }
                                 Spacer()
                             }
                                                       
@@ -112,6 +116,15 @@ struct CurrentUserDetail: View {
                         }
                         .padding(.bottom)
                     
+                    // bio limit message
+                    if let biolimitMessage = model.bioLimitMessage {
+                        Text(biolimitMessage)
+                            .font(.caption)
+                            .foregroundColor(.white.opacity(0.80))
+                            .padding(10)
+                           
+                    }
+                    
                     if let artists = user.topArtists?.items {
                         TopArtistsView(artists: artists)
                             .header(title: "Fan of")
@@ -128,6 +141,7 @@ struct CurrentUserDetail: View {
                     
                   
                 }
+                .animation(.easeInOut, value: model.bioLimitMessage)
                 .navigationTitle("You")
             }
         }

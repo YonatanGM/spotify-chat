@@ -11,6 +11,8 @@ import SwiftyChat
 
 struct SwiftyChatView: View {
     @EnvironmentObject var model: AppStateModel
+    @Environment(\.dismiss) private var dismiss
+    
     let groupID: String
     @State private var scrollToBottom = false
     
@@ -110,7 +112,7 @@ struct SwiftyChatView: View {
                            
                             DatabaseManager.shared.deleteGroup(groupID) { success in
                                 if success {
-                                    model.showChat = false
+                                    dismiss()
                                 }
                             }
                         }) {
@@ -120,7 +122,7 @@ struct SwiftyChatView: View {
                         Button(role: .destructive, action: {
                             DatabaseManager.shared.leaveGroup(groupID) { success in
                                 if success {
-                                    model.showChat = false
+                                    dismiss()
                                 }
                             }
                         }) {
@@ -188,8 +190,7 @@ struct SwiftyChatView: View {
                 .navigationBarItems(trailing:
                                         Menu {
                     Button(role: .destructive, action: {
-                        model.showChat = false
-                        model.navigateToChat = false
+                        dismiss()
                         DatabaseManager.shared.deleteGroup(groupID) { _ in }
                     }) {
                         Label("Delete chat", systemImage: "trash")
@@ -199,6 +200,7 @@ struct SwiftyChatView: View {
                         guard let otherUser = model.groups[groupID]?.otherUser?.id else { return }
                         DatabaseManager.shared.blockUser(with: otherUser)
                         DatabaseManager.shared.deleteGroup(groupID) { _ in }
+                        dismiss()
                     }) {
                         Text("Block")
                         Image(systemName: "person.fill.xmark")
@@ -236,7 +238,7 @@ struct SwiftyChatView: View {
             }
             .ignoresSafeArea()
             .onAppear {
-                model.showChat = false
+                dismiss()
             }
         }
     }

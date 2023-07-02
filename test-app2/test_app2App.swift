@@ -31,6 +31,9 @@ struct test_app2App: App {
 
 class AppDelegate: NSObject, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
+//        for family in UIFont.familyNames {
+//           print(UIFont.fontNames(forFamilyName: family), "\n")
+//        }
         
         // navigation bar apearance
         UINavigationBar.appearance().barTintColor = UIColor(.chatSpotifyColor)

@@ -33,6 +33,7 @@
 		9F2282E928D6E3650050929E /* UserIconsToolbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F2282E828D6E3640050929E /* UserIconsToolbar.swift */; };
 		9F2282EB28D6E3A50050929E /* UserIconAnimated.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F2282EA28D6E3A50050929E /* UserIconAnimated.swift */; };
 		9F2282ED28D6E4EC0050929E /* UserPicInitials.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F2282EC28D6E4EC0050929E /* UserPicInitials.swift */; };
+		9F27B1812A506FD600FAC709 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F27B1802A506FD600FAC709 /* StoreKit.framework */; };
 		9F3EE8182913E39F00998284 /* UserBackground.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F3EE8172913E39E00998284 /* UserBackground.swift */; };
 		9F3EE81E29140B4900998284 /* UIImageColors in Frameworks */ = {isa = PBXBuildFile; productRef = 9F3EE81D29140B4900998284 /* UIImageColors */; };
 		9F48D64D28FB4A6C006F4A55 /* BetterSafariView in Frameworks */ = {isa = PBXBuildFile; productRef = 9F48D64C28FB4A6C006F4A55 /* BetterSafariView */; };
@@ -62,6 +63,9 @@
 		9F894E2A2A4DF0270081F34B /* UserBio.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F894E292A4DF0270081F34B /* UserBio.swift */; };
 		9F894E2C2A4DF45D0081F34B /* SparklesIconBio.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F894E2B2A4DF45D0081F34B /* SparklesIconBio.swift */; };
 		9F894E2E2A4F58C50081F34B /* SparklesIconPulsing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F894E2D2A4F58C50081F34B /* SparklesIconPulsing.swift */; };
+		9F894E302A504E7C0081F34B /* ChristmasWishCalligraphyCalligraphy-yKzZ.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 9F894E2F2A504E710081F34B /* ChristmasWishCalligraphyCalligraphy-yKzZ.ttf */; };
+		9F894E322A5059BB0081F34B /* GreatVibes-A7yL.otf in Resources */ = {isa = PBXBuildFile; fileRef = 9F894E312A5059BA0081F34B /* GreatVibes-A7yL.otf */; };
+		9F894E342A5068520081F34B /* SparklesIconPremium.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F894E332A5068520081F34B /* SparklesIconPremium.swift */; };
 		9F8D7B022A41D0810009A9E4 /* OpenAISwift in Frameworks */ = {isa = PBXBuildFile; productRef = 9F8D7B012A41D0810009A9E4 /* OpenAISwift */; };
 		9F8D7B0B2A42B3D40009A9E4 /* DatabaseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F8D7B072A42B3D40009A9E4 /* DatabaseManager.swift */; };
 		9F8D7B0D2A42B42A0009A9E4 /* utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F8D7B0C2A42B42A0009A9E4 /* utils.swift */; };
@@ -121,6 +125,7 @@
 		9F2282E828D6E3640050929E /* UserIconsToolbar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserIconsToolbar.swift; sourceTree = "<group>"; };
 		9F2282EA28D6E3A50050929E /* UserIconAnimated.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserIconAnimated.swift; sourceTree = "<group>"; };
 		9F2282EC28D6E4EC0050929E /* UserPicInitials.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserPicInitials.swift; sourceTree = "<group>"; };
+		9F27B1802A506FD600FAC709 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		9F3EE8172913E39E00998284 /* UserBackground.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserBackground.swift; sourceTree = "<group>"; };
 		9F4C29262A453C02002120AA /* StorageManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorageManager.swift; sourceTree = "<group>"; };
 		9F4C29342A4907F7002120AA /* UpgradeButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpgradeButton.swift; sourceTree = "<group>"; };
@@ -146,6 +151,9 @@
 		9F894E292A4DF0270081F34B /* UserBio.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserBio.swift; sourceTree = "<group>"; };
 		9F894E2B2A4DF45D0081F34B /* SparklesIconBio.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SparklesIconBio.swift; sourceTree = "<group>"; };
 		9F894E2D2A4F58C50081F34B /* SparklesIconPulsing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SparklesIconPulsing.swift; sourceTree = "<group>"; };
+		9F894E2F2A504E710081F34B /* ChristmasWishCalligraphyCalligraphy-yKzZ.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "ChristmasWishCalligraphyCalligraphy-yKzZ.ttf"; path = "../../../../../../Downloads/christmas-wish-calligraphy-font/ChristmasWishCalligraphyCalligraphy-yKzZ.ttf"; sourceTree = "<group>"; };
+		9F894E312A5059BA0081F34B /* GreatVibes-A7yL.otf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "GreatVibes-A7yL.otf"; path = "../../../../../../Downloads/great-vibes-font/GreatVibes-A7yL.otf"; sourceTree = "<group>"; };
+		9F894E332A5068520081F34B /* SparklesIconPremium.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SparklesIconPremium.swift; sourceTree = "<group>"; };
 		9F8D7B002A41CE7D0009A9E4 /* OpenAISwift */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = OpenAISwift; path = ../../../../Downloads/OpenAISwift; sourceTree = "<group>"; };
 		9F8D7B072A42B3D40009A9E4 /* DatabaseManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DatabaseManager.swift; sourceTree = "<group>"; };
 		9F8D7B0C2A42B42A0009A9E4 /* utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = utils.swift; sourceTree = "<group>"; };
@@ -191,6 +199,7 @@
 				9F3EE81E29140B4900998284 /* UIImageColors in Frameworks */,
 				46EAE403280961AE0061C9BB /* ExternalAccessory.framework in Frameworks */,
 				9F894E282A4D9F5C0081F34B /* OpenAI in Frameworks */,
+				9F27B1812A506FD600FAC709 /* StoreKit.framework in Frameworks */,
 				9F4C29312A454A75002120AA /* FirebaseFunctions in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -247,6 +256,7 @@
 		46EAE401280961AE0061C9BB /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				9F27B1802A506FD600FAC709 /* StoreKit.framework */,
 				46EAE402280961AE0061C9BB /* ExternalAccessory.framework */,
 			);
 			name = Frameworks;
@@ -343,6 +353,7 @@
 				9F894E242A4C200C0081F34B /* SparklesIconRecommendations.swift */,
 				9F894E2B2A4DF45D0081F34B /* SparklesIconBio.swift */,
 				9F894E2D2A4F58C50081F34B /* SparklesIconPulsing.swift */,
+				9F894E332A5068520081F34B /* SparklesIconPremium.swift */,
 			);
 			path = Buttons;
 			sourceTree = "<group>";
@@ -374,6 +385,8 @@
 				9FF4384E29038A7C005FBFD0 /* Modulus-Bold.otf */,
 				9F6062F228F6508B00320BF9 /* logoRegular2.otf */,
 				9FD64C1C2918097A006A8664 /* Modulus-Bold2.otf */,
+				9F894E2F2A504E710081F34B /* ChristmasWishCalligraphyCalligraphy-yKzZ.ttf */,
+				9F894E312A5059BA0081F34B /* GreatVibes-A7yL.otf */,
 			);
 			path = Fonts;
 			sourceTree = "<group>";
@@ -538,6 +551,8 @@
 			files = (
 				9FD64C1D2918097A006A8664 /* Modulus-Bold2.otf in Resources */,
 				46F5CA712808C24000D58C41 /* Preview Assets.xcassets in Resources */,
+				9F894E302A504E7C0081F34B /* ChristmasWishCalligraphyCalligraphy-yKzZ.ttf in Resources */,
+				9F894E322A5059BB0081F34B /* GreatVibes-A7yL.otf in Resources */,
 				9FF4384F29038A7C005FBFD0 /* Modulus-Bold.otf in Resources */,
 				46F5CA6E2808C24000D58C41 /* Assets.xcassets in Resources */,
 				9FF4385229050A5D005FBFD0 /* GoogleService-Info.plist in Resources */,
@@ -567,6 +582,7 @@
 				9FBFACE828CBCD3200C9F179 /* Home.swift in Sources */,
 				9F9C41A528D18D44009CA948 /* UserCardViewGroupCreation.swift in Sources */,
 				9F9C419228CF531F009CA948 /* FindButton.swift in Sources */,
+				9F894E342A5068520081F34B /* SparklesIconPremium.swift in Sources */,
 				46F0CC2D280D716C00BF1B4B /* APICaller.swift in Sources */,
 				9F61C85E28EC4B8600877B91 /* DeleteAccount.swift in Sources */,
 				9F9C41A028D17E3B009CA948 /* CreateGroup.swift in Sources */,

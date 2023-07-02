@@ -11,9 +11,11 @@ struct SignOut: View {
     @EnvironmentObject var model: AppStateModel
     @State var isTapping: Bool = false
     var buttonHeight = 25.0
+    var completion: (() -> Void)?
     
     var body: some View {
         Button(action: {
+            
             withAnimation(.easeIn(duration: 0.1)) {
                 isTapping = true
             }
@@ -21,6 +23,7 @@ struct SignOut: View {
                 withAnimation {
                     isTapping = false
                 }
+                completion?()
                 model.signOut()
             }
         }, label: {

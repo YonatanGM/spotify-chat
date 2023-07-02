@@ -63,8 +63,10 @@ struct Home: View {
 
     
     var body: some View {
+        
         ScrollViewReader { proxy in
             List {
+
                 SuggestedUsersView()
                     .header(title: "You matched with")
                     .listRowSeparatorTint(.clear)
@@ -91,7 +93,7 @@ struct Home: View {
 
                 if (recommendedTracks.count > 0) {
                     TopTracksView(tracks: recommendedTracks)
-                        .header(title: "Recommedations", subtitle: "Based on tracks you like", messaage: model.weeklyLimitMessage)
+                        .header(title: "Recommedations", subtitle: "Based on tracks you like", messaage: model.recommendationLimitMessage)
                         .listRowSeparatorTint(.clear)
                         .listRowBackground(Color.clear)
                         .listRowInsets(EdgeInsets(.zero))
@@ -185,14 +187,15 @@ struct Home: View {
                     Image(systemName: "sparkles")
                         .resizable()
                         .aspectRatio(contentMode: .fit)
-                        .frame(width: 20)
                         .foregroundColor(.white)
+                        .frame(width: 15)
                 } else {
                     UpgradeButton()
                 }
             }
             
             ToolbarItem(placement: .navigationBarTrailing) {
+
                 CurrentUserSettings()
             }
 

@@ -11,6 +11,7 @@ struct DM: View {
     @EnvironmentObject var model: AppStateModel
     @State var isTapping: Bool = false
     @State var didCreateGroup = false
+    @State var navigateToChat = false
     let recipient: Message.ChatUserItem
     
     // @State var navigateToChat = false
@@ -27,7 +28,7 @@ struct DM: View {
     var buttonHeight = 25.0
     
     var body: some View {
-        NavigationLink(isActive: $model.navigateToChat,
+        NavigationLink(isActive: $navigateToChat,
                        destination: {
                             if let groupID = group?.id {
                                 SwiftyChatView(groupID: groupID)
@@ -44,7 +45,7 @@ struct DM: View {
                                         }
                                     }
                                     // necessary to pop back to home view if user blocks other user 
-                                    .onChange(of: model.groups[groupID] == nil) { _ in }
+                                    // .onChange(of: model.groups[groupID] == nil) { _ in }
                             }
                        },
                        label: { EmptyView() })
@@ -77,7 +78,7 @@ struct DM: View {
                         if didCreateGroup == true {
                             print("created group with user \(recipient.id)")
                             self.didCreateGroup = true
-                            model.navigateToChat = true
+                            navigateToChat = true
                         }
                     }
                 }
@@ -93,10 +94,10 @@ struct DM: View {
                 }
                 if group.pending == true {
                     DatabaseManager.shared.acceptPendingInvitation(group.id) { success in
-                        model.navigateToChat = true
+                        navigateToChat = true
                     }
                 } else {
-                    model.navigateToChat = true
+                    navigateToChat = true
                 }
             }
         }

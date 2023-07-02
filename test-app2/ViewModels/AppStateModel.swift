@@ -54,8 +54,6 @@ class AppStateModel: ObservableObject {
     
     
     @Published var showChat = false
-    @Published var navigateToChat = false
-    
     
     @Published var selectedGroup: String?
     
@@ -87,7 +85,11 @@ class AppStateModel: ObservableObject {
     // refresh counters
     @Published var recommendationRefreshCount = 0
     @Published var bioRefreshCount = 0
-    @Published var weeklyLimitMessage: String? = nil
+    @Published var recommendationLimitMessage: String? = nil
+    @Published var bioLimitMessage: String? = nil
+    
+    @Published var showCurrentUserSettings = false
+    @Published var popToRoot = false
     
     init() {
         // check if spotify is installed
@@ -130,6 +132,7 @@ class AppStateModel: ObservableObject {
                 }
             } else {
                 self?.signInStatus = .signedOut
+                self?.cleanup()
             }
         }
     }
@@ -161,9 +164,7 @@ class AppStateModel: ObservableObject {
     }
     
     func signOut() {
-        cleanup()
-        DatabaseManager.shared.removePresence()
-        AuthManager.shared.signOut { _ in }
+        AuthManager.shared.signOut { _ in  }
     }
     
     deinit {
@@ -199,19 +200,6 @@ extension AppStateModel {
                 // for existing users update the recommendations if needed, i.e once a week every Monday.
                 DatabaseManager.shared.updateRecommendationsWeekly(for: user)
                 
-                // observe the bio and recommendation refresh counters
-                DatabaseManager.shared.observeCounters(for: user.id) {
-                    if let recommendationRefreshCount = $0 {
-                        DispatchQueue.main.async {
-                            self?.recommendationRefreshCount = recommendationRefreshCount
-                        }
-                    }
-                    if let bioRefreshCount = $1 {
-                        DispatchQueue.main.async {
-                            self?.bioRefreshCount = bioRefreshCount
-                        }
-                    }
-                }
                 
                 // observe any changes to the user, such as the profile picture, name, top tracks, etc
                 self?.fetchUserUpdates()
@@ -485,7 +473,7 @@ extension AppStateModel {
 
 extension AppStateModel {
     public func cleanup() {
-        guard let currentUserID = AuthManager.shared.currentUser?.uid else { return }
+        guard let currentUserID = self.currentUser?.id else { return }
         // UserInfo
 
         DatabaseManager.shared.removeObserver(with: "userInfo/\(currentUserID)/Groups")
@@ -520,11 +508,9 @@ extension AppStateModel {
         // remove counter observer
         DatabaseManager.shared.removeObserver(with: "counters/\(currentUserID)")
         
-        
         // online status
-        // onlineStatusHandles.compactMap { $0 }.forEach {
-        //     DatabaseManager.shared.removeObserver(with: $0)
-        // }
+        DatabaseManager.shared.removePresence()
+        
         
         // remove AVPlayer observers
         NotificationCenter.default.removeObserver(itemDidPlayToEndTimeObserver)
@@ -547,6 +533,20 @@ extension AppStateModel {
         progress = 0.0
         play = false
         
+        recommendedTracks = []
+        didUnlockPremium = false
+    
+        
+        // openAI stream completions when getting by bio
+        bioCompletions = [] // an array of completions
+        fullBio = ""
+        
+        // refresh counters
+        recommendationRefreshCount = 0
+        bioRefreshCount = 0
+        // limit messages
+        recommendationLimitMessage = nil
+        bioLimitMessage = nil
     }
 }
 
@@ -825,35 +825,51 @@ extension AppStateModel {
             + "Tracks: \(topTracks ?? "")\n"
             + "Artists: \(topArtists ?? "")\n"
             + "Output:"
-            print(prompt)
+            // print(prompt)
             let bioCounter = try await DatabaseManager.shared.getBioCounter(for: currentUser.id)
-            // 3 bios a week
-            //            if (bioCounter < 3) {
-            let query = CompletionsQuery(model: .textDavinci_003, prompt: prompt, temperature: 0.8, maxTokens: 10, frequencyPenalty: 0.2)
-            //                DispatchQueue.main.async {
-            //                    self.bioCompletions = []
-            //                }
             
-            var index = 0
-            for try await result in  OpenAIManager.shared.openAI.completionsStream(query: query) {
-                if index == 0 {
-                    // list needs to be reset
-                    DispatchQueue.main.async {
-                        self.bioCompletions = [result.choices.first?.text ?? ""]
-                        self.fullBio = result.choices.first?.text ?? ""
+            
+            // 3 bios a week
+            
+            // update the bio limit message here
+            
+            if (bioCounter < 3) {
+
+                let query = CompletionsQuery(model: .textDavinci_003, prompt: prompt, temperature: 0.8, maxTokens: 10, frequencyPenalty: 0.2)
+                //                DispatchQueue.main.async {
+                //                    self.bioCompletions = []
+                //                }
+                
+                var index = 0
+                for try await result in  OpenAIManager.shared.openAI.completionsStream(query: query) {
+                    if index == 0 {
+                        // list needs to be reset
+                        DispatchQueue.main.async {
+                            self.bioCompletions = [result.choices.first?.text ?? ""]
+                            self.fullBio = result.choices.first?.text ?? ""
+                        }
+                    } else {
+                        DispatchQueue.main.async {
+                            self.bioCompletions.append(result.choices.first?.text ?? "")
+                            self.fullBio = self.bioCompletions.joined()
+                        }
                     }
-                } else {
-                    DispatchQueue.main.async {
-                        self.bioCompletions.append(result.choices.first?.text ?? "")
-                        self.fullBio = self.bioCompletions.joined()
-                    }
+                    index += 1
                 }
-                index += 1
+                
+                let bioText = "\" \(bioCompletions.joined().trimmingCharacters(in: .whitespacesAndNewlines)) \""
+                DatabaseManager.shared.setBio(for: currentUser.id, text: bioText, counter: bioCounter + 1)
+                
+            } else {
+
+                DispatchQueue.main.async {
+                    self.bioLimitMessage = "No more bio updates this week. Try again next week 😊."
+                }
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                    self.bioLimitMessage = nil
+                }
             }
             
-            let bioText = "\" \(bioCompletions.joined().trimmingCharacters(in: .whitespacesAndNewlines)) \""
-            DatabaseManager.shared.setBio(for: currentUser.id, text: bioText, counter: bioCounter + 1)
-            //            }
         } catch {
             print(error.localizedDescription)
         }

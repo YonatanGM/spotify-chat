@@ -14,9 +14,11 @@ struct CurrentUserSettings: View {
     @State var showCurrentUserSettings = false
     var body: some View {
         ZStack {
+        
             NavigationLink(isActive: $showCurrentUserSettings,
                            destination: { CurrentUserDetail() },
                            label: { EmptyView() })
+            .isDetailLink(false)
             if let currentUser = model.currentUser {
                 if let url = currentUser.avatarURL {
                     AnimatedImage(url: url)
@@ -36,6 +38,7 @@ struct CurrentUserSettings: View {
         .scaleEffect(isTapping ? 0.9 : 1)
         .brightness(isTapping ? 0.1 : 0)
         .onTapGesture {
+            
             withAnimation(.easeIn(duration: 0.1)) {
                 isTapping = true
             }
@@ -48,5 +51,8 @@ struct CurrentUserSettings: View {
             }
             
         }
+//        .navigationDestination(isPresented: $model.showCurrentUserSettings) {
+//            CurrentUserDetail()
+//        }
     }
 }

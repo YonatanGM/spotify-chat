@@ -60,17 +60,17 @@ struct SparklesIconRecommendations: View {
                             }
                             
                             if count == refreshLimit - 1 {
-                                model.weeklyLimitMessage = "Heads up! You have only one refresh left for this week."
+                                model.recommendationLimitMessage = "Heads up! You have only one refresh left for this week."
                                 DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
-                                    model.weeklyLimitMessage = nil
+                                    model.recommendationLimitMessage = nil
                                 }
                             } else if !didRefresh && count >= refreshLimit {
                           
-                                    model.weeklyLimitMessage = "You have used up all your refreshes for this week. "
+                                    model.recommendationLimitMessage = "You have used up all your refreshes for this week. "
                                 
                                 
                                 DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
-                                        model.weeklyLimitMessage = nil
+                                        model.recommendationLimitMessage = nil
                                 }
                             }
                             

@@ -20,13 +20,14 @@ struct SparklesIconPulsing: View {
         self.completion = completion
     }
     
+ 
     var body: some View {
         Image(systemName: "sparkles")
             .resizable()
             .aspectRatio(contentMode: .fit)
  
             .foregroundColor(.white)
-            .fontWeight(isBold ? .black : .regular)
+            //.fontWeight(isBold ? .black : .regular)
             .animation(.spring(response: 0.5, dampingFraction: 0.5), value: isBold)
             .scaleEffect(isTapping ? 0.9 : 1)
         

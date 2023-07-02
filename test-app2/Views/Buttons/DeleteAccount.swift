@@ -11,6 +11,7 @@ struct DeleteAccount: View {
     @EnvironmentObject var model: AppStateModel
     @State var isTapping: Bool = false
     var buttonHeight = 25.0
+    var completion: (() -> Void)?
     
     var body: some View {
         Button(action: {
@@ -22,6 +23,7 @@ struct DeleteAccount: View {
                 withAnimation {
                     isTapping = false
                 }
+                completion?()
                 model.signOut()
             }
             

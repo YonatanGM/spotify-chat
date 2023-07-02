@@ -13,23 +13,13 @@ struct UserBio: View {
     var body: some View {
         HStack {
             if let bioText = bioText {
-                Text(bioText)
-                    .italic()
-                    .fontWeight(.light)
+                Text(bioText.trimmingCharacters(in: .punctuationCharacters))
+                    .font(.custom("ChristmasWishCalligraphy-Calligraphy", size: 45))
+//                    .italic()
+                    // .fontWeight(.light)
                     .multilineTextAlignment(.center)
             }
-//            if !model.bioCompletions.isEmpty {
-//
-//                Text("\" \(model.fullBio.trimmingCharacters(in: .whitespacesAndNewlines)) \"")
-//                    .italic()
-//                    .fontWeight(.light)
-//                    .multilineTextAlignment(.center)
-//            } else if let bio = model.currentUser?.bio {
-//                Text(bio)
-//                    .italic()
-//                    .fontWeight(.light)
-//                    .multilineTextAlignment(.center)
-//            }
+            // .font(.custom("GreatVibes-Regular", size: 30))
             
         }
         .frame(width: 250)
