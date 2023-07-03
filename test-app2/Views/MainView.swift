@@ -14,12 +14,16 @@ struct MainView: View {
     
     var body: some View {
         if #available(iOS 16.0, *) {
-            NavigationStack {
+            
                 if model.signInStatus == .signedOut || model.signInStatus == .signingIn || model.finishedLoadingOfSuggestedUsers == false {
                     Login()
                 } else if model.signInStatus == .signedIn {
-                    Home()
-                        .navigationTitle("⁢⁢\u{17B5} \u{17B4} \u{115F}")
+                    NavigationStack {
+                        Home()
+                            .navigationTitle("⁢⁢\u{17B5} \u{17B4} \u{115F}")
+                    }
+                    .navigationViewStyle(.stack)
+                    .tint(.white)
                 } else {
                     LinearGradient(colors: [
                         Color(.sRGB,
@@ -36,9 +40,8 @@ struct MainView: View {
                     ], startPoint: .topLeading, endPoint: .center)
                     .edgesIgnoringSafeArea(.all)
                 }
-            }
-            .navigationViewStyle(.stack)
-            .tint(.white)
+            
+           
         } else {
             NavigationView {
                 if model.signInStatus == .signedOut || model.signInStatus == .signingIn || model.finishedLoadingOfSuggestedUsers == false {

@@ -93,7 +93,7 @@ struct Home: View {
 
                 if (recommendedTracks.count > 0) {
                     TopTracksView(tracks: recommendedTracks)
-                        .header(title: "Recommedations", subtitle: "Based on tracks you like", messaage: model.recommendationLimitMessage)
+                        .header(title: "Recommedations", subtitle: "Tracks you’ll like updated weekly", messaage: model.recommendationLimitMessage)
                         .listRowSeparatorTint(.clear)
                         .listRowBackground(Color.clear)
                         .listRowInsets(EdgeInsets(.zero))

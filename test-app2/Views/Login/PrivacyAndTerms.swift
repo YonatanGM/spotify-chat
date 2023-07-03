@@ -11,9 +11,9 @@ struct PrivacyAndTerms: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 5) {
             Text("By continuing, you agree to our ") +
-            Text(.init("[Terms of Service](https://testapp-79467.web.app/terms-and-conditions.html)")) +
+            Text(.init("[Terms of Service](https://testapp-79467.web.app/terms-and-conditions.html)")).foregroundColor(.blue) +
             Text(" and acknowledge that you have read our ") +
-            Text(.init("[Privacy Policy](https://testapp-79467.web.app/privacy.html)")) +
+            Text(.init("[Privacy Policy](https://testapp-79467.web.app/privacy.html)")).foregroundColor(.blue) +
             Text(" to learn how we collect, use and share your data.")
             // Text(" This app is not affiliated with Spotify.")
 //                .font(.system(size: 10))
