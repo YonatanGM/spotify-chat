@@ -103,11 +103,13 @@ struct Home: View {
                                     .padding(.trailing, 3)
                             } else {
                                 SparklesIconPulsing(size: CGSize(width: 35, height: 35)) {
-                                    Task {
-                                        do {
-                                            try await model.purchase()
-                                        } catch {
-                                            print(error.localizedDescription)
+                                    if model.didRequestProduct == false {
+                                        Task {
+                                            do {
+                                                try await model.purchase()
+                                            } catch {
+                                                print(error.localizedDescription)
+                                            }
                                         }
                                     }
                                 }

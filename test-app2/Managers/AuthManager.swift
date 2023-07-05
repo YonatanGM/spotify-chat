@@ -282,7 +282,7 @@ extension AuthManager {
                             } else {
                                 changeRequest.displayName = profile.email
                             }
-                            if let url = profile.images.first?.url {
+                            if let url = profile.images.last?.url {
                                 changeRequest.photoURL = URL(string: url)
                             }
                             changeRequest.commitChanges { error in

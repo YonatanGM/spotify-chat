@@ -43,7 +43,6 @@ extension DatabaseManager {
     
     public func userExists(with id: String, completion: @escaping ((Bool) -> Void )) {
         databaseref.child("users/\(id)").observeSingleEvent(of: .value, with: { snapshot in
-            
             guard snapshot.exists() else {
                 completion(false)
                 return
@@ -141,7 +140,7 @@ extension DatabaseManager {
 
                             // store profile pic in firebase storage and get the download url of the uploaded image and write it to the realtime database
                             // insert user into fireabase database
-                            StorageManager.shared.uploadProfileImage(for: profile.id, url: profile.images.first?.url) { downloadUrl in
+                            StorageManager.shared.uploadProfileImage(for: profile.id, url: profile.images.last?.url) { downloadUrl in
 
                                 let userUpdates: [String: Any] = [
                                     "users/\(profile.id)/id": profile.id, //redundant but whatever
@@ -154,7 +153,9 @@ extension DatabaseManager {
                                     "users/\(profile.id)/top_tracks": topTracks,
                                     "users/\(profile.id)/top_recent_tracks": topRecentTracks,
                                     "users/\(profile.id)/top_genres": topGenres,
-                                    "users/\(profile.id)/top_genre_display": modeGenre ?? topArtistsResponse.items.first?.genres?.first
+                                    "users/\(profile.id)/top_genre_display": modeGenre ?? topArtistsResponse.items.first?.genres?.first,
+                                    "userInfo/\(profile.id)/app_account_token": UUID().uuidString,
+                                    "userInfo/\(profile.id)/premium": false
                                 ]
 
                                 // update the genres and search index first
@@ -313,12 +314,12 @@ extension DatabaseManager {
                         }
                     }
                 }
-                if profile.images.first?.url != AuthManager.shared.currentUser?.photoURL?.absoluteString {
+                if profile.images.last?.url != AuthManager.shared.currentUser?.photoURL?.absoluteString {
                     // store new photo in firebase storage and get the download url
-                    StorageManager.shared.uploadProfileImage(for: profile.id, url: profile.images.first?.url) { downloadUrl in
+                    StorageManager.shared.uploadProfileImage(for: profile.id, url: profile.images.last?.url) { downloadUrl in
                         self?.databaseref.child("users/\(profile.id)/profile_picture_stable").setValue(downloadUrl?.absoluteString ?? "") { error, _ in
                             if error == nil  {
-                                if let url = profile.images.first?.url {
+                                if let url = profile.images.last?.url {
                                     let changeRequest = AuthManager.shared.currentUser?.createProfileChangeRequest()
                                     changeRequest?.photoURL = downloadUrl ?? URL(string: url)
                                     changeRequest?.commitChanges() { error in
@@ -1540,8 +1541,8 @@ extension DatabaseManager {
 // MARK: - premium features
 extension DatabaseManager {
     
-    public func upgradeUser(with id: String, appAccountToken: String, completion: (() -> Void)? = nil) {
-        self.databaseref.child("users/\(id)/appAccountToken").setValue(appAccountToken) { error, ref in
+    public func upgradeUser(with id: String, completion: (() -> Void)? = nil) {
+        self.databaseref.child("userInfo/\(id)/premium").setValue(true) { error, ref in
             guard error == nil else {
                 return
             }
@@ -1550,14 +1551,18 @@ extension DatabaseManager {
     }
     
     public func getAppAccountToken(for id: String, completion: @escaping (String?) -> Void) {
-        self.databaseref.child("users/\(id)/appAccountToken").observeSingleEvent(of: .value) { snapshot in
+        
+        self.databaseref.child("userInfo/\(id)/app_account_token").observeSingleEvent(of: .value) { snapshot in
             completion(snapshot.value as? String)
         }
     }
+    public func setAppAccountToken(for id: String, token: String) {
+        self.databaseref.child("userInfo/\(id)/app_account_token").setValue(token)
+    }
     
-    public func observeAppAccountToken(for id: String, completion: @escaping (String?) -> Void) {
-        self.databaseref.child("users/\(id)/appAccountToken").observe(.value) { snapshot in
-            completion(snapshot.value as? String)
+    public func observePremium(for id: String, completion: @escaping (Bool?) -> Void) {
+        self.databaseref.child("userInfo/\(id)/premium").observe(.value) { snapshot in
+            completion(snapshot.value as? Bool)
         }
     }
     

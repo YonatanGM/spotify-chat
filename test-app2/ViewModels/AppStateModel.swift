@@ -77,6 +77,7 @@ class AppStateModel: ObservableObject {
     var updateListenerTask: Task<Void, Error>? = nil
     let productID = "premium.feature"
     @Published var didUnlockPremium = false
+    @Published var didRequestProduct = false
     
     // openAI stream completions when getting by bio
     @Published var bioCompletions: [String] = [] // an array of completions
@@ -132,7 +133,7 @@ class AppStateModel: ObservableObject {
                 }
             } else {
                 self?.signInStatus = .signedOut
-                self?.cleanup()
+            
             }
         }
     }
@@ -165,6 +166,7 @@ class AppStateModel: ObservableObject {
     
     func signOut() {
         AuthManager.shared.signOut { _ in  }
+        self.cleanup()
     }
     
     deinit {
@@ -189,11 +191,9 @@ extension AppStateModel {
                 // fetch similar users from pinecone DB
                 self?.fetchSimilarUsers()
                 // check if the user has unlocked premium or not
-                DatabaseManager.shared.observeAppAccountToken(for: user.id) { token in
-                    if let _ = token {
-                        DispatchQueue.main.async {
-                            self?.didUnlockPremium = true
-                        }
+                DatabaseManager.shared.observePremium(for: user.id) { didUnlockPremium in
+                    DispatchQueue.main.async {
+                        self?.didUnlockPremium = didUnlockPremium ?? false
                     }
                 }
                 // get and save track recommendations if the user is new and has no recommendations yet
@@ -716,7 +716,7 @@ extension AppStateModel {
                 do {
                     let transaction = try self.checkVerified(result)
 
-                    //Deliver products to the user.
+                    // Deliver products to the user.
                     // if the transcation was made by the current user
                     // update the database to reflect that
                     // check this by comparing the app account token in the transcation result with the current user's
@@ -734,7 +734,7 @@ extension AppStateModel {
                                 // And the transcation is related to the currently signed-in user
                                 // the user's data most likely hasnt changed in the database
                                 // so update that
-                                DatabaseManager.shared.upgradeUser(with: id, appAccountToken: currentUserAppAccountToken)
+                                DatabaseManager.shared.upgradeUser(with: id)
                             }
                             continuation.resume()
                         }
@@ -753,18 +753,45 @@ extension AppStateModel {
         guard let id = self.currentUser?.id else {
             throw DatabaseManager.DatabaseError.failedToFetch
         }
+
+        
+       
+        // need to create the app token, need it validate later if unfinised transcations belong to the current signed in user
+        // by comparing the app token in the transcation with the current user's
+        let appAccountToken = await withCheckedContinuation { (continuation: CheckedContinuation<String, Never>) in
+            DatabaseManager.shared.getAppAccountToken(for: id) { appAccountToken in
+                guard let currentUserAppAccountToken = appAccountToken else {
+                    // most likely old user
+                    // need to create the app account token
+                    let token = UUID().uuidString
+                    DatabaseManager.shared.setAppAccountToken(for: id, token: token)
+                    continuation.resume(returning: token)
+                    return
+                    
+                    
+                }
+                continuation.resume(returning: currentUserAppAccountToken)
+            }
+        }
+        
+        guard let uuid = UUID(uuidString: appAccountToken) else {
+            return
+        }
+        
+        DispatchQueue.main.async {
+            self.didRequestProduct = true
+        }
         // request the product
         let storeProducts = try await Product.products(for: ["premium.feature"])
         
+
         guard let product = storeProducts.first,
               product.type == .nonConsumable else {
             return
         }
         
         // Begin purchasing
-        // need to create the app token, need it validate later if unfinised transcations belong to the current signed in user
-        // by comparing the app token in the transcation with the current user's
-        let result = try await product.purchase(options: [.appAccountToken(UUID())])
+        let result = try await product.purchase(options: [.appAccountToken(uuid)])
  
         switch result {
         case .success(let verification):
@@ -772,16 +799,22 @@ extension AppStateModel {
             let transaction = try checkVerified(verification)
             // The transaction is verified. Deliver content to the user.
             // update the databse
-            if let uuid = transaction.appAccountToken?.uuidString {
-                DatabaseManager.shared.upgradeUser(with: id, appAccountToken: uuid)
-            }
+            DatabaseManager.shared.upgradeUser(with: id)
             // finish the transaction.
             await transaction.finish()
+            DispatchQueue.main.async {
+                self.didRequestProduct = false
+            }
+            
       
         case .userCancelled, .pending:
-            break
+            DispatchQueue.main.async {
+                self.didRequestProduct = false
+            }
         default:
-            break
+            DispatchQueue.main.async {
+                self.didRequestProduct = false
+            }
         }
     }
     

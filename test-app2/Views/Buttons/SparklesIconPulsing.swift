@@ -59,7 +59,9 @@ struct SparklesIconPulsing: View {
     
                     }
                 }
-                
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1.3) {
+                    isAnimating = false
+                }
 
             }
             .onTapGesture {
