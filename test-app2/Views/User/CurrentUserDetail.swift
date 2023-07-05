@@ -62,7 +62,7 @@ struct CurrentUserDetail: View {
                     HStack {
                         Spacer()
                         UserIcon(user: .init(id: user.id, name: user.userName, photoURL: user.avatarURL?.absoluteString, genreDisplay: nil), contentMode: .fill)
-                            .frame(width: 145)
+                            .frame(width: UIScreen.main.bounds.width / 3)
                         VStack(alignment: .leading) {
                             Spacer()
                             HStack {
