@@ -753,7 +753,10 @@ extension AppStateModel {
         guard let id = self.currentUser?.id else {
             throw DatabaseManager.DatabaseError.failedToFetch
         }
-
+        
+        DispatchQueue.main.async {
+            self.didRequestProduct = true
+        }
         
        
         // need to create the app token, need it validate later if unfinised transcations belong to the current signed in user
@@ -778,9 +781,7 @@ extension AppStateModel {
             return
         }
         
-        DispatchQueue.main.async {
-            self.didRequestProduct = true
-        }
+
         // request the product
         let storeProducts = try await Product.products(for: ["premium.feature"])
         
