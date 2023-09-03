@@ -97,6 +97,7 @@
 		9FD64C1D2918097A006A8664 /* Modulus-Bold2.otf in Resources */ = {isa = PBXBuildFile; fileRef = 9FD64C1C2918097A006A8664 /* Modulus-Bold2.otf */; };
 		9FF4384F29038A7C005FBFD0 /* Modulus-Bold.otf in Resources */ = {isa = PBXBuildFile; fileRef = 9FF4384E29038A7C005FBFD0 /* Modulus-Bold.otf */; };
 		9FF4385229050A5D005FBFD0 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 9FF4385129050A5D005FBFD0 /* GoogleService-Info.plist */; };
+		9FFF1D092AA4BFF6004A4B0A /* StoreKitConfig.storekit in Resources */ = {isa = PBXBuildFile; fileRef = 9F894E212A4B0A7E0081F34B /* StoreKitConfig.storekit */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -187,6 +188,7 @@
 		9FD64C1C2918097A006A8664 /* Modulus-Bold2.otf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Modulus-Bold2.otf"; path = "../../../../../Modulus-Bold2.otf"; sourceTree = "<group>"; };
 		9FF4384E29038A7C005FBFD0 /* Modulus-Bold.otf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Modulus-Bold.otf"; path = "../../../../../../Downloads/Modulus-www.Dfonts.org/Modulus-Bold.otf"; sourceTree = "<group>"; };
 		9FF4385129050A5D005FBFD0 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../../../../Downloads/GoogleService-Info.plist"; sourceTree = "<group>"; };
+		9FFF1D0A2AA4C98D004A4B0A /* OpenAI */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = OpenAI; path = ../OpenAI; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -470,6 +472,7 @@
 			children = (
 				9F8D7B002A41CE7D0009A9E4 /* OpenAISwift */,
 				9FA7F86A28E5E2CB004F6A66 /* SwiftyChat */,
+				9FFF1D0A2AA4C98D004A4B0A /* OpenAI */,
 			);
 			name = Packages;
 			sourceTree = "<group>";
@@ -566,6 +569,7 @@
 				9F27B18F2A51DE7A00FAC709 /* sparkles3.gif in Resources */,
 				9F894E322A5059BB0081F34B /* GreatVibes-A7yL.otf in Resources */,
 				9FF4384F29038A7C005FBFD0 /* Modulus-Bold.otf in Resources */,
+				9FFF1D092AA4BFF6004A4B0A /* StoreKitConfig.storekit in Resources */,
 				46F5CA6E2808C24000D58C41 /* Assets.xcassets in Resources */,
 				9FF4385229050A5D005FBFD0 /* GoogleService-Info.plist in Resources */,
 			);
@@ -773,7 +777,7 @@
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CODE_SIGN_ENTITLEMENTS = "test-app2/test-app2.entitlements";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 3.4;
+				CURRENT_PROJECT_VERSION = 3.5;
 				DEVELOPMENT_ASSET_PATHS = "\"test-app2/Preview Content\"";
 				DEVELOPMENT_TEAM = RB594D2V3K;
 				ENABLE_PREVIEWS = YES;
@@ -809,7 +813,7 @@
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CODE_SIGN_ENTITLEMENTS = "test-app2/test-app2.entitlements";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 3.4;
+				CURRENT_PROJECT_VERSION = 3.5;
 				DEVELOPMENT_ASSET_PATHS = "\"test-app2/Preview Content\"";
 				DEVELOPMENT_TEAM = RB594D2V3K;
 				ENABLE_PREVIEWS = YES;

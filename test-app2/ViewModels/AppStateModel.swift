@@ -852,7 +852,7 @@ extension AppStateModel {
             Input:
             Tracks: Bohemian Rhapsody by Queen, Imagine by John Lennon, Stairway to Heaven by Led Zeppelin, Hotel California by Eagles
             Artists: Queen, John Lennon, Led Zeppelin, Eagles
-            Output: Classic rock lover with timeless taste.
+            Output: Classic rock lover with timeless taste.\n
             """
             +
             "Input:\n"
@@ -868,12 +868,13 @@ extension AppStateModel {
             // update the bio limit message here
             
             if (bioCounter < 3) {
-
+          
                 let query = CompletionsQuery(model: .textDavinci_003, prompt: prompt, temperature: 0.8, maxTokens: 10, frequencyPenalty: 0.2)
+    
                 //                DispatchQueue.main.async {
                 //                    self.bioCompletions = []
                 //                }
-                
+                print(query.prompt)
                 var index = 0
                 for try await result in  OpenAIManager.shared.openAI.completionsStream(query: query) {
                     if index == 0 {
@@ -888,6 +889,8 @@ extension AppStateModel {
                             self.fullBio = self.bioCompletions.joined()
                         }
                     }
+                    
+                    // print(result.choices.first?.text ?? "")
                     index += 1
                 }
                 
@@ -905,7 +908,8 @@ extension AppStateModel {
             }
             
         } catch {
-            print(error.localizedDescription)
+           //  print(error.localizedDescription)
+
         }
         
     }

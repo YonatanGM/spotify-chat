@@ -25,8 +25,9 @@ import OpenAI
 
 class OpenAIManager {
     static let shared = OpenAIManager()
-    let openAI = OpenAI(apiToken: "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")
-
+    // let openAI = OpenAI(apiToken: "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")
+   
+    let openAI = OpenAI(apiToken: "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")
 //    let openAI = OpenAISwift(authToken: "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")
 
     private init () {}
