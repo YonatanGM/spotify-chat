@@ -874,7 +874,7 @@ extension AppStateModel {
                 //                DispatchQueue.main.async {
                 //                    self.bioCompletions = []
                 //                }
-                print(query.prompt)
+//                print(query.prompt)
                 var index = 0
                 for try await result in  OpenAIManager.shared.openAI.completionsStream(query: query) {
                     if index == 0 {
@@ -908,7 +908,7 @@ extension AppStateModel {
             }
             
         } catch {
-           //  print(error.localizedDescription)
+             print(error.localizedDescription)
 
         }
         

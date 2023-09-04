@@ -115,7 +115,7 @@ struct UserCardViewGroupCreation: View {
                 Spacer()
             }
             .frame(height: 50)
-            .padding([.horizontal], 10)
+            .padding([.horizontal], 15)
 //            
 //            Text("Find")
 //                .font(Font.custom("Modulus", size: 30))
@@ -188,7 +188,7 @@ struct UserCardViewGroupCreation: View {
                 .frame(height: 40)
                 .background(Color.backdrop)
                 .clipShape(Capsule())
-                .padding([.horizontal], 10)
+                .padding([.horizontal], 15)
             }
             .header(title: "Find", subtitle: "Search by artist or track names (comma separated). You can add up to ten people.")
 

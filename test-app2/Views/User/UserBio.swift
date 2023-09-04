@@ -19,12 +19,19 @@ struct UserBio: View {
                     SparklesIconBio()
                 } else {
                     SparklesIconPulsing(size: CGSize(width: 20, height: 20)) {
-                        if model.didRequestProduct == false {
+                        // allow creating bio for the first time
+                        if bioText == "" {
                             Task {
-                                do {
-                                    try await model.purchase()
-                                } catch {
-                                    print(error.localizedDescription)
+                                await model.updateBio()
+                            }
+                        } else {
+                            if model.didRequestProduct == false {
+                                Task {
+                                    do {
+                                        try await model.purchase()
+                                    } catch {
+                                        print(error.localizedDescription)
+                                    }
                                 }
                             }
                         }
