@@ -7,15 +7,13 @@ An iOS social app I designed, developed, and released in 2023. It used Spotify l
   <img src="docs/previews/discovery-preview.gif" width="320" alt="Recommendations and user discovery preview">
 </p>
 
-## How it worked
+## Technical Overview
 
-Users signed in with Spotify, and the app refreshed their access tokens automatically. Spotify data powered profiles, follows, saved tracks, and recommendations.
-
-To suggest people with similar taste, the app created OpenAI embeddings from each person's top and recent listening data, then used Pinecone to retrieve the most similar profiles. Spotify supplied a separate set of track recommendations that refreshed weekly.
-
-Firebase kept profiles, direct and group conversations, invitations, online presence, unread message counts, blocks, reports, and profile deletion in sync. OpenAI also created short profile bios. A StoreKit purchase unlocked extra refreshes, with transactions verified before premium access was stored for the account.
-
-The interface was built mainly in SwiftUI, with UIKit where needed, AVKit for track previews, SDWebImage for artwork caching, UIImageColors for colors taken from cover art, and a customized copy of SwiftyChat.
+- Spotify authentication and Web API integration for profiles, listening data, recommendations, saved tracks, and following users.
+- OpenAI embeddings and Pinecone similarity search to match users with similar listening preferences.
+- Firebase Authentication, Realtime Database, Storage, and Cloud Functions for accounts, chat, presence, invitations, reporting, and moderation.
+- StoreKit for premium access, with transaction verification and limits on recommendation and profile bio refreshes.
+- SwiftUI interface with UIKit where needed, AVKit for track previews, remote image caching, and a customized version of SwiftyChat.
 
 ## Stack
 
