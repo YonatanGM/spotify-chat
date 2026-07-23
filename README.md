@@ -7,14 +7,14 @@ An iOS social app I designed, developed, and released in 2023. It used Spotify l
   <img src="docs/previews/discovery-preview.gif" width="320" alt="Recommendations and user discovery preview">
 </p>
 
-## Technical Overview
+## Overview
 
-- Spotify authentication and Web API integration for profiles, listening data, recommendations, saved tracks, and following users.
-- OpenAI embeddings and Pinecone similarity search to match users with similar listening preferences.
-- Firebase Authentication, Realtime Database, Storage, and Cloud Functions for accounts, chat, presence, invitations, reporting, and moderation.
-- StoreKit for premium access, with transaction verification and limits on recommendation and profile bio refreshes.
-- SwiftUI interface with UIKit where needed, AVKit for track previews, remote image caching, and a customized version of SwiftyChat.
+- Spotify OAuth with automatic token refresh, plus Web API clients for profiles, top artists and tracks, recommendations, saved tracks, and following users.
+- OpenAI embeddings generated from each user's top artists, tracks, recent listening, and genres, with Pinecone similarity search used to find matching profiles.
+- Spotify identities linked to Firebase Authentication through custom tokens. Realtime Database, Storage, and Cloud Functions supported profiles, direct and group chat, presence, invitations, unread messages, reporting, and moderation.
+- StoreKit premium access with verified transactions linked to each user account and refresh limits stored in Firebase.
+- SwiftUI interface with UIKit where needed and AVKit for track preview playback.
 
 ## Stack
 
-Swift · SwiftUI · UIKit · AVKit · StoreKit · Spotify Web API · Firebase Authentication · Realtime Database · Storage · Cloud Functions · OpenAI API · Pinecone · SDWebImageSwiftUI · UIImageColors · SwiftyChat
+Swift · SwiftUI · UIKit · AVKit · StoreKit · Spotify Web API · Firebase Authentication · Realtime Database · Storage · Cloud Functions · OpenAI API · Pinecone
