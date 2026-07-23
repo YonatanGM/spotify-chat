@@ -7,13 +7,15 @@ An iOS social app I designed, developed, and released in 2023. It used Spotify l
   <img src="docs/previews/discovery-preview.gif" width="320" alt="Recommendations and user discovery preview">
 </p>
 
-## Implementation
+## How it worked
 
-- Integrated Spotify's OAuth authorization-code flow and token refresh, then used profile, top-artist, top-track, recommendation, follow, and saved-track APIs throughout the app.
-- Built user matching by turning top and short-term listening data into OpenAI embeddings and querying Pinecone for similar profiles. Track recommendations used Spotify's recommendation API and refreshed weekly.
-- Used Firebase Authentication, Realtime Database, Storage, and Cloud Functions for Spotify-linked accounts, profiles, direct and group chat, invitations, presence, unread state, blocking, reporting, and account cleanup.
-- Added AI-generated music-taste bios and a StoreKit premium upgrade with verified transactions and per-user refresh limits.
-- Built the interface in SwiftUI with UIKit bridges, AVKit track previews, cached remote artwork, artwork-derived colors, and a customized local SwiftyChat package.
+Users signed in with Spotify, and the app refreshed their access tokens automatically. Spotify data powered profiles, follows, saved tracks, and recommendations.
+
+To suggest people with similar taste, the app created OpenAI embeddings from each person's top and recent listening data, then used Pinecone to retrieve the most similar profiles. Spotify supplied a separate set of track recommendations that refreshed weekly.
+
+Firebase kept profiles, direct and group conversations, invitations, online presence, unread message counts, blocks, reports, and profile deletion in sync. OpenAI also created short profile bios. A StoreKit purchase unlocked extra refreshes, with transactions verified before premium access was stored for the account.
+
+The interface was built mainly in SwiftUI, with UIKit where needed, AVKit for track previews, SDWebImage for artwork caching, UIImageColors for colors taken from cover art, and a customized copy of SwiftyChat.
 
 ## Stack
 
